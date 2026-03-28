@@ -746,17 +746,17 @@
       -webkit-backdrop-filter: blur(28px);
       border: 1px solid var(--glass-border);
       border-radius: var(--card-radius);
-      padding: 32px;
+      padding: 20px;
       box-shadow: var(--shadow);
       width: 100%;
-      max-width: 400px;
+      max-width: 350px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
     .login-box h2 {
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     .login-btn {
       background: var(--accent);
@@ -790,38 +790,38 @@
   <!-- AUTH SCREEN -->
   <div id="loginScreen">
     <div class="login-box">
-      <div style="text-align: center; margin-bottom: 10px;">
-        <img src="./logo.png" style="width: 80px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+      <div style="text-align: center; margin-bottom: 4px;">
+        <img src="./logo.png" style="width: 70px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
       </div>
-      <h2 style="font-size:26px; text-align: center; margin-bottom: 4px;">Spray Precision PRO</h2>
-      <p style="text-align: center; color: var(--accent); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Simulador de Bicos ISO</p>
+      <h2 style="font-size:24px; text-align: center; margin-bottom: 2px;">Spray Precision PRO</h2>
+      <p style="text-align: center; color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Simulador de Bicos ISO</p>
       
-      <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);">
-        <p style="text-align: center; color: var(--text-muted); font-size: 13px; line-height: 1.6; margin: 0;">
+      <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);">
+        <p style="text-align: center; color: var(--text-muted); font-size: 12px; line-height: 1.5; margin: 0;">
           Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.
         </p>
       </div>
 
-      <div style="border-top: 1px solid var(--glass-border); padding-top: 20px;">
-        <h3 style="text-align: center; font-size: 16px; color: var(--text-main); margin-bottom: 16px; font-family: 'Inter';">Acesso ao Sistema</h3>
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 12px;">
+        <h3 style="text-align: center; font-size: 15px; color: var(--text-main); margin-bottom: 10px; font-family: 'Inter';">Acesso ao Sistema</h3>
         
-        <form id="loginForm" onsubmit="event.preventDefault(); return false;" style="display: flex; flex-direction: column; gap: 12px;">
+        <form id="loginForm" onsubmit="event.preventDefault(); return false;" style="display: flex; flex-direction: column; gap: 8px;">
           <input type="email" id="email" class="login-input" placeholder="Seu E-mail" required>
           <input type="password" id="password" class="login-input" placeholder="Sua Senha" required minlength="6">
           
           <input type="text" id="nome" class="login-input" placeholder="Seu Nome e Sobrenome" style="display: none;">
           <input type="tel" id="whatsapp" class="login-input" placeholder="Seu WhatsApp (apenas números)" style="display: none;">
           
-          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); cursor: pointer;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer;">
             <input type="checkbox" id="chkRegister"> 
-            Quero me cadastrar (novo acesso)
+            Cadastrar novo acesso
           </label>
 
           <button type="button" onclick="handleAuth(event)" id="btnSubmit" class="login-btn">Entrar / Cadastrar</button>
         </form>
       </div>
 
-      <div style="margin-top: 24px; text-align: center; font-size: 11px; color: var(--text-muted); padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1);">
+      <div style="margin-top: 16px; text-align: center; font-size: 10px; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);">
         Powered by <strong style="color: var(--text-main);">Spray Precision</strong>
       </div>
 

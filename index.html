@@ -1155,6 +1155,17 @@
       </div>
     </div>
 
+    <!-- Status Explanation Modal -->
+    <div id="statusModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+      <div class="modal-content" style="max-width: 320px; padding: 24px; text-align: center;">
+        <button class="close-btn" onclick="document.getElementById('statusModal').style.display='none'">&times;</button>
+        <div id="smIcon" style="font-size: 40px; margin-bottom: 12px;">🏆</div>
+        <h3 id="smTitle" style="font-size: 20px; margin-bottom: 8px;">Status</h3>
+        <p id="smDesc" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px;">Descrição técnica do status.</p>
+        <button onclick="document.getElementById('statusModal').style.display='none'" class="info-btn" style="width: 100%; height: 40px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600;">Entendi</button>
+      </div>
+    </div>
+
     <!-- Result Modal Overlay -->
     <div id="resultModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
       <div class="modal-content" style="max-width: 400px; padding: 0;">
@@ -1410,10 +1421,10 @@
         let fallbackMode = false;
         if (tops.length === 0 && rows.length > 0) {
           fallbackMode = true;
-          tops = [rows[0]]; // O bico matematicamente mais proximo da pressao de referencia (3bar)
+          tops = [rows[0]]; // O bico matematicamente mais próximo da faixa (violação mínima)
         }
 
-        document.getElementById('matchCount').innerText = fallbackMode ? '1 alternativa com ressalvas' : `${tops.length} encontrados`;
+        document.getElementById('matchCount').innerText = fallbackMode ? 'Melhor alternativa disponível' : `${tops.length} encontrados`;
 
         if (tops.length > 0) {
           window.topNozzle = tops[0];
@@ -1434,27 +1445,29 @@
 
         container.innerHTML = '';
         if (fallbackMode) {
-          tops.forEach(r => container.appendChild(createCard(r, 'warning', "MELHOR ALTERNATIVA")));
+          tops.forEach(r => container.appendChild(createCard(r)));
 
           const msgDiv = document.createElement('div');
           msgDiv.style.cssText = "grid-column: 1/-1; padding: 12px 16px; background: var(--control-bg); border-left: 3px solid #FFC107; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; margin-top: 4px;";
           msgDiv.innerHTML = `
             <span style="color: var(--text-main); font-size: 14px; font-weight: 600;">⚠️ Atenção Ténica</span>
-            <p style="color: var(--text-muted); font-size: 13px; line-height: 1.4; margin:0;">Nenhum bico atende plenamente aos limites de pressão estabelecidos. A ponta listada acima é a opção matematicamente mais equilibrada para tentar atingir o alvo.</p>
+            <p style="color: var(--text-muted); font-size: 13px; line-height: 1.4; margin:0;">Nenhum bico atende plenamente aos limites de pressão informados. A ponta listada acima é a opção matematicamente mais próxima de operar com segurança no seu cenário.</p>
         `;
           container.appendChild(msgDiv);
         } else {
-          tops.slice(0, 4).forEach(r => container.appendChild(createCard(r, 'ok', "RECOMENDADO")));
+          tops.slice(0, 4).forEach(r => container.appendChild(createCard(r)));
         }
       }
 
-      function createCard(r, statusType, customText) {
+      function createCard(r) {
         const div = document.createElement('div');
         div.className = 'nozzle-card';
         div.style.setProperty('--nz-color', r.nz.color);
 
         const pUnit = PRESS_UNIT.toUpperCase();
         const avgStr = isNaN(r.pVavg) ? '--' : r.pVavg.toFixed(1);
+
+        const statusClass = r.ok ? 'ok' : (r.statusText === 'Parcial' ? 'warning' : 'bad');
 
         div.innerHTML = `
         <div class="noz-header" style="align-items: flex-start;">
@@ -1479,14 +1492,16 @@
             </div>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--control-border); padding-top: 12px;">
-            <span class="status-badge ${statusType}">${customText}</span>
+            <span class="status-badge ${statusClass}" onclick="explainStatus('${r.statusText}', ${r.pressures[0]}, ${r.pressures[2]})" style="cursor: pointer; position: relative;">
+               ${r.statusText} ⓘ
+            </span>
             <a href="https://wa.me/5565999106415?text=Olá! O sistema Spray Precision PRO me recomendou o bico ISO ${r.nz.iso}. Quero fazer um orçamento!" 
                target="_blank" 
                style="background: #25D366; color: white; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: all 0.2s ease;">
                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                </svg>
-               Entrar em Contato
+               Comprar
             </a>
         </div>
       `;
@@ -1537,6 +1552,36 @@
 
         const msg = encodeURIComponent(`Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
         document.getElementById('rmWhatsapp').href = `https://wa.me/5565999106415?text=${msg}`;
+
+        modal.style.display = 'flex';
+      }
+
+      function explainStatus(status, pVmin, pVmax) {
+        const modal = document.getElementById('statusModal');
+        const icon = document.getElementById('smIcon');
+        const title = document.getElementById('smTitle');
+        const desc = document.getElementById('smDesc');
+        
+        const pMin = parseFloat(document.getElementById('numPMin').value);
+        const pMax = parseFloat(document.getElementById('numPMax').value);
+        const unit = PRESS_UNIT.toUpperCase();
+
+        title.innerText = status;
+
+        if (status === 'Atende') {
+          icon.innerText = '🏆';
+          desc.innerHTML = `Este bico opera <b>100% dentro da pressão segura</b> (${pMin} a ${pMax} ${unit}) em toda a janela de velocidade informada.`;
+        } else if (status === 'Parcial') {
+          icon.innerText = '⚠️';
+          let reason = "";
+          if (pVmin < pMin) reason = `Em baixa velocidade, a pressão cai para ${pVmin.toFixed(1)} ${unit} (abaixo do recomendado).`;
+          else if (pVmax > pMax) reason = `Em alta velocidade, a pressão sobe para ${pVmax.toFixed(1)} ${unit} (acima do recomendado).`;
+          
+          desc.innerHTML = `<b>Operação com ressalvas:</b> ${reason} O bico atende apenas parte da sua janela com segurança.`;
+        } else {
+          icon.innerText = '🚫';
+          desc.innerHTML = `Este bico está <b>fora dos limites</b> (${pMin}-${pMax} ${unit}) para este volume de calda na maior parte da operação. Evite usar neste cenário.`;
+        }
 
         modal.style.display = 'flex';
       }

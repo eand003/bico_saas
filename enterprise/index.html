@@ -1718,15 +1718,17 @@
           'Nenhuma recomendação ideal encontrada';
 
         report.innerHTML = `
-          <div style="border: 2px solid ${pColor}; padding: 30px; border-radius: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid ${pColor}; padding-bottom: 20px; margin-bottom: 30px;">
-              <div>
-                <img src="${pLogo}" style="height: 60px; margin-bottom: 8px;">
-                <h1 style="margin:0; font-family: 'Outfit'; font-size: 24px;">${pName}</h1>
-              </div>
-              <div style="text-align: right;">
-                <h2 style="margin:0; color: ${pColor}; font-family: 'Outfit';">Laudo Técnico de Pulverização</h2>
-                <p style="margin:5px 0 0; font-size: 12px; color: #666;">Gerado em: ${dateStr}</p>
+          <div style="border: 2px solid ${pColor}; padding: 40px; border-radius: 12px; background: white; min-height: 1000px;">
+            <div style="border-bottom: 2px solid ${pColor}; padding-bottom: 20px; margin-bottom: 30px;">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px;">
+                <img src="${pLogo}" style="max-height: 80px; max-width: 300px; object-fit: contain;">
+                <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end;">
+                  <h1 style="margin:0; font-family: 'Outfit'; font-size: 28px; color: ${pColor};">${pName}</h1>
+                  <div style="text-align: right;">
+                    <h2 style="margin:0; color: #1e293b; font-family: 'Outfit'; font-size: 18px;">Laudo Técnico de Pulverização</h2>
+                    <p style="margin:3px 0 0; font-size: 11px; color: #666;">Data: ${dateStr}</p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2189,7 +2191,7 @@
     }
   </script>
 
-<div style="
+<div id="appFooter" style="
   width: 100%;
   text-align: center;
   margin-top: 40px;
@@ -2218,9 +2220,10 @@
     /* Esconde toda a interface do Aplicativo e rodapés */
     #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 
     .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal,
-    div[style*="text-align: center; margin-top: 40px"] {
+    #appFooter {
       display: none !important;
       visibility: hidden !important;
+      opacity: 0 !important;
     }
     
     /* Ativa e Formata apenas o Laudo */

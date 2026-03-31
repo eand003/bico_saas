@@ -1177,48 +1177,45 @@
         <button class="close-btn" onclick="document.getElementById('resultModal').style.display='none'"
           style="color: white; z-index: 10;">&times;</button>
 
-        <div id="rmHeader"
-          style="padding: 32px 24px 24px; text-align: center; border-radius: 16px 16px 0 0; background: var(--accent);">
-          <div
-            style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.9); font-weight: 700; margin-bottom: 4px;"
-            id="rmStatusText">Recomendado</div>
-          <div id="rmIso"
-            style="font-family: 'Outfit'; font-size: 56px; font-weight: 800; color: white; line-height: 1; text-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-            ISO 02</div>
-        </div>
-
-        <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
-          <div style="text-align: center;">
+          <div id="rmHeader"
+            style="padding: 40px 24px 32px; text-align: center; border-radius: 16px 16px 0 0; background: var(--accent); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 100%);"></div>
             <div
-              style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;"
-              id="rmQ3Label">Vazão de Calibração (L/min)</div>
-            <div id="rmQ3" style="font-family: 'Outfit'; font-size: 32px; font-weight: 800; color: var(--accent);">0.00</div>
-            <div id="rmQ3Iso" style="font-size: 11px; color: var(--text-muted); opacity: 0.8; margin-top: 4px;">Ref. ISO (@3bar): 0.76</div>
+              style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.9); font-weight: 800; margin-bottom: 8px; position: relative;"
+              id="rmStatusText">Sugestão Ideal</div>
+            <div id="rmIso"
+              style="font-family: 'Outfit'; font-size: 64px; font-weight: 800; color: white; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative;">
+              ISO 02</div>
           </div>
 
-          <div
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 16px; border-top: 1px solid var(--control-border); border-bottom: 1px solid var(--control-border); padding-bottom: 16px;">
-            <div>
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">
-                Vazão Alvo</div>
-              <div id="rmTargetRate" style="font-weight: 700; font-size: 15px; color: var(--text-main);">50 L/ha</div>
+          <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+            <div style="text-align: center; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px; border: 1px dashed var(--control-border);">
+              <div
+                style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px;"
+                id="rmQ3Label">Vazão de Calibração</div>
+              <div id="rmQ3" style="font-family: 'Outfit'; font-size: 40px; font-weight: 800; color: var(--text-main); line-height: 1;">0.00</div>
+              <div id="rmQ3Iso" style="font-size: 11px; color: var(--text-muted); opacity: 0.8; margin-top: 8px; font-weight: 500;">Referência Catálogo: -- L/min @ 3.0 bar</div>
             </div>
-            <div style="text-align: right;">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">
-                Vel. Média</div>
-              <div id="rmTargetSpeed" style="font-weight: 700; font-size: 15px; color: var(--text-main);">17 km/h</div>
+
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 4px;">
+              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Vazão Alvo</div>
+                <div id="rmTargetRate" style="font-weight: 700; font-size: 16px; color: var(--text-main);">50 L/ha</div>
+              </div>
+              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Velocidade</div>
+                <div id="rmTargetSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">17 km/h</div>
+              </div>
+              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Janela Ideal</div>
+                <div id="rmSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">12.8 - 23.5</div>
+              </div>
+              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">P. Média</div>
+                <div id="rmPress" style="font-weight: 700; font-size: 16px; color: var(--accent-green);">2.6 BAR</div>
+              </div>
             </div>
-            <div style="margin-top: 4px;">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">
-                Janela Ideal</div>
-              <div id="rmSpeed" style="font-weight: 700; font-size: 15px; color: var(--text-main);">12.8 - 23.5</div>
-            </div>
-            <div style="text-align: right; margin-top: 4px;">
-              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">
-                Pressão Média</div>
-              <div id="rmPress" style="font-weight: 700; font-size: 15px; color: var(--text-main);">2.6 BAR</div>
-            </div>
-          </div>
 
           <a id="rmWhatsapp" href="#" target="_blank"
             style="margin-top: 8px; background: #25D366; color: white; padding: 14px; border-radius: 12px; text-align: center; text-decoration: none; font-size: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); border: 1px solid rgba(255,255,255,0.2);">

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia T&eacute;cnico - Ferramenta de Balc&atilde;o</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #1e293b;
+            --light: #f1f5f9;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: #e2e8f0; color: var(--text); padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        .page { background: white; width: 800px; padding: 60px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 10px solid var(--primary); }
+        h1, h2, h3 { font-family: 'Outfit'; color: var(--primary); margin-bottom: 20px; }
+        .code-block { background: #0f172a; color: #38ef7d; padding: 20px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px; line-height: 1.5; position: relative; }
+        .code-block::before { content: "Snippet de Implementa&ccedil;&atilde;o"; position: absolute; top: -10px; right: 20px; background: var(--secondary); color: var(--primary); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 800; font-family: 'Inter'; }
+        .feature-card { border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid var(--secondary); }
+        .feature-card h3 { font-size: 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .feature-card i { width: 20px; color: var(--secondary); }
+        .btn-print { position: fixed; top: 20px; right: 20px; background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-family: Outfit; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print" onclick="window.print()">Exportar Guia de Implementa&ccedil;&atilde;o (PDF)</button>
+
+    <div class="page">
+        <header style="text-align: center; margin-bottom: 40px;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: var(--secondary); font-size: 12px;">Roadmap T&eacute;cnico</p>
+            <h1>Implementa&ccedil;&atilde;o: Ferramenta de Balc&atilde;o</h1>
+        </header>
+
+        <section>
+            <h2>Objetivo Profissional</h2>
+            <p>Transformar o <strong>Spray Precision PRO</strong> de um site gen&eacute;rico em uma plataforma de consultoria robusta e customiz&aacute;vel para cada loja/vendedor que assinar o servi&ccedil;o.</p>
+        </section>
+
+        <section>
+            <div class="feature-card">
+                <h3><i data-lucide="layout"></i> 1. Branding Din&acirc;mico (Dynamic Logo)</h3>
+                <p>N&atilde;o crie um arquivo HTML para cada loja. Use o Supabase para carregar a logo da loja logada. Se o usu&aacute;rio for da "Loja X", o sistema busca a URL da imagem no banco de dados e substitui o seu logo no cabe&ccedil;alho.</p>
+                <div class="code-block">
+                    // Exemplo de como substituir o logo via JS<br>
+                    const logoUrl = user_metadata.store_logo_url || './logo.png';<br>
+                    document.getElementById('headerLogo').src = logoUrl;
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3><i data-lucide="message-square"></i> 2. Roteamento de WhatsApp</h3>
+                <p>O vendedor quer que o cliente responda para o n&uacute;mero dele. Voc&ecirc; deve armazenar o telefone do vendedor (ou da unidade) nas configura&ccedil;&otilde;es da conta no Supabase.</p>
+                <div class="code-block">
+                    // Dinamizando o link do WhatsApp na exporta&ccedil;&atilde;o<br>
+                    const whatsNumber = user_metadata.store_whatsapp;<br>
+                    const message = encodeURIComponent("Simula&ccedil;&atilde;o finalizada...");<br>
+                    btnZap.href = `https://wa.me/${whatsNumber}?text=${message}`;
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3><i data-lucide="list"></i> 3. Filtro de Invent&aacute;rio de Estoque</h3>
+                <p>Grandes revendas muitas vezes representam marcas espec&iacute;ficas (John Deere, TeeJet, Hypro). Voc&ecirc; pode adicionar uma coluna <code>brand</code> no seu objeto de bicos e filtrar para que o sistema s&oacute; recomende bicos que a loja tenha no estoque f&iacute;sico.</p>
+                <div class="code-block">
+                    // Filtragem no array NOZZLES<br>
+                    const storeBrands = ['TeeJet', 'MagnoJet'];<br>
+                    const visibleNozzles = NOZZLES.filter(n => storeBrands.includes(n.brand));
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3><i data-lucide="printer"></i> 4. Relat&oacute;rio de Consultoria (A For&ccedil;a do Balc&atilde;o)</h3>
+                <p>O vendedor entrega um papel ou PDF com o logotipo da loja dele ao cliente. Isso fixa a marca da loja na cabe&ccedil;a do produtor. Use a fun&ccedil;&atilde;o <code>window.print()</code> e uma folha de estilo <code>@media print</code> para esconder os controles do site e deixar apenas o resultado final limpo.</p>
+            </div>
+        </section>
+
+        <section style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <h3>Estrat&eacute;gia de Scaling:</h3>
+            <p><strong>Fase 1:</strong> Comece com par&acirc;metros na URL para testes r&aacute;pidos.</p>
+            <p><strong>Fase 2:</strong> Migre para perfis de usu&aacute;rio no Supabase (Vers&atilde;o Senior).</p>
+            <p><strong>Fase 3:</strong> Crie um "Painel de Admin" onde o dono da loja pode entrar e trocar o logo e o telefone sozinho.</p>
+        </section>
+
+        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8;">
+            Guia de Engenharia para Eduardo Andrade - Spray Precision PRO 2026
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual do Usu&aacute;rio - Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #1e293b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .manual-page {
+            background: var(--white);
+            width: 800px;
+            min-height: 1120px;
+            padding: 60px 80px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            position: relative;
+            margin-bottom: 40px;
+            border-left: 8px solid var(--secondary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit'; font-weight: 800; color: var(--primary); }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header-logo img { width: 60px; }
+
+        .manual-title { margin-bottom: 40px; }
+        .manual-title h1 { font-size: 32px; margin-bottom: 5px; }
+        .manual-title p { color: var(--text-light); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+        .step-box {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .step-content {
+            padding-left: 20px;
+            border-left: 2px solid #e2e8f0;
+            margin-left: 10px;
+        }
+
+        .step-content h3 { font-size: 20px; margin-bottom: 10px; }
+        .step-content p { font-size: 15px; line-height: 1.6; margin-bottom: 15px; color: #475569; }
+
+        /* Icon Grid */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .icon-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .icon-item i { color: var(--primary); width: 18px; }
+
+        /* UI Elements Symbols */
+        .symbol-ref {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .symbol-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+        .symbol-row:last-child { margin-bottom: 0; }
+        .symbol-row span { font-size: 20px; }
+
+        .tip-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #166534;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        @media print {
+            .btn-nav { display: none; }
+            body { padding: 0; background: white; }
+            .manual-page { box-shadow: none; margin: 0; padding: 60px; width: 100%; page-break-after: always; }
+        }
+
+        .btn-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .btn-main {
+            background: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-family: Outfit;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="btn-nav">
+        <button onclick="window.print()" class="btn-main">Imprimir Guia (PDF)</button>
+    </div>
+
+    <!-- PAGE 1: INTRO & ACCESS -->
+    <div class="manual-page">
+        <header>
+            <div class="header-logo"><img src="logo.png" alt="Logo"></div>
+            <div style="text-align: right; font-size: 12px; font-weight: 700; color: var(--secondary);">GUIA DO USU&Aacute;RIO</div>
+        </header>
+
+        <div class="manual-title">
+            <p>Guia de Campo</p>
+            <h1>Spray Precision PRO</h1>
+            <p style="color: #94a3b8; font-weight: 400; text-transform: none;">Aprenda a configurar e extrair o m&aacute;ximo de performance de sua pulveriza&ccedil;&atilde;o.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-number">Etapa 01</div>
+            <div class="step-content">
+                <h3>Acesso & Autentica&ccedil;&atilde;o</h3>
+                <p>Para entrar no sistema pela primeira vez, voc&ecirc; precisa realizar o seu cadastro. Clique em <b>"Criar Nova Conta"</b> se for seu primeiro acesso.</p>
+                <div class="icon-grid">
+                    <div class="icon-item"><i data-lucide="user"></i> Nome Completo</div>
+                    <div class="icon-item"><i data-lucide="mail"></i> E-mail Ativo</div>
+                    <div class="icon-item"><i data-lucide="phone"></i> WhatsApp (com DDD)</div>
+                    <div class="icon-item"><i data-lucide="lock"></i> Senha Segura</div>
+                </div>
+                <div class="tip-box">
+                    <i data-lucide="info"></i>
+                    <div><b>Dica de Ouro:</b> Uma vez logado, o sistema lembrará de voc&ecirc; no seu pr&oacute;prio celular. Não precisa digitar a senha todas as vezes.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-number">Etapa 02</div>
+            <div class="step-content">
+                <h3>Configurando a sua M&aacute;quina</h3>
+                <p>O sucesso da aplica&ccedil;&atilde;o depende dos dados reais da sua opera&ccedil;&atilde;o. Informe estes tr&ecirc;s valores principais:</p>
+                <ul>
+                    <li style="margin-bottom: 10px; font-size: 14px;"><strong>Volume Alvo (L/ha):</strong> Quanto de produto voc&ecirc; quer colocar na terra.</li>
+                    <li style="margin-bottom: 10px; font-size: 14px;"><strong>Velocidade M&eacute;dia (km/h):</strong> A velocidade que o trator/pulverizador costuma andar no talh&atilde;o.</li>
+                    <li style="margin-bottom: 10px; font-size: 14px;"><strong>Espa&ccedil;amento entre Bicos (m):</strong> Geralmente 0.35m ou 0.50m.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Spray Precision PRO - Guia v2.6</span>
+            <span>https://github.com/eand003/bico_saas</span>
+            <span>P&aacute;gina 1</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2: ANALYSIS & STATUS -->
+    <div class="manual-page">
+        <header>
+            <div class="header-logo"><img src="logo.png" alt="Logo"></div>
+            <h3 style="font-size: 14px; text-transform: uppercase;">Interpretando os Resultados</h3>
+        </header>
+
+        <div class="step-box">
+            <div class="step-number">Etapa 03</div>
+            <div class="step-content">
+                <h3>Entendendo o Quadro de Sinais</h3>
+                <p>O sistema processa milhares de dados para te dar uma resposta em cores. Veja o que cada s&iacute;mbolo significa:</p>
+                
+                <div class="symbol-ref">
+                    <div class="symbol-row"><span>🏆</span> <div style="color: #166534;">ATENDE: Bico ideal. Pode pulverizar com total seguran&ccedil;a.</div></div>
+                    <div class="symbol-row"><span>⚠️</span> <div style="color: #854d0e;">PARCIAL: Atende, mas exige cuidado. Pode falhar no final da janela.</div></div>
+                    <div class="symbol-row"><span>🚫</span> <div style="color: #991b1b;">FORA: Risco alto de deriva ou falha de cobertura. Não recomendado.</div></div>
+                </div>
+
+                <div class="tip-box" style="background: #eff6ff; border-color: #bfdbfe; color: #1e40af;">
+                    <i data-lucide="trending-up"></i>
+                    <div><b>Gr&aacute;ficos:</b> A barra colorida mostra se a sua velocidade est&aacute; "no verde" para aquele bico. Fique sempre entre as faixas marcadas.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-number">Etapa 04</div>
+            <div class="step-content">
+                <h3>Compartilhando e Salvando</h3>
+                <p>Ao encontrar o bico correto, voc&ecirc; pode encaminhar o resultado t&eacute;cnico para o consultor ou vendedor diretamente para o WhatsApp.</p>
+                <div class="icon-item" style="border: 1px solid var(--accent);"><i data-lucide="send"></i> <strong>Bot&atilde;o WhatsApp:</strong> Gera o or&ccedil;amento pronto no zap.</div>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-number">Etapa 05</div>
+            <div class="step-content">
+                <h3>Uso Offline (Sem Internet)</h3>
+                <p>Para instalar o Spray Precision PRO como um aplicativo no seu celular:</p>
+                <ol style="margin-left: 20px; font-size: 14px;">
+                    <li>Abra o sistema no <strong>Google Chrome</strong> ou <strong>Safari</strong>.</li>
+                    <li>Clique no bot&atilde;o <strong>"Instalar"</strong> no topo da tela (ou no bot&atilde;o de compartilhar do navegador).</li>
+                    <li>Selecione <strong>"Adicionar &agrave; Tela de In&iacute;cio"</strong>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Desenvolvido para Eduardo Andrade</span>
+            <span>Confidencial</span>
+            <span>P&aacute;gina 2</span>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

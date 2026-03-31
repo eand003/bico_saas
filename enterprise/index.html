@@ -99,6 +99,44 @@
       z-index: -1;
     }
 
+    /* Print Optimization (PDF Export) */
+    @media print {
+      body {
+        background: white !important;
+        color: #0f172a !important;
+        padding: 0 !important;
+      }
+      body::before, .header-info-actions, .info-btn, .login-box, #btnInstall, .controls, .recommended-grid, .footer-promo, .logout-btn-container {
+        display: none !important;
+      }
+      .glass-panel {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+      }
+      .dashboard {
+        gap: 0 !important;
+      }
+      .chart-container {
+        border: 1px solid #e2e8f0 !important;
+        background: white !important;
+        page-break-inside: avoid;
+      }
+      .table-responsive {
+        border-color: #e2e8f0 !important;
+      }
+      .premium-table th {
+        background: #f8fafc !important;
+        color: #64748b !important;
+      }
+      .header h1 {
+        background: none !important;
+        -webkit-text-fill-color: #0f172a !important;
+        color: #0f172a !important;
+      }
+    }
+
     h1,
     h2,
     h3 {
@@ -971,6 +1009,7 @@
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
                 </a>
                 <button id="btnInstall" class="info-btn" title="Instalar App no Celular" style="display: none; width: 34px; height: 34px; font-size: 16px; background: var(--accent-green); color: #000; border-radius: 8px;">📱</button>
+                <button class="info-btn" onclick="window.print()" title="Gerar Relatório PDF (Balcão)" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">📄</button>
                 <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">🌓</button>
                 <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'" title="Como Usar o Simulador" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">?</button>
               </div>
@@ -1342,47 +1381,101 @@
 
       function pRef() { return PRESS_UNIT === 'bar' ? 3.0 : (3.0 * BAR_TO_PSI); }
 
-      async function update() {
-        const payload = {
-          spacingM: parseFloat(numSpacing.value) / 100.0,
-          rate: parseFloat(numRate.value),
-          pMin: parseFloat(numPMin.value) || 0.1,
-          pMax: parseFloat(numPMax.value) || 10.0,
-          density: parseFloat(numDensity.value) || 1.0,
-          vMin: parseFloat(numVMin.value) || 0,
-          vAvg: parseFloat(numVAvg.value) || 0,
-          vMax: parseFloat(numVMax.value) || 0,
-          unit: PRESS_UNIT
+      // --- LÓGICA DE CÁLCULO LOCAL (MIGRADA DA API V2) ---
+      const NOZZLES = [
+        { iso: "01", size: 0.1, color: "#F28C28" },
+        { iso: "0134", size: 0.134, color: "#795548" },
+        { iso: "015", size: 0.15, color: "#4CAF50" },
+        { iso: "0175", size: 0.175, color: "#9E9E9E" },
+        { iso: "02", size: 0.2, color: "#FFEB3B" },
+        { iso: "025", size: 0.25, color: "#9C27B0" },
+        { iso: "03", size: 0.3, color: "#2196F3" },
+        { iso: "04", size: 0.4, color: "#F44336" },
+        { iso: "05", size: 0.5, color: "#A1887F" },
+        { iso: "06", size: 0.6, color: "#BDBDBD" },
+        { iso: "08", size: 0.8, color: "#FFFFFF" }
+      ].map(n => ({ iso: n.iso, color: n.color, q3: n.size * 3.785 }));
+
+      const P_REF_BAR = 3.0;
+      const qPorBico = (rate, vel, spacM) => (rate * vel * spacM) / 600.0;
+      const velPara = (rate, spacM, q) => (q * 600.0) / (rate * spacM);
+
+      function update() {
+        // Coleta de inputs
+        const spacingM = parseFloat(numSpacing.value) / 100.0;
+        const rate = parseFloat(numRate.value);
+        const pMin = parseFloat(numPMin.value) || 0.1;
+        const pMax = parseFloat(numPMax.value) || 10.0;
+        const density = parseFloat(numDensity.value) || 1.0;
+        const vMin = parseFloat(numVMin.value) || 0;
+        const vAvg = parseFloat(numVAvg.value) || 0;
+        const vMax = parseFloat(numVMax.value) || 0;
+        const unit = PRESS_UNIT;
+
+        const pTarget = (pMin + pMax) / 2;
+        const currentPRef = () => unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
+        const pressaoNec = (qMix, q3, dens) => { 
+          const qWaterEq = qMix * Math.sqrt(dens); 
+          return currentPRef() * Math.pow(qWaterEq / q3, 2); 
         };
 
-        const maxLimitsValid = payload.pMax > payload.pMin && payload.rate > 0 && payload.spacingM > 0;
+        const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
         if (!maxLimitsValid) return;
 
-        try {
-          // Exibe "Calculando..." no texto
-          document.getElementById('matchCount').innerText = 'Calculando na Nuvem...';
+        document.getElementById('matchCount').innerText = 'Recalculando Localmente...';
 
-          // Faz o pedido para a Vercel 
-          // O backend irá rodar a matemática complexa sem ser exibida pro usuário final
-          const response = await fetch('/api/calcular', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+        let rows = [];
+
+        NOZZLES.forEach(nz => {
+          const qAtPmin_water = nz.q3 * Math.sqrt(pMin / currentPRef());
+          const qAtPmax_water = nz.q3 * Math.sqrt(pMax / currentPRef());
+          const qAtPmin_mix = qAtPmin_water / Math.sqrt(density);
+          const qAtPmax_mix = qAtPmax_water / Math.sqrt(density);
+
+          const vAtPmin = velPara(rate, spacingM, qAtPmin_mix);
+          const vAtPmax = velPara(rate, spacingM, qAtPmax_mix);
+
+          const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
+          const vAt3Bar = velPara(rate, spacingM, qAt3Bar_mix);
+
+          const qVmin = qPorBico(rate, vMin, spacingM);
+          const pVmin = pressaoNec(qVmin, nz.q3, density);
+          const qVavg = qPorBico(rate, vAvg, spacingM);
+          const pVavg = pressaoNec(qVavg, nz.q3, density);
+          const qVmax = qPorBico(rate, vMax, spacingM);
+          const pVmax = pressaoNec(qVmax, nz.q3, density);
+
+          const fitsMin = pVmin >= pMin;
+          const fitsMax = pVmax <= pMax;
+          const ok = fitsMin && fitsMax;
+          
+          let statusText = "Não recomendado";
+          if (ok) statusText = "Atende";
+          else if (fitsMin || fitsMax) statusText = "Parcial";
+
+          const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
+          const deviation = Math.abs(pVavg - pTarget);
+
+          rows.push({
+            nz: nz,
+            vAtPmin, vAtPmax, vAt3Bar,
+            pVavg, qVavg, ok, statusText,
+            violation, deviation,
+            pressures: [pVmin, pVavg, pVmax]
           });
+        });
 
-          if (!response.ok) throw new Error('Falha no calculo da API');
+        // Ordenação Inteligente Local
+        rows.sort((a, b) => {
+          if (a.ok !== b.ok) return a.ok ? -1 : 1;
+          if (a.ok) return a.deviation - b.deviation;
+          return a.violation - b.violation;
+        });
 
-          const result = await response.json();
-          const rows = result.rows || [];
-
-          renderCards(rows, payload.pMin, payload.pMax, payload.vMin, payload.vMax);
-          updateChart(rows, payload.vMin, payload.vMax);
-          renderTable(rows, payload.vMin, payload.vAvg, payload.vMax);
-
-        } catch (err) {
-          console.error("Erro na API:", err);
-          document.getElementById('matchCount').innerText = 'Calculadora offline - Publique na Vercel';
-        }
+        // Renderização
+        renderCards(rows, pMin, pMax, vMin, vMax);
+        updateChart(rows, vMin, vMax);
+        renderTable(rows, vMin, vAvg, vMax);
       }
 
       function renderCards(rows, pMin, pMax, vMin, vMax) {
@@ -1795,7 +1888,7 @@
       window._updateApp = () => { if (typeof update === 'function') update(); };
     </script>
 
-    <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+    <div class="logout-btn-container" style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
       <button onclick="logout()"
         style="background: transparent; border: 1px solid var(--accent-error); color: var(--accent-error); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">Sair
         do Sistema (Logout)</button>
@@ -1929,11 +2022,57 @@
     window.logout = logout;
 
     function showApp() {
+      // --- LOGICA ENTERPRISE: APLICAR BRANDING DO PARCEIRO ---
+      clienteSupabase.auth.getSession().then(({ data: { session } }) => {
+        if (session && session.user && session.user.user_metadata) {
+          const meta = session.user.user_metadata;
+          // Se o usuário tiver configurações de parceiro no metadata:
+          // { partner_name: "AgroLoja", partner_color: "#ffcc00", partner_logo: "...", partner_whastapp: "..." }
+          applyPartnerBranding(meta);
+        }
+      });
+
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
       if (window._updateApp) {
         window._updateApp(); // Recalcular os gráficos após aparecer
       }
+    }
+
+    function applyPartnerBranding(meta) {
+      if (!meta) return;
+
+      const accent = meta.partner_color || '#00d2ff';
+      const logo = meta.partner_logo || './logo.png';
+      const name = meta.partner_name || 'Spray Precision PRO';
+      const whatsapp = meta.partner_whatsapp || '5565999106415';
+
+      // 1. Atualizar Cores (CSS Variables)
+      document.documentElement.style.setProperty('--accent', accent);
+      // Criar um glow suave baseado na cor escolhida
+      document.documentElement.style.setProperty('--accent-glow', accent + '66'); 
+
+      // 2. Atualizar Logos
+      const logos = document.querySelectorAll('.header-icon, .login-box img');
+      logos.forEach(img => img.src = logo);
+
+      // 3. Atualizar Nomes
+      const titles = document.querySelectorAll('h1, h2');
+      titles.forEach(t => {
+        if (t.innerText.includes('Spray Precision')) {
+          t.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
+        }
+      });
+
+      // 4. Atualizar Links de WhatsApp de Venda
+      const waLinks = document.querySelectorAll('a[href*="wa.me"]');
+      waLinks.forEach(link => {
+        const currentUrl = new URL(link.href);
+        const text = currentUrl.searchParams.get('text');
+        link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
+      });
+
+      console.log(`Enterprise Mode: Branding aplicado para ${name}`);
     }
 
     function showLogin() {

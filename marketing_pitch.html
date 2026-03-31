@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentacao Marketing - Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #1e293b;
+            --light: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .pitch-page {
+            background: white;
+            width: 800px;
+            min-height: 1120px;
+            padding: 80px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            position: relative;
+            margin-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Diagonal Accent Decoration */
+        .pitch-page::after {
+            content: "";
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            transform: rotate(45deg);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        h1, h2, h3 { font-family: 'Outfit'; font-weight: 800; }
+
+        /* Splash Header */
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo-box { margin-bottom: 30px; }
+        .logo-box img { width: 100px; }
+
+        .hero h1 {
+            font-size: 48px;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span { color: var(--secondary); }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text);
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+
+        /* Value Props */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: #f1f5f9;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .card i {
+            width: 50px;
+            height: 50px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .card p {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* Problem/Solution Section */
+        .highlight {
+            background: var(--primary);
+            color: white;
+            padding: 40px;
+            border-radius: 24px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .highlight h2 { color: var(--secondary); margin-bottom: 15px; font-size: 28px; }
+        .highlight p { font-size: 16px; opacity: 0.9; }
+
+        /* Steps Section */
+        .steps {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-num {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px auto;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        /* CTA Page */
+        .cta-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cta-btn {
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(163, 207, 61, 0.3);
+            margin-top: 40px;
+            font-family: 'Outfit';
+        }
+
+        .footer {
+            margin-top: auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #94a3b8;
+            padding-top: 30px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .tagline {
+            color: var(--secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media print {
+            body { padding: 0; background: white; }
+            .pitch-page { box-shadow: none; margin: 0; padding: 60px; page-break-after: always; width: 100%; }
+            .btn-controls { display: none; }
+        }
+
+        .btn-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="btn-controls">
+        <button onclick="window.print()" style="background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-family: Outfit; font-weight: 700;">Imprimir Pitch (PDF)</button>
+    </div>
+
+    <!-- PAGE 1: COVER -->
+    <div class="pitch-page">
+        <div class="hero">
+            <div class="logo-box"><img src="logo.png" alt="Logo"></div>
+            <span class="tagline">O Futuro da Pulveriza&ccedil;&atilde;o</span>
+            <h1>Pulverize com <span>Precis&atilde;o PRO</span></h1>
+            <p>Economize defensivos, aumente a produtividade e transforme o seu manejo agrícola em um processo de elite.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <i data-lucide="zap"></i>
+                <h3>Velocidade</h3>
+                <p>C&aacute;lculos instant&acirc;neos no campo. Sem planilhas, sem erros.</p>
+            </div>
+            <div class="card">
+                <i data-lucide="shield-check"></i>
+                <h3>Seguran&ccedil;a</h3>
+                <p>Certifique-se de que a press&atilde;o est&aacute; correta para evitar perdas por deriva.</p>
+            </div>
+            <div class="card">
+                <i data-lucide="trending-down"></i>
+                <h3>Economia</h3>
+                <p>Reduza o desperd&iacute;cio de calda em at&eacute; 15% logo na primeira aplica&ccedil;&atilde;o.</p>
+            </div>
+            <div class="card">
+                <i data-lucide="smartphone"></i>
+                <h3>Mobilidade</h3>
+                <p>Funciona no seu celular, tablet ou computador. Mesmo em &aacute;reas sem internet.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Spray Precision PRO | Eduardo Andrade</span>
+            <span>https://github.com/eand003/bico_saas</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2: WHY CHOOSE US -->
+    <div class="pitch-page">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <img src="logo.png" style="width: 50px;" alt="Logo">
+            <h2 style="color: var(--primary); font-size: 18px;">POR QUE USAR?</h2>
+        </header>
+
+        <section>
+            <h2 style="font-size: 32px; color: var(--primary); margin-bottom: 20px;">Pare de <span>adivinhar</span> a sua press&atilde;o!</h2>
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                Muitos produtores perdem dinheiro todos os dias escolhendo bicos de forma incorreta ou trabalhando em press&otilde;es que geram gotas finas demais (deriva) ou grossas demais (falha de cobertura). 
+            </p>
+
+            <div class="highlight">
+                <h2>A Diferen&ccedil;a Spray Precision PRO</h2>
+                <p>Nossa intelig&ecirc;ncia cruza sua velocidade de trabalho com o volume de calda desejado e a densidade real do produto. O resultado? Uma recomenda&ccedil;&atilde;o cir&uacute;rgica que garante:</p>
+                <ul style="margin-top: 15px; padding-left: 20px;">
+                    <li style="margin-bottom: 8px;">Gotas no tamanho ideal para o alvo (Herbicida, Inseticida, Fungicida).</li>
+                    <li style="margin-bottom: 8px;">Vida &uacute;til prolongada para seus bicos e bomba.</li>
+                    <li>Registro t&eacute;cnico de toda a opera&ccedil;&atilde;o para or&ccedil;amento f&aacute;cil.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h3 style="margin-top: 40px; margin-bottom: 20px;">Simples como 1, 2, 3</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4 style="font-size: 14px; color: var(--primary);">Informe seus Dados</h4>
+                    <p style="font-size: 12px;">Espa&ccedil;amento, velocidade e volume.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4 style="font-size: 14px; color: var(--primary);">Veja a Melhores</h4>
+                    <p style="font-size: 12px;">O sistema sugere os bicos ISO ideais.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4 style="font-size: 14px; color: var(--primary);">Solicite Agora</h4>
+                    <p style="font-size: 12px;">Mande o resultado direto para o WhatsApp.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer">
+            <span>Confian&ccedil;a & Tecnologia no Agro</span>
+            <span>P&aacute;gina 2</span>
+        </div>
+    </div>
+
+    <!-- PAGE 3: PWA & CTA -->
+    <div class="pitch-page cta-page">
+        <h2 style="font-size: 36px; color: var(--primary); margin-bottom: 20px;">Pronto para elevar o n&iacute;vel da sua <span>fazenda</span>?</h2>
+        <p style="font-size: 18px; max-width: 500px; margin-bottom: 40px;">
+            Junte-se aos produtores que est&atilde;o eliminando desperd&iacute;cios e transformando a pulveriza&ccedil;&atilde;o em ci&ecirc;ncia.
+        </p>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 30px; margin-bottom: 30px; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 20px; text-align: left;">
+                <div style="flex-shrink: 0; width: 60px; height: 60px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i data-lucide="download"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 18px; margin: 0;">Instale como Aplicativo</h3>
+                    <p style="font-size: 14px; margin: 5px 0 0 0;">Utilize em qualquer lugar, mesmo sem internet. 100% Mobile Ready.</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" class="cta-btn">QUERO USAR AGORA</a>
+        
+        <p style="margin-top: 40px; font-weight: 700; color: var(--primary);">Desenvolvido por Eduardo Andrade</p>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 10px;">Spray Precision PRO &copy; 2026 - Todos os Direitos Reservados</p>
+
+        <div class="footer">
+            <span>Tecnologia de Elite para o Produtor de Elite</span>
+            <span>P&aacute;gina 3</span>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

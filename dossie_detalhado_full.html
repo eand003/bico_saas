@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossie Tecnico Full - Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #1a202c;
+            --text-light: #718096;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .page {
+            background: var(--white);
+            width: 800px;
+            min-height: 1120px;
+            padding: 60px 70px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            position: relative;
+            margin-bottom: 50px;
+            border-top: 12px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .logo-box img {
+            width: 70px;
+            height: auto;
+        }
+
+        .header-text {
+            text-align: right;
+        }
+
+        .header-text h1 {
+            font-family: 'Outfit';
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 22px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-text p {
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .title-block {
+            margin: 40px 0;
+        }
+
+        .title-block h2 {
+            font-family: 'Outfit';
+            font-size: 34px;
+            color: var(--primary);
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .title-block .subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 10px;
+        }
+
+        .accent-divider {
+            width: 80px;
+            height: 5px;
+            background: var(--secondary);
+            margin: 25px 0;
+            border-radius: 3px;
+        }
+
+        h3 {
+            font-family: 'Outfit';
+            font-size: 19px;
+            color: var(--primary);
+            margin: 30px 0 15px 0;
+            border-left: 4px solid var(--secondary);
+            padding-left: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #4a5568;
+            text-align: justify;
+        }
+
+        .highlight-box {
+            background: #f7fafc;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h4 {
+            font-family: 'Outfit';
+            font-size: 15px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #edf2f7;
+        }
+
+        .tech-item b { color: var(--primary); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: var(--primary);
+            text-align: left;
+            padding: 12px;
+            font-weight: 800;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e53e3e;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        .controls {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .btn-print {
+            background: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Outfit';
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,75,99,0.3);
+            transition: 0.3s;
+        }
+
+        .btn-print:hover {
+            transform: scale(1.05);
+            background: #003a4d;
+        }
+
+        @media print {
+            .controls { display: none; }
+            body { background: white; padding: 0; }
+            .page { 
+                box-shadow: none; 
+                margin: 0; 
+                width: 100%; 
+                border-top: none; 
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="btn-print" onclick="window.print()">Exportar Dossie Completo (PDF)</button>
+    </div>
+
+    <!-- PAGE 1: COVER & EXECUTIVE -->
+    <div class="page">
+        <header>
+            <div class="logo-box"><img src="logo.png" alt="Logo"></div>
+            <div class="header-text">
+                <h1>Spray Precision PRO</h1>
+                <p>An&aacute;lise T&eacute;cnica de Engenharia</p>
+            </div>
+        </header>
+
+        <div class="title-block">
+            <h2>Dossi&ecirc; de Desenvolvimento Profissional</h2>
+            <div class="subtitle">Vis&atilde;o 360&ordm; da Arquitetura, Neg&oacute;cio e Tecnologia do Software</div>
+        </div>
+
+        <div class="accent-divider"></div>
+
+        <section>
+            <h3>1. Vis&atilde;o Geral do Produto (V. Index.html)</h3>
+            <p>O <strong>Spray Precision PRO</strong> &eacute; uma solu&ccedil;&atilde;o SaaS (Software as a Service) de alta performance concebida para revolucionar a forma como o produtor rural define operacionalmente seus ativos de pulveriza&ccedil;&atilde;o. Diferente de aplicativos gen&eacute;ricos, este sistema utiliza um motor de c&aacute;lculo propriet&aacute;rio para garantir a m&aacute;xima eficiência operacional.</p>
+            
+            <p>A vers&atilde;o atual, consolidada no arquivo <code>index.html</code>, integra todo o fluxo de experi&ecirc;ncia do usuário: desde a captura de dados (Lead Generation) at&eacute; a exporta&ccedil;&atilde;o de resultados via WhatsApp, funcionando como um ecossistema completo de vendas e suporte t&eacute;cnico.</p>
+        </section>
+
+        <section>
+            <h3>2. Pilares de Desenvolvimento</h3>
+            <div class="highlight-box">
+                <div class="tech-list">
+                    <div class="tech-item"><b>Acur&aacute;cia:</b> C&aacute;lculos baseados em normas ISO de vaz&atilde;o.</div>
+                    <div class="tech-item"><b>Seguran&ccedil;a:</b> Prote&ccedil;&atilde;o de IP via Serverless Backend.</div>
+                    <div class="tech-item"><b>UX:</b> Interface intuitiva com Glassmorphism.</div>
+                    <div class="tech-item"><b>ROI:</b> Redu&ccedil;&atilde;o imediata de desperd&iacute;cio de calda.</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer">
+            <span>Eduardo Andrade &copy; 2026</span>
+            <span>Relat&oacute;rio Confidencial</span>
+            <span>P&aacute;gina 1</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2: ARCHITECTURE & STACK -->
+    <div class="page">
+        <header>
+            <div class="logo-box"><img src="logo.png" alt="Logo"></div>
+            <div class="header-text">
+                <h1>Engenharia</h1>
+                <p>Stack & Infraestrutura</p>
+            </div>
+        </header>
+
+        <section>
+            <h3>3. Stack Tecnol&oacute;gica Detalhada</h3>
+            <p>A arquitetura foi escolhida prezando por tr&ecirc;s fatores: <strong>Portabilidade</strong>, <strong>Custo de Manuten&ccedil;&atilde;o Zero</strong> e <strong>Velocidade de Resposta</strong>.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Camada</th>
+                        <th>Tecnologia</th>
+                        <th>Prop&oacute;sito</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Frontend</strong></td>
+                        <td>PWA (HTML5, Vanilla JS, CSS Atomic)</td>
+                        <td>Interface rápida que funciona offline via Service Workers.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>C&aacute;lculo</strong></td>
+                        <td>Node.js Edge Runtime (Vercel)</td>
+                        <td>Processamento de f&oacute;rmulas longe do olho do concorrente.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dados</strong></td>
+                        <td>Supabase (PostgreSQL / GoTrue)</td>
+                        <td>Gerenciamento de usuários e sess&otilde;es criptografadas.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gr&aacute;ficos</strong></td>
+                        <td>Chart.js via CDN</td>
+                        <td>Visualiza&ccedil;&atilde;o din&acirc;mica de janelas de aplica&ccedil;&atilde;o.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h3>4. Mobilidade & PWA (Offline First)</h3>
+            <p>O campo brasileiro apresenta desafios de conectividade. Por isso, implementamos o <code>sw.js</code> (Service Worker) que faz o cache de recursos cr&iacute;ticos. Uma vez aberto, o sistema pode ser instalado no celular e utilizado em &aacute;reas sem sinal, sincronizando os dados assim que o usuário retornar à base.</p>
+            <div class="highlight-box">
+                <h4>🛠️ Recursos Mobile Implementados:</h4>
+                <p>- Barra de status customizada via <code>theme-color</code>.</p>
+                <p>- &Iacute;cone de aplicativo din&acirc;mico via <code>manifest.json</code>.</p>
+                <p>- Teclados num&eacute;ricos otimizados nos inputs para entrada rápida de dados.</p>
+            </div>
+        </section>
+
+        <div class="footer">
+            <span>Eduardo Andrade &copy; 2026</span>
+            <span>Spray Precision PRO - Dossie Tecnico</span>
+            <span>P&aacute;gina 2</span>
+        </div>
+    </div>
+
+    <!-- PAGE 3: MATHEMATICS & LOGIC -->
+    <div class="page">
+        <header>
+            <div class="logo-box"><img src="logo.png" alt="Logo"></div>
+            <div class="header-text">
+                <h1>Propriedade Intelectual</h1>
+                <p>Motor de C&aacute;lculo Inteligente</p>
+            </div>
+        </header>
+
+        <section>
+            <h3>5. O "Secret Sauce": Motor Matem&aacute;tico</h3>
+            <p>A intelig&ecirc;ncia por trás do sistema reside na corre&ccedil;&atilde;o de vari&aacute;veis f&iacute;sicas. O sistema n&atilde;o apenas divide vaz&atilde;o por velocidade, ele aplica as seguintes l&oacute;gicas:</p>
+            
+            <div class="highlight-box">
+                <h4>🔘 Corre&ccedil;&atilde;o de Densidade</h4>
+                <p>Diferentes caldas (ex: adubo l&iacute;quido) possuem densidades maiores que a água. O sistema aplica a f&oacute;rmula de corre&ccedil;&atilde;o e calcula a <i>Vaz&atilde;o Equivalente em &Aacute;gua</i> para encontrar a press&atilde;o de trabalho real na bomba.</p>
+                <code>P_Real = P_Catalogo * ( (Q_Calda * sqrt(Densidade)) / Q_Nominal ) ^ 2</code>
+            </div>
+
+            <h4>🏆 Algoritmo de Sugest&atilde;o (Smart Scoring):</h4>
+            <p>Ao realizar o c&aacute;lculo, o sistema percorre todos os bicos ISO e atribui uma nota baseada em:</p>
+            <ul>
+                <li><strong>Viola&ccedil;&atilde;o:</strong> O bico &eacute; descartado se ultrapassar a faixa de press&atilde;o segura em qualquer velocidade da janela.</li>
+                <li><strong>Desvio do Alvo:</strong> Dentre os bicos seguros, ganha o que trabalha mais pr&oacute;ximo do centro da faixa na velocidade m&eacute;dia (onde o bico produz as melhores gotas).</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>6. Janelas Operacionais</h3>
+            <p>A visualiza&ccedil;&atilde;o gráfica (Chart.js) permite ao produtor entender visualmente se o bico escolhido "Atende" (Verde), "Parcial" (Amarelo) ou "Não Recomendado" (Vermelho). Isso gera uma segurança psicológica e operacional inestim&aacute;vel para o operador.</p>
+        </section>
+
+        <div class="footer">
+            <span>Eduardo Andrade &copy; 2026</span>
+            <span>Intellectual Property Report</span>
+            <span>P&aacute;gina 3</span>
+        </div>
+    </div>
+
+    <!-- PAGE 4: BUSINESS CORE & LEADS -->
+    <div class="page">
+        <header>
+            <div class="logo-box"><img src="logo.png" alt="Logo"></div>
+            <div class="header-text">
+                <h1>Estrat&eacute;gia de Neg&oacute;cio</h1>
+                <p>Convers&atilde;o & Funil de Vendas</p>
+            </div>
+        </header>
+
+        <section>
+            <h3>7. Lead Capture & Auth Wall</h3>
+            <p>O <code>index.html</code> implementa uma barreira de autentica&ccedil;&atilde;o via Supabase. Isso garante que o propriet&aacute;rio do software possua os dados de todos os usuários interessados na ferramenta:</p>
+            <p>- <strong>Nome:</strong> Para atendimento personalizado.</p>
+            <p>- <strong>WhatsApp:</strong> Canal direto de fechamento de vendas.</p>
+            <p>- <strong>E-mail:</strong> Nutri&ccedil;&atilde;o via E-mail Marketing.</p>
+        </section>
+
+        <section>
+            <h3>8. Convers&atilde;o via WhatsApp</h3>
+            <p>Ao final de cada simula&ccedil;&atilde;o, o botão de WhatsApp n&atilde;o apenas abre o aplicativo, ele envia uma <strong>Mensagem Pr&eacute;-Formatada</strong> de alta convers&atilde;o:</p>
+            <div class="highlight-box" style="font-style: italic; font-family: 'Inter';">
+                "Ol&aacute;! O sistema Spray Precision PRO sugeriu o bico ISO 03 para aplicar 100 L/ha a 12 km/h. Gostaria de ver op&ccedil;&otilde;es!"
+            </div>
+            <p>Isso reduz o atrito do cliente e leva o orçamento pronto para o vendedor, acelerando o ciclo de venda de bicos e equipamentos agrícolas.</p>
+        </section>
+
+        <section>
+            <h3>9. Conclus&atilde;o do Dev Senior</h3>
+            <p>O projeto <strong>Spray Precision PRO</strong> atinge o "Sweet Spot" do desenvolvimento moderno: uma interface que parece ser de uma grande Big Tech brasileira, rodando em uma infraestrutura leve, segura e altamente focada em convers&atilde;o de neg&oacute;cio. A utiliza&ccedil;&atilde;o do <code>index.html</code> como SPA (Single Page Application) garante que a manuten&ccedil;&atilde;o seja simples e o deployment instant&acirc;neo.</p>
+        </section>
+
+        <div class="footer">
+            <span>Eduardo Andrade &copy; 2026</span>
+            <span>Final Project Review</span>
+            <span>P&aacute;gina 4</span>
+        </div>
+    </div>
+
+</body>
+</html>

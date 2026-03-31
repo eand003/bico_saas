@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Monetiza&ccedil;&atilde;o - Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --dark: #0f172a;
+            --white: #ffffff;
+            --slate: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: #cbd5e1;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-family: 'Outfit';
+            font-size: 42px;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+        }
+
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .strategy-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 24px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--secondary);
+        }
+
+        .strategy-card h2 {
+            font-family: 'Outfit';
+            font-size: 22px;
+            color: var(--white);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .strategy-card h2 i { color: var(--secondary); }
+
+        .price-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .strategy-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            border: 1px solid var(--accent);
+        }
+
+        /* Value Prop Bar */
+        .value-prop {
+            background: linear-gradient(90deg, var(--primary), #002a3a);
+            padding: 40px;
+            border-radius: 30px;
+            margin: 40px 0;
+            text-align: center;
+            border: 1px solid rgba(0, 210, 255, 0.2);
+        }
+
+        .value-prop h2 { font-family: 'Outfit'; font-size: 28px; color: var(--white); margin-bottom: 15px; }
+
+        .scenario-box {
+            background: var(--white);
+            color: var(--dark);
+            padding: 30px;
+            border-radius: 24px;
+            margin-top: 50px;
+        }
+
+        .scenario-box h3 { font-family: 'Outfit'; font-size: 24px; margin-bottom: 20px; color: var(--primary); }
+
+        .scenario-item {
+            border-left: 4px solid var(--secondary);
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+
+        .scenario-item h4 { font-weight: 800; color: var(--primary); margin-bottom: 5px; }
+
+        @media screen and (max-width: 768px) {
+            .strategy-grid { grid-template-columns: 1fr; }
+        }
+
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: var(--primary);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: Outfit;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">Exportar Estrat&eacute;gia (PDF)</button>
+
+    <div class="container">
+        <div class="header">
+            <p>Business & Scaling Strategy</p>
+            <h1>Ouro L&iacute;quido: Monetizando o Spray Precision PRO</h1>
+        </div>
+
+        <div class="strategy-grid">
+            <div class="strategy-card">
+                <div class="price-badge">Faturamento B2B</div>
+                <h2><i data-lucide="store"></i> Revendas & Lojas</h2>
+                <p>Licencie o software como "Ferramenta de Balc&atilde;o" para lojas de implementos e pe&ccedil;as agr&iacute;colas.</p>
+                <div style="font-weight: 700; color: var(--secondary); margin-bottom: 15px;">Potencial: R$ 250 - R$ 500 /m&ecirc;s</div>
+                <a href="#" class="btn-action">Plano White-Label</a>
+            </div>
+
+            <div class="strategy-card">
+                <div class="price-badge">SaaS Individual</div>
+                <h2><i data-lucide="graduation-cap"></i> Consultoria PRO</h2>
+                <p>Ofere&ccedil;a recursos premium exclusivos para agr&ocirc;nomos (Relat&oacute;rios customizados com a marca deles).</p>
+                <div style="font-weight: 700; color: var(--secondary); margin-bottom: 15px;">Potencial: R$ 49,90 - R$ 89,90 /m&ecirc;s</div>
+                <a href="#" class="btn-action">Assinatura Premium</a>
+            </div>
+
+            <div class="strategy-card">
+                <div class="price-badge">Afilia&ccedil;&atilde;o</div>
+                <h2><i data-lucide="shopping-cart"></i> Marketplace de Bicos</h2>
+                <p>Integre links de compra direta quando um bico &eacute; recomendado. Ganhe comiss&atilde;o sobre cada venda.</p>
+                <div style="font-weight: 700; color: var(--secondary); margin-bottom: 15px;">Potencial: 5% - 8% por venda</div>
+                <a href="#" class="btn-action">Parceria Afiliada</a>
+            </div>
+
+            <div class="strategy-card">
+                <div class="price-badge">Corporativo</div>
+                <h2><i data-lucide="factory"></i> Gest&atilde;o de Frotas</h2>
+                <p>Venda o sistema para grandes grupos agr&iacute;colas padronizarem a pulveriza&ccedil;&atilde;o em todas as unidades.</p>
+                <div style="font-weight: 700; color: var(--secondary); margin-bottom: 15px;">Potencial: Licen&ccedil;as Progressivas</div>
+                <a href="#" class="btn-action">Enterprise SaaS</a>
+            </div>
+        </div>
+
+        <div class="value-prop">
+            <h2>Venda a Economia, n&atilde;o o C&oacute;digo.</h2>
+            <p>O produtor n&atilde;o quer "software", ele quer ganhar 2 sacas a mais por hectare reduzindo derivas e falhas de cobertura. Foque no ROI (Retorno sobre Investimento).</p>
+        </div>
+
+        <div class="scenario-box">
+            <h3>Cen&aacute;rio de Uso: O Vendedor de Balc&atilde;o</h3>
+            <div class="scenario-item">
+                <h4>O Problema</h4>
+                <p>O cliente chega na loja e pede "um bico que cubra bem". O vendedor n&atilde;o sabe a velocidade do trator do cliente e vende o bico errado. O cliente volta reclamando do produto qu&iacute;mico (que na verdade n&atilde;o funcionou por erro de ponta).</p>
+            </div>
+            <div class="scenario-item">
+                <h4>A Solu&ccedil;&atilde;o (Monetiza&ccedil;&atilde;o)</h4>
+                <p>O dono da loja paga a voc&ecirc; a mensalidade. O vendedor abre o <strong>Spray Precision PRO</strong> no tablet da loja, insere os dados do cliente em 30 segundos, imprime o relat&oacute;rio e vende o bico certo com autoridade. O cliente sai satisfeito e vira f&atilde; da loja.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; font-size: 12px;">
+            <p>Planejamento Estrat&eacute;gico para Eduardo Andrade &copy; 2026</p>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

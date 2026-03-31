@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossie Tecnico - Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #1a202c;
+            --text-light: #718096;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --page-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page {
+            background: var(--white);
+            width: 100%;
+            max-width: 800px;
+            min-height: 1122px; /* A4 Ratio */
+            padding: 60px 80px;
+            box-shadow: var(--page-shadow);
+            position: relative;
+            margin-bottom: 40px;
+            border-top: 10px solid var(--primary);
+            border-radius: 4px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 20px;
+        }
+
+        .logo-section img {
+            width: 80px;
+            height: auto;
+        }
+
+        .brand-name {
+            text-align: right;
+        }
+
+        .brand-name h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name p {
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .subject-title {
+            margin-bottom: 40px;
+        }
+
+        .subject-title h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .accent-bar {
+            width: 60px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        section h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        section h3::before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: var(--secondary);
+            display: inline-block;
+        }
+
+        p {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-card span {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table th {
+            background: var(--primary);
+            color: white;
+            text-align: left;
+            padding: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+        }
+
+        .controls-nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-family: 'Outfit';
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: #00364a;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                border-top: none;
+                border-bottom: none;
+                border-left: none;
+                border-right: none;
+            }
+            .controls-nav {
+                display: none;
+            }
+            .page {
+                page-break-after: always;
+            }
+        }
+
+        .footer-page {
+            position: absolute;
+            bottom: 40px;
+            left: 80px;
+            right: 80px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-light);
+            border-top: 1px solid #edf2f7;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls-nav">
+        <button onclick="window.print()" class="btn">
+            Gerar PDF Oficial (Dossie)
+        </button>
+    </div>
+
+    <div class="page">
+        <header>
+            <div class="logo-section">
+                <img src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/80?text=LOGO'">
+            </div>
+            <div class="brand-name">
+                <h1>Spray Precision PRO</h1>
+                <p>Technical & Architecture Dossier</p>
+            </div>
+        </header>
+
+        <div class="subject-title">
+            <div class="accent-bar"></div>
+            <h2>Relat&oacute;rio de Engenharia de Software</h2>
+            <p style="color: var(--text-light)">Mar&ccedil;o 31, 2026 | Vers&atilde;o Produ&ccedil;&atilde;o (Index.html)</p>
+        </div>
+
+        <section>
+            <h3>1. Executivo Sum&aacute;rio</h3>
+            <p>O <strong>Spray Precision PRO</strong> &eacute; a vers&atilde;o definitiva (atualmente operando via <code>index.html</code>) de uma plataforma SaaS para otimiza&ccedil;&atilde;o agr&iacute;cola. O sistema foca na precis&atilde;o cir&uacute;rgica da pulveriza&ccedil;&atilde;o, integrando dados em tempo real com uma interface premium de alta performance.</p>
+        </section>
+
+        <section>
+            <h3>2. Arquitetura em Produ&ccedil;&atilde;o</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <strong>Frontend Principal</strong>
+                    <span>Index.html (SPA Integrada)</span>
+                </div>
+                <div class="stat-card">
+                    <strong>Lead Capture & CRM</strong>
+                    <span>Integra&ccedil;&atilde;o WhatsApp & Supabase</span>
+                </div>
+                <div class="stat-card">
+                    <strong>Seguran&ccedil;a de Dados</strong>
+                    <span>Auth via GoTrue (Supabase)</span>
+                </div>
+                <div class="stat-card">
+                    <strong>Visualiza&ccedil;&atilde;o</strong>
+                    <span>Gr&aacute;ficos Din&acirc;micos Chart.js</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>3. Funcionalidades de Neg&oacute;cio</h3>
+            <p>A arquitetura atual do <code>index.html</code> n&atilde;o &eacute; apenas uma calculadora, mas um funil de vendas tecnol&oacute;gico:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Recurso</th>
+                        <th>Impacto Estrat&eacute;gico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Auth Wall</strong></td>
+                        <td>Captura de leads qualificados (Nome, Email, WhatsApp) antes do acesso à ferramenta.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Social Share</strong></td>
+                        <td>Gera&ccedil;&atilde;o automática de mensagens para WhatsApp com os resultados validados.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Offline Mode</strong></td>
+                        <td>PWA funcional no campo, mesmo sem sinal de internet constante.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <div class="footer-page">
+            <span>Confidencial | Spray Precision PRO | Eduardo Andrade</span>
+            <span>P&aacute;gina 1</span>
+        </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page">
+        <section>
+            <h3>4. An&aacute;lise Crom&aacute;tica do Branding</h3>
+            <p>Com base na an&aacute;lise do <strong>logo.png</strong>, o diret&oacute;rio visual do projeto segue uma hierarquia de cores que transmite confian&ccedil;a e precis&atilde;o tecnol&oacute;gica:</p>
+            
+            <div style="margin-top: 20px; display: flex; gap: 20px;">
+                <div style="text-align: center;">
+                    <div style="width: 120px; height: 120px; background: #004b63; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+                    <p style="margin-top: 8px; font-weight: 700; color: #004b63;">#004B63<br><small>Navy Prime</small></p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 120px; height: 120px; background: #a3cf3d; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+                    <p style="margin-top: 8px; font-weight: 700; color: #a3cf3d;">#A3CF3D<br><small>Agro Lime</small></p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="width: 120px; height: 120px; background: #00d2ff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+                    <p style="margin-top: 8px; font-weight: 700; color: #00d2ff;">#00D2FF<br><small>Tech Cyan</small></p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>5. Diagn&oacute;stico de Engenharia (Dev Senior Review)</h3>
+            <p>O projeto demonstra maturidade t&eacute;cnica superior. A ado&ccedil;&atilde;o de uma estrutura <strong>Atomic-Style</strong> no CSS e o uso de vari&aacute;veis globais para tematiza&ccedil;&atilde;o facilitam a escala para novos módulos de calibra&ccedil;&atilde;o (como fertilização ou semeadura).</p>
+            <p>O uso de <code>backdrop-filter</code> no frontend garante uma est&eacute;tica premium que se destaca no mercado de softwares agr&iacute;colas tradicionais.</p>
+        </section>
+
+        <section>
+            <h3>6. Roadmap & Manuten&ccedil;&atilde;o</h3>
+            <p>Para garantir a longevidade da plataforma, sugere-se:</p>
+            <ol>
+                <li><strong>Log de Auditoria:</strong> Salvar as configura&ccedil;&otilde;es mais usadas pelos operadores via Supabase DB.</li>
+                <li><strong>Gr&aacute;ficos de Cobertura:</strong> Plotar curvas de distribui&ccedil;&atilde;o de gotas baseadas nos presets de bico.</li>
+            </ol>
+        </section>
+
+        <div class="footer-page">
+            <span>Eduardo &copy; 2026</span>
+            <span>P&aacute;gina 2</span>
+        </div>
+    </div>
+
+</body>
+</html>

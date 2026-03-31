@@ -101,6 +101,7 @@ export default function handler(req, res) {
         nz: nz,
         vAtPmin, vAtPmax, vAt3Bar,
         pVavg, 
+        qVavg,
         ok, 
         statusText,
         violation,

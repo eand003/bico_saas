@@ -1472,9 +1472,12 @@
         div.innerHTML = `
         <div class="noz-header" style="align-items: flex-start;">
             <div class="noz-iso">ISO ${r.nz.iso}</div>
-            <div class="noz-flow-badge" title="Padrão de Calibração ISO @ 3bar (43.5 psi)">
-              <span class="label">Vazão Padrão</span>
-              <span class="value">${r.nz.q3.toFixed(2)} L/min</span>
+            <div class="noz-flow-badge" title="Vazão necessária (L/min) por bico no seu cenário real">
+              <span class="label">Vazão de Calibração</span>
+              <span class="value" style="font-size: 16px; font-weight: 800;">${r.qVavg.toFixed(2)} L/min</span>
+              <div style="font-size: 10px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 2px;">
+                Catálogo (Ref 3bar): ${r.nz.q3.toFixed(2)}
+              </div>
             </div>
         </div>
         <div class="noz-metrics">

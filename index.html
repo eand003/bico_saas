@@ -1926,6 +1926,7 @@
     async function logout() {
       await clienteSupabase.auth.signOut();
       document.getElementById('mainApp').style.display = 'none';
+      if(document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'none';
       showLogin();
     }
     window.logout = logout;
@@ -1933,6 +1934,7 @@
     function showApp() {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
+      if(document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'flex';
       if (window._updateApp) {
         window._updateApp(); // Recalcular os gráficos após aparecer
       }
@@ -1941,6 +1943,7 @@
     function showLogin() {
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('mainApp').style.display = 'none';
+      if(document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'none';
 
       // Limpar alertas antigos para não acumular
       const authError = document.getElementById('authError');

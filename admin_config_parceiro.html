@@ -86,10 +86,36 @@
         const SUPABASE_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const form = document.getElementById('configForm');
         const statusMsg = document.getElementById('statusMsg');
         const authStatus = document.getElementById('authStatus');
+        let supabase;
+
+        // Inicialização Segura
+        function init() {
+            if (typeof window.supabase === 'undefined') {
+                authStatus.innerText = "❌ Erro: Biblioteca Supabase não carregou.";
+                authStatus.style.color = "#ef4444";
+                return;
+            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Timeout de segurança: Se travar no "Verificando", abre o login em 3 segundos
+            setTimeout(() => {
+                if (authStatus.innerText === "Verificando perfil...") {
+                    console.warn("Timeout de conexão. Mostrando login manual.");
+                    showManuelLogin();
+                }
+            }, 3000);
+
+            checkSession();
+        }
+
+        function showManuelLogin() {
+            document.getElementById('loginArea').style.display = 'block';
+            document.getElementById('configArea').style.display = 'none';
+            authStatus.innerText = "Conexão lenta. Por favor, logue abaixo:";
+            authStatus.style.color = "#64748b";
+        }
 
         // Sincronizar Picker com Input de texto
         document.getElementById('partner_color_picker').addEventListener('input', (e) => {
@@ -102,53 +128,56 @@
             const pass = document.getElementById('loginPass').value;
             if (!email || !pass) return alert("Por favor, preencha o e-mail e a senha.");
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) {
-                alert("Erro ao entrar: " + error.message);
-            } else {
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+                if (error) throw error;
                 checkSession();
+            } catch (err) {
+                alert("Erro ao entrar: " + err.message);
             }
         }
 
         async function logout() {
-            if (confirm("Deseja realmente sair do painel?")) {
+            if (confirm("Deseja realmente sair?")) {
                 await supabase.auth.signOut();
                 location.reload();
             }
         }
 
-        // Checar Sessão a cada carregamento
+        // Checar Sessão
         async function checkSession(showAlert = false) {
             authStatus.innerText = "Verificando perfil...";
-            const { data: { user }, error } = await supabase.auth.getUser();
-            
-            if (user) {
-                document.getElementById('loginArea').style.display = 'none';
-                document.getElementById('configArea').style.display = 'block';
-                authStatus.innerText = `ID Online: ${user.email}`;
-                authStatus.style.color = "#166534";
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser();
                 
-                if (user.user_metadata) {
-                    const meta = user.user_metadata;
-                    document.getElementById('partner_name').value = meta.partner_name || '';
-                    document.getElementById('partner_color').value = meta.partner_color || '#00d2ff';
-                    document.getElementById('partner_color_picker').value = meta.partner_color || '#00d2ff';
-                    document.getElementById('partner_logo').value = meta.partner_logo || '';
-                    document.getElementById('partner_whatsapp').value = meta.partner_whatsapp || '';
-                    if (showAlert) alert("DADOS SALVOS NO BANCO:\n" + JSON.stringify(meta, null, 2));
+                if (user) {
+                    document.getElementById('loginArea').style.display = 'none';
+                    document.getElementById('configArea').style.display = 'block';
+                    authStatus.innerText = `ID Online: ${user.email}`;
+                    authStatus.style.color = "#166534";
+                    
+                    if (user.user_metadata) {
+                        const meta = user.user_metadata;
+                        document.getElementById('partner_name').value = meta.partner_name || '';
+                        document.getElementById('partner_color').value = meta.partner_color || '#00d2ff';
+                        document.getElementById('partner_color_picker').value = meta.partner_color || '#00d2ff';
+                        document.getElementById('partner_logo').value = meta.partner_logo || '';
+                        document.getElementById('partner_whatsapp').value = meta.partner_whatsapp || '';
+                        if (showAlert) alert("DADOS SALVOS NO BANCO:\n" + JSON.stringify(meta, null, 2));
+                    }
+                } else {
+                    showManuelLogin();
                 }
-            } else {
-                document.getElementById('loginArea').style.display = 'block';
-                document.getElementById('configArea').style.display = 'none';
-                authStatus.innerText = "⚠️ Identidade não confirmada.";
-                authStatus.style.color = "#ef4444";
+            } catch (err) {
+                console.error("Erro na sessão:", err);
+                showManuelLogin();
             }
         }
 
-        form.addEventListener('submit', async (e) => {
+        const configForm = document.getElementById('configForm');
+        configForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            const originalText = btn.innerText;
             btn.innerText = "Gravando no Banco...";
             btn.disabled = true;
 
@@ -164,22 +193,22 @@
                 const { data, error } = await supabase.auth.updateUser({ data: config });
                 if (error) throw error;
 
-                statusMsg.innerText = "✅ SUCESSO! Estilo salvo com sucesso.";
+                statusMsg.innerText = "✅ SUCESSO! Estilo salvo.";
                 statusMsg.className = "status success";
-                alert("PARABÉNS! As configurações foram salvas. Pode abrir o Enterprise para ver o resultado.");
+                alert("PARABÉNS! As configurações foram salvas.");
                 
             } catch (err) {
                 alert("Erro ao salvar: " + err.message);
                 statusMsg.innerText = "❌ ERRO: " + err.message;
                 statusMsg.className = "status error";
             } finally {
-                btn.innerText = originalText;
+                btn.innerText = "💾 Salvar Identidade Visual";
                 btn.disabled = false;
             }
         });
 
         // Carregamento Inicial
-        checkSession();
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>

@@ -2024,67 +2024,83 @@
     async function showApp() {
       // --- LOGICA ENTERPRISE: APLICAR BRANDING DO PARCEIRO ---
       try {
-        // Usamos getUser() em vez de getSession() para garantir que pegamos os dados MAIS RECENTES do banco
+        console.log("Enterprise: Buscando dados do perfil...");
         const { data: { user }, error } = await clienteSupabase.auth.getUser();
         
         if (user && user.user_metadata) {
           const meta = user.user_metadata;
-          // Se o usuário tiver configurações de parceiro no metadata:
-          // { partner_name: "AgroLoja", partner_color: "#ffcc00", partner_logo: "...", partner_whastapp: "..." }
-          applyPartnerBranding(meta);
+          // Se houver qualquer dado de parceiro, tentamos aplicar
+          if (meta.partner_name || meta.partner_color) {
+             console.log("Enterprise: Dados de branding encontrados!", meta);
+             applyPartnerBranding(meta);
+          } else {
+             console.log("Enterprise: Nenhum dado de branding no usuário.");
+          }
         }
       } catch (err) {
-        console.error("Erro ao carregar branding enterprise:", err);
+        console.error("Erro fatal de branding:", err);
       }
 
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
+      
       if (window._updateApp) {
-        window._updateApp(); // Recalcular os gráficos após aparecer
+        window._updateApp(); 
       }
     }
 
     function applyPartnerBranding(meta) {
-      if (!meta || !meta.is_enterprise) return; // Só aplica se for um perfil de parceiro configurado
+      if (!meta) return;
 
       const accent = meta.partner_color || '#00d2ff';
       const logo = meta.partner_logo || './logo.png';
       const name = meta.partner_name || 'Spray Precision PRO';
       const whatsapp = meta.partner_whatsapp || '5565999106415';
 
-      // 1. Atualizar Cores (CSS Variables) - Força a troca no :root
-      document.documentElement.style.setProperty('--accent', accent);
-      // Criar um brilho suave (glow) baseado na cor nova (adiciona 44 para transparência)
-      document.documentElement.style.setProperty('--accent-glow', accent + '66'); 
+      // 1. Atualizar Variáveis CSS Primárias
+      const root = document.documentElement;
+      root.style.setProperty('--accent', accent);
+      root.style.setProperty('--accent-glow', accent + '66'); 
 
-      // 2. Atualizar Logos (Procura por imagens no header e na tela de login)
+      // 2. Atualizar Logotipos em todo o app (Login e Interno)
       const logos = document.querySelectorAll('.header-icon, .login-box img');
       logos.forEach(img => {
         img.src = logo;
-        img.style.transition = '0.5s';
+        img.onerror = () => { img.src = './logo.png'; }; // Fallback
       });
 
-      // 3. Atualizar Título do Dashboard
-      const title = document.querySelector('.header h1');
-      if (title) {
-        title.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
+      // 3. Atualizar Título no Cabeçalho
+      const headerTitle = document.querySelector('.header h1');
+      if (headerTitle) {
+        headerTitle.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
       }
 
-      // 4. Atualizar Links de WhatsApp (Vendas)
-      const waLinks = document.querySelectorAll('a[href*="wa.me"]');
-      waLinks.forEach(link => {
-        const url = new URL(link.href);
-        const text = url.searchParams.get('text') || 'Olá! Vim pelo app.';
-        link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
+      // 4. Customizar Textos do Aplicativo
+      const subTitle = document.querySelector('.header p');
+      if (subTitle && meta.partner_name) {
+        subTitle.innerText = `Simulador Oficial - ${name}`;
+      }
+
+      // 5. Configurar Botões de WhatsApp Dinamicamente
+      const allWaLinks = document.querySelectorAll('a[href*="wa.me"]');
+      allWaLinks.forEach(link => {
+        try {
+          const url = new URL(link.href);
+          const originalText = url.searchParams.get('text') || 'Olá!';
+          link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(originalText)}`;
+        } catch(e) {}
       });
 
-      // 5. Atualizar Cor do Botão FAB (Melhor Bico) se ele existir
-      const fab = document.getElementById('fabBtn');
-      if (fab) {
-        fab.style.borderColor = accent;
-      }
+      // 6. Atualizar Elementos Dinâmicos (Botões e Símbolos)
+      const customStyles = document.createElement('style');
+      customStyles.innerHTML = `
+        .info-btn, .login-btn, .status-badge.ok, .fab-btn.fab-ok { border-color: ${accent} !important; }
+        .preset-btn.active { background: ${accent} !important; border-color: ${accent} !important; color: #000 !important; }
+        .result-hero .iso { color: ${accent} !important; }
+      `;
+      document.head.appendChild(customStyles);
 
-      console.log(`Enterprise Mode: Branding profissional aplicado para ${name}`);
+      console.log(`✅ Sucesso: Branding do Parceiro "${name}" aplicado.`);
     }
 
     function showLogin() {

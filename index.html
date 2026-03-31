@@ -1557,9 +1557,11 @@
         }
 
         if (isFallback) {
-          rmStatusText.innerText = '⚠️ Atenção: Bico Alternativo';
+          rmStatusText.innerText = '⚠️ Rec: ' + r.statusText;
+          rmStatusText.style.background = 'rgba(255,193,7,0.2)';
         } else {
-          rmStatusText.innerText = '🏆 Sugestão Ideal';
+          rmStatusText.innerText = '🏆 Sugestão: ' + r.statusText;
+          rmStatusText.style.background = 'transparent';
         }
 
         const msg = encodeURIComponent(`Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);

@@ -3,39 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Rescue Dashboard</title>
+    <title>SaaS Master Configurator</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 30px; background: #eef2f6; }
-        .box { background: white; max-width: 400px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; }
-        button { width: 90%; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; }
-        .primary { background: #0f172a; color: white; margin-top: 10px; }
-        .success { background: #16a34a; color: white; display: none; margin-top: 10px; }
+        body { font-family: sans-serif; text-align: center; background: #eef2f6; padding: 20px; }
+        .box { background: white; max-width: 400px; margin: auto; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; background: #0f172a; color: white; }
     </style>
 </head>
 <body>
 
     <div class="box">
-        <h2>🚀 Novo Painel Administrativo</h2>
-        <div id="status" style="font-size:12px; font-weight:bold; color:red; margin-bottom:10px;">Verificando conexão...</div>
+        <h2 id="title">🔐 Área do Parceiro</h2>
+        <div id="status" style="font-size:12px; color: grey;">Status: Inicializando...</div>
 
         <!-- LOGIN -->
         <div id="loginArea">
-            <input type="email" id="email" placeholder="E-mail">
-            <input type="password" id="pass" placeholder="Senha">
-            <button class="primary" onclick="doLogin()">ACESSAR AGORA</button>
+            <input type="email" id="email" placeholder="Seu e-mail">
+            <input type="password" id="pass" placeholder="Sua senha">
+            <button class="btn" onclick="doLogin()">ACESSAR PAINEL</button>
         </div>
 
         <!-- CONFIG -->
         <div id="configArea" style="display:none;">
-            <p style="color:green; font-weight:bold;">✅ Conectado</p>
-            <input type="text" id="p_name" placeholder="Nome Loja">
-            <input type="text" id="p_color" placeholder="Cor (Ex: #ff0000)">
-            <input type="text" id="p_logo" placeholder="URL Logo">
-            <input type="text" id="p_wa" placeholder="WhatsApp">
-            <button class="success" id="btnSave" onclick="doSave()" style="display:block;">SALVAR CONFIGURAÇÃO</button>
-            <button onclick="location.reload()" style="background:none; color:red; font-size:11px; margin-top:20px; font-weight:bold;">LOGOUT / SAIR</button>
+            <p style="color: green; font-weight: 700;">✅ Logado como Administrador</p>
+            <input type="text" id="p_name" placeholder="Nome da Revenda">
+            <input type="text" id="p_color" placeholder="Cor Hex (ex: #ffaa00)">
+            <input type="text" id="p_logo" placeholder="URL do Logo">
+            <input type="text" id="p_wa" placeholder="WhatsApp Vendedor">
+            <button class="btn" style="background:#16a34a;" onclick="doSave()">SALVAR TODAS AS MUDANÇAS</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer; font-size:11px; margin-top:20px; text-decoration: underline;">Desconectar / Sair</button>
         </div>
     </div>
 
@@ -44,51 +42,79 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
         let supabase;
 
-        async function init() {
+        // Função de Inicialização (Forçável)
+        function getSupabase() {
+            if (supabase) return supabase;
             if (typeof window.supabase === 'undefined') {
-                document.getElementById('status').innerText = "❌ ERRO: Supabase não carregou.";
-                return;
+                alert("ERRO: A biblioteca principal não carregou. Tente abrir em outro navegador (Edge ou Firefox) ou use aba anônima.");
+                return null;
             }
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) showConfig(user); else document.getElementById('status').innerText = "Aguardando Login...";
+            return supabase;
         }
 
         async function doLogin() {
+            const client = getSupabase();
+            if (!client) return;
+
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
-            const { data, error } = await supabase.auth.signInWithPassword({ email: e, password: p });
-            if (error) alert("Erro: " + error.message); else showConfig(data.user);
-        }
+            if (!e || !p) return alert("Erro: E-mail e senha são obrigatórios.");
 
-        function showConfig(user) {
-            document.getElementById('loginArea').style.display = 'none';
-            document.getElementById('configArea').style.display = 'block';
-            document.getElementById('status').innerText = "Dashboard Ativo!";
-            document.getElementById('status').style.color = "green";
-            const m = user.user_metadata || {};
-            document.getElementById('p_name').value = m.partner_name || '';
-            document.getElementById('p_color').value = m.partner_color || '';
-            document.getElementById('p_logo').value = m.partner_logo || '';
-            document.getElementById('p_wa').value = m.partner_whatsapp || '';
+            try {
+                document.getElementById('status').innerText = "Status: Conectando...";
+                const { data, error } = await client.auth.signInWithPassword({ email: e, password: p });
+                
+                if (error) {
+                    alert("Acesso Negado: " + error.message);
+                    document.getElementById('status').innerText = "Status: Erro";
+                } else {
+                    document.getElementById('loginArea').style.display = 'none';
+                    document.getElementById('configArea').style.display = 'block';
+                    document.getElementById('status').innerText = "Status: Dashboard Ativado";
+                    
+                    const m = data.user.user_metadata || {};
+                    document.getElementById('p_name').value = m.partner_name || '';
+                    document.getElementById('p_color').value = m.partner_color || '';
+                    document.getElementById('p_logo').value = m.partner_logo || '';
+                    document.getElementById('p_wa').value = m.partner_whatsapp || '';
+                }
+            } catch (err) {
+                alert("Erro inesperado: " + err.message);
+            }
         }
 
         async function doSave() {
-            const btn = document.getElementById('btnSave');
-            btn.innerText = "Gravando...";
-            const meta = {
+            const client = getSupabase();
+            if (!client) return;
+
+            const m = {
                 partner_name: document.getElementById('p_name').value,
                 partner_color: document.getElementById('p_color').value,
                 partner_logo: document.getElementById('p_logo').value,
                 partner_whatsapp: document.getElementById('p_wa').value,
                 is_enterprise: true
             };
-            const { error } = await supabase.auth.updateUser({ data: meta });
-            if (error) alert(error.message); else alert("SUCESSO! Reinicie o App Enterprise.");
-            btn.innerText = "SALVAR CONFIGURAÇÃO";
+
+            const { error } = await client.auth.updateUser({ data: m });
+            if (error) alert("Não foi possível salvar: " + error.message);
+            else alert("✅ SUCESSO ABSOLUTO! Dados salvos no banco. Já pode fechar o painel e abrir o Enterprise.");
         }
 
-        window.onload = init;
+        // Tenta checar sessão se já estiver logado
+        window.onload = async () => {
+            const client = getSupabase();
+            if (client) {
+                const { data: { user } } = await client.auth.getUser();
+                if (user) {
+                    document.getElementById('loginArea').style.display = 'none';
+                    document.getElementById('configArea').style.display = 'block';
+                    document.getElementById('status').innerText = "Status: Sessão Ativa";
+                } else {
+                    document.getElementById('status').innerText = "Status: Pronto para Login";
+                }
+            }
+        };
     </script>
 </body>
 </html>

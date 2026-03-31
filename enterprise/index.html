@@ -1833,8 +1833,17 @@
 
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
+        // --- TRUQUE PARA NOMEAR O PDF DINAMICAMENTE ---
+        const oldTitle = document.title;
+        const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
+        const fileName = `Laudo_${simulationData.rate}Lha_${simulationData.vAvg}kmh${nzPart}`;
+        document.title = fileName;
+
         // Disparar Impressão
         window.print();
+
+        // Restaurar título original
+        document.title = oldTitle;
       }
 
       function updateChart(rows, sysVMin, sysVMax) {

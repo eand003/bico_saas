@@ -1117,41 +1117,28 @@
         <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'"
           title="Fechar">&times;</button>
         <h2>📖 Sobre o Spray Precision PRO</h2>
-        <p>Este aplicativo é um <strong>Simulador Agronômico de Alta Fidelidade</strong> desenvolvido para auxiliar
-          profissionais na recomendação exata da ponta hidráulica (bico de pulverização) compatível com o padrão de
-          cores
-          ISO.</p>
+        <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para garantir que sua aplicação no campo seja exatamente o que você planejou no software.</p>
 
-        <h3>🎯 O que ele faz?</h3>
+        <h3>🎯 Vazão de Calibração (Jaragem)</h3>
+        <p>O dado mais importante para o operador! O valor em destaque nos cards é a <strong>Vazão Real (L/min)</strong> que cada bico deve entregar para atingir seu alvo (L/ha) na velocidade média informada. Use este número para a calibração manual com jarra/caneca.</p>
+
+        <h3>🏆 Selos de Diagnóstico Interativos</h3>
+        <p>Você pode <strong>clicar nos selos</strong> de status (Atende, Parcial ou Não Recomendado) para abrir um diagnóstico técnico. Ali mostramos exatamente qual pressão a bomba atingirá na sua velocidade mínima e máxima, comparando com o limite que você definiu.</p>
+
+        <h3>⚖️ Correção por Densidade da Calda</h3>
+        <p>Diferente de tabelas comuns, este simulador utiliza <strong>Correção de Gravidade Específica</strong>.</p>
         <ul>
-          <li>Gera automaticamente a janela de velocidades seguras de cada bico para evitar perdas ou derivas na sua
-            barra.</li>
-          <li>Identifica matematicamente qual bico atingirá a Vazão Desejada (L/ha) sendo exigido apenas pela <b>Pressão
-              Segura</b> da bomba.</li>
+          <li><strong>Água (1.00):</strong> Calda limpa e padrão.</li>
+          <li><strong>Média (1.08):</strong> Recomendado para caldas com óleos, fungicidas e adjuvantes que tornam o líquido mais "pesado".</li>
+          <li><strong>Pesada (1.20):</strong> Para adubação líquida e nutrição foliar densa (vincosa).</li>
         </ul>
+        <p style="margin-top: 4px; font-size: 13px; opacity: 0.8;">O simulador compensa a perda de fluxo causada pela densidade para que a leitura do seu manômetro seja 100% confiável.</p>
 
-        <h3>⚖️ Inovação Técnica: Densidade da Calda</h3>
-        <p>Calculadoras teóricas pressupõem que você aplicará água pura, resultando em recomendações irrealistas na
-          prática do defensivo. Aqui utilizamos <strong>Correção de Gravidade Específica</strong>.</p>
-        <ul>
-          <li><strong>Água:</strong> Selecione o peso base 1.00 kg/L.</li>
-          <li><strong>Misturas Fortes / Óleos Minerais:</strong> Utilize o atalho Média (1.08 kg/L). Compensa a perda de
-            fluxo exigida pela formulação SC / CE espessa.</li>
-          <li><strong>Adubação Líquida / Nutrição Foliar:</strong> Caldas densas "xaroposas" travam o fluxo de L/min
-            original do bico; use o atalho Pesada (1.20+ kg/L).</li>
-        </ul>
-        <p style="margin-top: 8px;"><em>O simulador fará a extração da raiz quadrada da densidade "escondido",
-            penalizando
-            ou aliviando os bicos teóricos para entregar a resposta real do cenário de campo ao limitador do
-            manômetro.</em></p>
+        <h3>📊 Gráfico de Janela Segura</h3>
+        <p>As barras coloridas representam a janela de velocidade de cada bico. Os <strong>pontos brancos</strong> no gráfico marcam a performance padrão ISO (3 bar), facilitando a comparação visual entre a sua configuração e o padrão de fábrica.</p>
 
-        <h3>💡 Módulo de Extremo Operacional (Falha Segura)</h3>
-        <p>Caso você force os parâmetros (ex: 300 L/ha) numa velocidade fora de série onde absolutamente nenhum bico na
-          vitrine conseguiria atuar usando uma pressão segura, o sistema ativará o protocolo de emergência.<br><br>Ele
-          não
-          esconde os resultados, mas sim pesquisa no catálogo a <b>"MELHOR ALTERNATIVA"</b> com uma etiqueta amarela de
-          aviso, mostrando a única opção viável (a matematicamente mais próxima de oscilar em torno da calibração de
-          fábrica ISO Padrão de 3 bar).</p>
+        <h3>💡 Extremo Operacional</h3>
+        <p>Se você configurar volumes muito altos (ex: 300 L/ha) e velocidades extremas onde nenhum bico no catálogo atende, o sistema ativará o modo de emergência, sugerindo a única <b>Melhor Alternativa</b> disponível matematicamente.</p>
       </div>
     </div>
 

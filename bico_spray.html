@@ -151,19 +151,19 @@
     }
 
     .header h1 {
-      font-size: 32px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
+      margin: 0;
       background: linear-gradient(to right, var(--title-grad-1), var(--title-grad-2));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      white-space: nowrap;
     }
 
     .header p {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 4px;
+      display: none;
     }
 
     /* Controls Panel */
@@ -951,9 +951,9 @@
     <div class="header">
       <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; width: 100%;">
         <img class="header-icon" src="./logo.png" alt="Spray Precision PRO Logo">
-        <div style="flex:1; min-width: 250px;">
+        <div style="flex:1; min-width: 0;">
           <h1>Spray Precision <span style="font-weight:300;">PRO</span></h1>
-          <div class="header-info-card" style="margin-top: 8px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <div class="header-info-card" style="margin-top: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 4px; flex-wrap: nowrap !important; width: 100%; min-width: max-content;">
             <div style="display: flex; gap: 8px; align-items: center;">
                 <a href="https://wa.me/5565999106415?text=Bom%20dia!%20Vim%20pelo%20seu%20aplicativo%20de%20bicos%20ISO."
                   target="_blank"

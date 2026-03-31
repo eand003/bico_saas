@@ -48,8 +48,12 @@ export default function handler(req, res) {
     const vMax = parseFloat(body.vMax) || 0;
     const unit = body.unit || 'bar';
 
+    const pTarget = (pMin + pMax) / 2;
     const pRef = () => unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
-    const pressaoNec = (qMix, q3, dens) => { const qWaterEq = qMix * Math.sqrt(dens); return pRef() * Math.pow(qWaterEq / q3, 2); };
+    const pressaoNec = (qMix, q3, dens) => { 
+      const qWaterEq = qMix * Math.sqrt(dens); 
+      return pRef() * Math.pow(qWaterEq / q3, 2); 
+    };
 
     const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
     if (!maxLimitsValid) {
@@ -77,24 +81,46 @@ export default function handler(req, res) {
       const qVmax = qPorBico(rate, vMax, spacingM);
       const pVmax = pressaoNec(qVmax, nz.q3, density);
 
-      const ok = (pVmin >= pMin && pVmax <= pMax && vMin > 0 && vMax > 0 && pVmin <= pVmax);
+      // Critérios de Validação Reais (User Driven)
+      const fitsMin = pVmin >= pMin;
+      const fitsMax = pVmax <= pMax;
+      const ok = fitsMin && fitsMax;
+      
+      // Status text as requested
+      let statusText = "Não recomendado";
+      if (ok) statusText = "Atende";
+      else if (fitsMin || fitsMax) statusText = "Parcial";
+
+      // Violação: Quão longe está dos limites (para ordenar os "não recomendados" por proximidade)
+      const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
+      
+      // Desvio do Alvo: Quão próximo da média da faixa (pTarget) o bico trabalha na vAvg
+      const deviation = Math.abs(pVavg - pTarget);
 
       rows.push({
         nz: nz,
         vAtPmin, vAtPmax, vAt3Bar,
-        pVavg, ok,
+        pVavg, 
+        ok, 
+        statusText,
+        violation,
+        deviation,
         pressures: [pVmin, pVavg, pVmax]
       });
     });
 
+    // Ordenação Inteligente
     rows.sort((a, b) => {
+      // 1. Quem atende a faixa 100% sempre ganha (Prioridade Máxima)
       if (a.ok !== b.ok) return a.ok ? -1 : 1;
-      const diffA = Math.abs(a.pVavg - pRef());
-      const diffB = Math.abs(b.pVavg - pRef());
-      if (diffA !== diffB) return diffA - diffB;
-      const windowA = (a.vAtPmax - a.vAtPmin);
-      const windowB = (b.vAtPmax - b.vAtPmin);
-      return windowB - windowA;
+      
+      if (a.ok) {
+        // 2. Entre os que atendem, ganha quem trabalha mais próximo do centro da faixa na vAvg
+        return a.deviation - b.deviation;
+      } else {
+        // 3. Entre os que não atendem, ganha o "menos ruim" (menor violação dos limites)
+        return a.violation - b.violation;
+      }
     });
 
     res.status(200).json({ rows });

@@ -2119,6 +2119,10 @@
 <div id="printReport"></div>
 <style>
   @media print {
+    :root {
+      --text-main: #0f172a !important;
+      --text-muted: #334155 !important;
+    }
     @page { size: auto; margin: 15mm; }
     body { background: white !important; padding: 0 !important; color: black !important; }
     #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 

@@ -2263,6 +2263,11 @@
 <style>
   /* Estilos específicos para Impressão Profissional (Laudo Técnico) */
   @media print {
+    :root {
+      --text-main: #0f172a !important; /* Forza o texto principal a ser escuro */
+      --text-muted: #334155 !important;
+    }
+
     @page { 
       size: auto;   /* auto is the initial value */
       margin: 15mm; /* margem limpa para o laudo */

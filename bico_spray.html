@@ -1528,8 +1528,11 @@
 
         document.getElementById('rmIso').innerText = 'ISO ' + r.nz.iso;
         document.getElementById('rmQ3').innerText = r.qVavg.toFixed(2) + ' L/min';
-        document.getElementById('rmQ3Iso').innerText = 'Referência Catálogo: ' + r.nz.q3.toFixed(2) + ' L/min';
-        document.getElementById('rmQ3').style.color = '#1E1E1E'; // Cor mais legível
+        
+        const pRefIso = PRESS_UNIT === 'bar' ? '3.0 bar' : '43.5 psi';
+        document.getElementById('rmQ3Iso').innerText = `Referência Catálogo: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
+        
+        document.getElementById('rmQ3').style.color = '#1E1E1E'; 
         document.getElementById('rmSpeed').innerText = r.vAtPmin.toFixed(1) + ' - ' + r.vAtPmax.toFixed(1) + ' km/h';
 
         const targetRate = document.getElementById('numRate').value;

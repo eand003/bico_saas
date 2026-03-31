@@ -144,12 +144,13 @@
     }
 
     .header-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
+      height: 48px;
+      width: auto;
+      max-width: 160px;
+      border-radius: 8px;
       background: transparent;
-      object-fit: cover;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      object-fit: contain;
+      box-shadow: none; /* Removido sombra para logos com fundo transparente ficarem limpos */
     }
 
     .header h1 {
@@ -2176,7 +2177,8 @@
       const logos = document.querySelectorAll('.header-icon, .login-box img');
       logos.forEach(img => {
         img.src = logo;
-        img.onerror = () => { img.src = './logo.png'; }; // Fallback
+        img.style.objectFit = 'contain'; // Garante que não corte no login também
+        img.onerror = () => { img.src = './logo.png'; }; 
       });
 
       // 3. Atualizar Título no Cabeçalho

@@ -3,212 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurador de Parceiro - Spray Precision</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Configurador PRO - Spray Precision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --primary: #0f172a;
-            --accent: #00d2ff;
-        }
-
-        body { font-family: 'Inter', sans-serif; background: #e2e8f0; color: #1e293b; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .setup-card { background: white; width: 100%; max-width: 500px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-top: 40px; }
-        h1 { font-family: 'Outfit'; font-size: 28px; text-align: center; margin-bottom: 30px; color: var(--primary); }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        input { width: 100%; padding: 12px; border: 2px solid #f1f5f9; border-radius: 10px; font-size: 15px; box-sizing: border-box; transition: 0.2s; }
-        input:focus { border-color: var(--accent); outline: none; background: #f8fafc; }
-        .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .status { text-align: center; margin-top: 20px; font-size: 14px; padding: 10px; border-radius: 8px; display: none; }
-        .status.success { background: #dcfce7; color: #166534; display: block; }
-        .status.error { background: #fee2e2; color: #991b1b; display: block; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; width: 100%; max-width: 450px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { font-family: 'Outfit'; text-align: center; color: #0f172a; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+        label { font-size: 12px; font-weight: 700; color: #64748b; display: block; margin-bottom: 5px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background: #0f172a; color: white; }
+        .btn-accent { background: #00d2ff; color: white; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="setup-card">
-        <h1 style="margin-bottom:10px;">Painel de Identidade</h1>
-        <p style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 30px;">Personalize o estilo da sua revenda.</p>
+    <div class="card">
+        <h1>Painel Admin v2.0</h1>
         
-        <!-- TELA DE LOGIN (Só aparece se deslogado) -->
-        <div id="loginArea" style="display:none; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; background: #f8fafc; margin-bottom: 20px;">
-            <p style="font-size:12px; font-weight:700; text-align:center; margin-bottom:15px; color:#1e293b;">🔒 LOGIN ADMINISTRATIVO</p>
-            <input type="email" id="loginEmail" placeholder="E-mail" style="margin-bottom:8px;">
-            <input type="password" id="loginPass" placeholder="Senha" style="margin-bottom:12px;">
-            <button onclick="handleLogin()" style="background:#0f172a; color:white; width:100%; border:none; padding:12px; border-radius:10px; cursor:pointer; font-weight:800; font-size:14px;">Acessar Configurações</button>
+        <!-- LOGIN (Sempre visível se não houver usuário) -->
+        <div id="loginSection">
+            <p style="text-align:center; font-size:13px; color:#64748b; margin-bottom:20px;">🔒 Identifique-se para configurar bicos.</p>
+            <input type="email" id="email" placeholder="Seu e-mail">
+            <input type="password" id="pass" placeholder="Sua senha">
+            <button class="btn btn-primary" onclick="login()">Entrar no Painel</button>
         </div>
 
-        <div id="authStatus" style="text-align: center; margin-bottom: 20px; font-size: 14px; font-weight: 600; color: #64748b;">
-            Verificando conexão...
-        </div>
+        <!-- CONFIGURAÇÃO (Oculta por padrão) -->
+        <div id="configSection" style="display:none;">
+            <p id="userEmail" style="text-align:center; font-weight:700; color:green; margin-bottom:20px;"></p>
+            
+            <label>Nome da Loja</label>
+            <input type="text" id="p_name">
+            
+            <label>Cor (Ex: #ff0000 para vermelho)</label>
+            <input type="text" id="p_color" placeholder="#00d2ff">
+            
+            <label>Link do Logo (Imagem PNG)</label>
+            <input type="text" id="p_logo">
+            
+            <label>WhatsApp da Loja</label>
+            <input type="text" id="p_wa">
 
-        <div id="configArea" style="display:none;">
-            <form id="configForm">
-                <div class="form-group">
-                    <label>Nome da Revenda / Loja</label>
-                    <input type="text" id="partner_name" placeholder="Ex: AgroLoja Mato Grosso" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Cor da Marca</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="color" id="partner_color_picker" value="#00d2ff" style="width: 60px; height: 50px; padding: 5px; cursor: pointer;">
-                        <input type="text" id="partner_color" placeholder="#00d2ff" style="flex:1;">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>URL do Logo (PNG Transparente)</label>
-                    <input type="url" id="partner_logo" placeholder="https://imgur.com/seulogo.png" required>
-                </div>
-
-                <div class="form-group">
-                    <label>WhatsApp de Vendas</label>
-                    <input type="tel" id="partner_whatsapp" placeholder="5565999998888" required>
-                </div>
-
-                <button type="submit" class="btn-save" id="btnSave">💾 Salvar Identidade Visual</button>
-                <button type="button" onclick="checkSession(true)" style="background:none; border:1px solid #ccc; width:100%; margin-top:15px; padding:10px; border-radius:10px; cursor:pointer; font-size:12px; font-weight:600; color:#475569;">🔍 Conferir Dados no Banco</button>
-            </form>
-        </div>
-
-        <div id="statusMsg" class="status"></div>
-        
-        <div style="text-align: center; margin-top: 40px; border-top:1px solid #eee; padding-top:20px;">
-            <a href="./enterprise/index.html" style="color: #0f172a; font-size: 13px; text-decoration: none; font-weight: 700; display:block; margin-bottom:15px;">&larr; Abrir App Enterprise</a>
-            <button onclick="logout()" style="background:none; border:none; font-size:12px; color:#ef4444; border-bottom: 2px solid #fee2e2; cursor:pointer; font-weight:700;">SAIR / LOGOUT</button>
+            <button class="btn btn-accent" id="btnSave" onclick="save()">💾 Salvar Tudo</button>
+            <button onclick="logout()" style="width:100%; margin-top:20px; background:none; border:none; color:red; cursor:pointer; font-size:12px;">Desconectar / Sair</button>
         </div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
-        
-        const statusMsg = document.getElementById('statusMsg');
-        const authStatus = document.getElementById('authStatus');
-        let supabase;
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Inicialização Segura
-        function init() {
-            if (typeof window.supabase === 'undefined') {
-                authStatus.innerText = "❌ Erro: Biblioteca Supabase não carregou.";
-                authStatus.style.color = "#ef4444";
-                return;
-            }
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            // Timeout de segurança: Se travar no "Verificando", abre o login em 3 segundos
-            setTimeout(() => {
-                if (authStatus.innerText === "Verificando perfil...") {
-                    console.warn("Timeout de conexão. Mostrando login manual.");
-                    showManuelLogin();
+        async function check() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('configSection').style.display = 'block';
+                document.getElementById('userEmail').innerText = "Logado: " + user.email;
+                
+                if (user.user_metadata) {
+                    const m = user.user_metadata;
+                    document.getElementById('p_name').value = m.partner_name || '';
+                    document.getElementById('p_color').value = m.partner_color || '';
+                    document.getElementById('p_logo').value = m.partner_logo || '';
+                    document.getElementById('p_wa').value = m.partner_whatsapp || '';
                 }
-            }, 3000);
-
-            checkSession();
-        }
-
-        function showManuelLogin() {
-            document.getElementById('loginArea').style.display = 'block';
-            document.getElementById('configArea').style.display = 'none';
-            authStatus.innerText = "Conexão lenta. Por favor, logue abaixo:";
-            authStatus.style.color = "#64748b";
-        }
-
-        // Sincronizar Picker com Input de texto
-        document.getElementById('partner_color_picker').addEventListener('input', (e) => {
-            document.getElementById('partner_color').value = e.target.value;
-        });
-
-        // Login Manual
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPass').value;
-            if (!email || !pass) return alert("Por favor, preencha o e-mail e a senha.");
-
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-                if (error) throw error;
-                checkSession();
-            } catch (err) {
-                alert("Erro ao entrar: " + err.message);
+            } else {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('configSection').style.display = 'none';
             }
+        }
+
+        async function login() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('pass').value;
+            const { error } = await supabase.auth.signInWithPassword({ email: e, password: p });
+            if (error) alert("Erro: " + error.message);
+            else check();
         }
 
         async function logout() {
-            if (confirm("Deseja realmente sair?")) {
-                await supabase.auth.signOut();
-                location.reload();
-            }
+            await supabase.auth.signOut();
+            location.reload();
         }
 
-        // Checar Sessão
-        async function checkSession(showAlert = false) {
-            authStatus.innerText = "Verificando perfil...";
-            try {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                
-                if (user) {
-                    document.getElementById('loginArea').style.display = 'none';
-                    document.getElementById('configArea').style.display = 'block';
-                    authStatus.innerText = `ID Online: ${user.email}`;
-                    authStatus.style.color = "#166534";
-                    
-                    if (user.user_metadata) {
-                        const meta = user.user_metadata;
-                        document.getElementById('partner_name').value = meta.partner_name || '';
-                        document.getElementById('partner_color').value = meta.partner_color || '#00d2ff';
-                        document.getElementById('partner_color_picker').value = meta.partner_color || '#00d2ff';
-                        document.getElementById('partner_logo').value = meta.partner_logo || '';
-                        document.getElementById('partner_whatsapp').value = meta.partner_whatsapp || '';
-                        if (showAlert) alert("DADOS SALVOS NO BANCO:\n" + JSON.stringify(meta, null, 2));
-                    }
-                } else {
-                    showManuelLogin();
-                }
-            } catch (err) {
-                console.error("Erro na sessão:", err);
-                showManuelLogin();
-            }
-        }
-
-        const configForm = document.getElementById('configForm');
-        configForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        async function save() {
             const btn = document.getElementById('btnSave');
-            btn.innerText = "Gravando no Banco...";
-            btn.disabled = true;
+            btn.innerText = "Gravando..."; btn.disabled = true;
 
             const config = {
-                partner_name: document.getElementById('partner_name').value,
-                partner_color: document.getElementById('partner_color').value,
-                partner_logo: document.getElementById('partner_logo').value,
-                partner_whatsapp: document.getElementById('partner_whatsapp').value,
-                is_enterprise: true 
+                partner_name: document.getElementById('p_name').value,
+                partner_color: document.getElementById('p_color').value,
+                partner_logo: document.getElementById('p_logo').value,
+                partner_whatsapp: document.getElementById('p_wa').value,
+                is_enterprise: true
             };
 
-            try {
-                const { data, error } = await supabase.auth.updateUser({ data: config });
-                if (error) throw error;
+            const { error } = await supabase.auth.updateUser({ data: config });
+            if (error) alert("Erro ao salvar: " + error.message);
+            else alert("SUCESSO! Dados salvos no banco.");
+            
+            btn.innerText = "💾 Salvar Tudo"; btn.disabled = false;
+        }
 
-                statusMsg.innerText = "✅ SUCESSO! Estilo salvo.";
-                statusMsg.className = "status success";
-                alert("PARABÉNS! As configurações foram salvas.");
-                
-            } catch (err) {
-                alert("Erro ao salvar: " + err.message);
-                statusMsg.innerText = "❌ ERRO: " + err.message;
-                statusMsg.className = "status error";
-            } finally {
-                btn.innerText = "💾 Salvar Identidade Visual";
-                btn.disabled = false;
-            }
-        });
-
-        // Carregamento Inicial
-        window.addEventListener('load', init);
+        check();
     </script>
 </body>
 </html>

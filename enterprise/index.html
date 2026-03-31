@@ -1565,7 +1565,7 @@
             <span class="status-badge ${statusClass}" onclick="explainStatus('${r.statusText}', ${r.pressures[0]}, ${r.pressures[2]})" style="cursor: pointer; position: relative;">
                ${r.statusText} ⓘ
             </span>
-            <a href="https://wa.me/5565999106415?text=Olá! O sistema Spray Precision PRO me recomendou o bico ISO ${r.nz.iso}. Quero fazer um orçamento!" 
+            <a href="https://wa.me/${window.partnerWhatsApp || '5565999106415'}?text=Olá! O sistema ${window.partnerName || 'Spray Precision PRO'} me recomendou o bico ISO ${r.nz.iso}. Quero fazer um orçamento!" 
                target="_blank" 
                style="background: #25D366; color: white; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: all 0.2s ease;">
                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1626,8 +1626,8 @@
           rmStatusText.style.background = 'transparent';
         }
 
-        const msg = encodeURIComponent(`Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
-        document.getElementById('rmWhatsapp').href = `https://wa.me/5565999106415?text=${msg}`;
+        const msg = encodeURIComponent(`Olá! O sistema ${window.partnerName || 'Spray Precision PRO'} sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
+        document.getElementById('rmWhatsapp').href = `https://wa.me/${window.partnerWhatsApp || '5565999106415'}?text=${msg}`;
 
         modal.style.display = 'flex';
       }
@@ -2081,13 +2081,17 @@
         subTitle.innerText = `Simulador Oficial - ${name}`;
       }
 
-      // 5. Configurar Botões de WhatsApp Dinamicamente
+      // 5. Configurar Botões de WhatsApp Dinamicamente (Globais e Estáticos)
+      window.partnerWhatsApp = whatsapp;
+      window.partnerName = name;
+
       const allWaLinks = document.querySelectorAll('a[href*="wa.me"]');
       allWaLinks.forEach(link => {
         try {
           const url = new URL(link.href);
           const originalText = url.searchParams.get('text') || 'Olá!';
-          link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(originalText)}`;
+          const cleanText = originalText.replace('Spray Precision PRO', name);
+          link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(cleanText)}`;
         } catch(e) {}
       });
 

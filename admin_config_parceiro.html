@@ -3,112 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurador PRO - Spray Precision</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>SaaS Control v3.0</title>
+    <!-- Tentando outro servidor da biblioteca Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f1f5f9; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; width: 100%; max-width: 450px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h1 { font-family: 'Outfit'; text-align: center; color: #0f172a; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
-        label { font-size: 12px; font-weight: 700; color: #64748b; display: block; margin-bottom: 5px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .btn-primary { background: #0f172a; color: white; }
-        .btn-accent { background: #00d2ff; color: white; margin-top: 10px; }
+        body { font-family: sans-serif; background: #eef2f6; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { text-align: center; font-size: 22px; color: #1e293b; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #0f172a; color: white; }
+        #status { text-align: center; font-size: 13px; margin: 10px 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>Painel Admin v2.0</h1>
-        
-        <!-- LOGIN (Sempre visível se não houver usuário) -->
-        <div id="loginSection">
-            <p style="text-align:center; font-size:13px; color:#64748b; margin-bottom:20px;">🔒 Identifique-se para configurar bicos.</p>
+        <h1>Painel de Gestão v3</h1>
+        <div id="status" style="color: blue;">🚀 Inicializando...</div>
+
+        <!-- AREA DE LOGIN -->
+        <div id="loginForm">
             <input type="email" id="email" placeholder="Seu e-mail">
             <input type="password" id="pass" placeholder="Sua senha">
-            <button class="btn btn-primary" onclick="login()">Entrar no Painel</button>
+            <button class="btn" id="btnLogin" onclick="doLogin()">ENTRAR NO PAINEL</button>
         </div>
 
-        <!-- CONFIGURAÇÃO (Oculta por padrão) -->
-        <div id="configSection" style="display:none;">
-            <p id="userEmail" style="text-align:center; font-weight:700; color:green; margin-bottom:20px;"></p>
-            
-            <label>Nome da Loja</label>
+        <!-- AREA DE CONFIG -->
+        <div id="configForm" style="display:none;">
+            <p id="userLogged" style="color: green; text-align: center; font-weight: bold;"></p>
+            <hr>
+            <label>Nome da Revenda:</label>
             <input type="text" id="p_name">
-            
-            <label>Cor (Ex: #ff0000 para vermelho)</label>
+            <label>Cor (Hex):</label>
             <input type="text" id="p_color" placeholder="#00d2ff">
-            
-            <label>Link do Logo (Imagem PNG)</label>
+            <label>Logo (URL):</label>
             <input type="text" id="p_logo">
-            
-            <label>WhatsApp da Loja</label>
+            <label>WhatsApp:</label>
             <input type="text" id="p_wa">
-
-            <button class="btn btn-accent" id="btnSave" onclick="save()">💾 Salvar Tudo</button>
-            <button onclick="logout()" style="width:100%; margin-top:20px; background:none; border:none; color:red; cursor:pointer; font-size:12px;">Desconectar / Sair</button>
+            <button class="btn" style="background: #10b981;" onclick="doSave()">SALVAR TUDO</button>
+            <button onclick="doLogout()" style="width: 100%; margin-top: 15px; background: transparent; border: none; color: red; cursor: pointer;">SAIR</button>
         </div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let supabase;
 
-        async function check() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('configSection').style.display = 'block';
-                document.getElementById('userEmail').innerText = "Logado: " + user.email;
-                
-                if (user.user_metadata) {
-                    const m = user.user_metadata;
-                    document.getElementById('p_name').value = m.partner_name || '';
-                    document.getElementById('p_color').value = m.partner_color || '';
-                    document.getElementById('p_logo').value = m.partner_logo || '';
-                    document.getElementById('p_wa').value = m.partner_whatsapp || '';
+        async function start() {
+            try {
+                // TESTE DE CARREGAMENTO
+                if (typeof window.supabase === 'undefined') {
+                    document.getElementById('status').innerText = "❌ ERRO: BIBLIOTECA BLOQUEADA PELO NAVEGADOR!";
+                    document.getElementById('status').style.color = "red";
+                    alert("ALERTA: Seu navegador ou rede está bloqueando o Supabase. Tente aba anônima ou outro navegador.");
+                    return;
                 }
-            } else {
-                document.getElementById('loginSection').style.display = 'block';
-                document.getElementById('configSection').style.display = 'none';
+
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                document.getElementById('status').innerText = "✅ Conexão Estabelecida";
+                document.getElementById('status').style.color = "green";
+
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    showConfig(user);
+                } else {
+                    document.getElementById('status').innerText = "🔒 Por favor, faça login:";
+                    document.getElementById('status').style.color = "orange";
+                }
+            } catch (e) {
+                alert("Erro ao iniciar: " + e.message);
             }
         }
 
-        async function login() {
+        async function doLogin() {
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
-            const { error } = await supabase.auth.signInWithPassword({ email: e, password: p });
-            if (error) alert("Erro: " + error.message);
-            else check();
+            if (!e || !p) return alert("Preencha e-mail e senha.");
+
+            document.getElementById('btnLogin').innerText = "CONECTANDO...";
+            const { data, error } = await supabase.auth.signInWithPassword({ email: e, password: p });
+            
+            if (error) {
+                alert("ERRO: " + error.message);
+                document.getElementById('btnLogin').innerText = "ENTRAR NO PAINEL";
+            } else {
+                showConfig(data.user);
+            }
         }
 
-        async function logout() {
-            await supabase.auth.signOut();
-            location.reload();
+        function showConfig(user) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('configForm').style.display = 'block';
+            document.getElementById('status').innerText = "🟢 Modo Administrador";
+            document.getElementById('userLogged').innerText = "Logado: " + user.email;
+
+            if (user.user_metadata) {
+                const m = user.user_metadata;
+                document.getElementById('p_name').value = m.partner_name || '';
+                document.getElementById('p_color').value = m.partner_color || '';
+                document.getElementById('p_logo').value = m.partner_logo || '';
+                document.getElementById('p_wa').value = m.partner_whatsapp || '';
+            }
         }
 
-        async function save() {
-            const btn = document.getElementById('btnSave');
-            btn.innerText = "Gravando..."; btn.disabled = true;
-
-            const config = {
+        async function doSave() {
+            const m = {
                 partner_name: document.getElementById('p_name').value,
                 partner_color: document.getElementById('p_color').value,
                 partner_logo: document.getElementById('p_logo').value,
                 partner_whatsapp: document.getElementById('p_wa').value,
                 is_enterprise: true
             };
-
-            const { error } = await supabase.auth.updateUser({ data: config });
+            const { error } = await supabase.auth.updateUser({ data: m });
             if (error) alert("Erro ao salvar: " + error.message);
-            else alert("SUCESSO! Dados salvos no banco.");
-            
-            btn.innerText = "💾 Salvar Tudo"; btn.disabled = false;
+            else alert("DADOS SALVOS COM SUCESSO!");
         }
 
-        check();
+        async function doLogout() {
+            await supabase.auth.signOut();
+            location.reload();
+        }
+
+        start();
     </script>
 </body>
 </html>

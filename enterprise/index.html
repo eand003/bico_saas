@@ -1481,7 +1481,7 @@
           const msgDiv = document.createElement('div');
           msgDiv.style.cssText = "grid-column: 1/-1; padding: 12px 16px; background: var(--control-bg); border-left: 3px solid #FFC107; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; margin-top: 4px;";
           msgDiv.innerHTML = `
-            <span style="color: var(--text-main); font-size: 14px; font-weight: 600;">⚠️ Atenção Ténica</span>
+            <span style="color: var(--text-main); font-size: 14px; font-weight: 600;">⚠️ Atenção Técnica</span>
             <p style="color: var(--text-muted); font-size: 13px; line-height: 1.4; margin:0;">Nenhum bico atende plenamente aos limites de pressão informados. A ponta listada acima é a opção matematicamente mais próxima de operar com segurança no seu cenário.</p>
         `;
           container.appendChild(msgDiv);
@@ -1754,7 +1754,7 @@
               <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 Recomendação Principal</h3>
               <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
               <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
-                Para este cenário, o bico indicado deve entregar uma vazão de <b>${window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--'} L/min</b> (jaragem) operando com uma pressão média de <b>${window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--'} ${simulationData.unit}</b> na velocidade nominal.
+                Para este cenário, o bico indicado deve entregar uma vazão de <b>${window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--'} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--'} ${simulationData.unit}</b> na velocidade nominal.
               </p>
             </div>
 
@@ -2199,7 +2199,6 @@
   opacity: 0.6;
   letter-spacing: 0.5px;
 ">
-  Made by
   <span style="color: var(--accent); font-weight: 600;">Eduardo Andrade</span>
 </div>
 
@@ -2209,12 +2208,19 @@
 <style>
   /* Estilos específicos para Impressão Profissional (Laudo Técnico) */
   @media print {
+    @page { 
+      size: auto;   /* auto is the initial value */
+      margin: 15mm; /* margem limpa para o laudo */
+    }
+
     body { background: white !important; padding: 0 !important; color: black !important; }
     
-    /* Esconde toda a interface do Aplicativo */
+    /* Esconde toda a interface do Aplicativo e rodapés */
     #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 
-    .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal {
+    .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal,
+    div[style*="text-align: center; margin-top: 40px"] {
       display: none !important;
+      visibility: hidden !important;
     }
     
     /* Ativa e Formata apenas o Laudo */

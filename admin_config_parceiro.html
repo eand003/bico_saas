@@ -61,13 +61,14 @@
                 <input type="tel" id="partner_whatsapp" placeholder="5565999998888" required>
             </div>
 
-            <button type="submit" class="btn-save" id="btnSave">Salvar Configuração</button>
+            <button type="submit" class="btn-save" id="btnSave">💾 Salvar Configurações</button>
+            <button type="button" onclick="checkSession(true)" style="background:none; border:1px solid #ccc; width:100%; margin-top:10px; padding:8px; border-radius:8px; cursor:pointer; font-size:11px;">🔍 Verificar Dados no Banco</button>
         </form>
 
         <div id="statusMsg" class="status"></div>
         
         <div style="text-align: center; margin-top: 30px;">
-            <a href="./enterprise/index.html" style="color: #64748b; font-size: 12px; text-decoration: none; font-weight: 700;">&larr; Voltar para o App</a>
+            <a href="./enterprise/index.html" style="color: #64748b; font-size: 12px; text-decoration: none; font-weight: 700;">&larr; Abrir App Enterprise</a>
         </div>
     </div>
 
@@ -86,14 +87,12 @@
         });
 
         // Checar Sessão ao abrir
-        async function checkSession() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (session) {
-                const user = session.user;
-                authStatus.innerText = `Editando perfil de: ${user.email}`;
+        async function checkSession(showAlert = false) {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (user) {
+                authStatus.innerText = `Logado como: ${user.email}`;
                 authStatus.style.color = "#166534";
                 
-                // Carregar dados atuais se existirem
                 if (user.user_metadata) {
                     const meta = user.user_metadata;
                     document.getElementById('partner_name').value = meta.partner_name || '';
@@ -101,18 +100,21 @@
                     document.getElementById('partner_color_picker').value = meta.partner_color || '#00d2ff';
                     document.getElementById('partner_logo').value = meta.partner_logo || '';
                     document.getElementById('partner_whatsapp').value = meta.partner_whatsapp || '';
+                    
+                    if (showAlert) {
+                        alert("Dados Atuais no Banco:\n" + JSON.stringify(meta, null, 2));
+                    }
                 }
             } else {
-                authStatus.innerText = "ATENÇÃO: Você não está logado. Faça login no App primeiro!";
-                document.getElementById('btnSave').disabled = true;
-                document.getElementById('btnSave').style.opacity = "0.5";
+                authStatus.innerText = "❌ ERRO: Você não está logado!";
+                if (showAlert) alert("Você precisa fazer login no App antes de configurar.");
             }
         }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            btn.innerText = "Salvando no Backend...";
+            btn.innerText = "Salvando...";
             btn.disabled = true;
 
             const config = {
@@ -120,24 +122,29 @@
                 partner_color: document.getElementById('partner_color').value,
                 partner_logo: document.getElementById('partner_logo').value,
                 partner_whatsapp: document.getElementById('partner_whatsapp').value,
-                is_enterprise: true // Flag para identificar parceiros
+                is_enterprise: true 
             };
 
             try {
+                // Tenta atualizar o usuário logado
                 const { data, error } = await supabase.auth.updateUser({
                     data: config
                 });
 
                 if (error) throw error;
 
-                statusMsg.innerText = "Configurações salvas com sucesso! O App já está atualizado.";
+                console.log("Sucesso ao salvar metadata:", data);
+                statusMsg.innerText = "✅ SUCESSO! Configurações aplicadas no Supabase.";
                 statusMsg.className = "status success";
+                alert("PARABÉNS! Dados salvos com sucesso. Agora pode abrir o Enterprise.");
                 
             } catch (err) {
-                statusMsg.innerText = "Erro ao salvar: " + err.message;
+                console.error("Erro no update:", err);
+                statusMsg.innerText = "❌ ERRO AO SALVAR: " + err.message;
                 statusMsg.className = "status error";
+                alert("Erro ao salvar dados: " + err.message);
             } finally {
-                btn.innerText = "Salvar Configuração";
+                btn.innerText = "💾 Salvar Configurações";
                 btn.disabled = false;
             }
         });

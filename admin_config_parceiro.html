@@ -3,108 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Control v3.0</title>
-    <!-- Tentando outro servidor da biblioteca Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <title>SaaS Master Tool</title>
     <style>
-        body { font-family: sans-serif; background: #eef2f6; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { text-align: center; font-size: 22px; color: #1e293b; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #0f172a; color: white; }
-        #status { text-align: center; font-size: 13px; margin: 10px 0; font-weight: bold; }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f1f5f9; }
+        .box { background: white; max-width: 400px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        input { width: 90%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; }
+        .btn { width: 90%; padding: 14px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        #status { font-size: 11px; margin-bottom: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>Painel de Gestão v3</h1>
-        <div id="status" style="color: blue;">🚀 Inicializando...</div>
+    <div class="box">
+        <h2>Gestor de Revenda</h2>
+        <div id="status" style="color: grey;">Estado: Carregando...</div>
 
-        <!-- AREA DE LOGIN -->
-        <div id="loginForm">
+        <!-- AREA LOGIN -->
+        <div id="loginArea">
             <input type="email" id="email" placeholder="Seu e-mail">
             <input type="password" id="pass" placeholder="Sua senha">
-            <button class="btn" id="btnLogin" onclick="doLogin()">ENTRAR NO PAINEL</button>
+            <button class="btn" onclick="doLogin()">Acessar Painel</button>
+            <p style="font-size: 10px; color: #666; margin-top: 10px;">Clique acima para entrar</p>
         </div>
 
-        <!-- AREA DE CONFIG -->
-        <div id="configForm" style="display:none;">
-            <p id="userLogged" style="color: green; text-align: center; font-weight: bold;"></p>
-            <hr>
-            <label>Nome da Revenda:</label>
-            <input type="text" id="p_name">
-            <label>Cor (Hex):</label>
-            <input type="text" id="p_color" placeholder="#00d2ff">
-            <label>Logo (URL):</label>
-            <input type="text" id="p_logo">
-            <label>WhatsApp:</label>
-            <input type="text" id="p_wa">
-            <button class="btn" style="background: #10b981;" onclick="doSave()">SALVAR TUDO</button>
-            <button onclick="doLogout()" style="width: 100%; margin-top: 15px; background: transparent; border: none; color: red; cursor: pointer;">SAIR</button>
+        <!-- AREA CONFIG -->
+        <div id="configArea" style="display:none;">
+            <p style="color: green; font-weight: bold;">✅ Autenticado</p>
+            <input type="text" id="p_name" placeholder="Nome da Loja">
+            <input type="text" id="p_color" placeholder="Cor (ex: #00ff00)">
+            <input type="text" id="p_logo" placeholder="URL do Logo">
+            <input type="text" id="p_wa" placeholder="WhatsApp">
+            <button class="btn" style="background: #16a34a;" onclick="doSave()">SALVAR TUDO</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer; font-size:11px; margin-top:15px; font-weight:bold;">SAIR / DESCONECTAR</button>
         </div>
+
+        <button onclick="forceStart()" style="background: #e2e8f0; border: none; padding: 5px 10px; margin-top: 20px; border-radius: 4px; font-size: 10px; cursor: pointer; color: #475569;">CLIQUE AQUI SE NÃO CARREGAR</button>
     </div>
 
+    <!-- Script no final para não travar o visual -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
-        
         let supabase;
 
-        async function start() {
-            try {
-                // TESTE DE CARREGAMENTO
-                if (typeof window.supabase === 'undefined') {
-                    document.getElementById('status').innerText = "❌ ERRO: BIBLIOTECA BLOQUEADA PELO NAVEGADOR!";
-                    document.getElementById('status').style.color = "red";
-                    alert("ALERTA: Seu navegador ou rede está bloqueando o Supabase. Tente aba anônima ou outro navegador.");
-                    return;
-                }
-
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                document.getElementById('status').innerText = "✅ Conexão Estabelecida";
-                document.getElementById('status').style.color = "green";
-
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    showConfig(user);
-                } else {
-                    document.getElementById('status').innerText = "🔒 Por favor, faça login:";
-                    document.getElementById('status').style.color = "orange";
-                }
-            } catch (e) {
-                alert("Erro ao iniciar: " + e.message);
+        function forceStart() {
+            if (typeof window.supabase === 'undefined') {
+                alert("O Supabase ainda não carregou. Verifique sua internet ou tente aba anônima.");
+                return;
             }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            document.getElementById('status').innerText = "Estado: Pronto (Forçado)";
+            document.getElementById('status').style.color = "blue";
         }
 
         async function doLogin() {
+            if (!supabase) forceStart();
+            if (!supabase) return;
+
             const e = document.getElementById('email').value;
             const p = document.getElementById('pass').value;
-            if (!e || !p) return alert("Preencha e-mail e senha.");
+            if (!e || !p) return alert("Preencha tudo.");
 
-            document.getElementById('btnLogin').innerText = "CONECTANDO...";
+            document.getElementById('status').innerText = "Estado: Autenticando...";
             const { data, error } = await supabase.auth.signInWithPassword({ email: e, password: p });
             
             if (error) {
-                alert("ERRO: " + error.message);
-                document.getElementById('btnLogin').innerText = "ENTRAR NO PAINEL";
+                alert("Erro: " + error.message);
+                document.getElementById('status').innerText = "Estado: Erro no Login";
             } else {
-                showConfig(data.user);
-            }
-        }
-
-        function showConfig(user) {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('configForm').style.display = 'block';
-            document.getElementById('status').innerText = "🟢 Modo Administrador";
-            document.getElementById('userLogged').innerText = "Logado: " + user.email;
-
-            if (user.user_metadata) {
-                const m = user.user_metadata;
-                document.getElementById('p_name').value = m.partner_name || '';
-                document.getElementById('p_color').value = m.partner_color || '';
-                document.getElementById('p_logo').value = m.partner_logo || '';
-                document.getElementById('p_wa').value = m.partner_whatsapp || '';
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('configArea').style.display = 'block';
+                document.getElementById('status').innerText = "Estado: Administrador Ativo";
+                
+                const meta = data.user.user_metadata || {};
+                document.getElementById('p_name').value = meta.partner_name || '';
+                document.getElementById('p_color').value = meta.partner_color || '';
+                document.getElementById('p_logo').value = meta.partner_logo || '';
+                document.getElementById('p_wa').value = meta.partner_whatsapp || '';
             }
         }
 
@@ -118,15 +94,11 @@
             };
             const { error } = await supabase.auth.updateUser({ data: m });
             if (error) alert("Erro ao salvar: " + error.message);
-            else alert("DADOS SALVOS COM SUCESSO!");
+            else alert("✅ SUCESSO! DADOS GRAVADOS NO BANCO.");
         }
 
-        async function doLogout() {
-            await supabase.auth.signOut();
-            location.reload();
-        }
-
-        start();
+        // Tenta iniciar após 1 segundo
+        setTimeout(forceStart, 1000);
     </script>
 </body>
 </html>

@@ -1770,15 +1770,35 @@
           </div>
         `;
 
-        // Clonar a tabela original para o relatório
+        // Clonar a tabela original e Filtrar apenas bicos com algum parâmetro verde
         const originalTable = document.getElementById('dataTable').cloneNode(true);
         originalTable.style.width = '100%';
         originalTable.style.borderCollapse = 'collapse';
         originalTable.style.fontSize = '12px';
-        originalTable.querySelectorAll('th, td').forEach(cell => {
-          cell.style.border = '1px solid #eee';
-          cell.style.padding = '8px';
+        
+        // Filtrar Linhas: Remover quem não tem nada verde
+        const rowsToFilter = originalTable.querySelectorAll('tbody tr');
+        rowsToFilter.forEach(tr => {
+          const hasGreen = tr.innerHTML.indexOf('var(--accent-green)') !== -1;
+          if (!hasGreen) {
+            tr.remove(); 
+          } else {
+            // Se for mantida, aplica o estilo de borda
+            tr.querySelectorAll('td').forEach(cell => {
+              cell.style.border = '1px solid #eee';
+              cell.style.padding = '8px';
+            });
+          }
         });
+
+        // Aplicar estilo nos headers (th)
+        originalTable.querySelectorAll('th').forEach(th => {
+          th.style.border = '1px solid #eee';
+          th.style.padding = '10px';
+          th.style.background = '#f8fafc';
+          th.style.color = '#64748b';
+        });
+
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
         // Disparar Impressão

@@ -3,75 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Master Configurator</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <title>Rescue Dashboard v5 - Spray Precision</title>
+    <!-- MUDANÇA DE SERVIDOR: Cloudflare (Mais estável e fura bloqueios) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.7/supabase.min.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #eef2f6; padding: 20px; }
-        .box { background: white; max-width: 400px; margin: auto; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; background: #0f172a; color: white; }
+        body { font-family: sans-serif; background: #f8fafc; padding: 20px; text-align: center; }
+        .box { background: white; max-width: 420px; margin: auto; padding: 35px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 2px solid #e2e8f0; }
+        h1 { color: #0f172a; margin-bottom: 25px; font-size: 24px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; background: #0f172a; color: white; margin-top: 15px; }
+        #log { font-size: 11px; margin-top: 20px; font-weight: 700; color: #64748b; padding: 10px; background: #f1f5f9; border-radius: 8px; }
     </style>
 </head>
 <body>
 
     <div class="box">
-        <h2 id="title">🔐 Área do Parceiro</h2>
-        <div id="status" style="font-size:12px; color: grey;">Status: Inicializando...</div>
+        <h1>🚀 Painel de Segurança v5</h1>
+        <div id="log">Aguardando motor...</div>
 
-        <!-- LOGIN -->
-        <div id="loginArea">
-            <input type="email" id="email" placeholder="Seu e-mail">
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+            <input type="email" id="email" placeholder="Seu e-mail cadastrado">
             <input type="password" id="pass" placeholder="Sua senha">
-            <button class="btn" onclick="doLogin()">ACESSAR PAINEL</button>
+            <button class="btn" onclick="doAction('login')">🔓 ACESSAR PAINEL</button>
         </div>
 
-        <!-- CONFIG -->
-        <div id="configArea" style="display:none;">
-            <p style="color: green; font-weight: 700;">✅ Logado como Administrador</p>
-            <input type="text" id="p_name" placeholder="Nome da Revenda">
-            <input type="text" id="p_color" placeholder="Cor Hex (ex: #ffaa00)">
+        <!-- CONFIG FORM -->
+        <div id="configForm" style="display:none;">
+            <p style="color: #16a34a; font-weight: 800; margin-bottom: 20px;">🛡️ MODO CONFIGURAÇÃO ATIVO</p>
+            <input type="text" id="p_name" placeholder="Nome da Loja">
+            <input type="text" id="p_color" placeholder="Cor (Ex: #ff0000)">
             <input type="text" id="p_logo" placeholder="URL do Logo">
-            <input type="text" id="p_wa" placeholder="WhatsApp Vendedor">
-            <button class="btn" style="background:#16a34a;" onclick="doSave()">SALVAR TODAS AS MUDANÇAS</button>
-            <button onclick="location.reload()" style="background:none; border:none; color:red; cursor:pointer; font-size:11px; margin-top:20px; text-decoration: underline;">Desconectar / Sair</button>
+            <input type="text" id="p_wa" placeholder="WhatsApp">
+            <button class="btn" style="background:#10b981;" onclick="doAction('save')">💾 GRAVAR NO SUPABASE</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:#ef4444; font-size:12px; margin-top:20px; font-weight:700; cursor:pointer;">SAIR DO PAINEL</button>
+        </div>
+
+        <!-- BOTÃO DE EMERGÊNCIA (Aparece se falhar) -->
+        <div id="panicBtn" style="display:none; margin-top:20px;">
+            <p style="color:red; font-size:12px;">O motor não carregou. Clique abaixo se estiver no celular.</p>
+            <button onclick="checkEngine(true)" style="padding:10px; background:red; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">FORÇAR MOTOR MANUAMENTE</button>
         </div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
-        let supabase;
+        
+        let engine;
+        const logger = document.getElementById('log');
 
-        // Função de Inicialização (Forçável)
-        function getSupabase() {
-            if (supabase) return supabase;
-            if (typeof window.supabase === 'undefined') {
-                alert("ERRO: A biblioteca principal não carregou. Tente abrir em outro navegador (Edge ou Firefox) ou use aba anônima.");
-                return null;
+        function checkEngine(force = false) {
+            if (typeof window.supabase !== 'undefined') {
+                engine = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                logger.innerText = "🔋 MOTOR LIGADO: Pronto para agir.";
+                logger.style.color = "blue";
+                return true;
+            } else {
+                logger.innerText = "🚨 ERRO: BIBLIOTECA BLOQUEADA NA SUA REDE.";
+                logger.style.color = "red";
+                document.getElementById('panicBtn').style.display = 'block';
+                if(force) alert("O Supabase continua bloqueado. Tente 4G ou Aba Anônima.");
+                return false;
             }
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            return supabase;
         }
 
-        async function doLogin() {
-            const client = getSupabase();
-            if (!client) return;
+        async function doAction(type) {
+            if (!engine && !checkEngine()) return;
 
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-            if (!e || !p) return alert("Erro: E-mail e senha são obrigatórios.");
-
-            try {
-                document.getElementById('status').innerText = "Status: Conectando...";
-                const { data, error } = await client.auth.signInWithPassword({ email: e, password: p });
+            if (type === 'login') {
+                const e = document.getElementById('email').value;
+                const p = document.getElementById('pass').value;
+                if (!e || !p) return alert("Preencha e-mail e senha.");
                 
+                logger.innerText = "⏳ Autenticando com o servidor...";
+                const { data, error } = await engine.auth.signInWithPassword({ email: e, password: p });
                 if (error) {
-                    alert("Acesso Negado: " + error.message);
-                    document.getElementById('status').innerText = "Status: Erro";
+                    alert("Acesso negado: " + error.message);
+                    logger.innerText = "Erro no Login.";
                 } else {
-                    document.getElementById('loginArea').style.display = 'none';
-                    document.getElementById('configArea').style.display = 'block';
-                    document.getElementById('status').innerText = "Status: Dashboard Ativado";
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('configArea')?.style.display = 'block'; // Failsafe
+                    document.getElementById('configForm').style.display = 'block';
+                    logger.innerText = "Conectado como: " + data.user.email;
                     
                     const m = data.user.user_metadata || {};
                     document.getElementById('p_name').value = m.partner_name || '';
@@ -79,42 +93,23 @@
                     document.getElementById('p_logo').value = m.partner_logo || '';
                     document.getElementById('p_wa').value = m.partner_whatsapp || '';
                 }
-            } catch (err) {
-                alert("Erro inesperado: " + err.message);
+            } else if (type === 'save') {
+                logger.innerText = "💾 Gravando no banco de dados...";
+                const m = {
+                    partner_name: document.getElementById('p_name').value,
+                    partner_color: document.getElementById('p_color').value,
+                    partner_logo: document.getElementById('p_logo').value,
+                    partner_whatsapp: document.getElementById('p_wa').value,
+                    is_enterprise: true
+                };
+                const { error } = await engine.auth.updateUser({ data: m });
+                if (error) alert(error.message); else alert("✅ SUCESSO! Estilo gravado. Reinicie o App Enterprise.");
+                logger.innerText = "Pronto!";
             }
         }
 
-        async function doSave() {
-            const client = getSupabase();
-            if (!client) return;
-
-            const m = {
-                partner_name: document.getElementById('p_name').value,
-                partner_color: document.getElementById('p_color').value,
-                partner_logo: document.getElementById('p_logo').value,
-                partner_whatsapp: document.getElementById('p_wa').value,
-                is_enterprise: true
-            };
-
-            const { error } = await client.auth.updateUser({ data: m });
-            if (error) alert("Não foi possível salvar: " + error.message);
-            else alert("✅ SUCESSO ABSOLUTO! Dados salvos no banco. Já pode fechar o painel e abrir o Enterprise.");
-        }
-
-        // Tenta checar sessão se já estiver logado
-        window.onload = async () => {
-            const client = getSupabase();
-            if (client) {
-                const { data: { user } } = await client.auth.getUser();
-                if (user) {
-                    document.getElementById('loginArea').style.display = 'none';
-                    document.getElementById('configArea').style.display = 'block';
-                    document.getElementById('status').innerText = "Status: Sessão Ativa";
-                } else {
-                    document.getElementById('status').innerText = "Status: Pronto para Login";
-                }
-            }
-        };
+        // Tenta ligar o motor após 2 segundos
+        setTimeout(checkEngine, 2000);
     </script>
 </body>
 </html>

@@ -1161,7 +1161,12 @@
         <button class="close-btn" onclick="document.getElementById('statusModal').style.display='none'">&times;</button>
         <div id="smIcon" style="font-size: 40px; margin-bottom: 12px;">🏆</div>
         <h3 id="smTitle" style="font-size: 20px; margin-bottom: 8px;">Status</h3>
-        <p id="smDesc" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 16px;">Descrição técnica do status.</p>
+        <p id="smDesc" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 12px;">Descrição técnica do status.</p>
+        <div id="smTechnical" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; opacity:0.7;">Sua Faixa: <span id="smUserRange">--</span></div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-weight:600;">Na V. Mínima: <span id="smPressMin">--</span></div>
+            <div style="display:flex; justify-content:space-between; font-weight:600;">Na V. Máxima: <span id="smPressMax">--</span></div>
+        </div>
         <button onclick="document.getElementById('statusModal').style.display='none'" class="info-btn" style="width: 100%; height: 40px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600;">Entendi</button>
       </div>
     </div>
@@ -1569,6 +1574,14 @@
         const pMin = parseFloat(document.getElementById('numPMin').value);
         const pMax = parseFloat(document.getElementById('numPMax').value);
         const unit = PRESS_UNIT.toUpperCase();
+
+        document.getElementById('smUserRange').innerText = `${pMin} a ${pMax} ${unit}`;
+        document.getElementById('smPressMin').innerText = `${pVmin.toFixed(1)} ${unit}`;
+        document.getElementById('smPressMax').innerText = `${pVmax.toFixed(1)} ${unit}`;
+
+        // Cores de alerta nos dados técnicos
+        document.getElementById('smPressMin').style.color = pVmin < pMin ? 'var(--accent-error)' : 'var(--accent-green)';
+        document.getElementById('smPressMax').style.color = pVmax > pMax ? 'var(--accent-error)' : 'var(--accent-green)';
 
         title.innerText = status;
 

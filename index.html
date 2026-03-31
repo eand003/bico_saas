@@ -166,13 +166,6 @@
       display: none;
     }
 
-    #mainApp {
-      display: none !important;
-      width: 100%;
-      flex-direction: column;
-      align-items: center;
-    }
-
     /* Controls Panel */
     .controls {
       display: flex;
@@ -683,36 +676,75 @@
       color: var(--text-main);
     }
 
+    .header-info-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: var(--control-bg);
+      border-radius: 12px;
+      border: 1px solid var(--control-border);
+    }
+
+    .header-info-content {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .header-info-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 1px solid var(--control-border);
+      padding-left: 12px;
+    }
+
+    .header-social-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media screen and (max-width: 650px) {
+      .header-info-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .header-info-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        width: 100%;
+      }
+
+      .header-info-actions {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--control-border);
+        padding-top: 12px;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 12px;
+      }
+    }
 
     /* Login Form Styles */
     #loginScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100vw;
-      height: 100vh;
-      background: var(--bg-dark) var(--bg-img) no-repeat center center fixed;
-      background-size: cover;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      overflow: hidden;
-    }
-
-    #loginScreen::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, var(--bg-dark) 0%, transparent 100%);
-      opacity: 0.95;
-      z-index: -1;
+      min-height: 80vh;
+      width: 100%;
     }
 
     .login-box {
@@ -847,14 +879,7 @@
       font-size: 48px;
       font-weight: 800;
       line-height: 1;
-      padding: 24px;
-    }
-
-    #mainApp {
-      display: none;
-      width: 100%;
-      flex-direction: column;
-      align-items: center;
+      margin: 8px 0;
     }
   </style>
 </head>
@@ -868,36 +893,53 @@
         <img src="./logo.png" style="width: 70px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
       </div>
       <h2 style="font-size:24px; text-align: center; margin-bottom: 2px;">Spray Precision PRO</h2>
-      <p style="text-align: center; color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+      <p
+        style="text-align: center; color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
         Simulador de Bicos ISO</p>
 
-      <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div
+        style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);">
         <p style="text-align: center; color: var(--text-muted); font-size: 12px; line-height: 1.5; margin: 0;">
-          Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.
+          Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na
+          aplicação.
         </p>
       </div>
 
       <div style="border-top: 1px solid var(--glass-border); padding-top: 12px;">
-        <h3 style="text-align: center; font-size: 15px; color: var(--text-main); margin-bottom: 10px; font-family: 'Inter';">Acesso ao Sistema</h3>
+        <h3
+          style="text-align: center; font-size: 15px; color: var(--text-main); margin-bottom: 10px; font-family: 'Inter';">
+          Acesso ao Sistema</h3>
 
-        <form id="loginForm" onsubmit="event.preventDefault(); return false;" style="display: flex; flex-direction: column; gap: 8px;">
+        <form id="loginForm" onsubmit="event.preventDefault(); return false;"
+          style="display: flex; flex-direction: column; gap: 8px;">
           <input type="email" id="email" class="login-input" placeholder="Seu E-mail" required>
           <input type="password" id="password" class="login-input" placeholder="Sua Senha" required minlength="6">
+
           <input type="text" id="nome" class="login-input" placeholder="Seu Nome e Sobrenome" style="display: none;">
-          <input type="tel" id="whatsapp" class="login-input" placeholder="Seu WhatsApp (apenas números)" style="display: none;">
-          <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer;">
-            <input type="checkbox" id="chkRegister"> Cadastrar novo acesso
+          <input type="tel" id="whatsapp" class="login-input" placeholder="Seu WhatsApp (apenas números)"
+            style="display: none;">
+
+          <label
+            style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer;">
+            <input type="checkbox" id="chkRegister">
+            Cadastrar novo acesso
           </label>
+
           <button type="button" onclick="handleAuth(event)" id="btnSubmit" class="login-btn">Entrar / Cadastrar</button>
         </form>
       </div>
 
-      <div id="authError" style="color: var(--accent-error); font-size: 13px; text-align: center; display: none; padding: 8px; border: 1px solid var(--accent-error); border-radius: 4px; background: rgba(255,0,0,0.1); margin-top: 10px;">Erro ao entrar</div>
-      <div id="authSuccess" style="color: var(--accent-green); font-size: 13px; text-align: center; display: none; padding: 8px; border: 1px solid var(--accent-green); border-radius: 4px; background: rgba(0,255,0,0.1); margin-top: 10px;">Sucesso!</div>
-      
-      <div class="footer" style="margin-top: 20px; text-align: center; color: var(--text-muted); padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
-         <div style="font-size: 10px; opacity: 0.6;">Powered by <strong>Spray Precision</strong></div>
+      <div
+        style="margin-top: 16px; text-align: center; font-size: 10px; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);">
+        Powered by <strong style="color: var(--text-main);">Spray Precision</strong>
       </div>
+
+      <div id="authError"
+        style="color: var(--accent-error); font-size: 13px; text-align: center; display: none; padding: 8px; border: 1px solid var(--accent-error); border-radius: 4px; background: rgba(255,0,0,0.1);">
+        Erro ao entrar</div>
+      <div id="authSuccess"
+        style="color: var(--accent-green); font-size: 13px; text-align: center; display: none; padding: 8px; border: 1px solid var(--accent-green); border-radius: 4px; background: rgba(0,255,0,0.1);">
+        Sucesso!</div>
     </div>
   </div>
 
@@ -907,32 +949,22 @@
     <div class="header">
       <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; width: 100%;">
         <img class="header-icon" src="./logo.png" alt="Spray Precision PRO Logo">
-        <div style="flex:1; min-width: 0;">
-          <h1>Spray Precision <span style="font-weight:300;">PRO</span></h1>
-          <div class="header-info-card" style="margin-top: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: flex-start; gap: 6px; flex-wrap: nowrap !important; width: 100%; overflow: hidden;">
+          <div class="header-info-card" style="margin-top: 8px; padding: 6px 10px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: nowrap !important; width: 100%; border-radius: 12px;">
               <a href="https://wa.me/5565999106415?text=Bom%20dia!%20Vim%20pelo%20seu%20aplicativo%20de%20bicos%20ISO."
                 target="_blank"
                 title="WhatsApp"
                 style="color:#25D366; text-decoration:none; display:flex; align-items:center; justify-content:center; width: 34px; height: 34px; background: rgba(37,211,102,0.1); border-radius: 8px; border: 1px solid rgba(37,211,102,0.2);">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
               </a>
               <a href="https://www.instagram.com/spray.precision?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
                 target="_blank"
                 title="Instagram"
                 style="color:#E1306C; text-decoration:none; display:flex; align-items:center; justify-content:center; width: 34px; height: 34px; background: rgba(225,48,108,0.1); border-radius: 8px; border: 1px solid rgba(225,48,108,0.2);">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
               </a>
-              <button id="btnInstall" class="info-btn" title="Instalar App no Celular"
-                style="display: none; width: 34px; height: 34px; font-size: 16px; background: var(--accent-green); color: #000; border-radius: 8px;">📱</button>
-              <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro"
-                style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">🌓</button>
-              <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'"
-                title="Como Usar o Simulador" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">?</button>
-          </div>
+              <button id="btnInstall" class="info-btn" title="Instalar App no Celular" style="display: none; width: 34px; height: 34px; font-size: 16px; background: var(--accent-green); color: #000; border-radius: 8px;">📱</button>
+              <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">🌓</button>
+              <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'" title="Como Usar o Simulador" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">?</button>
           </div>
         </div>
       </div>
@@ -1881,32 +1913,22 @@
 
     async function logout() {
       await clienteSupabase.auth.signOut();
-      const app = document.getElementById('mainApp');
-      const login = document.getElementById('loginScreen');
-      if (app) app.style.setProperty('display', 'none', 'important');
-      if (login) login.style.display = 'flex';
-      if (document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'none';
       showLogin();
     }
     window.logout = logout;
 
     function showApp() {
-      const loginS = document.getElementById('loginScreen');
-      const app = document.getElementById('mainApp');
-      if (loginS) loginS.style.display = 'none';
-      if (app) app.style.setProperty('display', 'flex', 'important');
-      if (document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'flex';
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'flex';
       if (window._updateApp) {
         window._updateApp(); // Recalcular os gráficos após aparecer
       }
     }
 
     function showLogin() {
-      const loginS = document.getElementById('loginScreen');
-      const app = document.getElementById('mainApp');
-      if (loginS) loginS.style.display = 'flex';
-      if (app) app.style.setProperty('display', 'none', 'important');
-      if (document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('mainApp').style.display = 'none';
 
       // Limpar alertas antigos para não acumular
       const authError = document.getElementById('authError');

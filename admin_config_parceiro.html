@@ -39,36 +39,55 @@
             Carregando sessão...
         </div>
 
-        <form id="configForm">
-            <div class="form-group">
-                <label>Nome da Revenda / Loja</label>
-                <input type="text" id="partner_name" placeholder="Ex: AgroLoja Mato Grosso" required>
-            </div>
+    <div class="setup-card">
+        <h1>Dashboard do Parceiro</h1>
+        <p style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 30px;">Personalize a identidade visual da sua revenda.</p>
+        
+        <!-- TELA DE LOGIN INTERNA (Só aparece se deslogado) -->
+        <div id="loginArea" style="display:none; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; background: #f8fafc; margin-bottom: 20px;">
+            <p style="font-size:12px; font-weight:700; text-align:center; margin-bottom:10px;">🔒 FAÇA LOGIN PARA ACESSAR</p>
+            <input type="email" id="loginEmail" placeholder="Seu e-mail" style="margin-bottom:8px;">
+            <input type="password" id="loginPass" placeholder="Sua senha" style="margin-bottom:8px;">
+            <button onclick="handleLogin()" style="background:var(--accent); color:white; width:100%; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:700;">Entrar no Painel</button>
+        </div>
 
-            <div class="form-group">
-                <label>Cor da Marca (Hexadecimal)</label>
-                <input type="color" id="partner_color_picker" value="#00d2ff" style="height: 50px; cursor: pointer;">
-                <input type="text" id="partner_color" placeholder="#00d2ff" style="margin-top: 8px;">
-            </div>
+        <div id="authStatus" style="text-align: center; margin-bottom: 20px; font-size: 13px; font-weight: 600; color: #64748b;">
+            Carregando sessão...
+        </div>
 
-            <div class="form-group">
-                <label>Link do Logo (PNG Transparente)</label>
-                <input type="url" id="partner_logo" placeholder="https://imgur.com/seulogo.png" required>
-            </div>
+        <div id="configArea" style="display:none;">
+            <form id="configForm">
+                <div class="form-group">
+                    <label>Nome da Revenda / Loja</label>
+                    <input type="text" id="partner_name" placeholder="Ex: AgroLoja Mato Grosso" required>
+                </div>
 
-            <div class="form-group">
-                <label>Número WhatsApp para Vendas</label>
-                <input type="tel" id="partner_whatsapp" placeholder="5565999998888" required>
-            </div>
+                <div class="form-group">
+                    <label>Cor da Marca (Hexadecimal)</label>
+                    <input type="color" id="partner_color_picker" value="#00d2ff" style="height: 50px; cursor: pointer;">
+                    <input type="text" id="partner_color" placeholder="#00d2ff" style="margin-top: 8px;">
+                </div>
 
-            <button type="submit" class="btn-save" id="btnSave">💾 Salvar Configurações</button>
-            <button type="button" onclick="checkSession(true)" style="background:none; border:1px solid #ccc; width:100%; margin-top:10px; padding:8px; border-radius:8px; cursor:pointer; font-size:11px;">🔍 Verificar Dados no Banco</button>
-        </form>
+                <div class="form-group">
+                    <label>Link do Logo (PNG Transparente)</label>
+                    <input type="url" id="partner_logo" placeholder="https://imgur.com/seulogo.png" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Número WhatsApp para Vendas</label>
+                    <input type="tel" id="partner_whatsapp" placeholder="5565999998888" required>
+                </div>
+
+                <button type="submit" class="btn-save" id="btnSave">💾 Salvar Configurações</button>
+                <button type="button" onclick="checkSession(true)" style="background:none; border:1px solid #ccc; width:100%; margin-top:10px; padding:8px; border-radius:8px; cursor:pointer; font-size:11px;">🔍 Verificar Dados no Banco</button>
+            </form>
+        </div>
 
         <div id="statusMsg" class="status"></div>
         
         <div style="text-align: center; margin-top: 30px;">
             <a href="./enterprise/index.html" style="color: #64748b; font-size: 12px; text-decoration: none; font-weight: 700;">&larr; Abrir App Enterprise</a>
+            <button onclick="logout()" style="display:block; margin: 10px auto; background:none; border:none; font-size:11px; color:#ef4444; border-bottom: 1px solid #ef4444; cursor:pointer;">Sair (Logout)</button>
         </div>
     </div>
 
@@ -86,10 +105,29 @@
             document.getElementById('partner_color').value = e.target.value;
         });
 
-        // Checar Sessão ao abrir
+        // Login Independente
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            if (!email || !pass) return alert("Preencha e-mail e senha.");
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+            if (error) alert("Erro ao entrar: " + error.message);
+            else checkSession();
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            checkSession();
+        }
+
+        // Checar Sessão
         async function checkSession(showAlert = false) {
             const { data: { user }, error } = await supabase.auth.getUser();
+            
             if (user) {
+                document.getElementById('loginArea').style.display = 'none';
+                document.getElementById('configArea').style.display = 'block';
                 authStatus.innerText = `Logado como: ${user.email}`;
                 authStatus.style.color = "#166534";
                 
@@ -100,14 +138,13 @@
                     document.getElementById('partner_color_picker').value = meta.partner_color || '#00d2ff';
                     document.getElementById('partner_logo').value = meta.partner_logo || '';
                     document.getElementById('partner_whatsapp').value = meta.partner_whatsapp || '';
-                    
-                    if (showAlert) {
-                        alert("Dados Atuais no Banco:\n" + JSON.stringify(meta, null, 2));
-                    }
+                    if (showAlert) alert("Dados no Banco:\n" + JSON.stringify(meta, null, 2));
                 }
             } else {
-                authStatus.innerText = "❌ ERRO: Você não está logado!";
-                if (showAlert) alert("Você precisa fazer login no App antes de configurar.");
+                document.getElementById('loginArea').style.display = 'block';
+                document.getElementById('configArea').style.display = 'none';
+                authStatus.innerText = "⚠️ Você precisa logar primeiro.";
+                authStatus.style.color = "#ef4444";
             }
         }
 
@@ -126,23 +163,15 @@
             };
 
             try {
-                // Tenta atualizar o usuário logado
-                const { data, error } = await supabase.auth.updateUser({
-                    data: config
-                });
-
+                const { data, error } = await supabase.auth.updateUser({ data: config });
                 if (error) throw error;
 
-                console.log("Sucesso ao salvar metadata:", data);
-                statusMsg.innerText = "✅ SUCESSO! Configurações aplicadas no Supabase.";
+                statusMsg.innerText = "✅ SUCESSO! Configurações aplicadas.";
                 statusMsg.className = "status success";
-                alert("PARABÉNS! Dados salvos com sucesso. Agora pode abrir o Enterprise.");
+                alert("PARABÉNS! Estilo salvo com sucesso.");
                 
             } catch (err) {
-                console.error("Erro no update:", err);
-                statusMsg.innerText = "❌ ERRO AO SALVAR: " + err.message;
-                statusMsg.className = "status error";
-                alert("Erro ao salvar dados: " + err.message);
+                alert("Erro ao salvar: " + err.message);
             } finally {
                 btn.innerText = "💾 Salvar Configurações";
                 btn.disabled = false;

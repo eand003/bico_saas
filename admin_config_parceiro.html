@@ -24,35 +24,24 @@
         .status { text-align: center; margin-top: 20px; font-size: 14px; padding: 10px; border-radius: 8px; display: none; }
         .status.success { background: #dcfce7; color: #166534; display: block; }
         .status.error { background: #fee2e2; color: #991b1b; display: block; }
-        
-        /* Preview da Cor */
-        .color-preview { height: 10px; border-radius: 5px; margin-top: 5px; background: var(--accent); }
     </style>
 </head>
 <body>
 
     <div class="setup-card">
-        <h1>Dashboard do Parceiro</h1>
-        <p style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 30px;">Personalize a identidade visual da sua revenda.</p>
+        <h1 style="margin-bottom:10px;">Painel de Identidade</h1>
+        <p style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 30px;">Personalize o estilo da sua revenda.</p>
         
-        <div id="authStatus" style="text-align: center; margin-bottom: 20px; font-size: 13px; font-weight: 600; color: #ef4444;">
-            Carregando sessão...
-        </div>
-
-    <div class="setup-card">
-        <h1>Dashboard do Parceiro</h1>
-        <p style="text-align: center; font-size: 14px; color: #64748b; margin-bottom: 30px;">Personalize a identidade visual da sua revenda.</p>
-        
-        <!-- TELA DE LOGIN INTERNA (Só aparece se deslogado) -->
+        <!-- TELA DE LOGIN (Só aparece se deslogado) -->
         <div id="loginArea" style="display:none; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; background: #f8fafc; margin-bottom: 20px;">
-            <p style="font-size:12px; font-weight:700; text-align:center; margin-bottom:10px;">🔒 FAÇA LOGIN PARA ACESSAR</p>
-            <input type="email" id="loginEmail" placeholder="Seu e-mail" style="margin-bottom:8px;">
-            <input type="password" id="loginPass" placeholder="Sua senha" style="margin-bottom:8px;">
-            <button onclick="handleLogin()" style="background:var(--accent); color:white; width:100%; border:none; padding:10px; border-radius:8px; cursor:pointer; font-weight:700;">Entrar no Painel</button>
+            <p style="font-size:12px; font-weight:700; text-align:center; margin-bottom:15px; color:#1e293b;">🔒 LOGIN ADMINISTRATIVO</p>
+            <input type="email" id="loginEmail" placeholder="E-mail" style="margin-bottom:8px;">
+            <input type="password" id="loginPass" placeholder="Senha" style="margin-bottom:12px;">
+            <button onclick="handleLogin()" style="background:#0f172a; color:white; width:100%; border:none; padding:12px; border-radius:10px; cursor:pointer; font-weight:800; font-size:14px;">Acessar Configurações</button>
         </div>
 
-        <div id="authStatus" style="text-align: center; margin-bottom: 20px; font-size: 13px; font-weight: 600; color: #64748b;">
-            Carregando sessão...
+        <div id="authStatus" style="text-align: center; margin-bottom: 20px; font-size: 14px; font-weight: 600; color: #64748b;">
+            Verificando conexão...
         </div>
 
         <div id="configArea" style="display:none;">
@@ -63,31 +52,33 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Cor da Marca (Hexadecimal)</label>
-                    <input type="color" id="partner_color_picker" value="#00d2ff" style="height: 50px; cursor: pointer;">
-                    <input type="text" id="partner_color" placeholder="#00d2ff" style="margin-top: 8px;">
+                    <label>Cor da Marca</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="color" id="partner_color_picker" value="#00d2ff" style="width: 60px; height: 50px; padding: 5px; cursor: pointer;">
+                        <input type="text" id="partner_color" placeholder="#00d2ff" style="flex:1;">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Link do Logo (PNG Transparente)</label>
+                    <label>URL do Logo (PNG Transparente)</label>
                     <input type="url" id="partner_logo" placeholder="https://imgur.com/seulogo.png" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Número WhatsApp para Vendas</label>
+                    <label>WhatsApp de Vendas</label>
                     <input type="tel" id="partner_whatsapp" placeholder="5565999998888" required>
                 </div>
 
-                <button type="submit" class="btn-save" id="btnSave">💾 Salvar Configurações</button>
-                <button type="button" onclick="checkSession(true)" style="background:none; border:1px solid #ccc; width:100%; margin-top:10px; padding:8px; border-radius:8px; cursor:pointer; font-size:11px;">🔍 Verificar Dados no Banco</button>
+                <button type="submit" class="btn-save" id="btnSave">💾 Salvar Identidade Visual</button>
+                <button type="button" onclick="checkSession(true)" style="background:none; border:1px solid #ccc; width:100%; margin-top:15px; padding:10px; border-radius:10px; cursor:pointer; font-size:12px; font-weight:600; color:#475569;">🔍 Conferir Dados no Banco</button>
             </form>
         </div>
 
         <div id="statusMsg" class="status"></div>
         
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="./enterprise/index.html" style="color: #64748b; font-size: 12px; text-decoration: none; font-weight: 700;">&larr; Abrir App Enterprise</a>
-            <button onclick="logout()" style="display:block; margin: 10px auto; background:none; border:none; font-size:11px; color:#ef4444; border-bottom: 1px solid #ef4444; cursor:pointer;">Sair (Logout)</button>
+        <div style="text-align: center; margin-top: 40px; border-top:1px solid #eee; padding-top:20px;">
+            <a href="./enterprise/index.html" style="color: #0f172a; font-size: 13px; text-decoration: none; font-weight: 700; display:block; margin-bottom:15px;">&larr; Abrir App Enterprise</a>
+            <button onclick="logout()" style="background:none; border:none; font-size:12px; color:#ef4444; border-bottom: 2px solid #fee2e2; cursor:pointer; font-weight:700;">SAIR / LOGOUT</button>
         </div>
     </div>
 
@@ -105,30 +96,36 @@
             document.getElementById('partner_color').value = e.target.value;
         });
 
-        // Login Independente
+        // Login Manual
         async function handleLogin() {
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPass').value;
-            if (!email || !pass) return alert("Preencha e-mail e senha.");
+            if (!email || !pass) return alert("Por favor, preencha o e-mail e a senha.");
 
             const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
-            if (error) alert("Erro ao entrar: " + error.message);
-            else checkSession();
+            if (error) {
+                alert("Erro ao entrar: " + error.message);
+            } else {
+                checkSession();
+            }
         }
 
         async function logout() {
-            await supabase.auth.signOut();
-            checkSession();
+            if (confirm("Deseja realmente sair do painel?")) {
+                await supabase.auth.signOut();
+                location.reload();
+            }
         }
 
-        // Checar Sessão
+        // Checar Sessão a cada carregamento
         async function checkSession(showAlert = false) {
+            authStatus.innerText = "Verificando perfil...";
             const { data: { user }, error } = await supabase.auth.getUser();
             
             if (user) {
                 document.getElementById('loginArea').style.display = 'none';
                 document.getElementById('configArea').style.display = 'block';
-                authStatus.innerText = `Logado como: ${user.email}`;
+                authStatus.innerText = `ID Online: ${user.email}`;
                 authStatus.style.color = "#166534";
                 
                 if (user.user_metadata) {
@@ -138,12 +135,12 @@
                     document.getElementById('partner_color_picker').value = meta.partner_color || '#00d2ff';
                     document.getElementById('partner_logo').value = meta.partner_logo || '';
                     document.getElementById('partner_whatsapp').value = meta.partner_whatsapp || '';
-                    if (showAlert) alert("Dados no Banco:\n" + JSON.stringify(meta, null, 2));
+                    if (showAlert) alert("DADOS SALVOS NO BANCO:\n" + JSON.stringify(meta, null, 2));
                 }
             } else {
                 document.getElementById('loginArea').style.display = 'block';
                 document.getElementById('configArea').style.display = 'none';
-                authStatus.innerText = "⚠️ Você precisa logar primeiro.";
+                authStatus.innerText = "⚠️ Identidade não confirmada.";
                 authStatus.style.color = "#ef4444";
             }
         }
@@ -151,7 +148,8 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            btn.innerText = "Salvando...";
+            const originalText = btn.innerText;
+            btn.innerText = "Gravando no Banco...";
             btn.disabled = true;
 
             const config = {
@@ -166,18 +164,21 @@
                 const { data, error } = await supabase.auth.updateUser({ data: config });
                 if (error) throw error;
 
-                statusMsg.innerText = "✅ SUCESSO! Configurações aplicadas.";
+                statusMsg.innerText = "✅ SUCESSO! Estilo salvo com sucesso.";
                 statusMsg.className = "status success";
-                alert("PARABÉNS! Estilo salvo com sucesso.");
+                alert("PARABÉNS! As configurações foram salvas. Pode abrir o Enterprise para ver o resultado.");
                 
             } catch (err) {
                 alert("Erro ao salvar: " + err.message);
+                statusMsg.innerText = "❌ ERRO: " + err.message;
+                statusMsg.className = "status error";
             } finally {
-                btn.innerText = "💾 Salvar Configurações";
+                btn.innerText = originalText;
                 btn.disabled = false;
             }
         });
 
+        // Carregamento Inicial
         checkSession();
     </script>
 </body>

@@ -1583,7 +1583,18 @@
           desc.innerHTML = `<b>Operação com ressalvas:</b> ${reason} O bico atende apenas parte da sua janela com segurança.`;
         } else {
           icon.innerText = '🚫';
-          desc.innerHTML = `Este bico está <b>fora dos limites</b> (${pMin}-${pMax} ${unit}) para este volume de calda na maior parte da operação. Evite usar neste cenário.`;
+          let reason = "Este bico está <b>totalmente fora dos limites</b> seguros para este volume de calda.";
+          let suggestion = "Tente usar um bico de tamanho diferente ou ajustar o volume de calda (L/ha).";
+
+          if (pVmin > pMax) {
+              reason = `A pressão necessária (${pVmin.toFixed(1)} ${unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.`;
+              suggestion = "<b>Sugestão:</b> Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.";
+          } else if (pVmax < pMin) {
+              reason = `A pressão gerada (${pVmax.toFixed(1)} ${unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.`;
+              suggestion = "<b>Sugestão:</b> Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.";
+          }
+          
+          desc.innerHTML = `${reason}<br><br>${suggestion}`;
         }
 
         modal.style.display = 'flex';

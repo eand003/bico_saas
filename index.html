@@ -686,12 +686,33 @@
 
     /* Login Form Styles */
     #loginScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-dark) var(--bg-img) no-repeat center center fixed;
+      background-size: cover;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 80vh;
-      width: 100%;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    #loginScreen::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, transparent 100%);
+      opacity: 0.95;
+      z-index: -1;
     }
 
     .login-box {
@@ -1861,7 +1882,9 @@
     async function logout() {
       await clienteSupabase.auth.signOut();
       const app = document.getElementById('mainApp');
+      const login = document.getElementById('loginScreen');
       if (app) app.style.setProperty('display', 'none', 'important');
+      if (login) login.style.display = 'flex';
       if (document.getElementById('fabBtn')) document.getElementById('fabBtn').style.display = 'none';
       showLogin();
     }

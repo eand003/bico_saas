@@ -1424,7 +1424,7 @@
           const msgDiv = document.createElement('div');
           msgDiv.style.cssText = "grid-column: 1/-1; padding: 12px 16px; background: var(--control-bg); border-left: 3px solid #FFC107; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; margin-top: 4px;";
           msgDiv.innerHTML = `
-            <span style="color: var(--text-main); font-size: 14px; font-weight: 600;">⚠️ Atenção Ténica</span>
+            <span style="color: var(--text-main); font-size: 14px; font-weight: 600;">⚠️ Atenção Técnica</span>
             <p style="color: var(--text-muted); font-size: 13px; line-height: 1.4; margin:0;">Nenhum bico atende plenamente aos limites de pressão informados. A ponta listada acima é a opção matematicamente mais próxima de operar com segurança no seu cenário.</p>
         `;
           container.appendChild(msgDiv);
@@ -1631,6 +1631,115 @@
         });
         html += `</tbody>`;
         tbody.innerHTML = html;
+      }
+
+      // --- GERAÇÃO DE RELATÓRIO TÉCNICO PROFISSIONAL ---
+      function generateReport() {
+        const pName = 'Spray Precision PRO';
+        const pLogo = './logo.png';
+        const pColor = '#00d2ff';
+        
+        const report = document.getElementById('printReport');
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR');
+
+        const simulationData = {
+          rate: document.getElementById('numRate').value,
+          spacing: document.getElementById('numSpacing').value,
+          density: document.getElementById('numDensity').value,
+          unit: PRESS_UNIT.toUpperCase(),
+          vMin: document.getElementById('numVMin').value,
+          vAvg: document.getElementById('numVAvg').value,
+          vMax: document.getElementById('numVMax').value,
+          pMin: document.getElementById('numPMin').value,
+          pMax: document.getElementById('numPMax').value
+        };
+
+        const nozzleInfo = window.topNozzle ? 
+          `ISO ${window.topNozzle.nz.iso} (${window.topNozzle.statusText})` : 
+          'Nenhuma recomendação ideal encontrada';
+
+        report.innerHTML = `
+          <div style="border: 2px solid ${pColor}; padding: 40px; border-radius: 12px; background: white; min-height: 1000px;">
+            <div style="border-bottom: 2px solid ${pColor}; padding-bottom: 20px; margin-bottom: 30px;">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px;">
+                <img src="${pLogo}" style="max-height: 80px; max-width: 300px; object-fit: contain;">
+                <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end;">
+                  <h1 style="margin:0; font-family: 'Outfit'; font-size: 28px; color: ${pColor};">${pName}</h1>
+                  <div style="text-align: right;">
+                    <h2 style="margin:0; color: #1e293b; font-family: 'Outfit'; font-size: 18px;">Laudo Técnico de Pulverização</h2>
+                    <p style="margin:3px 0 0; font-size: 11px; color: #666;">Data: ${dateStr}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">Parâmetros da Simulação</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Vazão Alvo:</td><td style="text-align: right; font-weight: bold;">${simulationData.rate} L/ha</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Espaçamento:</td><td style="text-align: right; font-weight: bold;">${simulationData.spacing} cm</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Densidade da Calda:</td><td style="text-align: right; font-weight: bold;">${simulationData.density} kg/L</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Limites de Pressão:</td><td style="text-align: right; font-weight: bold;">${simulationData.pMin} a ${simulationData.pMax} ${simulationData.unit}</td></tr>
+                </table>
+              </div>
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">Velocidades de Operação</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Mínima:</td><td style="text-align: right; font-weight: bold;">${simulationData.vMin} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Média (Calibração):</td><td style="text-align: right; font-weight: bold;">${simulationData.vAvg} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Máxima:</td><td style="text-align: right; font-weight: bold;">${simulationData.vMax} km/h</td></tr>
+                </table>
+              </div>
+            </div>
+
+            <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
+              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 Recomendação Principal</h3>
+              <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
+              <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
+                Para este cenário, o bico indicado deve entregar uma vazão de <b>${window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--'} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--'} ${simulationData.unit}</b> na velocidade nominal.
+              </p>
+            </div>
+
+            <h3 style="font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">📊 Tabela de Desempenho por Ponta</h3>
+            <div id="reportTableContainer"></div>
+
+            <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 11px;">
+              Simulação gerada via <b>${pName} Demo</b>.
+            </div>
+          </div>
+        `;
+
+        const originalTable = document.getElementById('dataTable').cloneNode(true);
+        originalTable.style.width = '100%';
+        originalTable.style.borderCollapse = 'collapse';
+        originalTable.style.fontSize = '12px';
+        
+        const rowsToFilter = originalTable.querySelectorAll('tbody tr');
+        rowsToFilter.forEach(tr => {
+          const hasGreen = tr.innerHTML.indexOf('var(--accent-green)') !== -1;
+          if (!hasGreen) {
+            tr.remove(); 
+          } else {
+            tr.querySelectorAll('td').forEach(cell => {
+              cell.style.border = '1px solid #eee';
+              cell.style.padding = '8px';
+            });
+          }
+        });
+
+        originalTable.querySelectorAll('th').forEach(th => {
+          th.style.border = '1px solid #eee';
+          th.style.padding = '10px';
+          th.style.background = '#f8fafc';
+          th.style.color = '#64748b';
+        });
+
+        document.getElementById('reportTableContainer').innerHTML = '';
+        document.getElementById('reportTableContainer').appendChild(originalTable);
+
+        window.print();
       }
 
       function updateChart(rows, sysVMin, sysVMax) {
@@ -1975,6 +2084,28 @@
   <span style="color: var(--accent); font-weight: 600;">Eduardo Andrade</span>
 </div>
 
+<div id="printReport"></div>
+<style>
+  @media print {
+    @page { size: auto; margin: 15mm; }
+    body { background: white !important; padding: 0 !important; color: black !important; }
+    #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 
+    .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal {
+      display: none !important;
+      visibility: hidden !important;
+    }
+    #printReport { 
+      display: block !important; 
+      visibility: visible !important; 
+      position: absolute !important; 
+      top: 0 !important; 
+      left: 0 !important; 
+      width: 100% !important; 
+    }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+  #printReport { display: none; }
+</style>
 </body>
 
 </html>

@@ -2021,16 +2021,21 @@
     }
     window.logout = logout;
 
-    function showApp() {
+    async function showApp() {
       // --- LOGICA ENTERPRISE: APLICAR BRANDING DO PARCEIRO ---
-      clienteSupabase.auth.getSession().then(({ data: { session } }) => {
-        if (session && session.user && session.user.user_metadata) {
-          const meta = session.user.user_metadata;
+      try {
+        // Usamos getUser() em vez de getSession() para garantir que pegamos os dados MAIS RECENTES do banco
+        const { data: { user }, error } = await clienteSupabase.auth.getUser();
+        
+        if (user && user.user_metadata) {
+          const meta = user.user_metadata;
           // Se o usuário tiver configurações de parceiro no metadata:
           // { partner_name: "AgroLoja", partner_color: "#ffcc00", partner_logo: "...", partner_whastapp: "..." }
           applyPartnerBranding(meta);
         }
-      });
+      } catch (err) {
+        console.error("Erro ao carregar branding enterprise:", err);
+      }
 
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
@@ -2040,39 +2045,46 @@
     }
 
     function applyPartnerBranding(meta) {
-      if (!meta) return;
+      if (!meta || !meta.is_enterprise) return; // Só aplica se for um perfil de parceiro configurado
 
       const accent = meta.partner_color || '#00d2ff';
       const logo = meta.partner_logo || './logo.png';
       const name = meta.partner_name || 'Spray Precision PRO';
       const whatsapp = meta.partner_whatsapp || '5565999106415';
 
-      // 1. Atualizar Cores (CSS Variables)
+      // 1. Atualizar Cores (CSS Variables) - Força a troca no :root
       document.documentElement.style.setProperty('--accent', accent);
-      // Criar um glow suave baseado na cor escolhida
+      // Criar um brilho suave (glow) baseado na cor nova (adiciona 44 para transparência)
       document.documentElement.style.setProperty('--accent-glow', accent + '66'); 
 
-      // 2. Atualizar Logos
+      // 2. Atualizar Logos (Procura por imagens no header e na tela de login)
       const logos = document.querySelectorAll('.header-icon, .login-box img');
-      logos.forEach(img => img.src = logo);
-
-      // 3. Atualizar Nomes
-      const titles = document.querySelectorAll('h1, h2');
-      titles.forEach(t => {
-        if (t.innerText.includes('Spray Precision')) {
-          t.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
-        }
+      logos.forEach(img => {
+        img.src = logo;
+        img.style.transition = '0.5s';
       });
 
-      // 4. Atualizar Links de WhatsApp de Venda
+      // 3. Atualizar Título do Dashboard
+      const title = document.querySelector('.header h1');
+      if (title) {
+        title.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
+      }
+
+      // 4. Atualizar Links de WhatsApp (Vendas)
       const waLinks = document.querySelectorAll('a[href*="wa.me"]');
       waLinks.forEach(link => {
-        const currentUrl = new URL(link.href);
-        const text = currentUrl.searchParams.get('text');
+        const url = new URL(link.href);
+        const text = url.searchParams.get('text') || 'Olá! Vim pelo app.';
         link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`;
       });
 
-      console.log(`Enterprise Mode: Branding aplicado para ${name}`);
+      // 5. Atualizar Cor do Botão FAB (Melhor Bico) se ele existir
+      const fab = document.getElementById('fabBtn');
+      if (fab) {
+        fab.style.borderColor = accent;
+      }
+
+      console.log(`Enterprise Mode: Branding profissional aplicado para ${name}`);
     }
 
     function showLogin() {

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spray Precision: Diagnóstico Visual Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Outfit:wght@800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #0077b6;
+            --bg: #f4f7f9;
+            --card: #ffffff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --text: #212529;
+            --text-muted: #6c757d;
+        }
+
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .container { max-width: 900px; width: 100%; border: 1px solid #dee2e6; border-radius: 20px; background: var(--card); padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid var(--primary); padding-bottom: 20px; }
+        .header h1 { font-family: 'Outfit'; font-size: 32px; font-weight: 800; color: var(--secondary); margin: 0; }
+        .header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Sliders Section */
+        .control-unit { text-align: center; margin-bottom: 50px; background: #e9f5ff; padding: 30px; border-radius: 15px; }
+        .speed-val { font-size: 70px; font-weight: 900; color: var(--secondary); line-height: 1; }
+        .speed-label { font-size: 12px; font-weight: 900; color: var(--text-muted); margin-bottom: 20px; }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; max-width: 500px; height: 10px; border-radius: 5px; background: #ced4da; outline: none; margin: 20px 0; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; background: var(--secondary); border: 4px solid #fff; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: 0.1s; }
+
+        /* Gauges Matrix */
+        .gauges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .gauge-card { background: #fff; border: 1px solid #dee2e6; border-radius: 15px; padding: 20px; text-align: center; position: relative; }
+        .gauge-card.winner { border: 2px solid var(--success); background: #f8fff9; }
+        .winner-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--success); color: #fff; font-size: 10px; font-weight: 900; padding: 3px 12px; border-radius: 50px; }
+
+        .gauge-title { font-size: 14px; font-weight: 900; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
+
+        /* Manômetro Flat Snap-Style */
+        .gauge-visual { height: 100px; position: relative; margin: 15px 0; display: flex; align-items: flex-end; justify-content: center; }
+        .arc-base { width: 140px; height: 70px; border: 10px solid #dee2e6; border-bottom: 0; border-radius: 100px 100px 0 0; position: relative; overflow: hidden; }
+        .arc-zone { width: 50%; height: 100%; position: absolute; left: 25%; background: var(--success); opacity: 0.15; border-left: 2px solid var(--success); border-right: 2px solid var(--success); }
+        
+        .needle { position: absolute; bottom: 0; left: 50%; width: 4px; height: 60px; background: #333; border-radius: 5px; transform-origin: bottom center; transform: rotate(0deg); transition: 0.1s cubic-bezier(0, 0.5, 0.5, 1); z-index: 2; }
+        .needle::after { content: ""; position: absolute; bottom: -6px; left: -5px; width: 14px; height: 14px; background: #333; border-radius: 50%; border: 3px solid #fff; }
+
+        .status-badge { font-size: 11px; font-weight: 900; margin-top: 15px; min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 10px; border-radius: 5px; line-height: 1.2; text-transform: uppercase; }
+
+        /* Metafora Simples */
+        .metafor-box { margin-top: 40px; border-top: 2px solid #f8fafc; padding-top: 30px; }
+        .metafor-label { font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; text-align: center; }
+        .track { width: 100%; height: 40px; background: #ced4da; border-radius: 5px; position: relative; display: flex; align-items: center; }
+        .safe-zone { position: absolute; left: 30%; width: 40%; height: 100%; background: #fff; border-left: 1px dashed #6c757d; border-right: 1px dashed #6c757d; }
+        .dot { position: absolute; width: 30px; height: 30px; border-radius: 5px; font-size: 12px; font-weight: 900; color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.1s; transform: translateX(-50%); }
+
+        .btn-footer { width: 100%; background: var(--secondary); color: #fff; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 18px; margin-top: 40px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Spray Precision PRO</h1>
+            <p>Diagnóstico de Estabilidade de Pressão</p>
+        </div>
+
+        <div class="control-unit">
+            <div class="speed-label">Simular Velocidade de Operação (KM/H)</div>
+            <div class="speed-val" id="valKm">17</div>
+            <input type="range" id="rngKm" min="4" max="30" value="17" oninput="runSim(this.value)">
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Arraste para testar o limite dos bicos</p>
+        </div>
+
+        <div class="gauges-grid">
+            <!-- CAMPEÃO -->
+            <div class="gauge-card winner">
+                <div class="winner-tag">CAMPEÃO</div>
+                <div class="gauge-title">ISO 03 (AZUL)</div>
+                <div class="gauge-visual">
+                    <div class="arc-base"><div class="arc-zone"></div></div>
+                    <div id="ndlA" class="needle"></div>
+                </div>
+                <div class="status-badge" id="stA" style="color:var(--success)">Estável e Seguro</div>
+            </div>
+
+            <!-- PEQUENO -->
+            <div class="gauge-card">
+                <div class="gauge-title">ISO 02 (AMARELO)</div>
+                <div class="gauge-visual">
+                    <div class="arc-base"><div class="arc-zone" style="width: 25%; left: 50%;"></div></div>
+                    <div id="ndlB" class="needle"></div>
+                </div>
+                <div class="status-badge" id="stB" style="color:var(--text-muted)">Dentro do Limite</div>
+            </div>
+
+            <!-- GRANDE -->
+            <div class="gauge-card">
+                <div class="gauge-title">ISO 04 (VERMELHO)</div>
+                <div class="gauge-visual">
+                    <div class="arc-base"><div class="arc-zone" style="width: 25%; left: 25%;"></div></div>
+                    <div id="ndlC" class="needle"></div>
+                </div>
+                <div class="status-badge" id="stC" style="color:var(--text-muted)">Dentro do Limite</div>
+            </div>
+        </div>
+
+        <div class="metafor-box">
+            <div class="metafor-label">Posicionamento na Faixa de Segurança</div>
+            <div class="track">
+                <div class="safe-zone"></div>
+                <div id="dtA" class="dot" style="background:var(--success); top: -45px;">PRO</div>
+                <div id="dtB" class="dot" style="background:var(--danger); top: 55px;">Gargalo</div>
+                <div id="dtC" class="dot" style="background:var(--secondary); top: 5px;">Vago</div>
+            </div>
+            <p style="text-align: center; font-size: 11px; margin-top: 40px; color: var(--text-muted);">O bico <b>PRO</b> é o único que permanece no centro da segurança com oscilações.</p>
+        </div>
+
+        <button class="btn-footer">Confirmar Escolha do Kit</button>
+    </div>
+
+    <script>
+        function runSim(v) {
+            document.getElementById('valKm').innerText = v;
+            
+            // Física Sólida Snap (Muito responsiva)
+            const angA = (v - 17) * 4.8;
+            const angB = ((v - 17) * 9.2) + 40;
+            const angC = ((v - 17) * 8.8) - 45;
+
+            document.getElementById('ndlA').style.transform = `rotate(${angA}deg)`;
+            document.getElementById('ndlB').style.transform = `rotate(${angB}deg)`;
+            document.getElementById('ndlC').style.transform = `rotate(${angC}deg)`;
+
+            // Sincronia de Estrada
+            document.getElementById('dtA').style.left = `${50 + (v-17)*2.5}%`;
+            document.getElementById('dtB').style.left = `${55 + (v-17)*4.5}%`;
+            document.getElementById('dtC').style.left = `${45 + (v-17)*4.2}%`;
+
+            // Feedbacks Sólidos
+            const sA = document.getElementById('stA');
+            const sB = document.getElementById('stB');
+            const sC = document.getElementById('stC');
+
+            if (v > 26 || v < 10) {
+               sA.innerText = "ALERTA: LIMITE DE SEGURANÇA";
+               sA.style.color = "var(--warning)";
+            } else {
+               sA.innerText = "Estável e Seguro";
+               sA.style.color = "var(--success)";
+            }
+
+            if (v > 20) {
+                sB.innerText = "O bico estourou a pressão máxima!";
+                sB.style.color = "var(--danger)";
+            } else {
+                sB.innerText = "Dentro do Limite";
+                sB.style.color = "var(--text-muted)";
+            }
+
+            if (v < 13) {
+                sC.innerText = "Bico vago: Sem pressão mínima!";
+                sC.style.color = "var(--danger)";
+            } else {
+                sC.innerText = "Dentro do Limite";
+                sC.style.color = "var(--text-muted)";
+            }
+        }
+        runSim(17);
+    </script>
+</body>
+</html>

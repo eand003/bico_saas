@@ -100,6 +100,8 @@
     }
 
     h1,
+
+    h1,
     h2,
     h3 {
       font-family: 'Outfit', sans-serif;
@@ -142,12 +144,13 @@
     }
 
     .header-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
+      height: 48px;
+      width: auto;
+      max-width: 160px;
+      border-radius: 8px;
       background: transparent;
-      object-fit: cover;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      object-fit: contain;
+      box-shadow: none; /* Removido sombra para logos com fundo transparente ficarem limpos */
     }
 
     .header h1 {
@@ -929,11 +932,8 @@
         </form>
       </div>
 
-      <p style="text-align: center; font-size: 11px; margin-bottom: 5px; color: var(--text-muted);">
-        Ao entrar, você concorda com os <a href="/termos_uso.html" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: none;">Termos de Uso</a>
-      </p>
       <div
-        style="margin-top: 8px; text-align: center; font-size: 10px; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);">
+        style="margin-top: 16px; text-align: center; font-size: 10px; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);">
         Powered by <strong style="color: var(--text-main);">Spray Precision</strong>
       </div>
 
@@ -1346,47 +1346,101 @@
 
       function pRef() { return PRESS_UNIT === 'bar' ? 3.0 : (3.0 * BAR_TO_PSI); }
 
-      async function update() {
-        const payload = {
-          spacingM: parseFloat(numSpacing.value) / 100.0,
-          rate: parseFloat(numRate.value),
-          pMin: parseFloat(numPMin.value) || 0.1,
-          pMax: parseFloat(numPMax.value) || 10.0,
-          density: parseFloat(numDensity.value) || 1.0,
-          vMin: parseFloat(numVMin.value) || 0,
-          vAvg: parseFloat(numVAvg.value) || 0,
-          vMax: parseFloat(numVMax.value) || 0,
-          unit: PRESS_UNIT
+      // --- LÓGICA DE CÁLCULO LOCAL (MIGRADA DA API V2) ---
+      const NOZZLES = [
+        { iso: "01", q3: 0.40, color: "#F28C28" },
+        { iso: "0134", q3: 0.50, color: "#795548" },
+        { iso: "015", q3: 0.60, color: "#4CAF50" },
+        { iso: "0175", q3: 0.70, color: "#9E9E9E" },
+        { iso: "02", q3: 0.80, color: "#FFEB3B" },
+        { iso: "025", q3: 1.00, color: "#9C27B0" },
+        { iso: "03", q3: 1.20, color: "#2196F3" },
+        { iso: "04", q3: 1.60, color: "#F44336" },
+        { iso: "05", q3: 2.00, color: "#A1887F" },
+        { iso: "06", q3: 2.40, color: "#BDBDBD" },
+        { iso: "08", q3: 3.20, color: "#FFFFFF" }
+      ];
+
+      const P_REF_BAR = 3.0;
+      const qPorBico = (rate, vel, spacM) => (rate * vel * spacM) / 600.0;
+      const velPara = (rate, spacM, q) => (q * 600.0) / (rate * spacM);
+
+      function update() {
+        // Coleta de inputs
+        const spacingM = parseFloat(numSpacing.value) / 100.0;
+        const rate = parseFloat(numRate.value);
+        const pMin = parseFloat(numPMin.value) || 0.1;
+        const pMax = parseFloat(numPMax.value) || 10.0;
+        const density = parseFloat(numDensity.value) || 1.0;
+        const vMin = parseFloat(numVMin.value) || 0;
+        const vAvg = parseFloat(numVAvg.value) || 0;
+        const vMax = parseFloat(numVMax.value) || 0;
+        const unit = PRESS_UNIT;
+
+        const pTarget = (pMin + pMax) / 2;
+        const currentPRef = () => unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
+        const pressaoNec = (qMix, q3, dens) => { 
+          const qWaterEq = qMix * Math.sqrt(dens); 
+          return currentPRef() * Math.pow(qWaterEq / q3, 2); 
         };
 
-        const maxLimitsValid = payload.pMax > payload.pMin && payload.rate > 0 && payload.spacingM > 0;
+        const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
         if (!maxLimitsValid) return;
 
-        try {
-          // Exibe "Calculando..." no texto
-          document.getElementById('matchCount').innerText = 'Calculando na Nuvem...';
+        document.getElementById('matchCount').innerText = 'Recalculando Localmente...';
 
-          // Faz o pedido para a Vercel 
-          // O backend irá rodar a matemática complexa sem ser exibida pro usuário final
-          const response = await fetch('/api/calcular', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+        let rows = [];
+
+        NOZZLES.forEach(nz => {
+          const qAtPmin_water = nz.q3 * Math.sqrt(pMin / currentPRef());
+          const qAtPmax_water = nz.q3 * Math.sqrt(pMax / currentPRef());
+          const qAtPmin_mix = qAtPmin_water / Math.sqrt(density);
+          const qAtPmax_mix = qAtPmax_water / Math.sqrt(density);
+
+          const vAtPmin = velPara(rate, spacingM, qAtPmin_mix);
+          const vAtPmax = velPara(rate, spacingM, qAtPmax_mix);
+
+          const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
+          const vAt3Bar = velPara(rate, spacingM, qAt3Bar_mix);
+
+          const qVmin = qPorBico(rate, vMin, spacingM);
+          const pVmin = pressaoNec(qVmin, nz.q3, density);
+          const qVavg = qPorBico(rate, vAvg, spacingM);
+          const pVavg = pressaoNec(qVavg, nz.q3, density);
+          const qVmax = qPorBico(rate, vMax, spacingM);
+          const pVmax = pressaoNec(qVmax, nz.q3, density);
+
+          const fitsMin = pVmin >= pMin;
+          const fitsMax = pVmax <= pMax;
+          const ok = fitsMin && fitsMax;
+          
+          let statusText = "Não recomendado";
+          if (ok) statusText = "Atende";
+          else if (fitsMin || fitsMax) statusText = "Parcial";
+
+          const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
+          const deviation = Math.abs(pVavg - pTarget);
+
+          rows.push({
+            nz: nz,
+            vAtPmin, vAtPmax, vAt3Bar,
+            pVavg, qVavg, ok, statusText,
+            violation, deviation,
+            pressures: [pVmin, pVavg, pVmax]
           });
+        });
 
-          if (!response.ok) throw new Error('Falha no calculo da API');
+        // Ordenação Inteligente Local
+        rows.sort((a, b) => {
+          if (a.ok !== b.ok) return a.ok ? -1 : 1;
+          if (a.ok) return a.deviation - b.deviation;
+          return a.violation - b.violation;
+        });
 
-          const result = await response.json();
-          const rows = result.rows || [];
-
-          renderCards(rows, payload.pMin, payload.pMax, payload.vMin, payload.vMax);
-          updateChart(rows, payload.vMin, payload.vMax);
-          renderTable(rows, payload.vMin, payload.vAvg, payload.vMax);
-
-        } catch (err) {
-          console.error("Erro na API:", err);
-          document.getElementById('matchCount').innerText = 'Calculadora offline - Publique na Vercel';
-        }
+        // Renderização
+        renderCards(rows, pMin, pMax, vMin, vMax);
+        updateChart(rows, vMin, vMax);
+        renderTable(rows, vMin, vAvg, vMax);
       }
 
       function renderCards(rows, pMin, pMax, vMin, vMax) {
@@ -1476,7 +1530,7 @@
             <span class="status-badge ${statusClass}" onclick="explainStatus('${r.statusText}', ${r.pressures[0]}, ${r.pressures[2]})" style="cursor: pointer; position: relative;">
                ${r.statusText} ⓘ
             </span>
-            <a href="https://wa.me/5565999106415?text=Olá! O sistema Spray Precision PRO me recomendou o bico ISO ${r.nz.iso}. Quero fazer um orçamento!" 
+            <a href="https://wa.me/${window.partnerWhatsApp || '5565999106415'}?text=Olá! O sistema ${window.partnerName || 'Spray Precision PRO'} me recomendou o bico ISO ${r.nz.iso}. Quero fazer um orçamento!" 
                target="_blank" 
                style="background: #25D366; color: white; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: all 0.2s ease;">
                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1537,8 +1591,8 @@
           rmStatusText.style.background = 'transparent';
         }
 
-        const msg = encodeURIComponent(`Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
-        document.getElementById('rmWhatsapp').href = `https://wa.me/5565999106415?text=${msg}`;
+        const msg = encodeURIComponent(`Olá! O sistema ${window.partnerName || 'Spray Precision PRO'} sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
+        document.getElementById('rmWhatsapp').href = `https://wa.me/${window.partnerWhatsApp || '5565999106415'}?text=${msg}`;
 
         modal.style.display = 'flex';
       }
@@ -1646,7 +1700,7 @@
           } else if (greenCount > 0) {
             statusText = 'PARCIAL';
             statusClass = 'ok'; 
-            statusColor = '#FFC107'; 
+            statusColor = '#FFC107'; // Amarelo/Dourado para parcial
           }
 
           const rowOkClass = (greenCount === 3) ? 'row-ok' : '';
@@ -1670,9 +1724,9 @@
 
       // --- GERAÇÃO DE RELATÓRIO TÉCNICO PROFISSIONAL ---
       function generateReport() {
-        const pName = 'Spray Precision PRO';
-        const pLogo = './logo.png';
-        const pColor = '#00d2ff';
+        const pName = window.partnerName || 'Spray Precision PRO';
+        const pLogo = document.querySelector('.header-icon').src;
+        const pColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
         
         const report = document.getElementById('printReport');
         const now = new Date();
@@ -1690,6 +1744,7 @@
           pMax: document.getElementById('numPMax').value
         };
 
+        // Capturar o bico recomendado (se existir)
         const nozzleInfo = window.topNozzle ? 
           `ISO ${window.topNozzle.nz.iso} (${window.topNozzle.statusText})` : 
           'Nenhuma recomendação ideal encontrada';
@@ -1741,22 +1796,26 @@
             <div id="reportTableContainer"></div>
 
             <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 11px;">
-              Simulação gerada via <b>${pName} Demo</b>.
+              Este simulador utiliza correção por densidade específica. Certifique-se de que os bicos estejam limpos e o manômetro calibrado.<br>
+              Simulação gerada via <b>${pName} Enterprise PRO</b>.
             </div>
           </div>
         `;
 
+        // Clonar a tabela original e Filtrar apenas bicos com algum parâmetro verde
         const originalTable = document.getElementById('dataTable').cloneNode(true);
         originalTable.style.width = '100%';
         originalTable.style.borderCollapse = 'collapse';
         originalTable.style.fontSize = '12px';
         
+        // Filtrar Linhas: Remover quem não tem nada verde
         const rowsToFilter = originalTable.querySelectorAll('tbody tr');
         rowsToFilter.forEach(tr => {
           const hasGreen = tr.innerHTML.indexOf('var(--accent-green)') !== -1;
           if (!hasGreen) {
             tr.remove(); 
           } else {
+            // Se for mantida, aplica o estilo de borda
             tr.querySelectorAll('td').forEach(cell => {
               cell.style.border = '1px solid #eee';
               cell.style.padding = '8px';
@@ -1764,6 +1823,7 @@
           }
         });
 
+        // Aplicar estilo nos headers (th)
         originalTable.querySelectorAll('th').forEach(th => {
           th.style.border = '1px solid #eee';
           th.style.padding = '10px';
@@ -1771,16 +1831,12 @@
           th.style.color = '#64748b';
         });
 
-        document.getElementById('reportTableContainer').innerHTML = '';
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
         // --- TRUQUE PARA NOMEAR O PDF DINAMICAMENTE ---
         const oldTitle = document.title;
         const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
-        // Remove pontos decimais para o nome do arquivo ficar limpo
-        const cleanRate = Math.round(simulationData.rate);
-        const cleanVel = Math.round(simulationData.vAvg);
-        const fileName = `Laudo_${cleanRate}Lha_${cleanVel}kmh${nzPart}`;
+        const fileName = `Laudo_${simulationData.rate}Lha_${simulationData.vAvg}kmh${nzPart}`;
         document.title = fileName;
 
         // Disparar Impressão
@@ -1952,7 +2008,7 @@
       window._updateApp = () => { if (typeof update === 'function') update(); };
     </script>
 
-    <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+    <div class="logout-btn-container" style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
       <button onclick="logout()"
         style="background: transparent; border: 1px solid var(--accent-error); color: var(--accent-error); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">Sair
         do Sistema (Logout)</button>
@@ -2085,12 +2141,91 @@
     }
     window.logout = logout;
 
-    function showApp() {
+    async function showApp() {
+      // --- LOGICA ENTERPRISE: APLICAR BRANDING DO PARCEIRO ---
+      try {
+        console.log("Enterprise: Buscando dados do perfil...");
+        const { data: { user }, error } = await clienteSupabase.auth.getUser();
+        
+        if (user && user.user_metadata) {
+          const meta = user.user_metadata;
+          // Se houver qualquer dado de parceiro, tentamos aplicar
+          if (meta.partner_name || meta.partner_color) {
+             console.log("Enterprise: Dados de branding encontrados!", meta);
+             applyPartnerBranding(meta);
+          } else {
+             console.log("Enterprise: Nenhum dado de branding no usuário.");
+          }
+        }
+      } catch (err) {
+        console.error("Erro fatal de branding:", err);
+      }
+
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
+      
       if (window._updateApp) {
-        window._updateApp(); // Recalcular os gráficos após aparecer
+        window._updateApp(); 
       }
+    }
+
+    function applyPartnerBranding(meta) {
+      if (!meta) return;
+
+      const accent = meta.partner_color || '#00d2ff';
+      const logo = meta.partner_logo || './logo.png';
+      const name = meta.partner_name || 'Spray Precision PRO';
+      const whatsapp = meta.partner_whatsapp || '5565999106415';
+
+      // 1. Atualizar Variáveis CSS Primárias
+      const root = document.documentElement;
+      root.style.setProperty('--accent', accent);
+      root.style.setProperty('--accent-glow', accent + '66'); 
+
+      // 2. Atualizar Logotipos em todo o app (Login e Interno)
+      const logos = document.querySelectorAll('.header-icon, .login-box img');
+      logos.forEach(img => {
+        img.src = logo;
+        img.style.objectFit = 'contain'; // Garante que não corte no login também
+        img.onerror = () => { img.src = './logo.png'; }; 
+      });
+
+      // 3. Atualizar Título no Cabeçalho
+      const headerTitle = document.querySelector('.header h1');
+      if (headerTitle) {
+        headerTitle.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
+      }
+
+      // 4. Customizar Textos do Aplicativo
+      const subTitle = document.querySelector('.header p');
+      if (subTitle && meta.partner_name) {
+        subTitle.innerText = `Simulador Oficial - ${name}`;
+      }
+
+      // 5. Configurar Botões de WhatsApp Dinamicamente (Globais e Estáticos)
+      window.partnerWhatsApp = whatsapp;
+      window.partnerName = name;
+
+      const allWaLinks = document.querySelectorAll('a[href*="wa.me"]');
+      allWaLinks.forEach(link => {
+        try {
+          const url = new URL(link.href);
+          const originalText = url.searchParams.get('text') || 'Olá!';
+          const cleanText = originalText.replace('Spray Precision PRO', name);
+          link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(cleanText)}`;
+        } catch(e) {}
+      });
+
+      // 6. Atualizar Elementos Dinâmicos (Botões e Símbolos)
+      const customStyles = document.createElement('style');
+      customStyles.innerHTML = `
+        .info-btn, .login-btn, .status-badge.ok, .fab-btn.fab-ok { border-color: ${accent} !important; }
+        .preset-btn.active { background: ${accent} !important; border-color: ${accent} !important; color: #000 !important; }
+        .result-hero .iso { color: ${accent} !important; }
+      `;
+      document.head.appendChild(customStyles);
+
+      console.log(`✅ Sucesso: Branding do Parceiro "${name}" aplicado.`);
     }
 
     function showLogin() {
@@ -2118,7 +2253,7 @@
     }
   </script>
 
-<div style="
+<div id="appFooter" style="
   width: 100%;
   text-align: center;
   margin-top: 40px;
@@ -2128,36 +2263,55 @@
   opacity: 0.6;
   letter-spacing: 0.5px;
 ">
-  Made by
   <span style="color: var(--accent); font-weight: 600;">Eduardo Andrade</span>
 </div>
 
+<!-- Container Oculto para Impressão de Relatório Técnico -->
 <div id="printReport"></div>
+
 <style>
+  /* Estilos específicos para Impressão Profissional (Laudo Técnico) */
   @media print {
     :root {
-      --text-main: #0f172a !important;
+      --text-main: #0f172a !important; /* Forza o texto principal a ser escuro */
       --text-muted: #334155 !important;
     }
-    @page { size: auto; margin: 15mm; }
+
+    @page { 
+      size: auto;   /* auto is the initial value */
+      margin: 15mm; /* margem limpa para o laudo */
+    }
+
     body { background: white !important; padding: 0 !important; color: black !important; }
+    
+    /* Esconde toda a interface do Aplicativo e rodapés */
     #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 
-    .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal {
+    .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal,
+    #appFooter {
       display: none !important;
       visibility: hidden !important;
+      opacity: 0 !important;
     }
-    #printReport { 
-      display: block !important; 
-      visibility: visible !important; 
-      position: absolute !important; 
-      top: 0 !important; 
-      left: 0 !important; 
-      width: 100% !important; 
+    
+    /* Ativa e Formata apenas o Laudo */
+    #printReport {
+      display: block !important;
+      visibility: visible !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
     }
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    
+    /* Força Cores e Backgrouds na Impressora */
+    * { 
+      -webkit-print-color-adjust: exact !important; 
+      print-color-adjust: exact !important; 
+    }
   }
   #printReport { display: none; }
 </style>
+
 </body>
 
 </html>

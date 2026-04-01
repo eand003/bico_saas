@@ -3,7 +3,7 @@
 
 const NOZZLES = [
   { iso: "01", q3: 0.40, color: "#F28C28" },
-  { iso: "0134", q3: 0.54, color: "#795548" },
+  { iso: "0134", q3: 0.536, color: "#795548" },
   { iso: "015", q3: 0.60, color: "#4CAF50" },
   { iso: "0175", q3: 0.70, color: "#9E9E9E" },
   { iso: "02", q3: 0.80, color: "#FFEB3B" },

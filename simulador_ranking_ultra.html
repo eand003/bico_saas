@@ -18,12 +18,12 @@
             --text-muted: #6c757d;
         }
 
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .container { max-width: 900px; width: 100%; border: 1px solid #dee2e6; border-radius: 20px; background: var(--card); padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); padding: 15px; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; margin: 0; }
+        .container { max-width: 900px; width: 100%; border: 1px solid #dee2e6; border-radius: 20px; background: var(--card); padding: 30px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
-        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid var(--primary); padding-bottom: 20px; }
-        .header h1 { font-family: 'Outfit'; font-size: 32px; font-weight: 800; color: var(--secondary); margin: 0; }
-        .header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 15px; }
+        .header h1 { font-family: 'Outfit'; font-size: 28px; font-weight: 800; color: var(--secondary); margin: 0; }
+        .header p { color: var(--text-muted); font-size: 12px; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Sliders Section */
         .control-unit { text-align: center; margin-bottom: 50px; background: #e9f5ff; padding: 30px; border-radius: 15px; }
@@ -35,6 +35,17 @@
 
         /* Gauges Matrix */
         .gauges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        @media (max-width: 768px) {
+            .gauges-grid { grid-template-columns: 1fr; }
+            .speed-val { font-size: 54px; }
+            .control-unit { padding: 20px; margin-bottom: 30px; }
+            .gauge-card { order: 2; }
+            .gauge-card.winner { order: 1; } /* Força o Campeão no Topo no Celular */
+            .metafor-box { padding-top: 20px; margin-top: 30px; }
+            .header h1 { font-size: 24px; }
+        }
+
         .gauge-card { background: #fff; border: 1px solid #dee2e6; border-radius: 15px; padding: 20px; text-align: center; position: relative; }
         .gauge-card.winner { border: 2px solid var(--success); background: #f8fff9; }
         .winner-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--success); color: #fff; font-size: 10px; font-weight: 900; padding: 3px 12px; border-radius: 50px; }
@@ -58,7 +69,7 @@
         .safe-zone { position: absolute; left: 30%; width: 40%; height: 100%; background: #fff; border-left: 1px dashed #6c757d; border-right: 1px dashed #6c757d; }
         .dot { position: absolute; width: 30px; height: 30px; border-radius: 5px; font-size: 12px; font-weight: 900; color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.1s; transform: translateX(-50%); }
 
-        .btn-footer { width: 100%; background: var(--secondary); color: #fff; border: none; padding: 20px; border-radius: 10px; font-weight: 900; font-size: 18px; margin-top: 40px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-footer { width: 100%; background: var(--secondary); color: #fff; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 16px; margin-top: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>

@@ -1,55 +1,48 @@
 # 🏛️ Documentação Mestre: Spray Precision PRO
 
-Este documento serve como o "Mapa da Mina" para o desenvolvedor e o gestor do projeto. Ele explica as duas arquiteturas coexistentes e como o sistema se comporta.
+Este documento serve como o "Mapa da Mina" para o desenvolvedor e o gestor do projeto. Ele explica as arquiteturas coexistentes e como o sistema se comporta.
 
 ---
 
-## 📁 1. Estrutura do Repositório
+## 📁 1. Estrutura do Ecossistema
 
-*   `/enterprise/index.html`: **O Coração do SaaS.** É a versão moderna, White-Label, que muda de cor e logo conforme o usuário logado.
-*   `/v2/index.html`: **A Versão Standard/Offline.** Focada no produtor final, sem branding dinâmico, mas com suporte a PWA (instalação).
-*   `admin_config_parceiro.html`: **O Painel de Controle do Parceiro.** Onde as revendas configuram sua identidade sem precisar de você.
-*   `Manual_do_Licenciador_SaaS.md`: Guia comercial e de onboarding de parceiros.
+O projeto é dividido em quatro pilares principais, cada um com sua finalidade comercial:
 
----
-
-## 🚀 2. O Motor de Branding (Enterprise White-Label)
-
-A versão Enterprise funciona via **Metadados do Supabase**.
-
-1.  **Persistência**: As cores e logos não estão no código, estão no `user_metadata` do usuário no Supabase.
-2.  **Funcionamento**:
-    *   O `index.html` faz login -> busca o perfil -> executa a função `applyPartnerBranding(meta)`.
-    *   Essa função injeta variáveis CSS (`--accent`) e troca as URLs de imagem (`.header-icon`).
-    *   **Importante**: O número de WhatsApp é salvo em `window.partnerWhatsApp` para que botões criados dinamicamente (resultados de bicos) também usem o número correto.
+*   **CORE (`/index.html`)**: Versão pública para captura de leads via Supabase. Requer internet para os cálculos via `/api/calcular`.
+*   **ENTERPRISE (`/enterprise/index.html`)**: O Coração do SaaS. Versão White-Label dinâmica que muda de cor e logo conforme o parceiro logado via Supabase Metadata. (Usa `/api/calcular`).
+*   **OFFLINE / PWA (`/v2/index.html`)**: Versão blindada para o campo. **Matemática portada localmente**, não depende da pasta API nem de internet para os resultados.
+*   **SIMULADOR ULTRA (`/simulador_ranking_ultra.html`)**: Ferramenta de fechamento de vendas visual. Otimizada para mobile, usa manômetros dinâmicos para provar a superioridade técnica do bico recomendado.
 
 ---
 
-## 📄 3. Sistema de Relatórios PDF
+## ⚙️ 2. O Motor de Inteligência (API vs Local)
 
-A geração do laudo técnico não usa bibliotecas pesadas. Ela usa o motor de impressão nativo do navegador com "máscaras" de CSS.
+A inteligência matemática foi padronizada em conformidade com a norma **ISO 10625**.
 
-*   **HTML**: Existe uma `div` chamada `#printReport` que fica oculta (`display: none`).
-*   **Ação**: Quando o botão 📄 é clicado, a função `generateReport()` limpa esse container, preenche com os dados da simulação e clona a tabela de bicos (filtrando apenas os que têm parâmetros verdes).
-*   **CSS (@media print)**: Esconde o App inteiro e mostra apenas o `#printReport`. O comando `@page { margin: 15mm; }` ajuda a esconder URLs e datas indesejadas no rodapé do navegador.
-
----
-
-## ⚙️ 4. Manutenção e Cálculos
-
-A lógica matemática reside na função `update()`. Se precisar alterar tabelas de bicos ou constantes:
-
-*   **Tabela de Bicos**: Procure a constante `NOZZLES` no `index.html`. É um array de objetos com ISO, Cor e Vazão Padrão (Q3).
-*   **Cálculo de Pressão**: Usa a fórmula física de vazão vs pressão (Relação Quadrática) e o fator de correção de densidade específica (`Math.sqrt(densidade)`).
+1.  **API Central (`/api/calcular.js`)**: Função Serverless (Node.js) hospedada na Vercel. Garante que o CORE e o ENTERPRISE usem a mesma base de dados.
+2.  **Lógica Offline**: Na versão `/v2`, o array `NOZZLES` e a lógica de ranking foram injetados no JavaScript.
+3.  **Padrão ISO (3.0 BAR)**: Abandonamos a conversão de GPM para usar valores reais de mercado (Ex: ISO 04 = 1.60 L/min).
+    *   *Fórmula Mestra*: `Vazão (L/min) = Código_ISO * 4.0`.
 
 ---
 
-## 🌐 5. Deployment e URLs
+## 🏆 3. Algoritmo de Ranking (Resiliência Operacional)
 
-O projeto é hospedado na **Vercel** e usa o domínio principal para todas as versões:
+O sistema não escolhe apenas o bico que atende a faixa, ele busca o bico mais **estável**:
+-   **Prioridade 1**: Atendimento binário (dentro do limite Pmin/Pmax em velocidade Min e Max).
+-   **Prioridade 2**: Proximidade do Centro (Janela de Resiliência). O bico que trabalha no centro do manômetro é o Top 1, pois dá margem para o operador oscilar a velocidade.
+
+---
+
+## 🚀 4. Deployment e URLs (Vercel)
+
+O projeto usa a infraestrutura da Vercel para servir tanto os arquivos estáticos quanto as funções de backend.
+
 *   `bico-saas.vercel.app/` -> Página Inicial / Pitch.
 *   `bico-saas.vercel.app/enterprise/` -> App White-Label.
+*   `bico-saas.vercel.app/v2/` -> App Offline Field Ready.
+*   `bico-saas.vercel.app/simulador_ranking_ultra.html` -> Ferramenta de Venda Visual.
 *   `bico-saas.vercel.app/admin_config_parceiro.html` -> Painel de Configuração.
 
 ---
-*Dúvidas Futuras: Consulte esta documentação antes de qualquer refatoração.*
+*Dúvidas Futuras: Consulte este mapa de rotas antes de qualquer alteração estrutural.*

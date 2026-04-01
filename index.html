@@ -1774,7 +1774,10 @@
         // --- TRUQUE PARA NOMEAR O PDF DINAMICAMENTE ---
         const oldTitle = document.title;
         const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
-        const fileName = `Laudo_${simulationData.rate}Lha_${simulationData.vAvg}kmh${nzPart}`;
+        // Remove pontos decimais para o nome do arquivo ficar limpo
+        const cleanRate = Math.round(simulationData.rate);
+        const cleanVel = Math.round(simulationData.vAvg);
+        const fileName = `Laudo_${cleanRate}Lha_${cleanVel}kmh${nzPart}`;
         document.title = fileName;
 
         // Disparar Impressão

@@ -1589,45 +1589,76 @@
         modal.style.display = 'flex';
       }
 
-      function renderTable(rows, vMin, vAvg, vMax) {
+      function renderTable(rows) {
         const tbody = document.getElementById('dataTable');
         const pUnit = PRESS_UNIT.toUpperCase();
         const sysPMin = parseFloat(numPMin.value);
         const sysPMax = parseFloat(numPMax.value);
-
         const targetRate = parseFloat(document.getElementById('numRate').value || 0);
 
-        let html = `<thead>
-        <tr>
-          <th style="text-align:left">ISO</th>
-          <th title="Vazão de fábrica Padrão ISO">Q@3bar<br><span style="font-size:10px; font-weight:400;">(43.5 psi)</span></th>
-          <th>Vazão Alvo</th>
-          <th>Pressão V. Mín</th>
-          <th>Pressão V. Méd</th>
-          <th>Pressão V. Máx</th>
-          <th>Janela (km/h)</th>
-          <th>Veredito</th>
-        </tr>
-      </thead><tbody>`;
+        // FILTRO RELEVANTE: Apenas bicos que tenham pelo menos UM parâmetro verde
+        const filteredRows = rows.filter(r => {
+          const hasGreen = (r.pressures[0] >= sysPMin && r.pressures[0] <= sysPMax) ||
+                           (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
+                           (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
+          return hasGreen;
+        });
 
-        rows.forEach(r => {
+        // FALLBACK: Se nenhum bico atende nada, mostra os 3 mais próximos da média
+        const finalRows = filteredRows.length > 0 ? filteredRows : rows.sort((a,b) => {
+          const distA = Math.abs(a.pressures[1] - (sysPMin + sysPMax)/2);
+          const distB = Math.abs(b.pressures[1] - (sysPMin + sysPMax)/2);
+          return distA - distB;
+        }).slice(0, 3);
+
+        let html = `<thead>
+          <tr>
+            <th style="text-align:left">ISO</th>
+            <th title="Vazão de fábrica Padrão ISO">Q@3bar<br><span style="font-size:10px; font-weight:400;">(43.5 psi)</span></th>
+            <th>Vazão Alvo</th>
+            <th>Pressão V. Mín</th>
+            <th>Pressão V. Méd</th>
+            <th>Pressão V. Máx</th>
+            <th>Janela (km/h)</th>
+            <th style="width:100px;">Veredito</th>
+          </tr>
+        </thead><tbody>`;
+
+        finalRows.forEach(r => {
           const makeCell = (lbl, p) => {
-            const cls = (p >= sysPMin && p <= sysPMax && p > 0) ? 'ok' : 'bad';
-            const color = cls === 'ok' ? 'var(--accent-green)' : 'var(--accent-error)';
+            const isOk = (p >= sysPMin && p <= sysPMax && p > 0);
+            const color = isOk ? 'var(--accent-green)' : 'var(--accent-error)';
             return `<td data-label="${lbl}" style="color:${color}; font-family: Outfit; font-weight: 600;">${isNaN(p) || !isFinite(p) ? '--' : p.toFixed(1)} ${pUnit}</td>`;
           };
 
-          const rateColor = r.ok ? 'var(--accent-green)' : 'var(--text-muted)';
+          const greenCount = r.pressures.filter(p => p >= sysPMin && p <= sysPMax).length;
+          let statusText = 'FORA';
+          let statusClass = 'bad';
+          let statusColor = 'var(--accent-error)';
+          
+          if (greenCount === 3) {
+            statusText = 'ATENDE';
+            statusClass = 'ok';
+            statusColor = 'var(--accent-green)';
+          } else if (greenCount > 0) {
+            statusText = 'PARCIAL';
+            statusClass = 'ok'; 
+            statusColor = '#FFC107'; 
+          }
 
-          html += `<tr class="${r.ok ? 'row-ok' : ''}">
+          const rowOkClass = (greenCount === 3) ? 'row-ok' : '';
+
+          html += `<tr class="${rowOkClass}">
             <td data-label="Bico ISO" style="text-align:left; font-weight:bold; color:${r.nz.color}">ISO ${r.nz.iso}</td>
             <td data-label="Q@3bar (43.5 psi)" style="font-family: Outfit; color:var(--text-muted)">${r.nz.q3.toFixed(2)}</td>
-            <td data-label="Vazão Alvo (L/ha)" style="font-family: Outfit; color:${rateColor}; font-weight: 700;">${targetRate.toFixed(1)} L/ha</td>
+            <td data-label="Vazão Alvo (L/ha)" style="font-family: Outfit; color:${statusColor}; font-weight: 700;">${targetRate.toFixed(1)} L/ha</td>
             ${makeCell("Pressão V. Mín", r.pressures[0])}
             ${makeCell("Pressão V. Méd", r.pressures[1])}
             ${makeCell("Pressão V. Máx", r.pressures[2])}
-            <td data-label="Janela (km/h)"><span class="status-badge" style="background:var(--control-bg); color:var(--text-main); border:1px solid var(--control-border); padding: 4px 8px;">${r.vAtPmin.toFixed(1)} - ${r.vAtPmax.toFixed(1)}</span></td>
-            <td data-label="Veredito"><span class="status-badge ${r.ok ? 'ok' : 'bad'}" style="padding: 4px 8px;">${r.ok ? 'OK' : 'FORA'}</span></td>
+            <td data-label="Janela (km/h)"><span class="status-badge" style="background:var(--control-bg); color:var(--text-main); border:1px solid var(--control-border); padding: 4px 8px;">${r.vAtPmin.toFixed(1)} - ${r.vAtPmax.toFixed(1)} km/h</span></td>
+            <td data-label="Veredito">
+              <span class="status-badge ${statusClass}" style="padding: 4px 8px; border-color:${statusColor} !important; color:${statusColor} !important; font-weight:800; font-size:10px;">${statusText}</span>
+            </td>
           </tr>`;
         });
         html += `</tbody>`;
@@ -1740,7 +1771,17 @@
         document.getElementById('reportTableContainer').innerHTML = '';
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
+        // --- TRUQUE PARA NOMEAR O PDF DINAMICAMENTE ---
+        const oldTitle = document.title;
+        const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
+        const fileName = `Laudo_${simulationData.rate}Lha_${simulationData.vAvg}kmh${nzPart}`;
+        document.title = fileName;
+
+        // Disparar Impressão
         window.print();
+
+        // Restaurar título original
+        document.title = oldTitle;
       }
 
       function updateChart(rows, sysVMin, sysVMax) {
@@ -2088,6 +2129,10 @@
 <div id="printReport"></div>
 <style>
   @media print {
+    :root {
+      --text-main: #0f172a !important;
+      --text-muted: #334155 !important;
+    }
     @page { size: auto; margin: 15mm; }
     body { background: white !important; padding: 0 !important; color: black !important; }
     #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 

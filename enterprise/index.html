@@ -1348,18 +1348,18 @@
 
       // --- LÓGICA DE CÁLCULO LOCAL (MIGRADA DA API V2) ---
       const NOZZLES = [
-        { iso: "01", size: 0.1, color: "#F28C28" },
-        { iso: "0134", size: 0.134, color: "#795548" },
-        { iso: "015", size: 0.15, color: "#4CAF50" },
-        { iso: "0175", size: 0.175, color: "#9E9E9E" },
-        { iso: "02", size: 0.2, color: "#FFEB3B" },
-        { iso: "025", size: 0.25, color: "#9C27B0" },
-        { iso: "03", size: 0.3, color: "#2196F3" },
-        { iso: "04", size: 0.4, color: "#F44336" },
-        { iso: "05", size: 0.5, color: "#A1887F" },
-        { iso: "06", size: 0.6, color: "#BDBDBD" },
-        { iso: "08", size: 0.8, color: "#FFFFFF" }
-      ].map(n => ({ iso: n.iso, color: n.color, q3: n.size * 3.785 }));
+        { iso: "01", q3: 0.40, color: "#F28C28" },
+        { iso: "0134", q3: 0.50, color: "#795548" },
+        { iso: "015", q3: 0.60, color: "#4CAF50" },
+        { iso: "0175", q3: 0.70, color: "#9E9E9E" },
+        { iso: "02", q3: 0.80, color: "#FFEB3B" },
+        { iso: "025", q3: 1.00, color: "#9C27B0" },
+        { iso: "03", q3: 1.20, color: "#2196F3" },
+        { iso: "04", q3: 1.60, color: "#F44336" },
+        { iso: "05", q3: 2.00, color: "#A1887F" },
+        { iso: "06", q3: 2.40, color: "#BDBDBD" },
+        { iso: "08", q3: 3.20, color: "#FFFFFF" }
+      ];
 
       const P_REF_BAR = 3.0;
       const qPorBico = (rate, vel, spacM) => (rate * vel * spacM) / 600.0;

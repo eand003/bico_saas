@@ -2095,10 +2095,19 @@
         if (isRegister) {
           if (!nome || !whatsapp) throw new Error("Por favor, preencha o seu Nome e o WhatsApp.");
 
+          // Monta a URL raiz do projeto (sobe um nível de /enterprise/ para /)
+          const pathParts = window.location.pathname.split('/');
+          // Remove 'enterprise' e o arquivo da ponta para pegar a raiz
+          const rootPath = pathParts.slice(0, pathParts.length - 2).join('/') + '/';
+          const rootUrl  = window.location.origin + rootPath;
+          // Redireciona para email_confirmado.html com destino enterprise após confirmar
+          const redirectUrl = rootUrl + 'email_confirmado.html?next=enterprise/index.html';
+
           const { data, error } = await clienteSupabase.auth.signUp({
             email: email,
             password: password,
             options: {
+              emailRedirectTo: redirectUrl,
               data: {
                 nome: nome,
                 whatsapp: whatsapp
@@ -2106,16 +2115,29 @@
             }
           });
           if (error) throw error;
-          authSuccess.innerText = 'Cadastro realizado com sucesso!';
-          authSuccess.style.display = 'block';
 
           if (data.session) {
+            // Confirmação desativada no Supabase — entra direto
+            authSuccess.innerText = 'Cadastro realizado! Entrando...';
+            authSuccess.style.display = 'block';
             setTimeout(showApp, 1500);
           } else {
-            authError.innerText = 'Conta criada, por favor faça login (desmarque a caixinha).';
-            authError.style.display = 'block';
+            // Confirmação por e-mail ativada no Supabase
+            authSuccess.style.display = 'block';
+            authSuccess.innerHTML = `
+              <strong>✅ Cadastro enviado para confirmação!</strong><br>
+              <span style="font-size:13px; opacity:0.85;">
+                Acesse seu e-mail <strong>${email}</strong> e clique no link de confirmação que enviamos.
+                Após confirmar, volte aqui para fazer login.
+              </span>
+            `;
             btnSubmit.disabled = false;
-            btnSubmit.innerText = 'Entrar';
+            btnSubmit.innerText = 'Entrar / Cadastrar';
+            const chk = document.getElementById('chkRegister');
+            if (chk) {
+              chk.checked = false;
+              chk.dispatchEvent(new Event('change'));
+            }
           }
         } else {
           const { data, error } = await clienteSupabase.auth.signInWithPassword({ email, password });

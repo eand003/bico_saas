@@ -364,7 +364,21 @@
       document.getElementById('stateError').style.display   = state === 'error'   ? 'block' : 'none';
     }
 
-    // ── Contagem regressiva e redirecionamento ───────────
+    // ── Resolve URL de destino após confirmação ─────────
+    // Lê o parâmetro ?next=enterprise/index.html da URL
+    // Ex: email_confirmado.html?next=enterprise/index.html
+    function getRedirectTarget() {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get('next');
+      if (next) {
+        // Monta caminho relativo seguro (evita URLs externas)
+        const base = window.location.origin + window.location.pathname.replace(/[^\/]*$/, '');
+        return base + next;
+      }
+      return './index.html';
+    }
+
+    // ── Contagem regressiva e redirecionamento ────────────
     function startCountdown(seconds, targetUrl) {
       const el = document.getElementById('countdown');
       let remaining = seconds;
@@ -387,6 +401,13 @@
         // O SDK v2 processa automaticamente esses parâmetros via getSession()
         const { data, error } = await client.auth.getSession();
 
+        // Descobre para onde redirecionar após confirmação
+        const destino = getRedirectTarget();
+
+        // Atualiza o botão "Acessar o Sistema" com o destino correto
+        const btnAcessar = document.getElementById('btnAcessar');
+        if (btnAcessar) btnAcessar.href = destino;
+
         if (error) {
           throw error;
         }
@@ -399,7 +420,7 @@
 
           showState('success');
           launchConfetti();
-          startCountdown(5, './index.html');
+          startCountdown(5, destino);
         } else {
           // Sem sessão e sem erro → link já foi usado ou inválido
           document.getElementById('errorMsg').textContent =

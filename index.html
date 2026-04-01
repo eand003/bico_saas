@@ -1774,20 +1774,27 @@
         document.getElementById('reportTableContainer').innerHTML = '';
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
-        // --- TRUQUE PARA NOMEAR O PDF DINAMICAMENTE ---
+        // --- NOMEAR O PDF DINAMICAMENTE (compatível com iOS/Safari) ---
         const oldTitle = document.title;
         const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
-        // Remove pontos decimais para o nome do arquivo ficar limpo
         const cleanRate = Math.round(simulationData.rate);
         const cleanVel = Math.round(simulationData.vAvg);
         const fileName = `Laudo_${cleanRate}Lha_${cleanVel}kmh${nzPart}`;
+
+        // Atualiza tanto document.title quanto a tag <title> no DOM
+        // O setTimeout dá tempo ao iOS/Safari capturar o novo título antes do print
+        const titleTag = document.querySelector('title');
         document.title = fileName;
+        if (titleTag) titleTag.textContent = fileName;
 
-        // Disparar Impressão
-        window.print();
-
-        // Restaurar título original
-        document.title = oldTitle;
+        setTimeout(() => {
+          window.print();
+          // Restaura após o dialog de impressão abrir
+          setTimeout(() => {
+            document.title = oldTitle;
+            if (titleTag) titleTag.textContent = oldTitle;
+          }, 1000);
+        }, 300);
       }
 
       function updateChart(rows, sysVMin, sysVMax) {

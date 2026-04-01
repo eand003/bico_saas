@@ -1830,17 +1830,24 @@
         document.getElementById('reportTableContainer').innerHTML = '';
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
-        // --- TRUQUE PARA NOMEAR O PDF DINAMICAMENTE ---
+        // --- NOMEAR O PDF DINAMICAMENTE (compatível com iOS/Safari) ---
         const oldTitle = document.title;
         const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
-        const fileName = `Laudo_${simulationData.rate}Lha_${simulationData.vAvg}kmh${nzPart}`;
+        const cleanRate = Math.round(parseFloat(simulationData.rate));
+        const cleanVel  = Math.round(parseFloat(simulationData.vAvg));
+        const fileName = `Laudo_${cleanRate}Lha_${cleanVel}kmh${nzPart}`;
+
+        const titleTag = document.querySelector('title');
         document.title = fileName;
+        if (titleTag) titleTag.textContent = fileName;
 
-        // Disparar Impressão
-        window.print();
-
-        // Restaurar título original
-        document.title = oldTitle;
+        setTimeout(() => {
+          window.print();
+          setTimeout(() => {
+            document.title = oldTitle;
+            if (titleTag) titleTag.textContent = oldTitle;
+          }, 1000);
+        }, 300);
       }
 
       function updateChart(rows, sysVMin, sysVMax) {

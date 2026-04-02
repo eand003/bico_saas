@@ -6,9 +6,12 @@ Este documento serve como o "Mapa da Mina" para o desenvolvedor e o gestor do pr
 
 ## 📁 1. Estrutura do Ecossistema
 
-O projeto é dividido em quatro pilares principais, cada um com sua finalidade comercial:
+O projeto é dividido em múltiplos pilares principais, cada um com sua finalidade comercial:
 
 *   **CORE (`/index.html`)**: Versão pública para captura de leads via Supabase. Requer internet para os cálculos via `/api/calcular`.
+*   **LANDINGS DE CONVERSÃO (`/landing/` e `/landing_vendas/`)**:
+    *   `/landing/index.html`: Funil B2B focado em Autoridade Consultiva (Estética Extreme Dark).
+    *   `/landing_vendas/index.html`: Funil B2C para Varejo e Revendas. Usa o app como "Motor de Auditoria" para justificar venda física de peças.
 *   **ENTERPRISE (`/enterprise/index.html`)**: O Coração do SaaS. Versão White-Label dinâmica que muda de cor e logo conforme o parceiro logado via Supabase Metadata. (Usa `/api/calcular`).
 *   **OFFLINE / PWA (`/v2/index.html`)**: Versão blindada para o campo. **Matemática portada localmente**, não depende da pasta API nem de internet para os resultados.
 *   **SIMULADOR ULTRA (`/simulador_ranking_ultra.html`)**: Ferramenta de fechamento de vendas visual. Otimizada para mobile, usa manômetros dinâmicos para provar a superioridade técnica do bico recomendado.

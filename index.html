@@ -2233,12 +2233,12 @@
 
       @page {
         size: auto;
-        margin: 15mm;
+        margin: 0mm; /* A margem ZERO desativa a inserção da URL e Data nativa do navegador */
       }
 
       body {
         background: white !important;
-        padding: 0 !important;
+        padding: 15mm !important; /* Compensar a margem para o texto não colar nas bordas do PDF */
         color: black !important;
       }
 

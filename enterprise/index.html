@@ -2325,13 +2325,13 @@
       @page {
         size: auto;
         /* auto is the initial value */
-        margin: 15mm;
-        /* margem limpa para o laudo */
+        margin: 0mm;
+        /* margem zerada para ocultar cabeçalho do navegador (URL) */
       }
 
       body {
         background: white !important;
-        padding: 0 !important;
+        padding: 15mm !important; /* compensação da margem */
         color: black !important;
       }
 

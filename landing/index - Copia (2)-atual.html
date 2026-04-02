@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spray Precision PRO | Validação Técnica de Pulverização</title>
+    <meta name="description"
+        content="A ferramenta de validação técnica da pulverização. Pare de confiar em tabela média. Valide a aplicação real da máquina no campo em segundos.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-dark: #000000; /* Preto absoluto para choque extremo de contraste */
+            --bg-card: #0f172a;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary-blue: #00d2ff;
+            --primary-dark: #004b63;
+            --whatsapp-green: #25D366;
+            --alert-red: #ef4444;
+            --alert-yellow: #eab308;
+            --ok-green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-wpp {
+            background-color: var(--whatsapp-green);
+            color: #000;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.2);
+        }
+
+        .btn-wpp:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
+            background-color: #20b858;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(0, 210, 255, 0.1);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-wrap img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            font-weight: 500;
+            font-size: 15px;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-cta {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            nav {
+                display: none;
+            }
+
+            .nav-cta {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        /* Section Spacing */
+        section {
+            padding: 100px 0;
+        }
+        
+        .bg-alt {
+            background-color: #112a46; /* Azul Escocês (Saturado), impossível de telas de celular esmagarem no preto */
+            position: relative;
+        }
+
+        /* Linhas Neon muito mais agressivas marcando o corte */
+        .bg-alt::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--primary-blue);
+            box-shadow: 0 0 15px var(--primary-blue);
+        }
+
+        .bg-alt::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--primary-blue);
+            box-shadow: 0 0 15px var(--primary-blue);
+        }
+
+        /* HERO */
+        .hero {
+            padding: 160px 0 80px 0;
+            position: relative;
+            background: radial-gradient(circle at center 20%, rgba(0, 210, 255, 0.15) 0%, #000000 60%);
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 64px);
+            line-height: 1.1;
+            font-weight: 900;
+            margin-bottom: 24px;
+            background: linear-gradient(to right, #fff, var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+        }
+
+        /* PROBLEMA */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .problem-wrapper {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--alert-red);
+        }
+
+        .problem-wrapper p {
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+
+        /* SOLUCAO */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* COMO FUNCIONA */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-family: 'Outfit';
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* EXEMPLO REAL */
+        .example-box {
+            background: linear-gradient(145deg, #0f172a, #020817);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 50px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .example-box {
+                flex-direction: column;
+                padding: 30px;
+            }
+        }
+
+        .ex-code {
+            flex: 1;
+        }
+
+        .ex-code h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .ex-code p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .ex-result {
+            flex: 1;
+            background: #fff1f2;
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid var(--alert-red);
+            color: #7f1d1d;
+        }
+
+        .ex-result strong {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-family: 'Outfit';
+        }
+
+        /* PDF FLOATING BADGE */
+        .pdf-badge {
+            position: absolute;
+            bottom: -20px;
+            right: -10px;
+            z-index: 2;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            text-align: left;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-badge:hover {
+            transform: translateY(-5px);
+            border-color: var(--alert-red);
+        }
+
+        @media (max-width: 768px) {
+            .pdf-badge {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: -30px;
+            }
+            .pdf-badge:hover {
+                transform: translate(-50%, -5px);
+            }
+        }
+
+        /* STATUS ICONS */
+        .status-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--bg-card);
+        }
+
+        .status-ok {
+            border: 1px solid var(--ok-green);
+            color: var(--ok-green);
+        }
+
+        .status-warn {
+            border: 1px solid var(--alert-yellow);
+            color: var(--alert-yellow);
+        }
+
+        .status-err {
+            border: 1px solid var(--alert-red);
+            color: var(--alert-red);
+        }
+
+        /* DEPOIMENTOS */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            border-top: 3px solid var(--primary-blue);
+        }
+
+        .testimonial p {
+            font-style: italic;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .t-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .t-author div strong {
+            display: block;
+            font-family: 'Outfit';
+        }
+
+        .t-author div span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: var(--bg-card);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .faq-item h4 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .faq-item p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* CTA FINAL */
+        .cta-final {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-dark), #0f172a);
+            padding: 80px 20px;
+            border-radius: 24px;
+            margin-bottom: 100px;
+        }
+
+        .cta-final h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .cta-final p {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 40px;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo-wrap">
+                <img src="logo.png" alt="Logo">
+                <span class="logo-text">Spray Precision PRO</span>
+            </div>
+
+            <nav>
+                <a href="#problema">Problema</a>
+                <a href="#solucao">Solução</a>
+                <a href="#como-funciona">Como funciona</a>
+            </nav>
+
+            <div class="nav-cta">
+                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-outline"
+                    style="padding: 10px 20px; font-size: 13px;">
+                    Solicitar Demo
+                </a>
+            </div>
+
+            <button class="mobile-toggle"><i data-lucide="menu"></i></button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Não é sobre a máquina. É sobre a ponta certa.</h1>
+            <p>O Spray Precision PRO mostra, em segundos, qual bico usar, em qual faixa de velocidade ele funciona e
+                quando o cenário está fora da faixa segura.</p>
+            <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp">
+                <i data-lucide="message-circle"></i> Solicitar Demonstração
+            </a>
+        </div>
+    </section>
+
+    <!-- Exemplo Real & STATUS -->
+    <section class="bg-alt">
+        <div class="container">
+            <div class="section-header">
+                <h2>Fim das Suposições</h2>
+                <p style="color: var(--text-muted);">A física irrefutável exibida em tela para o seu cliente.</p>
+            </div>
+
+            <div class="example-box" style="align-items: center;">
+                <div class="ex-code" style="flex: 1.2;">
+                    <h3 style="font-size: 32px; color: var(--primary-blue); margin-bottom: 15px;">Leitura Técnica Instantânea</h3>
+                    <p style="font-size: 18px; margin-bottom: 25px;">O produtor compreende em apenas segundos a recomendação técnica. Uma apresentação <b>visual premium</b> que eleva imediatamente a percepção de valor e autoridade do seu atendimento em campo.</p>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-left: 4px solid var(--primary-blue); padding: 25px; border-radius: 12px;">
+                        <strong style="display: block; font-size: 18px; color: #fff; margin-bottom: 15px; font-family: 'Outfit';">O diagnóstico prioriza o que define a aplicação:</strong>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 15px;">
+                            <li><b style="color: var(--ok-green);">✓</b> <strong>Status de Viabilidade:</strong> Validação agronômica em tempo real.</li>
+                            <li><b style="color: var(--primary-blue);">✓</b> <strong>ISO Recomendado:</strong> Definição exata da ponta requerida.</li>
+                            <li><b style="color: var(--primary-blue);">✓</b> <strong>Vazão de Calibração:</strong> A métrica central e alvo (L/ha) do pulverizador.</li>
+                            <li><b style="color: var(--alert-yellow);">✓</b> <strong>Janela de Velocidade:</strong> Os limites práticos de aceleração do equipamento.</li>
+                            <li><b style="color: var(--alert-red);">✓</b> <strong>Pressão Média:</strong> Carga de trabalho exata sobre a controladora e bomba.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="ex-image" style="flex: 1; text-align: center; position: relative;">
+                    <!-- Efeito de Glow (Luz de fundo) -->
+                    <div
+                        style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; background: var(--primary-blue); filter: blur(80px); opacity: 0.3; z-index: 0;">
+                    </div>
+                    <!-- Imagem do App -->
+                    <img src="exemplo_resultado_app.jpeg" alt="Screenshot do Aplicativo em Ação"
+                        style="position: relative; z-index: 1; width: 100%; max-width: 320px; border-radius: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.8); border: 6px solid #1e293b; object-fit: cover;">
+                </div>
+            </div>
+
+            <div class="status-grid">
+                <div class="status-pill status-ok"><i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
+                    ATENDE</div>
+                <div class="status-pill status-warn"><i data-lucide="alert-triangle"
+                        style="width: 18px; height: 18px;"></i> PARCIAL</div>
+                <div class="status-pill status-err"><i data-lucide="x-circle" style="width: 18px; height: 18px;"></i>
+                    FORA DA FAIXA</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problema -->
+    <section id="problema">
+        <div class="container">
+            <div class="section-header">
+                <h2>A máquina não trabalha na média.</h2>
+            </div>
+            <div class="problem-wrapper">
+                <i data-lucide="alert-triangle"
+                    style="width: 48px; height: 48px; color: var(--alert-red); margin-bottom: 20px;"></i>
+                <p><strong style="color: #f8fafc; font-size: 20px;">Erro de ponta = erro de aplicação.</strong><br><span style="display: inline-block; margin-top: 10px;">A variação de velocidade faz a pressão sair da faixa ideal e o resultado vira deriva, subdose ou falha.</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solução -->
+    <section id="solucao" class="bg-alt">
+        <div class="container">
+            <div class="section-header">
+                <h2>Ferramenta de validação técnica</h2>
+                <p style="color: var(--text-muted);">Cruzamento em tempo real das 4 leis absolutas da aplicação.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i data-lucide="droplets" style="width: 32px; height: 32px;"></i>
+                    <h3>Volume (L/ha)</h3>
+                    <p>Avalia a taxa real cobrada pelo produtor e os impactos na ponta instalada.</p>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="gauge" style="width: 32px; height: 32px;"></i>
+                    <h3>Velocidade Média</h3>
+                    <p>Calcula o impacto da aceleração e frenagem do trator sobre a estabilidade da bomba.</p>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="ruler" style="width: 32px; height: 32px;"></i>
+                    <h3>Espaçamento</h3>
+                    <p>Compensa matematicamente a distância física da barra padronizando o volume.</p>
+                </div>
+                <div class="feature-card">
+                    <i data-lucide="activity" style="width: 32px; height: 32px;"></i>
+                    <h3>Parâmetros Flexíveis</h3>
+                    <p>O coração do algoritmo se adapta ao cenário: defina qualquer limite de pressão que você exige e o
+                        controle fará o cruzamento.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section id="como-funciona">
+        <div class="container">
+            <div class="section-header">
+                <h2>O laudo técnico em 4 passos.</h2>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 5px;">Chega no campo</h4>
+                        <p style="color: var(--text-muted); font-size: 15px;">Ao lado do trator e do cliente.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 5px;">Informa os dados</h4>
+                        <p style="color: var(--text-muted); font-size: 15px;">Volume alvo, velocidade, espaçamento e faixa de pressão.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 5px;">Recebe diagnóstico</h4>
+                        <p style="color: var(--text-muted); font-size: 15px;">O sistema processa e devolve a resposta
+                            instantânea.</p>
+                    </div>
+                </div>
+                <div class="step-item" style="border-color: var(--primary-blue);">
+                    <div class="step-number" style="background: var(--primary-blue); color: #000;">4</div>
+                    <div>
+                        <h4 style="font-size: 18px; margin-bottom: 5px; color: var(--primary-blue);">Decide com
+                            segurança</h4>
+                        <p style="color: var(--text-muted); font-size: 15px;">Você justifica sua recomendação com leitura técnica, e não por achismo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Laudo Exemplo Direto na Tela -->
+    <section class="bg-alt">
+        <div class="container" style="text-align: center;">
+            <div class="section-header" style="margin-bottom: 40px;">
+                <h2>O Resultado Pronto para Envio</h2>
+                <p style="color: var(--text-muted);">Um laudo premium gerado automaticamente pelo aplicativo para endossar a sua recomendação no WhatsApp do cliente.</p>
+            </div>
+            
+            <div style="display: inline-block; position: relative;">
+                <img src="laudo.jpeg" alt="Exemplo de Laudo PDF" style="max-width: 100%; width: 700px; height: auto; border-radius: 8px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+                <!-- Etiqueta decorativa sobre o laudo -->
+                <div style="position: absolute; top: -15px; right: -15px; background: var(--alert-red); color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-family: 'Outfit'; font-size: 14px; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="file-check" style="width: 16px; height: 16px;"></i> PDF Real
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prova Social -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2>Quem usa, domina o campo.</h2>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p>"Transformou a minha consultoria. Eu abro o celular, mostro que o limitador é a controladora da
+                        máquina, e o cliente entende na hora a necessidade técnica de usar a ponta certa."</p>
+                    <div class="t-author">
+                        <div>
+                            <strong>Consultor Agronômico</strong>
+                            <span>Goiás / GO</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <p>"Eu pensava ter sempre razão na calibragem cruzando as velhas tabelas. Hoje o app já me impediu
+                        de aplicar mil reais de herbicida de maneira ineficaz por erro de press&atilde;o."</p>
+                    <div class="t-author">
+                        <div>
+                            <strong>Produtor Rural</strong>
+                            <span>Sorriso / MT</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <p>"Eu atendo muitas fazendas. O fechamento via WhatsApp gerou credibilidade pura. O PDF de
+                        diagnóstico virou minha principal arma de vendas."</p>
+                    <div class="t-author">
+                        <div>
+                            <strong>Vendedor Técnico</strong>
+                            <span>Mato Grosso</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="bg-alt">
+        <div class="container" style="max-width: 800px;">
+            <div class="section-header">
+                <h2>Dúvidas Comuns</h2>
+            </div>
+
+            <div class="faq-item">
+                <h4>Funciona offline?</h4>
+                <p>Não. Os cálculos ultra avançados rodam em nossos servidores na nuvem em questão de milissegundos,
+                    sendo necessária alguma conexão para rodar as leis da controlador.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Serve qualquer máquina?</h4>
+                <p>Sim. É universal e suporta as equações das principais controladoras de vazão do mercado global.</p>
+            </div>
+            <div class="faq-item">
+                <h4>É difícil de usar?</h4>
+                <p>Absolutamente não. Em apenas poucos toques na tela do celular e inserindo três métricas, o relatório
+                    completo é gerado na palma de sua mão.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section>
+        <div class="container">
+            <div class="cta-final">
+                <h2>Pare de recomendar no escuro.</h2>
+                <p>Adote a tecnologia e assuma o controle definitivo da aplicação no campo.</p>
+                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp"
+                    style="padding: 18px 40px; font-size: 18px;">
+                    <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i> Solicitar Demonstração
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Spray Precision PRO. Todos os direitos reservados. Material "A Última Milha".</p>
+        </div>
+    </footer>
+
+    <!-- Initialize Icons & JS Funcs -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

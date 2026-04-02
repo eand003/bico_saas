@@ -1397,101 +1397,47 @@
 
       function pRef() { return PRESS_UNIT === 'bar' ? 3.0 : (3.0 * BAR_TO_PSI); }
 
-      // --- LÓGICA DE CÁLCULO LOCAL (MIGRADA DA API V2) ---
-      const NOZZLES = [
-        { iso: "01", q3: 0.40, color: "#F28C28" },
-        { iso: "0134", q3: 0.50, color: "#795548" },
-        { iso: "015", q3: 0.60, color: "#4CAF50" },
-        { iso: "0175", q3: 0.70, color: "#9E9E9E" },
-        { iso: "02", q3: 0.80, color: "#FFEB3B" },
-        { iso: "025", q3: 1.00, color: "#9C27B0" },
-        { iso: "03", q3: 1.20, color: "#2196F3" },
-        { iso: "04", q3: 1.60, color: "#F44336" },
-        { iso: "05", q3: 2.00, color: "#A1887F" },
-        { iso: "06", q3: 2.40, color: "#BDBDBD" },
-        { iso: "08", q3: 3.20, color: "#FFFFFF" }
-      ];
-
-      const P_REF_BAR = 3.0;
-      const qPorBico = (rate, vel, spacM) => (rate * vel * spacM) / 600.0;
-      const velPara = (rate, spacM, q) => (q * 600.0) / (rate * spacM);
-
-      function update() {
-        // Coleta de inputs
-        const spacingM = parseFloat(numSpacing.value) / 100.0;
-        const rate = parseFloat(numRate.value);
-        const pMin = parseFloat(numPMin.value) || 0.1;
-        const pMax = parseFloat(numPMax.value) || 10.0;
-        const density = parseFloat(numDensity.value) || 1.0;
-        const vMin = parseFloat(numVMin.value) || 0;
-        const vAvg = parseFloat(numVAvg.value) || 0;
-        const vMax = parseFloat(numVMax.value) || 0;
-        const unit = PRESS_UNIT;
-
-        const pTarget = (pMin + pMax) / 2;
-        const currentPRef = () => unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
-        const pressaoNec = (qMix, q3, dens) => {
-          const qWaterEq = qMix * Math.sqrt(dens);
-          return currentPRef() * Math.pow(qWaterEq / q3, 2);
+      async function update() {
+        const payload = {
+          spacingM: parseFloat(numSpacing.value) / 100.0,
+          rate: parseFloat(numRate.value),
+          pMin: parseFloat(numPMin.value) || 0.1,
+          pMax: parseFloat(numPMax.value) || 10.0,
+          density: parseFloat(numDensity.value) || 1.0,
+          vMin: parseFloat(numVMin.value) || 0,
+          vAvg: parseFloat(numVAvg.value) || 0,
+          vMax: parseFloat(numVMax.value) || 0,
+          unit: PRESS_UNIT
         };
 
-        const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
+        const maxLimitsValid = payload.pMax > payload.pMin && payload.rate > 0 && payload.spacingM > 0;
         if (!maxLimitsValid) return;
 
-        document.getElementById('matchCount').innerText = 'Recalculando Localmente...';
+        try {
+          // Exibe "Calculando..." no texto
+          document.getElementById('matchCount').innerText = 'Calculando na Nuvem...';
 
-        let rows = [];
-
-        NOZZLES.forEach(nz => {
-          const qAtPmin_water = nz.q3 * Math.sqrt(pMin / currentPRef());
-          const qAtPmax_water = nz.q3 * Math.sqrt(pMax / currentPRef());
-          const qAtPmin_mix = qAtPmin_water / Math.sqrt(density);
-          const qAtPmax_mix = qAtPmax_water / Math.sqrt(density);
-
-          const vAtPmin = velPara(rate, spacingM, qAtPmin_mix);
-          const vAtPmax = velPara(rate, spacingM, qAtPmax_mix);
-
-          const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
-          const vAt3Bar = velPara(rate, spacingM, qAt3Bar_mix);
-
-          const qVmin = qPorBico(rate, vMin, spacingM);
-          const pVmin = pressaoNec(qVmin, nz.q3, density);
-          const qVavg = qPorBico(rate, vAvg, spacingM);
-          const pVavg = pressaoNec(qVavg, nz.q3, density);
-          const qVmax = qPorBico(rate, vMax, spacingM);
-          const pVmax = pressaoNec(qVmax, nz.q3, density);
-
-          const fitsMin = pVmin >= pMin;
-          const fitsMax = pVmax <= pMax;
-          const ok = fitsMin && fitsMax;
-
-          let statusText = "Não recomendado";
-          if (ok) statusText = "Atende";
-          else if (fitsMin || fitsMax) statusText = "Parcial";
-
-          const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
-          const deviation = Math.abs(pVavg - pTarget);
-
-          rows.push({
-            nz: nz,
-            vAtPmin, vAtPmax, vAt3Bar,
-            pVavg, qVavg, ok, statusText,
-            violation, deviation,
-            pressures: [pVmin, pVavg, pVmax]
+          // Faz o pedido para a Vercel 
+          // O backend irá rodar a matemática complexa sem ser exibida pro usuário final
+          const response = await fetch('/api/calcular', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
           });
-        });
 
-        // Ordenação Inteligente Local
-        rows.sort((a, b) => {
-          if (a.ok !== b.ok) return a.ok ? -1 : 1;
-          if (a.ok) return a.deviation - b.deviation;
-          return a.violation - b.violation;
-        });
+          if (!response.ok) throw new Error('Falha no calculo da API');
 
-        // Renderização
-        renderCards(rows, pMin, pMax, vMin, vMax);
-        updateChart(rows, vMin, vMax);
-        renderTable(rows, vMin, vAvg, vMax);
+          const result = await response.json();
+          const rows = result.rows || [];
+
+          renderCards(rows, payload.pMin, payload.pMax, payload.vMin, payload.vMax);
+          updateChart(rows, payload.vMin, payload.vMax);
+          renderTable(rows, payload.vMin, payload.vAvg, payload.vMax);
+
+        } catch (err) {
+          console.error("Erro na API:", err);
+          document.getElementById('matchCount').innerText = 'Calculadora offline - Publique na Vercel';
+        }
       }
 
       function renderCards(rows, pMin, pMax, vMin, vMax) {

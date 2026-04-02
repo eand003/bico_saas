@@ -1873,7 +1873,7 @@
 
         // Limita a exibição do gráfico para focar nas velocidades práticas
         myChart.options.scales.x.min = Math.max(0, sysVMin - 5);
-        myChart.options.scales.x.max = sysVMax + 10;
+        myChart.options.scales.x.max = sysVMax + 5;
 
         const labels = finalRows.map(r => `ISO ${r.nz.iso}`);
 

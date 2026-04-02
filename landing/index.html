@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spray Precision PRO | Validação Técnica de Pulverização</title>
-    <meta name="description" content="A ferramenta de validação técnica da pulverização. Pare de confiar em tabela média. Valide a aplicação real da máquina no campo em segundos.">
-    
+    <meta name="description"
+        content="A ferramenta de validação técnica da pulverização. Pare de confiar em tabela média. Valide a aplicação real da máquina no campo em segundos.">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -43,11 +47,18 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, .brand-font {
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-font {
             font-family: 'Outfit', sans-serif;
         }
 
-        a { text-decoration: none; color: inherit; }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
         /* Container */
         .container {
@@ -105,7 +116,7 @@
             background: rgba(2, 8, 23, 0.9);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding: 15px 0;
         }
 
@@ -164,21 +175,48 @@
         }
 
         @media (max-width: 900px) {
-            nav { display: none; }
-            .nav-cta { display: none; }
-            .mobile-toggle { display: block; }
+            nav {
+                display: none;
+            }
+
+            .nav-cta {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
         }
 
         /* Section Spacing */
         section {
             padding: 100px 0;
         }
+        
+        .bg-alt {
+            background-color: #0c1a33; /* Contraste acentuado para evidenciar as seções */
+            position: relative;
+        }
+
+        .bg-alt::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 210, 255, 0.35), transparent);
+        }
+
+        .bg-alt::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 210, 255, 0.35), transparent);
+        }
 
         /* HERO */
         .hero {
             padding: 160px 0 80px 0;
             position: relative;
-            background: radial-gradient(circle at center 20%, rgba(0,75,99,0.3) 0%, rgba(2,8,23,1) 60%);
+            background: radial-gradient(circle at center 20%, rgba(0, 75, 99, 0.3) 0%, rgba(2, 8, 23, 1) 60%);
             text-align: center;
         }
 
@@ -225,7 +263,7 @@
 
         .problem-wrapper {
             background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             padding: 40px;
             text-align: center;
@@ -238,7 +276,10 @@
         .problem-wrapper::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
             background: var(--alert-red);
         }
 
@@ -258,14 +299,29 @@
             background: var(--bg-card);
             padding: 30px;
             border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: 0.3s;
         }
 
-        .feature-card:hover { border-color: var(--primary-blue); transform: translateY(-5px); }
-        .feature-card i { color: var(--primary-blue); margin-bottom: 20px; }
-        .feature-card h3 { font-size: 20px; margin-bottom: 10px; }
-        .feature-card p { color: var(--text-muted); font-size: 15px; }
+        .feature-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
 
         /* COMO FUNCIONA */
         .steps-container {
@@ -283,23 +339,28 @@
             background: var(--bg-card);
             padding: 20px;
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .step-number {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: rgba(0, 210, 255, 0.1);
             color: var(--primary-blue);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-family: 'Outfit'; font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-family: 'Outfit';
+            font-size: 20px;
             flex-shrink: 0;
         }
 
         /* EXEMPLO REAL */
         .example-box {
             background: linear-gradient(145deg, #0f172a, #020817);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 50px;
             display: flex;
@@ -308,21 +369,121 @@
         }
 
         @media (max-width: 768px) {
-            .example-box { flex-direction: column; padding: 30px; }
+            .example-box {
+                flex-direction: column;
+                padding: 30px;
+            }
         }
 
-        .ex-code { flex: 1; }
-        .ex-code h3 { font-size: 28px; margin-bottom: 10px; }
-        .ex-code p { color: var(--text-muted); margin-bottom: 20px; }
+        .ex-code {
+            flex: 1;
+        }
+
+        .ex-code h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .ex-code p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
 
         .ex-result {
-            flex: 1; background: #fff1f2; padding: 30px; border-radius: 12px;
+            flex: 1;
+            background: #fff1f2;
+            padding: 30px;
+            border-radius: 12px;
             border-left: 5px solid var(--alert-red);
             color: #7f1d1d;
         }
 
-        .ex-result strong { display: block; font-size: 20px; margin-bottom: 10px; font-family: 'Outfit'; }
+        .ex-result strong {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-family: 'Outfit';
+        }
+
+        /* PDF FLOATING BADGE */
+        .pdf-badge {
+            position: absolute;
+            bottom: -20px;
+            right: -10px;
+            z-index: 2;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            text-align: left;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-badge:hover {
+            transform: translateY(-5px);
+            border-color: var(--alert-red);
+        }
+
+        @media (max-width: 768px) {
+            .pdf-badge {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: -30px;
+            }
+            .pdf-badge:hover {
+                transform: translate(-50%, -5px);
+            }
+        }
+
+        /* PDF MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2,8,23,0.9);
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            border: 4px solid var(--primary-blue);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; left: 15px;
+            background: var(--bg-dark);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-family: 'Outfit';
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            transition: 0.3s;
+        }
         
+        .modal-close:hover { background: var(--alert-red); }
+
         /* STATUS ICONS */
         .status-grid {
             display: flex;
@@ -333,22 +494,66 @@
         }
 
         .status-pill {
-            display: flex; align-items: center; gap: 10px;
-            padding: 10px 20px; border-radius: 50px;
-            font-weight: 600; font-size: 14px; background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--bg-card);
         }
 
-        .status-ok { border: 1px solid var(--ok-green); color: var(--ok-green); }
-        .status-warn { border: 1px solid var(--alert-yellow); color: var(--alert-yellow); }
-        .status-err { border: 1px solid var(--alert-red); color: var(--alert-red); }
+        .status-ok {
+            border: 1px solid var(--ok-green);
+            color: var(--ok-green);
+        }
+
+        .status-warn {
+            border: 1px solid var(--alert-yellow);
+            color: var(--alert-yellow);
+        }
+
+        .status-err {
+            border: 1px solid var(--alert-red);
+            color: var(--alert-red);
+        }
 
         /* DEPOIMENTOS */
-        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .testimonial { background: var(--bg-card); padding: 30px; border-radius: 16px; border-top: 3px solid var(--primary-blue); }
-        .testimonial p { font-style: italic; color: #cbd5e1; margin-bottom: 20px; }
-        .t-author { display: flex; align-items: center; gap: 15px; }
-        .t-author div strong { display: block; font-family: 'Outfit'; }
-        .t-author div span { font-size: 13px; color: var(--text-muted); }
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            border-top: 3px solid var(--primary-blue);
+        }
+
+        .testimonial p {
+            font-style: italic;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .t-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .t-author div strong {
+            display: block;
+            font-family: 'Outfit';
+        }
+
+        .t-author div span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
 
         /* FAQ */
         .faq-item {
@@ -356,10 +561,18 @@
             margin-bottom: 15px;
             border-radius: 8px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .faq-item h4 { font-size: 18px; margin-bottom: 8px; }
-        .faq-item p { color: var(--text-muted); font-size: 15px; }
+
+        .faq-item h4 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .faq-item p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
 
         /* CTA FINAL */
         .cta-final {
@@ -370,12 +583,20 @@
             margin-bottom: 100px;
         }
 
-        .cta-final h2 { font-size: 40px; margin-bottom: 20px; }
-        .cta-final p { font-size: 18px; color: #cbd5e1; margin-bottom: 40px; }
+        .cta-final h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        .cta-final p {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 40px;
+        }
 
         /* FOOTER */
         footer {
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             padding: 40px 0;
             text-align: center;
             color: var(--text-muted);
@@ -383,6 +604,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Header -->
@@ -392,7 +614,7 @@
                 <img src="logo.png" alt="Logo">
                 <span class="logo-text">Spray Precision PRO</span>
             </div>
-            
+
             <nav>
                 <a href="#problema">Problema</a>
                 <a href="#solucao">Solução</a>
@@ -400,7 +622,8 @@
             </nav>
 
             <div class="nav-cta">
-                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-outline" style="padding: 10px 20px; font-size: 13px;">
+                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-outline"
+                    style="padding: 10px 20px; font-size: 13px;">
                     Solicitar Demo
                 </a>
             </div>
@@ -412,8 +635,9 @@
     <!-- Hero -->
     <section class="hero">
         <div class="container">
-            <h1>Valide a aplicação real da máquina antes de entrar no talhão.</h1>
-            <p>O Spray Precision PRO mostra, em segundos, qual bico usar, em qual faixa de velocidade ele funciona e quando o cenário está fora da faixa segura.</p>
+            <h1>Não é sobre a máquina. É sobre a ponta certa.</h1>
+            <p>O Spray Precision PRO mostra, em segundos, qual bico usar, em qual faixa de velocidade ele funciona e
+                quando o cenário está fora da faixa segura.</p>
             <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp">
                 <i data-lucide="message-circle"></i> Solicitar Demonstração
             </a>
@@ -427,20 +651,21 @@
                 <h2>A máquina não trabalha na média.</h2>
             </div>
             <div class="problem-wrapper">
-                <i data-lucide="alert-triangle" style="width: 48px; height: 48px; color: var(--alert-red); margin-bottom: 20px;"></i>
-                <p>Nenhuma aplicação real no campo reflete o "ideal" da tabela impressa.<br>Variações de terreno e marcha forçam a controladora a oscilar a pressão do sistema. O resultado? Riscos severos de <strong>deriva, subdose e entupimento</strong> baseados no achismo de campo.</p>
+                <i data-lucide="alert-triangle"
+                    style="width: 48px; height: 48px; color: var(--alert-red); margin-bottom: 20px;"></i>
+                <p><strong style="color: #f8fafc; font-size: 20px;">Erro de ponta = erro de aplicação.</strong><br><span style="display: inline-block; margin-top: 10px;">A variação de velocidade faz a pressão sair da faixa ideal e o resultado vira deriva, subdose ou falha.</span></p>
             </div>
         </div>
     </section>
 
     <!-- Solução -->
-    <section id="solucao" style="background-color: rgba(255,255,255,0.02);">
+    <section id="solucao" class="bg-alt">
         <div class="container">
             <div class="section-header">
                 <h2>Ferramenta de validação técnica</h2>
                 <p style="color: var(--text-muted);">Cruzamento em tempo real das 4 leis absolutas da aplicação.</p>
             </div>
-            
+
             <div class="features-grid">
                 <div class="feature-card">
                     <i data-lucide="droplets" style="width: 32px; height: 32px;"></i>
@@ -460,7 +685,8 @@
                 <div class="feature-card">
                     <i data-lucide="activity" style="width: 32px; height: 32px;"></i>
                     <h3>Parâmetros Flexíveis</h3>
-                    <p>O coração do algoritmo se adapta ao cenário: defina qualquer limite de pressão que você exige e o controle fará o cruzamento.</p>
+                    <p>O coração do algoritmo se adapta ao cenário: defina qualquer limite de pressão que você exige e o
+                        controle fará o cruzamento.</p>
                 </div>
             </div>
         </div>
@@ -472,7 +698,7 @@
             <div class="section-header">
                 <h2>O laudo técnico em 4 passos.</h2>
             </div>
-            
+
             <div class="steps-container">
                 <div class="step-item">
                     <div class="step-number">1</div>
@@ -484,22 +710,24 @@
                 <div class="step-item">
                     <div class="step-number">2</div>
                     <div>
-                        <h4 style="font-size: 18px; margin-bottom: 5px;">Informa dados</h4>
-                        <p style="color: var(--text-muted); font-size: 15px;">Tipos de ponta, L/ha alvo e velocidade.</p>
+                        <h4 style="font-size: 18px; margin-bottom: 5px;">Informa os dados</h4>
+                        <p style="color: var(--text-muted); font-size: 15px;">Volume alvo, velocidade, espaçamento e faixa de pressão.</p>
                     </div>
                 </div>
                 <div class="step-item">
                     <div class="step-number">3</div>
                     <div>
                         <h4 style="font-size: 18px; margin-bottom: 5px;">Recebe diagnóstico</h4>
-                        <p style="color: var(--text-muted); font-size: 15px;">O motor processa e devolve a resposta instantânea.</p>
+                        <p style="color: var(--text-muted); font-size: 15px;">O sistema processa e devolve a resposta
+                            instantânea.</p>
                     </div>
                 </div>
                 <div class="step-item" style="border-color: var(--primary-blue);">
                     <div class="step-number" style="background: var(--primary-blue); color: #000;">4</div>
                     <div>
-                        <h4 style="font-size: 18px; margin-bottom: 5px; color: var(--primary-blue);">Decide com segurança</h4>
-                        <p style="color: var(--text-muted); font-size: 15px;">Você defende sua recomendação através da matemática exata.</p>
+                        <h4 style="font-size: 18px; margin-bottom: 5px; color: var(--primary-blue);">Decide com
+                            segurança</h4>
+                        <p style="color: var(--text-muted); font-size: 15px;">Você justifica sua recomendação com leitura técnica, e não por achismo.</p>
                     </div>
                 </div>
             </div>
@@ -507,35 +735,56 @@
     </section>
 
     <!-- Exemplo Real & STATUS -->
-    <section style="background-color: rgba(255,255,255,0.02);">
+    <section class="bg-alt">
         <div class="container">
             <div class="section-header">
                 <h2>Fim das Suposições</h2>
                 <p style="color: var(--text-muted);">A física irrefutável exibida em tela para o seu cliente.</p>
             </div>
-            
+
             <div class="example-box" style="align-items: center;">
                 <div class="ex-code" style="flex: 1.2;">
-                    <h3 style="font-size: 32px; color: var(--primary-blue); margin-bottom: 20px;">Diagnóstico em Tempo Real</h3>
-                    <p style="font-size: 18px;">O cliente exige forçar a máquina a entregar <strong>60 L/ha à 25 km/h</strong>. A velha tabela de papel dá o sinal verde. Mas o <b>PRO</b> escaneia a física real:</p>
-                    
-                    <div class="ex-result" style="margin-top: 25px; padding: 25px;">
-                        <strong style="margin-bottom: 5px;">🚫 Risco Iminente!</strong>
-                        A essa velocidade contínua, a controladora será forçada a disparar a pressão do sistema. A gota esmaga, vira névoa de deriva e queima seu produto no vento. O diagnóstico exato impede o desastre.
+                    <h3 style="font-size: 32px; color: var(--primary-blue); margin-bottom: 15px;">Leitura Técnica Instantânea</h3>
+                    <p style="font-size: 18px; margin-bottom: 25px;">O produtor compreende em apenas segundos a recomendação técnica. Uma apresentação <b>visual premium</b> que eleva imediatamente a percepção de valor e autoridade do seu atendimento em campo.</p>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-left: 4px solid var(--primary-blue); padding: 25px; border-radius: 12px;">
+                        <strong style="display: block; font-size: 18px; color: #fff; margin-bottom: 15px; font-family: 'Outfit';">O diagnóstico prioriza o que define a aplicação:</strong>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 15px;">
+                            <li><b style="color: var(--ok-green);">✓</b> <strong>Status de Viabilidade:</strong> Validação agronômica em tempo real.</li>
+                            <li><b style="color: var(--primary-blue);">✓</b> <strong>ISO Recomendado:</strong> Definição exata da ponta requerida.</li>
+                            <li><b style="color: var(--primary-blue);">✓</b> <strong>Vazão de Calibração:</strong> A métrica central e alvo (L/ha) do pulverizador.</li>
+                            <li><b style="color: var(--alert-yellow);">✓</b> <strong>Janela de Velocidade:</strong> Os limites práticos de aceleração do equipamento.</li>
+                            <li><b style="color: var(--alert-red);">✓</b> <strong>Pressão Média:</strong> Carga de trabalho exata sobre a controladora e bomba.</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="ex-image" style="flex: 1; text-align: center; position: relative;">
                     <!-- Efeito de Glow (Luz de fundo) -->
-                    <div style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; background: var(--primary-blue); filter: blur(80px); opacity: 0.3; z-index: 0;"></div>
+                    <div
+                        style="position: absolute; top: 10%; left: 10%; width: 80%; height: 80%; background: var(--primary-blue); filter: blur(80px); opacity: 0.3; z-index: 0;">
+                    </div>
                     <!-- Imagem do App -->
-                    <img src="exemplo_resultado_app.jpeg" alt="Screenshot do Aplicativo em Ação" style="position: relative; z-index: 1; width: 100%; max-width: 320px; border-radius: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.8); border: 6px solid #1e293b; object-fit: cover;">
+                    <img src="exemplo_resultado_app.jpeg" alt="Screenshot do Aplicativo em Ação"
+                        style="position: relative; z-index: 1; width: 100%; max-width: 320px; border-radius: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.8); border: 6px solid #1e293b; object-fit: cover;">
+                    
+                    <!-- BADGE DO PDF (Botão Pequeno Flutuante via Modal) -->
+                    <button onclick="openPdfModal(event)" class="pdf-badge" style="cursor: pointer; border-color: rgba(255,255,255,0.2);">
+                        <i data-lucide="file-text" style="color: var(--alert-red); width: 28px; height: 28px;"></i>
+                        <div style="text-align: left;">
+                            <strong style="display: block; font-size: 14px; color: #fff; font-family: 'Inter';">Ver Laudo Real</strong>
+                            <span style="font-size: 11px; color: var(--text-muted); font-family: 'Inter';">Abertura Segura</span>
+                        </div>
+                    </button>
                 </div>
             </div>
 
             <div class="status-grid">
-                <div class="status-pill status-ok"><i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> ATENDE</div>
-                <div class="status-pill status-warn"><i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i> PARCIAL</div>
-                <div class="status-pill status-err"><i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> FORA DA FAIXA</div>
+                <div class="status-pill status-ok"><i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
+                    ATENDE</div>
+                <div class="status-pill status-warn"><i data-lucide="alert-triangle"
+                        style="width: 18px; height: 18px;"></i> PARCIAL</div>
+                <div class="status-pill status-err"><i data-lucide="x-circle" style="width: 18px; height: 18px;"></i>
+                    FORA DA FAIXA</div>
             </div>
         </div>
     </section>
@@ -548,7 +797,8 @@
             </div>
             <div class="testimonial-grid">
                 <div class="testimonial">
-                    <p>"Transformou a minha consultoria. Eu abro o celular, mostro que o limitador é a controladora da máquina, e o cliente entende na hora a necessidade técnica de usar a ponta certa."</p>
+                    <p>"Transformou a minha consultoria. Eu abro o celular, mostro que o limitador é a controladora da
+                        máquina, e o cliente entende na hora a necessidade técnica de usar a ponta certa."</p>
                     <div class="t-author">
                         <div>
                             <strong>Consultor Agronômico</strong>
@@ -557,7 +807,8 @@
                     </div>
                 </div>
                 <div class="testimonial">
-                    <p>"Eu pensava ter sempre razão na calibragem cruzando as velhas tabelas. Hoje o app já me impediu de aplicar mil reais de herbicida de maneira ineficaz por erro de press&atilde;o."</p>
+                    <p>"Eu pensava ter sempre razão na calibragem cruzando as velhas tabelas. Hoje o app já me impediu
+                        de aplicar mil reais de herbicida de maneira ineficaz por erro de press&atilde;o."</p>
                     <div class="t-author">
                         <div>
                             <strong>Produtor Rural</strong>
@@ -566,7 +817,8 @@
                     </div>
                 </div>
                 <div class="testimonial">
-                    <p>"Eu atendo mais de 50 fazendas. O fechamento via WhatsApp gerou credibilidade pura. O PDF de diagnóstico virou minha principal arma de vendas."</p>
+                    <p>"Eu atendo muitas fazendas. O fechamento via WhatsApp gerou credibilidade pura. O PDF de
+                        diagnóstico virou minha principal arma de vendas."</p>
                     <div class="t-author">
                         <div>
                             <strong>Vendedor Técnico</strong>
@@ -579,15 +831,16 @@
     </section>
 
     <!-- FAQ -->
-    <section style="background-color: rgba(255,255,255,0.02);">
+    <section class="bg-alt">
         <div class="container" style="max-width: 800px;">
             <div class="section-header">
                 <h2>Dúvidas Comuns</h2>
             </div>
-            
+
             <div class="faq-item">
                 <h4>Funciona offline?</h4>
-                <p>Não. Os cálculos ultra avançados rodam em nossos servidores na nuvem em questão de milissegundos, sendo necessária alguma conexão para rodar as leis da controlador.</p>
+                <p>Não. Os cálculos ultra avançados rodam em nossos servidores na nuvem em questão de milissegundos,
+                    sendo necessária alguma conexão para rodar as leis da controlador.</p>
             </div>
             <div class="faq-item">
                 <h4>Serve qualquer máquina?</h4>
@@ -595,7 +848,8 @@
             </div>
             <div class="faq-item">
                 <h4>É difícil de usar?</h4>
-                <p>Absolutamente não. Em apenas poucos toques na tela do celular e inserindo três métricas, o relatório completo é gerado na palma de sua mão.</p>
+                <p>Absolutamente não. Em apenas poucos toques na tela do celular e inserindo três métricas, o relatório
+                    completo é gerado na palma de sua mão.</p>
             </div>
         </div>
     </section>
@@ -606,7 +860,8 @@
             <div class="cta-final">
                 <h2>Pare de recomendar no escuro.</h2>
                 <p>Adote a tecnologia e assuma o controle definitivo da aplicação no campo.</p>
-                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp" style="padding: 18px 40px; font-size: 18px;">
+                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp"
+                    style="padding: 18px 40px; font-size: 18px;">
                     <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i> Solicitar Demonstração
                 </a>
             </div>
@@ -619,9 +874,27 @@
         </div>
     </footer>
 
-    <!-- Initialize Icons -->
+    <!-- Modal para leitura de PDF sem sair do lugar -->
+    <div id="pdf-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closePdfModal()">&times; Voltar para a Página</button>
+            <iframe src="Laudo_60Lha_17kmh_ISO02.pdf#view=FitH" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <!-- Initialize Icons & JS Funcs -->
     <script>
         lucide.createIcons();
+
+        function openPdfModal(e) {
+            e.preventDefault();
+            document.getElementById('pdf-modal').style.display = 'flex';
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdf-modal').style.display = 'none';
+        }
     </script>
 </body>
+
 </html>

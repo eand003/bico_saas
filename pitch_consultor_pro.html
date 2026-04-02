@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch para Consultor - Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #020817;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #334155;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #020817 0%, #004b63 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .page {
+            background: var(--white);
+            width: 800px;
+            min-height: 1120px;
+            padding: 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            position: relative;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            background: var(--gradient);
+            color: white;
+            padding: 60px 70px 70px 70px;
+            position: relative;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: var(--white);
+            transform: skewY(-2deg);
+        }
+
+        .sys-badge {
+            display: inline-block;
+            background: rgba(163, 207, 61, 0.2);
+            color: var(--secondary);
+            font-weight: 700;
+            padding: 6px 15px;
+            border-radius: 50px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border: 1px solid var(--secondary);
+        }
+
+        .hero h1 {
+            font-family: 'Outfit';
+            font-weight: 900;
+            font-size: 45px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: #cbd5e1;
+            max-width: 90%;
+            line-height: 1.5;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 40px 70px;
+        }
+
+        .pain-section {
+            background: #fff1f2;
+            border-left: 6px solid #ef4444;
+            padding: 25px;
+            margin-bottom: 40px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .pain-section h3 {
+            color: #b91c1c;
+            font-family: 'Outfit';
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .pain-section p {
+            color: #7f1d1d;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .benefit-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border-top: 4px solid var(--secondary);
+        }
+
+        .benefit-card h4 {
+            font-family: 'Outfit';
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .benefit-card p {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        h2 {
+            font-family: 'Outfit';
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .quote {
+            font-family: 'Outfit';
+            font-size: 22px;
+            color: var(--primary);
+            text-align: center;
+            font-weight: 300;
+            font-style: italic;
+            margin: 50px 0;
+            position: relative;
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 60px;
+            color: var(--secondary);
+            opacity: 0.3;
+            position: absolute;
+            top: -20px;
+            left: 20px;
+        }
+
+        .fomo-box {
+            background: var(--primary);
+            color: white;
+            padding: 35px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 15px 30px rgba(0,75,99,0.3);
+            margin-top: 30px;
+        }
+
+        .fomo-box h3 {
+            font-family: 'Outfit';
+            font-size: 24px;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .fomo-box p {
+            font-size: 15px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .fomo-stats {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        .fomo-stats div strong {
+            display: block;
+            font-size: 28px;
+            font-family: 'Outfit';
+            color: var(--accent);
+        }
+
+        .fomo-stats div span {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+
+        /* CONTROLS */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn-print {
+            background: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Outfit';
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+
+        .btn-print:hover { transform: scale(1.05); }
+
+        @page { margin: 0; }
+
+        @media print {
+            body { background: white; padding: 0 !important; }
+            .controls { display: none; }
+            .page { 
+                box-shadow: none; 
+                margin: 0; 
+                page-break-after: always; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="btn-print" onclick="window.print()">🔥 Extracar PDF Comercial</button>
+    </div>
+
+    <!-- PÁGINA 1 -->
+    <div class="page">
+        <div class="hero">
+            <span class="sys-badge">Privado Especialista</span>
+            <h1>A diferen&ccedil;a entre a Intui&ccedil;&atilde;o e o Diagn&oacute;stico Exato.</h1>
+            <p>Seus clientes investem milh&otilde;es em equipamentos, mas o ajuste fino da aplica&ccedil;&atilde;o ainda define o lucro da safra. Eleve sua consultoria à Alta Precis&atilde;o.</p>
+        </div>
+
+        <div class="content">
+            <div class="pain-section">
+                <h3>O fim do "Achismo" em Campo</h3>
+                <p>O produtor tem uma m&aacute;quina de R$ 2 Milh&otilde;es, mas na hora decisiva, a ponta de pulveriza&ccedil;&atilde;o &eacute; escolhida pela "tabela de papel". O resultado? A controladora compensa varia&ccedil;&otilde;es de velocidade estourando ou despencando a press&atilde;o. A gota perde qualidade, a deriva consome o produto e o controle falha. O preju&iacute;zo cai sobre a sua recomenda&ccedil;&atilde;o.</p>
+            </div>
+
+            <h2>Conheça o Spray Precision PRO</h2>
+            <p style="margin-bottom: 30px; line-height: 1.7; font-size: 16px;">
+                Diga adeus &agrave;s calculadoras b&aacute;sicas. Tenha um <strong>Motor de Engenharia Din&acirc;mica de Bolso</strong> que cruza a f&iacute;sica de fluidos com os limites da controladora de taxa da m&aacute;quina do cliente.
+            </p>
+
+            <div class="grid-cards">
+                <div class="benefit-card">
+                    <h4>Diagn&oacute;sticos de Choque</h4>
+                    <p>O operador exige 60 L/ha à 25 km/h? Em segundos, roda o simulador e <b>prova matematicamente</b> que essa configura&ccedil;&atilde;o far&aacute; a controladora vaporizar a calda em deriva cont&iacute;nua. Contra a f&iacute;sica processada, n&atilde;o h&aacute; argumento.</p>
+                </div>
+                <div class="benefit-card">
+                    <h4>Autoridade Instant&acirc;nea </h4>
+                    <p>Extraia na hora um <b>Laudo T&eacute;cnico em PDF</b> limpo, direto do sistema na nuvem para o WhatsApp do produtor. Sua imagem passa de consultor de rotina para "Engenheiro de Aplica&ccedil;&atilde;o Especialista".</p>
+                </div>
+            </div>
+
+            <div class="quote">
+                "Como fomos capazes de engessar uma fazenda milionária por anos confiando apenas na média da tabela de uma marca?"
+            </div>
+            
+            <p style="text-align: center; color: var(--text-light); font-size: 14px;">(Relato real de Produtor após auditoria sistêmica na controladora)</p>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2 -->
+    <div class="page" style="padding-top: 40px;">
+        <div class="content">
+            <h2>Por que adotar a ferramenta HOJE?</h2>
+            
+            <div class="grid-cards" style="grid-template-columns: 1fr;">
+                <div class="benefit-card" style="border-top-color: var(--primary);">
+                    <h4>1. Blindando a "Última Milha" do Sucesso Agron&ocirc;mico</h4>
+                    <p>O software valida as velocidades reais de opera&ccedil;&atilde;o da m&aacute;quina mantendo a press&atilde;o estriamente segura (2.0 a 4.0 Bar). Ele detecta e acusa <i style="color: #ef4444">"Incompatibilidade Agronômica"</i> imediata se a oscila&ccedil;&atilde;o de velocidade no talh&atilde;o for estrangular o bico escolhido.</p>
+                </div>
+                
+                <div class="benefit-card" style="border-top-color: var(--accent);">
+                    <h4>2. Fluxo de Negócios (B2B) Acelerado</h4>
+                    <p>Ao identificar o erro, o relat&oacute;rio de solu&ccedil;&atilde;o vai pronto ao WhatsApp. Voc&ecirc; e o cliente t&ecirc;m a vis&atilde;o exata das pontas adequadas para aquela bomba hidr&aacute;ulica, gerando converso&otilde;es t&eacute;cnicas, eficientes e de extrema confian&ccedil;a.</p>
+                </div>
+            </div>
+
+            <div class="fomo-box">
+                <h3>Vá Além da Receita. Domine o Equipamento.</h3>
+                <p>O dom&iacute;nio hidr&aacute;ulico na ponta da barra &eacute; o detalhe t&aacute;tico mais caro deixado na mesa hoje. Prove proativamente pro seu cliente os limites f&iacute;sicos do equipamento dele antes que a concorr&ecirc;ncia apareça com este laudo primeiro.</p>
+                
+                <div class="fomo-stats">
+                    <div>
+                        <strong>1s</strong>
+                        <span>Processamento em Nuvem</span>
+                    </div>
+                    <div>
+                        <strong>&#8734;</strong>
+                        <span>Laudos (PDF) Ilimitados</span>
+                    </div>
+                    <div>
+                        <strong>100%</strong>
+                        <span>Direto no WhatsApp</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 60px; text-align: center;">
+                <p style="font-weight: 700; color: var(--primary); font-size: 18px; font-family: 'Outfit';">Spray Precision PRO</p>
+                <p style="color: var(--text-light); font-size: 14px; margin-top: 5px;">A Ferramenta de Alto Impacto da Consultoria Especializada.</p>
+                <div style="border-top: 1px dashed #cbd5e1; width: 200px; margin: 30px auto 0 auto; padding-top: 20px; font-size: 12px; color: #94a3b8;">
+                    CONFIDENTIAL - MATERIAL B2B
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

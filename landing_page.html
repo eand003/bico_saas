@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spray Precision PRO — Validação Técnica da Pulverização</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #06111b;
+      --primary-2: #0b2a3a;
+      --accent: #00d2ff;
+      --accent-2: #a3cf3d;
+      --bg: #f3f7fa;
+      --surface: #ffffff;
+      --surface-2: #f8fbfd;
+      --text: #334155;
+      --muted: #64748b;
+      --line: #dbe5ee;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gradient: linear-gradient(135deg, #06111b 0%, #0b2a3a 58%, #004b63 100%);
+      --shadow: 0 18px 48px rgba(2, 8, 23, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(6, 17, 27, 0.88);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .topbar-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: #bcd0da;
+      margin-top: 4px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      color: #dbe7ee;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .btn-primary {
+      background: #25D366;
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(37, 211, 102, 0.22);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .hero {
+      background: var(--gradient);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(0,210,255,0.12), transparent 30%),
+        radial-gradient(circle at 20% 80%, rgba(163,207,61,0.10), transparent 28%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+      padding: 72px 0 88px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 15px;
+      border-radius: 999px;
+      background: rgba(163,207,61,0.14);
+      color: var(--accent-2);
+      border: 1px solid rgba(163,207,61,0.5);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(42px, 5vw, 66px);
+      line-height: 0.98;
+      letter-spacing: -1.8px;
+      font-weight: 900;
+      max-width: 680px;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #d6e3ea;
+      max-width: 620px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 30px;
+      max-width: 700px;
+    }
+
+    .hero-point {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-point strong {
+      display: block;
+      font-family: 'Outfit';
+      font-size: 16px;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .hero-point span {
+      font-size: 13px;
+      color: #c7d7df;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 26px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 36px rgba(2, 8, 23, 0.18);
+    }
+
+    .hero-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .hero-card p {
+      font-size: 15px;
+      color: #d7e3ea;
+      margin-bottom: 18px;
+    }
+
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .status-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .status-item strong {
+      display: block;
+      color: #fff;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .status-item span {
+      color: #c7d7df;
+      font-size: 13px;
+    }
+
+    section.section {
+      padding: 74px 0;
+    }
+
+    .section-head {
+      max-width: 720px;
+      margin-bottom: 30px;
+    }
+
+    .section-head .tag {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .section-head h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -1.3px;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .section-head p {
+      font-size: 17px;
+      color: var(--muted);
+    }
+
+    .problem-box {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 22px;
+      padding: 28px;
+      border-radius: var(--radius);
+      background: #fff1f2;
+      border-left: 6px solid var(--danger);
+      box-shadow: var(--shadow);
+    }
+
+    .problem-icon {
+      width: 110px;
+      height: 110px;
+      border-radius: 22px;
+      background: rgba(239,68,68,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit';
+      font-size: 44px;
+      font-weight: 900;
+      color: #b91c1c;
+    }
+
+    .problem-box h3 {
+      font-family: 'Outfit';
+      font-size: 28px;
+      color: #991b1b;
+      margin-bottom: 10px;
+    }
+
+    .problem-box p {
+      color: #7f1d1d;
+      font-size: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card .kicker {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-family: 'Outfit';
+      font-size: 23px;
+      line-height: 1.1;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .card p, .card li {
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .card ul { padding-left: 18px; }
+
+    .how-box {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 22px 18px;
+      min-height: 215px;
+    }
+
+    .step-number {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit';
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .step h4 {
+      font-family: 'Outfit';
+      font-size: 21px;
+      color: var(--primary);
+      margin-bottom: 10px;
+      line-height: 1.12;
+    }
+
+    .step ul { padding-left: 18px; }
+    .step li { margin-bottom: 4px; }
+
+    .example-box {
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .example-head {
+      background: var(--gradient);
+      color: #fff;
+      padding: 26px 28px;
+    }
+
+    .example-head h3 {
+      font-family: 'Outfit';
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .example-head p { color: #d6e3ea; }
+
+    .example-body {
+      padding: 28px;
+      background: var(--surface-2);
+    }
+
+    .scenario {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .scenario-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      min-height: 220px;
+    }
+
+    .scenario-card h4 {
+      font-family: 'Outfit';
+      font-size: 24px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .scenario-card ul { padding-left: 18px; }
+    .scenario-card li { margin-bottom: 5px; font-size: 15px; }
+
+    .arrow {
+      text-align: center;
+      font-size: 40px;
+      font-family: 'Outfit';
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .signal {
+      border-radius: 22px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .signal.success { background: #ecfdf5; border-color: #bbf7d0; }
+    .signal.warning { background: #fff7ed; border-color: #fed7aa; }
+    .signal.danger { background: #fff1f2; border-color: #fecdd3; }
+
+    .signal .icon {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .signal h4 {
+      font-family: 'Outfit';
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .cta {
+      background: var(--gradient);
+      color: #fff;
+      border-radius: 32px;
+      padding: 38px;
+      box-shadow: 0 24px 42px rgba(2,8,23,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(0,210,255,0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(163,207,61,0.1), transparent 24%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .cta h2 {
+      font-family: 'Outfit';
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -1.2px;
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      color: #d7e3ea;
+      font-size: 17px;
+      max-width: 700px;
+    }
+
+    .cta-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .cta-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cta-side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+      min-width: 290px;
+    }
+
+    .cta-side .btn {
+      font-size: 18px;
+      padding: 16px 24px;
+    }
+
+    .contact-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .contact-card strong {
+      display: block;
+      font-family: 'Outfit';
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .contact-card span {
+      color: #d7e3ea;
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 34px 0 42px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+      font-family: 'Outfit';
+      font-weight: 800;
+    }
+
+    .footer-brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-inner,
+      .cta-inner,
+      .grid-3,
+      .steps,
+      .signal-grid,
+      .scenario,
+      .hero-points {
+        grid-template-columns: 1fr;
+      }
+
+      .scenario { gap: 14px; }
+      .arrow { transform: rotate(90deg); }
+      .cta-side { min-width: 0; }
+      .nav a:not(.btn) { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      .container { width: min(100% - 24px, 1180px); }
+      .hero-inner { padding: 54px 0 64px; }
+      section.section { padding: 58px 0; }
+      .topbar-inner,
+      .footer-inner { align-items: flex-start; }
+      .brand-title { font-size: 18px; }
+      .hero p,
+      .section-head p,
+      .cta p { font-size: 16px; }
+      .problem-box { grid-template-columns: 1fr; }
+      .problem-icon { width: 76px; height: 76px; font-size: 32px; }
+      .hero-point,
+      .card,
+      .step,
+      .signal,
+      .scenario-card { padding: 18px; }
+      .cta { padding: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <img src="logo.png" alt="Logo Spray Precision PRO">
+        <div>
+          <div class="brand-title">Spray Precision PRO</div>
+          <div class="brand-sub">Validação técnica da pulverização</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#problema">Problema</a>
+        <a href="#solucao">Solução</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#demonstracao" class="btn btn-primary">Solicitar Demonstração</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div>
+          <div class="eyebrow">Aplicação técnica de campo</div>
+          <h1>Valide a aplicação real da máquina antes de entrar no talhão.</h1>
+          <p>
+            O Spray Precision PRO transforma recomendação em decisão técnica. Em segundos, você identifica qual bico atende, em qual faixa de velocidade funciona e quando o cenário está tecnicamente fora da faixa segura.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20solicitar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Spray%20Precision%20PRO.">Solicitar Demonstração</a>
+            <a class="btn btn-secondary" href="#como-funciona">Ver como funciona</a>
+          </div>
+          <div class="hero-points">
+            <div class="hero-point">
+              <strong>Qual bico usar</strong>
+              <span>Sem depender de tabela média</span>
+            </div>
+            <div class="hero-point">
+              <strong>Faixa segura</strong>
+              <span>Velocidade e pressão coerentes</span>
+            </div>
+            <div class="hero-point">
+              <strong>Risco técnico</strong>
+              <span>Erro detectado antes da aplicação</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>O que o app entrega na prática</h3>
+          <p>Leitura objetiva para consultor, vendedor técnico e profissional de campo que precisa decidir rápido e com segurança.</p>
+          <div class="status-list">
+            <div class="status-item">
+              <div class="status-icon">🏆</div>
+              <div>
+                <strong>Atende</strong>
+                <span>Bico compatível com a condição informada.</span>
+              </div>
+            </div>
+            <div class="status-item">
+              <div class="status-icon">⚠️</div>
+              <div>
+                <strong>Parcial</strong>
+                <span>Funciona com ressalvas e exige atenção.</span>
+              </div>
+            </div>
+            <div class="status-item">
+              <div class="status-icon">🚫</div>
+              <div>
+                <strong>Fora</strong>
+                <span>Cenário tecnicamente inadequado para aquela ponta.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="problema">
+      <div class="container">
+        <div class="section-head">
+          <div class="tag">Problema real de campo</div>
+          <h2>A máquina não trabalha na média. A recomendação também não deveria.</h2>
+          <p>Quando o bico é definido apenas por tabela, a operação ignora a velocidade real, a pressão efetiva e o comportamento da aplicação no campo.</p>
+        </div>
+
+        <div class="problem-box">
+          <div class="problem-icon">!</div>
+          <div>
+            <h3>O erro mais caro é o que passa despercebido.</h3>
+            <p>
+              O produtor investe pesado na máquina, mas a ponta ainda é muitas vezes escolhida por aproximação. Com a variação de velocidade, a pressão sai da faixa ideal, a gota perde padrão e o resultado pode virar deriva invisível, subdose, superdose ou falha de cobertura. No fim, o prejuízo técnico cai sobre quem recomendou.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="solucao">
+      <div class="container">
+        <div class="section-head">
+          <div class="tag">Solução prática</div>
+          <h2>Uma ferramenta de validação técnica da pulverização.</h2>
+          <p>O Spray Precision PRO cruza volume alvo, velocidade, espaçamento da barra e faixa de pressão para mostrar se a condição realmente funciona na prática.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card">
+            <div class="kicker">Resposta imediata</div>
+            <h3>Qual bico usar</h3>
+            <p>O app mostra as pontas que realmente atendem ao cenário informado, com leitura clara e objetiva.</p>
+          </article>
+          <article class="card">
+            <div class="kicker">Janela operacional</div>
+            <h3>Em que velocidade funciona</h3>
+            <p>Você visualiza a faixa segura para aquele bico e evita operar com pressão fora do ideal.</p>
+          </article>
+          <article class="card">
+            <div class="kicker">Decisão técnica</div>
+            <h3>O risco antes de aplicar</h3>
+            <p>O sistema identifica rapidamente quando o cenário está parcial ou fora, antes da máquina entrar no talhão.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="como-funciona">
+      <div class="container">
+        <div class="section-head">
+          <div class="tag">Como funciona</div>
+          <h2>Uso simples. Decisão rápida. Aplicação mais segura.</h2>
+          <p>O fluxo foi pensado para o campo. Sem enrolação, sem interpretação subjetiva e sem depender do “acho que funciona”.</p>
+        </div>
+
+        <div class="how-box">
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <h4>Chegue na operação</h4>
+              <p>Abra o app já focado na regulagem real da máquina e na decisão que precisa ser tomada.</p>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <h4>Informe os dados principais</h4>
+              <ul>
+                <li>Volume alvo (L/ha)</li>
+                <li>Velocidade média</li>
+                <li>Espaçamento entre bicos</li>
+              </ul>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <h4>Receba o diagnóstico</h4>
+              <p>O sistema compara a condição com a faixa de pressão e identifica quais pontas atendem ou não.</p>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <h4>Decida com segurança</h4>
+              <p>Você recomenda, ajusta ou corrige a operação com base em leitura técnica e objetiva.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="tag">Exemplo real</div>
+          <h2>O tipo de situação que acontece todos os dias na regulagem.</h2>
+          <p>O valor do app está em mostrar, na hora, quando a física da aplicação não fecha com o que foi pedido.</p>
+        </div>
+
+        <div class="example-box">
+          <div class="example-head">
+            <h3>Exemplo prático de campo</h3>
+            <p>Quando a tabela diz uma coisa, mas a operação real mostra outra.</p>
+          </div>
+          <div class="example-body">
+            <div class="scenario">
+              <div class="scenario-card">
+                <h4>O que o operador quer</h4>
+                <ul>
+                  <li>60 L/ha</li>
+                  <li>25 km/h</li>
+                  <li>Bico escolhido por tabela média</li>
+                </ul>
+              </div>
+              <div class="arrow">→</div>
+              <div class="scenario-card">
+                <h4>O que o app mostra</h4>
+                <ul>
+                  <li>Pressão fora da faixa ideal</li>
+                  <li>Risco real de deriva</li>
+                  <li>Necessidade de ajustar velocidade ou trocar ponta</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="signal-grid">
+              <div class="signal success">
+                <div class="icon">🏆</div>
+                <h4>Atende</h4>
+                <p>Bico compatível com a condição informada e dentro da faixa de trabalho definida.</p>
+              </div>
+              <div class="signal warning">
+                <div class="icon">⚠️</div>
+                <h4>Parcial</h4>
+                <p>O cenário funciona com ressalvas e pode sair da faixa em parte da operação.</p>
+              </div>
+              <div class="signal danger">
+                <div class="icon">🚫</div>
+                <h4>Fora</h4>
+                <p>A ponta não é tecnicamente adequada para a condição avaliada.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demonstracao">
+      <div class="container">
+        <div class="cta">
+          <div class="cta-inner">
+            <div>
+              <h2>Solicite uma demonstração do Spray Precision PRO.</h2>
+              <p>
+                Veja como o app pode ajudar na recomendação técnica de bicos, no suporte ao cliente e na validação prática da pulverização em campo.
+              </p>
+              <div class="cta-meta">
+                <div class="cta-pill">Aplicação real</div>
+                <div class="cta-pill">Decisão objetiva</div>
+                <div class="cta-pill">Uso prático em campo</div>
+              </div>
+            </div>
+            <div class="cta-side">
+              <a class="btn btn-primary" href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20solicitar%20uma%20demonstra%C3%A7%C3%A3o%20do%20Spray%20Precision%20PRO.">Solicitar Demonstração</a>
+              <div class="contact-card">
+                <strong>WhatsApp</strong>
+                <span>(65) 99910-6415</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- PROVA SOCIAL -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="tag">Prova de campo</div>
+          <h2>Quem usa, não volta para tabela.</h2>
+          <p>Relatos reais de quem já aplicou a lógica no campo.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <p>"Depois que comecei a usar, parei de discutir com operador. Mostro no app e pronto."</p>
+            <strong>- Consultor Agronômico</strong>
+          </div>
+          <div class="card">
+            <p>"Evitei erro de regulagem que ia custar caro. O app mostrou na hora."</p>
+            <strong>- Produtor MT</strong>
+          </div>
+          <div class="card">
+            <p>"Facilitou muito a venda técnica. Cliente entende rápido."</p>
+            <strong>- Representante Técnico</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div class="tag">Dúvidas comuns</div>
+          <h2>Perguntas frequentes</h2>
+        </div>
+
+        <div class="card">
+          <h3>Funciona offline?</h3>
+          <p>Atualmente necessita conexão com internet para processar os cálculos.</p>
+
+          <h3 style="margin-top:20px;">Serve para qualquer pulverizador?</h3>
+          <p>Sim. A lógica é baseada nos parâmetros operacionais, independente da marca da máquina.</p>
+
+          <h3 style="margin-top:20px;">Preciso de conhecimento avançado?</h3>
+          <p>Não. O app foi feito para uso prático em campo com leitura simples e direta.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA FINAL FORTE -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <div class="cta-inner">
+            <div>
+              <h2>Pare de recomendar no escuro.</h2>
+              <p>Veja na prática como o Spray Precision PRO pode mudar sua forma de recomendar bicos e validar aplicações.</p>
+            </div>
+            <div class="cta-side">
+              <a class="btn btn-primary" href="https://wa.me/5565999106415?text=Quero%20ver%20uma%20demonstra%C3%A7%C3%A3o%20do%20Spray%20Precision%20PRO">Solicitar Demonstração</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="logo.png" alt="Logo Spray Precision PRO">
+        <span>Spray Precision PRO</span>
+      </div>
+      <div>Ferramenta de validação técnica da pulverização</div>
+      <div>WhatsApp: (65) 99910-6415</div>
+    </div>
+  </footer>
+</body>
+</html>

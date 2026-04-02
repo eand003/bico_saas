@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Auditoria Reversa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --warning: #f59e0b;
+            --ok: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--surface);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-family: 'Outfit';
+            color: var(--secondary);
+            font-size: 24px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 8px;
+            font-family: 'Inter';
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #006080;
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-family: 'Outfit';
+            font-size: 16px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-row .val {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .val-danger { color: #f87171; }
+        .val-ok { color: var(--ok); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .note {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--warning);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Auditoria T&aacute;tica de Bico</h1>
+            <p>Diagn&oacute;stico reverso: Descubra os limites mec&acirc;nicos de uma m&aacute;quina j&aacute; montada.</p>
+        </header>
+
+        <div class="note">
+            Modelo Din&acirc;mico Avan&ccedil;ado: Descubra os limites reais do Volume (L/ha) permitidos na sua <b>Controladora de Taxa</b> considerando a acelera&ccedil;&atilde;o e frenagem natural do trator no talh&atilde;o.
+        </div>
+
+        <div class="input-group">
+            <label>Bico Instalado (Tamanho ISO)</label>
+            <select id="isoSelect">
+                <option value="0.1">ISO 01 (Laranja)</option>
+                <option value="0.15">ISO 015 (Verde)</option>
+                <option value="0.2" selected>ISO 02 (Amarelo)</option>
+                <option value="0.25">ISO 025 (Lilás)</option>
+                <option value="0.3">ISO 03 (Azul)</option>
+                <option value="0.4">ISO 04 (Vermelho)</option>
+                <option value="0.5">ISO 05 (Marrom)</option>
+                <option value="0.6">ISO 06 (Cinza)</option>
+                <option value="0.8">ISO 08 (Branco)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Espa&ccedil;amento entre Bicos na Barra (cm)</label>
+            <input type="number" id="spaceInput" value="50" step="5">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <div class="input-group" style="margin-bottom: 0;">
+                <label>Veloc. Mín</label>
+                <input type="number" id="vMin" value="16" step="0.5">
+            </div>
+            <div class="input-group" style="margin-bottom: 0;">
+                <label>V. Média</label>
+                <input type="number" id="vAvg" value="18" step="0.5">
+            </div>
+            <div class="input-group" style="margin-bottom: 0;">
+                <label>Veloc. Máx</label>
+                <input type="number" id="vMax" value="20" step="0.5">
+            </div>
+        </div>
+
+        <button onclick="calculateAudit()">Verificar Janela da Controladora</button>
+
+        <!-- AREA DE RESULTADOS -->
+        <div id="resultsArea" class="results">
+            <div class="card">
+                <div class="card-title">LAUDO DA CONFIGURA&Ccedil;&Atilde;O DE M&Aacute;QUINA</div>
+                <p style="font-size: 14px; margin-bottom: 20px; color: var(--text); line-height: 1.5;" id="dynamicText">
+                    <!-- Texto Injetado Dinamicamente -->
+                </p>
+                
+                <div id="successPanel">
+                    <div class="data-row">
+                        <span>Piso de Vaz&atilde;o (Limite antes da press&atilde;o minguar de 2 bar)</span>
+                        <span class="val val-danger" id="rateMin">-- L/ha</span>
+                    </div>
+                    <div class="data-row" style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px solid var(--ok); margin: 10px 0;">
+                        <span style="color: white">Melhor Taxa (Ideal focado na velocidade pr&aacute;tica m&eacute;dia)</span>
+                        <span class="val val-ok" id="rateTgt" style="font-size: 20px;">-- L/ha</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Teto de Vaz&atilde;o (Limite antes da press&atilde;o estourar os 4 bar)</span>
+                        <span class="val val-danger" id="rateMax">-- L/ha</span>
+                    </div>
+                </div>
+
+                <div id="errorPanel" style="display: none; background: rgba(248, 113, 113, 0.1); border: 1px solid #f87171; padding: 20px; border-radius: 8px;">
+                    <h4 style="color: #f87171; margin-bottom: 10px;">&#9888; Incompatibilidade Agron&ocirc;mica Detectada!</h4>
+                    <p style="font-size: 13px; color: white;">A varia&ccedil;&atilde;o de marchas que o piloto faz (de <span id="errMin">X</span> a <span id="errMax">Y</span> km/h) &eacute; excessiva para o bico atual. Nenhuma taxa escolhida impedir&aacute; que a m&aacute;quina extrapole o limite f&iacute;sico da bomba. Solu&ccedil;&atilde;o: Diminua a oscila&ccedil;&atilde;o do trator ou troque a ponta por uma adequada à faixa inteira.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function calculateAudit() {
+            const isoSelect = document.getElementById('isoSelect');
+            const iso = parseFloat(isoSelect.value);
+            const isoLabel = isoSelect.options[isoSelect.selectedIndex].text.split(' ')[1]; 
+            
+            const spaceCm = parseFloat(document.getElementById('spaceInput').value);
+            const vMin = parseFloat(document.getElementById('vMin').value);
+            const vAvg = parseFloat(document.getElementById('vAvg').value);
+            const vMax = parseFloat(document.getElementById('vMax').value);
+            
+            if(!vMin || !vAvg || !vMax || !spaceCm) {
+                alert("Verifique os n&uacute;meros digitados.");
+                return;
+            }
+
+            if(vMin >= vMax || vAvg <= vMin || vAvg >= vMax) {
+                alert("A ordem de velocidades está ilógica. A mínima deve ser menor que a média, que deve ser menor que a máxima.");
+                return;
+            }
+
+            const spacingMeters = spaceCm / 100.0; 
+
+            // Vaz&atilde;o Nominal da ponta na janela de seguran&ccedil;a (2 a 4 bar)
+            const flow3Bar = iso * 4.0; // Ponto est&aacute;vel
+            const flow2Bar = flow3Bar * Math.sqrt(2.0 / 3.0); // M&iacute;nima sa&uacute;de da gota
+            const flow4Bar = flow3Bar * Math.sqrt(4.0 / 3.0); // M&aacute;ximo de deriva/press&atilde;o
+
+            /* 
+              ENGENHARIA DA CONTROLADORA DE TAXA:
+              Volume L/ha = (Q * 600) / (Velocidade * S)
+              O perigo #1 ocorre na MÍNIMA velocidade, pois a bomba baixa a press&atilde;o pra n&atilde;o afogar.
+              Para n&atilde;o cair abaixo de 2 bar na freada (vMin), a soma do volume no painel não pode ser minúscula.
+            */
+            const rateFloorLimit = (flow2Bar * 600) / (vMin * spacingMeters);
+
+            /*
+              O perigo #2 ocorre na M&Aacute;XIMA velocidade, pois a bomba acelera e joga press&atilde;o para n&atilde;o faltar calda.
+              Para press&atilde;o não subir acima de 4 bar na acelera&ccedil;&atilde;o, a taxa do visor não pode ser gigante.
+            */
+            const rateCeilingLimit = (flow4Bar * 600) / (vMax * spacingMeters);
+
+            const successPanel = document.getElementById('successPanel');
+            const errorPanel = document.getElementById('errorPanel');
+            const dynText = document.getElementById('dynamicText');
+
+            document.getElementById('resultsArea').style.display = 'block';
+
+            if (rateFloorLimit > rateCeilingLimit) {
+                // A f&iacute;sica &eacute; imposs&iacute;vel. O bico n&atilde;o suporta o el&aacute;stico de velocidade.
+                successPanel.style.display = 'none';
+                errorPanel.style.display = 'block';
+                dynText.style.display = 'none';
+                
+                document.getElementById('errMin').innerText = vMin;
+                document.getElementById('errMax').innerText = vMax;
+                return;
+            }
+
+            // O bico aguenta. Exibir a realidade.
+            successPanel.style.display = 'block';
+            errorPanel.style.display = 'none';
+            dynText.style.display = 'block';
+
+            // O alvo de volume preferencial da casa &eacute; calculado baseado no alvo prim&aacute;rio de 3 bar na marcha de cruzeiro
+            const rateIdealCruise = (flow3Bar * 600) / (vAvg * spacingMeters);
+
+            dynText.innerHTML = `Para o Bico <strong style="color: var(--secondary)">ISO ${isoLabel}</strong> num espaçamento de <strong>${spaceCm} cm</strong>, a controladora de taxa tem que rebolar com a velocidade oscilando entre ${vMin} km/h e ${vMax} km/h. <br><br>Você poderá digitar no painel <b>única e exclusivamente valores L/ha que obedeçam aos limites abaixo</b> para garantir vida útil mecânica e qualidade de gota (2.0 a 4.0 Bar de pressão na ponta da barra):`;
+
+            document.getElementById('rateMin').innerText = `${rateFloorLimit.toFixed(1)} L/ha`;
+            document.getElementById('rateMax').innerText = `${rateCeilingLimit.toFixed(1)} L/ha`;
+            
+            // Garantir que o ideal que será plotado se encaixe ou apenas mostrá-lo como sugestão
+            document.getElementById('rateTgt').innerText = `${rateIdealCruise.toFixed(1)} L/ha`;
+        }
+    </script>
+</body>
+</html>

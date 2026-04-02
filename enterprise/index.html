@@ -1124,7 +1124,7 @@
         <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para garantir que sua
           aplicação no campo seja exatamente o que você planejou no software.</p>
 
-        <h3>🎯 Vazão de Calibração (Jaragem)</h3>
+        <h3>🎯 Vazão de Calibração</h3>
         <p>O dado mais importante para o operador! O valor em destaque nos cards é a <strong>Vazão Real (L/min)</strong>
           que cada bico deve entregar para atingir seu alvo (L/ha) na velocidade média informada. Use este número para a
           calibração manual com jarra/caneca.</p>
@@ -1853,13 +1853,31 @@
       function updateChart(rows, sysVMin, sysVMax) {
         if (!myChart) return;
 
+        const sysPMin = parseFloat(document.getElementById('numPMin').value);
+        const sysPMax = parseFloat(document.getElementById('numPMax').value);
+        
+        // Aplica o mesmo filtro da Tabela de Dados
+        const filteredRows = rows.filter(r => {
+          const hasGreen = (r.pressures[0] >= sysPMin && r.pressures[0] <= sysPMax) ||
+            (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
+            (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
+          return hasGreen;
+        });
+
+        // Fallback se todos os bicos estiverem fora
+        const finalRows = filteredRows.length > 0 ? filteredRows : rows.sort((a, b) => {
+          const distA = Math.abs(a.pressures[1] - (sysPMin + sysPMax) / 2);
+          const distB = Math.abs(b.pressures[1] - (sysPMin + sysPMax) / 2);
+          return distA - distB;
+        }).slice(0, 3);
+
         // Limita a exibição do gráfico para focar nas velocidades práticas
         myChart.options.scales.x.min = Math.max(0, sysVMin - 5);
         myChart.options.scales.x.max = sysVMax + 10;
 
-        const labels = rows.map(r => `ISO ${r.nz.iso}`);
+        const labels = finalRows.map(r => `ISO ${r.nz.iso}`);
 
-        const barData = rows.map(r => {
+        const barData = finalRows.map(r => {
           return {
             x: [r.vAtPmin, r.vAtPmax], // [min_val, max_val] interval 
             y: `ISO ${r.nz.iso}`,
@@ -1870,7 +1888,7 @@
           }
         });
 
-        const scatterData = rows.map(r => {
+        const scatterData = finalRows.map(r => {
           return {
             x: r.vAt3Bar,
             y: `ISO ${r.nz.iso}`

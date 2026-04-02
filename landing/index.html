@@ -441,49 +441,6 @@
             }
         }
 
-        /* PDF MODAL */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2,8,23,0.9);
-            z-index: 9999;
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            height: 90vh;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            border: 4px solid var(--primary-blue);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px; left: 15px;
-            background: var(--bg-dark);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-family: 'Outfit';
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-            transition: 0.3s;
-        }
-        
-        .modal-close:hover { background: var(--alert-red); }
-
         /* STATUS ICONS */
         .status-grid {
             display: flex;
@@ -766,15 +723,6 @@
                     <!-- Imagem do App -->
                     <img src="exemplo_resultado_app.jpeg" alt="Screenshot do Aplicativo em Ação"
                         style="position: relative; z-index: 1; width: 100%; max-width: 320px; border-radius: 24px; box-shadow: 0 25px 60px rgba(0,0,0,0.8); border: 6px solid #1e293b; object-fit: cover;">
-                    
-                    <!-- BADGE DO PDF (Botão Pequeno Flutuante via Modal) -->
-                    <button onclick="openPdfModal(event)" class="pdf-badge" style="cursor: pointer; border-color: rgba(255,255,255,0.2);">
-                        <i data-lucide="file-text" style="color: var(--alert-red); width: 28px; height: 28px;"></i>
-                        <div style="text-align: left;">
-                            <strong style="display: block; font-size: 14px; color: #fff; font-family: 'Inter';">Ver Laudo Real</strong>
-                            <span style="font-size: 11px; color: var(--text-muted); font-family: 'Inter';">Abertura Segura</span>
-                        </div>
-                    </button>
                 </div>
             </div>
 
@@ -785,6 +733,24 @@
                         style="width: 18px; height: 18px;"></i> PARCIAL</div>
                 <div class="status-pill status-err"><i data-lucide="x-circle" style="width: 18px; height: 18px;"></i>
                     FORA DA FAIXA</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Laudo Exemplo Direto na Tela -->
+    <section>
+        <div class="container" style="text-align: center;">
+            <div class="section-header" style="margin-bottom: 40px;">
+                <h2>O Resultado Pronto para Envio</h2>
+                <p style="color: var(--text-muted);">Um laudo premium gerado automaticamente pelo aplicativo para endossar a sua recomendação no WhatsApp do cliente.</p>
+            </div>
+            
+            <div style="display: inline-block; position: relative;">
+                <img src="laudo.jpg" alt="Exemplo de Laudo PDF" style="max-width: 100%; width: 700px; height: auto; border-radius: 8px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+                <!-- Etiqueta decorativa sobre o laudo -->
+                <div style="position: absolute; top: -15px; right: -15px; background: var(--alert-red); color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-family: 'Outfit'; font-size: 14px; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="file-check" style="width: 16px; height: 16px;"></i> PDF Real
+                </div>
             </div>
         </div>
     </section>
@@ -874,26 +840,9 @@
         </div>
     </footer>
 
-    <!-- Modal para leitura de PDF sem sair do lugar -->
-    <div id="pdf-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closePdfModal()">&times; Voltar para a Página</button>
-            <iframe src="Laudo_60Lha_17kmh_ISO02.pdf#view=FitH" width="100%" height="100%" frameborder="0"></iframe>
-        </div>
-    </div>
-
     <!-- Initialize Icons & JS Funcs -->
     <script>
         lucide.createIcons();
-
-        function openPdfModal(e) {
-            e.preventDefault();
-            document.getElementById('pdf-modal').style.display = 'flex';
-        }
-
-        function closePdfModal() {
-            document.getElementById('pdf-modal').style.display = 'none';
-        }
     </script>
 </body>
 

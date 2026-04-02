@@ -194,22 +194,25 @@
         }
         
         .bg-alt {
-            background-color: #1e293b; /* Azul Metálico Médio (Slate-800) - brutalmente mais claro que o Preto */
+            background-color: #112a46; /* Azul Escocês (Saturado), impossível de telas de celular esmagarem no preto */
             position: relative;
         }
 
+        /* Linhas Neon muito mais agressivas marcando o corte */
         .bg-alt::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 1px;
-            background: linear-gradient(to right, transparent, rgba(0, 210, 255, 0.4), transparent);
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--primary-blue);
+            box-shadow: 0 0 15px var(--primary-blue);
         }
 
         .bg-alt::after {
             content: '';
             position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 1px;
-            background: linear-gradient(to right, transparent, rgba(0, 210, 255, 0.4), transparent);
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--primary-blue);
+            box-shadow: 0 0 15px var(--primary-blue);
         }
 
         /* HERO */

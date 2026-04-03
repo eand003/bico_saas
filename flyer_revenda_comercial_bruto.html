@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flyer Comercial Revenda | Spray Precision PRO</title>
+  <meta name="description" content="Flyer comercial bruto para revendas: venda mais pontas com argumento técnico usando app + laudo PDF." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root{
+      --bg:#071019;
+      --card:#ffffff;
+      --line:#dbe5ee;
+      --text:#0f172a;
+      --muted:#5b6b7d;
+      --accent:#00d2ff;
+      --accent-dark:#004b63;
+      --ok:#10b981;
+      --danger:#ef4444;
+      --shadow:0 18px 40px rgba(15,23,42,.14);
+    }
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      -webkit-print-color-adjust:exact !important;
+      print-color-adjust:exact !important;
+    }
+    body{
+      font-family:'Inter',sans-serif;
+      background:linear-gradient(180deg,#071019 0%, #0b1622 100%);
+      padding:18px;
+      color:#fff;
+    }
+    .toolbar{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:10;
+    }
+    .print-btn{
+      border:none;
+      border-radius:999px;
+      background:var(--accent-dark);
+      color:#fff;
+      padding:12px 16px;
+      font-family:'Outfit',sans-serif;
+      font-weight:800;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      box-shadow:0 12px 24px rgba(0,0,0,.22);
+    }
+    .flyer{
+      width:min(1080px,100%);
+      margin:0 auto;
+      background:var(--card);
+      color:var(--text);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .top{
+      padding:28px 28px 20px;
+      background:
+        radial-gradient(circle at top right, rgba(0,210,255,.10), transparent 25%),
+        linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+      border-bottom:1px solid var(--line);
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#e9fbff;
+      border:1px solid #cdeffd;
+      color:var(--accent-dark);
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:14px;
+    }
+    h1{
+      font-family:'Outfit',sans-serif;
+      font-size:54px;
+      line-height:.95;
+      letter-spacing:-.06em;
+      margin-bottom:12px;
+      max-width:760px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.5;
+      max-width:760px;
+      margin-bottom:16px;
+    }
+    .pain{
+      display:inline-block;
+      padding:12px 14px;
+      border-radius:14px;
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      color:#991b1b;
+      font-size:14px;
+      font-weight:700;
+      line-height:1.45;
+    }
+    .body{
+      padding:22px 28px 28px;
+    }
+    .visuals{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#f8fbff;
+      padding:16px;
+    }
+    .card h2{
+      font-family:'Outfit',sans-serif;
+      font-size:26px;
+      line-height:1;
+      color:var(--accent-dark);
+      margin-bottom:8px;
+    }
+    .card p{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      margin-bottom:12px;
+    }
+    .mock{
+      position:relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:220px;
+      padding:8px 0 2px;
+    }
+    .mock img{
+      display:block;
+      max-width:100%;
+      height:auto;
+    }
+    .phone{
+      width:min(100%,220px);
+      border-radius:22px;
+      border:4px solid #1e293b;
+      box-shadow:0 18px 34px rgba(15,23,42,.24);
+    }
+    .pdf{
+      width:min(100%,430px);
+      border-radius:12px;
+      border:1px solid var(--line);
+      box-shadow:0 16px 28px rgba(15,23,42,.12);
+    }
+    .badge{
+      position:absolute;
+      bottom:-8px;
+      left:50%;
+      transform:translateX(-50%);
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      white-space:nowrap;
+      box-shadow:0 8px 18px rgba(15,23,42,.12);
+    }
+    .badge.cyan{background:var(--accent); color:#031018}
+    .badge.green{background:var(--ok); color:#fff}
+    .strip{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .big-box{
+      border-radius:18px;
+      background:linear-gradient(135deg,#004b63 0%, #08212a 100%);
+      color:#fff;
+      padding:20px;
+    }
+    .big-box h3{
+      font-family:'Outfit',sans-serif;
+      font-size:34px;
+      line-height:.95;
+      letter-spacing:-.05em;
+      margin-bottom:10px;
+    }
+    .big-box p{
+      color:#d8e7ef;
+      font-size:16px;
+      line-height:1.5;
+    }
+    .gain{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      padding:18px;
+    }
+    .gain h3{
+      font-family:'Outfit',sans-serif;
+      font-size:24px;
+      margin-bottom:10px;
+    }
+    .gain ul{
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+    .gain li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#334155;
+      font-size:14px;
+      line-height:1.45;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#f8fbff;
+      border:1px solid var(--line);
+    }
+    .close{
+      border-radius:18px;
+      background:#0f172a;
+      color:#fff;
+      padding:22px;
+      text-align:center;
+    }
+    .close h3{
+      font-family:'Outfit',sans-serif;
+      font-size:34px;
+      line-height:.96;
+      letter-spacing:-.05em;
+      margin-bottom:10px;
+      color:var(--accent);
+    }
+    .close p{
+      color:#d4e3ec;
+      font-size:16px;
+      line-height:1.55;
+      max-width:820px;
+      margin:0 auto 14px;
+    }
+    .pills{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .pills span{
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:12px;
+      font-weight:800;
+    }
+
+    @media (max-width: 920px){
+      .visuals,.strip{grid-template-columns:1fr}
+    }
+    @media (max-width: 720px){
+      body{padding:10px}
+      .top,.body{padding:18px 16px}
+      h1{font-size:38px}
+      .toolbar{right:10px; bottom:10px}
+      .print-btn{padding:10px 14px; font-size:14px}
+    }
+    @media print{
+      @page{size:A4 portrait; margin:0}
+      body{background:#fff; padding:0}
+      .toolbar{display:none}
+      .flyer{width:100%; max-width:none; border-radius:0; box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="print-btn" onclick="window.print()">
+      <i data-lucide="printer"></i>
+      Imprimir
+    </button>
+  </div>
+
+  <article class="flyer">
+    <section class="top">
+      <div class="tag">
+        <i data-lucide="store"></i>
+        Flyer comercial revenda
+      </div>
+
+      <h1>Venda mais pontas com argumento técnico</h1>
+      <p class="sub">O Spray Precision PRO mostra no app qual ponta atende e gera um laudo em PDF para reforçar a venda no WhatsApp.</p>
+      <div class="pain">Sem apoio técnico, o vendedor vende o que o cliente pede. Com o app, vende o que a operação precisa.</div>
+    </section>
+
+    <section class="body">
+      <div class="visuals">
+        <div class="card">
+          <h2>App no balcão</h2>
+          <p>O vendedor mostra na tela o diagnóstico da operação.</p>
+          <div class="mock">
+            <img src="landing/exemplo_resultado_app.jpeg" alt="Exemplo app" class="phone">
+            <div class="badge cyan">Diagnóstico na hora</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Laudo no WhatsApp</h2>
+          <p>O cliente leva um PDF técnico que reforça a recomendação.</p>
+          <div class="mock">
+            <img src="landing/laudo.jpeg" alt="Exemplo laudo" class="pdf">
+            <div class="badge green">Laudo PDF</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="big-box">
+          <h3>Seu vendedor mostra.<br>Seu cliente entende.<br>Sua loja vende mais.</h3>
+          <p>O app reduz discussão, aumenta autoridade e ajuda a justificar a ponta certa com mais segurança.</p>
+        </div>
+
+        <div class="gain">
+          <h3>O que a revenda ganha</h3>
+          <ul>
+            <li><i data-lucide="trending-up" style="width:18px;height:18px;color:var(--ok);flex-shrink:0;"></i> Mais ticket médio</li>
+            <li><i data-lucide="package-plus" style="width:18px;height:18px;color:var(--accent-dark);flex-shrink:0;"></i> Mais chance de vender o jogo completo</li>
+            <li><i data-lucide="badge-check" style="width:18px;height:18px;color:var(--accent);flex-shrink:0;"></i> Mais autoridade no balcão</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="close">
+        <h3>Não é só vender ponta.<br>É vender a recomendação certa.</h3>
+        <p>App + laudo = mais confiança para o vendedor, mais clareza para o cliente e mais resultado para a revenda.</p>
+        <div class="pills">
+          <span>Diagnóstico visual</span>
+          <span>Laudo técnico</span>
+          <span>Mais valor por venda</span>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

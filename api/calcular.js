@@ -97,15 +97,21 @@ export default function handler(req, res) {
       // Desvio do Alvo: Quão próximo da média da faixa (pTarget) o bico trabalha na vAvg
       const deviation = Math.abs(pVavg - pTarget);
 
+      // Distância entre pVmin e pMin: critério principal para ranking de bicos parciais/não-atende.
+      // Prioriza bicos cuja pressão mínima está mais próxima do limite mínimo exigido,
+      // evitando recomendar bicos que ficam muito abaixo de pMin (falha grave: ângulo não abre).
+      const distMin = Math.abs(pVmin - pMin);
+
       rows.push({
         nz: nz,
         vAtPmin, vAtPmax, vAt3Bar,
-        pVavg, 
+        pVavg,
         qVavg,
-        ok, 
+        ok,
         statusText,
         violation,
         deviation,
+        distMin,
         pressures: [pVmin, pVavg, pVmax]
       });
     });
@@ -119,8 +125,11 @@ export default function handler(req, res) {
         // 2. Entre os que atendem, ganha quem trabalha mais próximo do centro da faixa na vAvg
         return a.deviation - b.deviation;
       } else {
-        // 3. Entre os que não atendem, ganha o "menos ruim" (menor violação dos limites)
-        return a.violation - b.violation;
+        // 3. Entre os parciais/não-atende, prioriza quem tem pVmin mais próxima de pMin.
+        //    Um bico muito abaixo de pMin na velocidade mínima não abre o ângulo corretamente
+        //    e representa falha grave de aplicação. Bicos que ultrapassam levemente pMax em
+        //    alta velocidade são risco menor comparado a não abrir o cone na velocidade mínima.
+        return a.distMin - b.distMin;
       }
     });
 

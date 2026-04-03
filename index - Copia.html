@@ -1120,7 +1120,7 @@
         <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para garantir que sua
           aplicação no campo seja exatamente o que você planejou no software.</p>
 
-        <h3>🎯 Vazão de Calibração (Jaragem)</h3>
+        <h3>🎯 Vazão de Calibração</h3>
         <p>O dado mais importante para o operador! O valor em destaque nos cards é a <strong>Vazão Real (L/min)</strong>
           que cada bico deve entregar para atingir seu alvo (L/ha) na velocidade média informada. Use este número para a
           calibração manual com jarra/caneca.</p>
@@ -1248,7 +1248,7 @@
                 d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
               </path>
             </svg>
-            Pedir Orçamento
+            Consultar Especialista
           </a>
         </div>
       </div>
@@ -1458,7 +1458,7 @@
           fabBtn.style.display = 'flex';
           if (fallbackMode) {
             fabBtn.className = 'fab-btn fab-warning';
-            fabText.innerText = 'Ver Alternativa';
+            fabText.innerText = 'Opção Mais Próxima';
           } else {
             fabBtn.className = 'fab-btn fab-ok';
             fabText.innerText = 'Ver Melhor Bico';
@@ -1525,11 +1525,11 @@
             </span>
             <a href="https://wa.me/5565999106415?text=Olá! O sistema Spray Precision PRO me recomendou o bico ISO ${r.nz.iso}. Quero fazer um orçamento!" 
                target="_blank" 
-               style="background: #25D366; color: white; padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: all 0.2s ease;">
-               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+               style="background: #25D366; color: white; padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: 700; white-space: nowrap; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: all 0.2s ease;">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                </svg>
-               Comprar
+               Especialista
             </a>
         </div>
       `;
@@ -1847,13 +1847,31 @@
       function updateChart(rows, sysVMin, sysVMax) {
         if (!myChart) return;
 
+        const sysPMin = parseFloat(document.getElementById('numPMin').value);
+        const sysPMax = parseFloat(document.getElementById('numPMax').value);
+        
+        // Aplica o mesmo filtro da Tabela de Dados
+        const filteredRows = rows.filter(r => {
+          const hasGreen = (r.pressures[0] >= sysPMin && r.pressures[0] <= sysPMax) ||
+            (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
+            (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
+          return hasGreen;
+        });
+
+        // Fallback se todos os bicos estiverem fora
+        const finalRows = filteredRows.length > 0 ? filteredRows : rows.sort((a, b) => {
+          const distA = Math.abs(a.pressures[1] - (sysPMin + sysPMax) / 2);
+          const distB = Math.abs(b.pressures[1] - (sysPMin + sysPMax) / 2);
+          return distA - distB;
+        }).slice(0, 3);
+
         // Limita a exibição do gráfico para focar nas velocidades práticas
         myChart.options.scales.x.min = Math.max(0, sysVMin - 5);
-        myChart.options.scales.x.max = sysVMax + 10;
+        myChart.options.scales.x.max = sysVMax + 5;
 
-        const labels = rows.map(r => `ISO ${r.nz.iso}`);
+        const labels = finalRows.map(r => `ISO ${r.nz.iso}`);
 
-        const barData = rows.map(r => {
+        const barData = finalRows.map(r => {
           return {
             x: [r.vAtPmin, r.vAtPmax], // [min_val, max_val] interval 
             y: `ISO ${r.nz.iso}`,
@@ -1864,7 +1882,7 @@
           }
         });
 
-        const scatterData = rows.map(r => {
+        const scatterData = finalRows.map(r => {
           return {
             x: r.vAt3Bar,
             y: `ISO ${r.nz.iso}`
@@ -2215,12 +2233,12 @@
 
       @page {
         size: auto;
-        margin: 15mm;
+        margin: 0mm; /* A margem ZERO desativa a inserção da URL e Data nativa do navegador */
       }
 
       body {
         background: white !important;
-        padding: 0 !important;
+        padding: 15mm !important; /* Compensar a margem para o texto não colar nas bordas do PDF */
         color: black !important;
       }
 

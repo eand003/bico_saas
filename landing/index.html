@@ -562,6 +562,64 @@
             color: var(--text-muted);
             font-size: 14px;
         }
+
+        /* MODAL DE LEADS */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: modalFadeIn 0.3s ease forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: transparent; border: none; color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-close:hover {
+            color: var(--alert-red);
+        }
+        .modal-content h3 {
+            font-size: 24px; margin-bottom: 10px; color: #fff;
+        }
+        .modal-content p {
+            color: var(--text-muted); margin-bottom: 25px; font-size: 14px;
+        }
+        .modal-content input {
+            width: 100%; padding: 15px; margin-bottom: 15px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: white; font-family: 'Inter', sans-serif; font-size: 15px;
+            transition: 0.3s;
+        }
+        .modal-content input::placeholder {
+            color: #64748b;
+        }
+        .modal-content input:focus {
+            outline: none; border-color: var(--primary-blue); background: rgba(0, 210, 255, 0.05);
+        }
     </style>
 </head>
 
@@ -582,7 +640,7 @@
             </nav>
 
             <div class="nav-cta">
-                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-outline"
+                <a href="#" onclick="openModal(event)" class="btn btn-outline"
                     style="padding: 10px 20px; font-size: 13px;">
                     Solicitar Demo
                 </a>
@@ -598,7 +656,7 @@
             <h1>Não é sobre a máquina. É sobre a ponta certa.</h1>
             <p>O Spray Precision PRO mostra, em segundos, qual ponta usar, em qual faixa de velocidade ele funciona e
                 quando o cenário está fora da faixa segura.</p>
-            <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp">
+            <a href="#" onclick="openModal(event)" class="btn btn-wpp">
                 <i data-lucide="message-circle"></i> Solicitar Demonstração
             </a>
         </div>
@@ -830,7 +888,7 @@
             <div class="cta-final">
                 <h2>Pare de recomendar no escuro.</h2>
                 <p>Adote a tecnologia e assuma o controle definitivo da aplicação no campo.</p>
-                <a href="https://wa.me/5565999106415" target="_blank" class="btn btn-wpp"
+                <a href="#" onclick="openModal(event)" class="btn btn-wpp"
                     style="padding: 18px 40px; font-size: 18px;">
                     <i data-lucide="message-circle" style="width: 24px; height: 24px;"></i> Solicitar Demonstração
                 </a>
@@ -844,9 +902,57 @@
         </div>
     </footer>
 
+    <!-- Lead Modal -->
+    <div id="leadModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+            <h3 class="brand-font">Falta pouco!</h3>
+            <p>Preencha os dados abaixo para receber seu acesso de demonstração e liberarmos seu atendimento no WhatsApp.</p>
+            <form id="leadForm" onsubmit="submitForm(event)">
+                <input type="text" id="leadName" placeholder="Seu Nome" required>
+                <input type="tel" id="leadPhone" placeholder="Seu WhatsApp" required>
+                <input type="text" id="leadRegion" placeholder="Sua Região / Estado" required>
+                <button type="submit" class="btn btn-wpp" style="width: 100%; justify-content: center; margin-top: 10px;">
+                    <i data-lucide="message-circle"></i> Falar no WhatsApp Agora
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Initialize Icons & JS Funcs -->
     <script>
         lucide.createIcons();
+
+        function openModal(e) {
+            if(e) e.preventDefault();
+            document.getElementById('leadModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('leadModal').classList.remove('active');
+        }
+
+        // Fechar ao clicar fora
+        document.getElementById('leadModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        function submitForm(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('leadName').value;
+            const phone = document.getElementById('leadPhone').value;
+            const region = document.getElementById('leadRegion').value;
+            
+            // Redirecionamento direto pro WhatsApp com a mensagem pré-preenchida
+            const text = `Olá! Vim da página de Demonstração.%0A%0A*Nome:* ${name}%0A*WhatsApp:* ${phone}%0A*Região:* ${region}%0A%0AGostaria de ver o sistema funcionando.`;
+            const phoneTarget = '5565999106415';
+            
+            closeModal();
+            window.open(`https://wa.me/${phoneTarget}?text=${text}`, '_blank');
+        }
     </script>
 </body>
 

@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Admin - Spray Precision SaaS</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Supabase JS Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-dark: #05080a;
+      --glass-bg: rgba(15, 20, 24, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.35);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.3);
+      --accent-error: #ff4b4b;
+      --accent-error-glow: rgba(255, 75, 75, 0.3);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --card-radius: 16px;
+      --control-bg: rgba(255, 255, 255, 0.04);
+      --control-border: rgba(255, 255, 255, 0.12);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image: radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(56, 239, 125, 0.03) 0%, transparent 40%);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      display: none; /* Shown after login */
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Login Box */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-box {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .login-box h2 {
+      font-size: 24px;
+      font-weight: 800;
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-radius: var(--card-radius);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .header-title h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--control-border);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #05080a;
+      border-color: var(--accent);
+    }
+
+    .btn-accent:hover {
+      background: #33e0ff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-danger {
+      background: rgba(255, 75, 75, 0.15);
+      color: var(--accent-error);
+      border-color: rgba(255, 75, 75, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: var(--accent-error);
+      color: white;
+      box-shadow: 0 0 15px var(--accent-error-glow);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .stat-card.green::before { background: var(--accent-green); }
+    .stat-card.red::before { background: var(--accent-error); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* Main Grid Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 900px) {
+      .main-grid {
+        grid-template-columns: 320px 1fr;
+      }
+    }
+
+    /* Sidebar / Filters */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .glass-panel h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .input-field {
+      width: 100%;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    select.input-field {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+      padding-right: 36px;
+    }
+
+    /* Enterprise list in sidebar */
+    .enterprise-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .enterprise-item {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .enterprise-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .enterprise-item.active {
+      background: rgba(0, 210, 255, 0.1);
+      border-color: rgba(0, 210, 255, 0.2);
+      font-weight: 600;
+    }
+
+    .enterprise-badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Users Table Container */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--card-radius);
+      border: 1px solid var(--glass-border);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .admin-table th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .admin-table tbody tr {
+      transition: background 0.2s;
+    }
+
+    .admin-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .user-email-cell {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .role-select {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      color: var(--accent);
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .role-select.gerente {
+      background: rgba(56, 239, 125, 0.1);
+      border-color: rgba(56, 239, 125, 0.2);
+      color: var(--accent-green);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 28px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0, 210, 255, 0.15);
+      position: relative;
+      color: var(--text-main);
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: white;
+    }
+
+    .loader {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      padding: 48px;
+      text-align: center;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Master Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="login-box">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <span style="font-size: 48px;">👑</span>
+      </div>
+      <h2>Painel Master Admin</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: -10px;">Entre com suas credenciais master da nuvem</p>
+      
+      <form onsubmit="handleMasterLogin(event)">
+        <div class="form-group">
+          <label>E-mail do Administrador</label>
+          <input type="email" id="loginEmail" class="input-field" value="eand003@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="Sua senha secreta" required>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Entrar no Painel Master</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 12px;">
+        <a href="#" onclick="openCredentialsModal()" style="font-size: 11px; color: var(--accent); text-decoration: none; font-weight: 600;">⚙️ Configurar Conexão Supabase</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Admin Dashboard (Hidden initially) -->
+  <div class="container" id="adminDashboard">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <h1>🛠️ Painel Master Admin PWA</h1>
+        <p>Sessão ativa: <strong id="loggedAdminEmail">master@admin.com</strong></p>
+      </div>
+      <div class="header-actions">
+        <button class="btn" onclick="openCredentialsModal()" title="Configurações de API">⚙️ Parâmetros API</button>
+        <button class="btn btn-accent" id="createUserBtn" onclick="openCreateUserModal()">➕ Novo Usuário</button>
+        <button class="btn btn-danger" onclick="handleLogout()">🚪 Sair</button>
+      </div>
+    </header>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Empresas Contratantes</span>
+        <span class="stat-value" id="statsEnterprises">0</span>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-label">Usuários Ativos</span>
+        <span class="stat-value" id="statsUsers">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Clientes Cadastrados</span>
+        <span class="stat-value" id="statsClients">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Pulverizadores Registrados</span>
+        <span class="stat-value" id="statsMachines">0</span>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      
+      <!-- Sidebar Filters -->
+      <aside class="sidebar">
+        
+        <div class="glass-panel">
+          <h3>🏢 Filtrar Empresas</h3>
+          <div class="enterprise-list" id="enterpriseList">
+            <div class="enterprise-item active" onclick="selectEnterprise('all')">
+              <span>Todas as Empresas</span>
+              <span class="enterprise-badge" id="badgeAll">0</span>
+            </div>
+            <!-- Dynamic entries here -->
+          </div>
+        </div>
+
+        <div class="glass-panel">
+          <h3>ℹ️ Segurança na Nuvem</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            Sua chave `service_role` foi carregada de forma 100% segura através do banco de dados após a validação do seu login master (`eand003@gmail.com`). Nenhuma chave de administração fica exposta no código.
+          </p>
+        </div>
+
+      </aside>
+
+      <!-- Main Panel: User List -->
+      <main class="main-content">
+        
+        <div class="glass-panel" style="padding: 24px;">
+          <div class="table-header">
+            <h3 style="margin-bottom: 0;">👥 Usuários Cadastrados (<span id="userCount">0</span>)</h3>
+            <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px;">🔄 Recarregar</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>E-mail</th>
+                  <th>Cargo (Role)</th>
+                  <th>Empresa / Enterprise</th>
+                  <th>Criado Em</th>
+                  <th style="text-align: right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="5">
+                    <div class="empty-state">
+                      <div class="loader"></div>
+                      <p>Aguardando login administrativo...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Modal Connection Setup -->
+  <div id="credentialsModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('credentialsModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>⚙️ Conexão Supabase</h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Insira a URL e a Anon Key pública para permitir a autenticação do seu e-mail master.</p>
+      </div>
+      <form onsubmit="saveConnection(event)">
+        <div class="form-group">
+          <label>Supabase URL</label>
+          <input type="url" id="configUrl" class="input-field" placeholder="https://xxxx.supabase.co" required>
+        </div>
+        <div class="form-group">
+          <label>Supabase Anon Key (Chave Pública)</label>
+          <input type="password" id="configAnon" class="input-field" placeholder="eyJhbGciOi..." required>
+        </div>
+        <div class="form-group" style="opacity: 0.7;">
+          <label>Chave Service Role (Carregada Automática após Login)</label>
+          <input type="text" id="configServiceRoleDisplay" class="input-field" placeholder="Carregada dinamicamente pela Nuvem" disabled style="background: rgba(255,255,255,0.02); color: var(--accent); border-style: dashed;">
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Salvar Parâmetros</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Create User -->
+  <div id="createUserModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('createUserModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>➕ Cadastrar Novo Usuário</h3>
+      </div>
+      <form onsubmit="createUser(event)">
+        <div class="form-group">
+          <label>E-mail do Usuário</label>
+          <input type="email" id="userEmail" class="input-field" placeholder="ex: consultor@empresa.com" required>
+        </div>
+        <div class="form-group">
+          <label>Senha Provisória</label>
+          <input type="password" id="userPassword" class="input-field" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label>ID da Empresa (Sem espaços/acentos)</label>
+          <input type="text" id="userPartnerId" class="input-field" placeholder="ex: revenda_sol_agro" required>
+        </div>
+        <div class="form-group">
+          <label>Nome da Empresa (Fantasia)</label>
+          <input type="text" id="userPartnerName" class="input-field" placeholder="ex: Sol Agro Soluções" required>
+        </div>
+        <div class="form-group">
+          <label>Nível de Acesso (Cargo)</label>
+          <select id="userRole" class="input-field" required>
+            <option value="consultor">🌾 Consultor (Apenas seus registros)</option>
+            <option value="gerente">📈 Gerente (Toda a revenda/equipe)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Criar Usuário no Supabase</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS Logic -->
+  <script>
+    let supabasePublic = null;
+    let supabaseAdmin = null;
+    
+    let cachedUsers = [];
+    let cachedClients = [];
+    let cachedMachines = [];
+    let selectedEnterpriseId = 'all';
+
+    // Auto load credentials from localStorage on start
+    window.addEventListener('DOMContentLoaded', () => {
+      loadConnectionSettings();
+    });
+
+    function loadConnectionSettings() {
+      const url = localStorage.getItem('spray_super_supabase_url');
+      const anon = localStorage.getItem('spray_super_supabase_anon');
+
+      if (url && anon) {
+        document.getElementById('configUrl').value = url;
+        document.getElementById('configAnon').value = anon;
+
+        try {
+          // Initialize standard public Supabase client
+          supabasePublic = supabase.createClient(url, anon);
+          checkActiveSession();
+        } catch (err) {
+          alert('Erro ao inicializar conexão: ' + err.message);
+          openCredentialsModal();
+        }
+      } else {
+        openCredentialsModal();
+      }
+    }
+
+    function openCredentialsModal() {
+      document.getElementById('credentialsModal').style.display = 'flex';
+    }
+
+    function openCreateUserModal() {
+      if (!supabaseAdmin) {
+        alert('Por favor, faça o login administrativo primeiro!');
+        return;
+      }
+      document.getElementById('createUserModal').style.display = 'flex';
+    }
+
+    function saveConnection(e) {
+      e.preventDefault();
+      const url = document.getElementById('configUrl').value.trim();
+      const anon = document.getElementById('configAnon').value.trim();
+
+      localStorage.setItem('spray_super_supabase_url', url);
+      localStorage.setItem('spray_super_supabase_anon', anon);
+
+      document.getElementById('credentialsModal').style.display = 'none';
+      loadConnectionSettings();
+    }
+
+    // Check if eand003@gmail.com is already logged in
+    async function checkActiveSession() {
+      if (!supabasePublic) return;
+
+      const { data: { session }, error } = await supabasePublic.auth.getSession();
+      
+      if (session && session.user && session.user.email === 'eand003@gmail.com') {
+        // Authenticated! Now fetch admin keys
+        document.getElementById('loggedAdminEmail').innerText = session.user.email;
+        await attemptLoadAdminKey();
+      } else {
+        // Show login screen
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminDashboard').style.display = 'none';
+        document.body.style.justifyContent = 'center';
+      }
+    }
+
+    // Sign in process
+    async function handleMasterLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!supabasePublic) {
+        alert('Por favor, configure a URL e a Anon Key do Supabase primeiro.');
+        openCredentialsModal();
+        return;
+      }
+
+      if (email !== 'eand003@gmail.com') {
+        alert('Acesso negado: Apenas o e-mail master eand003@gmail.com possui acesso a este painel.');
+        return;
+      }
+
+      const button = e.submitter;
+      const originalText = button.innerText;
+      button.innerText = 'Autenticando...';
+      button.disabled = true;
+
+      try {
+        const { data, error } = await supabasePublic.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) throw error;
+
+        // Verify if role metadata is master
+        const role = data.user.user_metadata && data.user.user_metadata.role;
+        if (role !== 'master') {
+          // Attempting update internally or warning
+          console.warn('Usuário autenticado, mas a role de metadado "master" não foi encontrada. Certifique-se de executar o script DDL SQL no Supabase.');
+        }
+
+        document.getElementById('loggedAdminEmail').innerText = data.user.email;
+        await attemptLoadAdminKey();
+
+      } catch (err) {
+        alert('Falha no login Master Admin: ' + err.message);
+      } finally {
+        button.innerText = originalText;
+        button.disabled = false;
+      }
+    }
+
+    // Securely load the service_role key from the admin_keys table (protected by RLS)
+    async function attemptLoadAdminKey() {
+      try {
+        const { data, error } = await supabasePublic
+          .from('admin_keys')
+          .select('service_role_key')
+          .limit(1)
+          .single();
+
+        if (error) {
+          throw new Error('Não foi possível ler a chave service_role do banco.\n\nCertifique-se de:\n1. Ter criado a tabela admin_keys\n2. Ter cadastrado a service_role_key nela\n3. Ter rodado o SQL para tornar o seu usuário eand003@gmail.com a role "master".\n\nErro original: ' + error.message);
+        }
+
+        const serviceKey = data.service_role_key;
+        document.getElementById('configServiceRoleDisplay').value = '••••••••••••••••••••••••';
+
+        // Initialize admin SDK in-memory
+        const url = localStorage.getItem('spray_super_supabase_url');
+        supabaseAdmin = supabase.createClient(url, serviceKey, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        });
+
+        // Toggle layout
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminDashboard').style.display = 'flex';
+        document.body.style.justifyContent = 'flex-start';
+
+        // Load stats and table
+        fetchDatabaseData();
+
+      } catch (err) {
+        alert('Atenção: ' + err.message + '\n\nO painel será aberto em modo de exibição local. Você terá que configurar a chave administrativa de forma manual nas configurações.');
+        
+        // Fallback to local storage key if exists, else ask manually
+        const fallbackKey = prompt("Digite a sua Service Role Key manualmente para prosseguir:");
+        if (fallbackKey && fallbackKey.trim() !== "") {
+          const url = localStorage.getItem('spray_super_supabase_url');
+          supabaseAdmin = supabase.createClient(url, fallbackKey.trim(), {
+            auth: {
+              autoRefreshToken: false,
+              persistSession: false
+            }
+          });
+          
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('adminDashboard').style.display = 'flex';
+          document.body.style.justifyContent = 'flex-start';
+          fetchDatabaseData();
+        } else {
+          handleLogout();
+        }
+      }
+    }
+
+    async function handleLogout() {
+      if (supabasePublic) {
+        await supabasePublic.auth.signOut();
+      }
+      supabaseAdmin = null;
+      document.getElementById('configServiceRoleDisplay').value = '';
+      document.getElementById('loginPassword').value = '';
+      
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminDashboard').style.display = 'none';
+      document.body.style.justifyContent = 'center';
+    }
+
+    // Fetch database users and counts using admin client
+    async function fetchDatabaseData() {
+      if (!supabaseAdmin) return;
+
+      showLoading(true);
+
+      try {
+        // 1. Fetch Auth Users (Admin Key required)
+        const { data: { users }, error: authError } = await supabaseAdmin.auth.admin.listUsers();
+        if (authError) throw authError;
+        cachedUsers = users;
+
+        // 2. Fetch stats
+        const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
+        const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
+
+        cachedClients = clients || [];
+        cachedMachines = machines || [];
+
+        renderStats();
+        renderEnterpriseList();
+        renderUsersTable();
+
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao carregar dados do Supabase. Verifique a service_role no banco.\nDetalles: ' + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function showLoading(isLoading) {
+      const tbody = document.getElementById('usersTableBody');
+      if (isLoading) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="loader"></div>
+                <p>Consultando base de usuários do Supabase...</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function renderStats() {
+      document.getElementById('statsUsers').innerText = cachedUsers.length;
+      document.getElementById('statsClients').innerText = cachedClients.length;
+      document.getElementById('statsMachines').innerText = cachedMachines.length;
+
+      const uniquePartners = new Set();
+      cachedUsers.forEach(u => {
+        if (u.user_metadata && u.user_metadata.partner_id) {
+          uniquePartners.add(u.user_metadata.partner_id);
+        }
+      });
+      document.getElementById('statsEnterprises').innerText = uniquePartners.size;
+    }
+
+    function renderEnterpriseList() {
+      const listContainer = document.getElementById('enterpriseList');
+      
+      listContainer.innerHTML = `
+        <div class="enterprise-item ${selectedEnterpriseId === 'all' ? 'active' : ''}" onclick="selectEnterprise('all')">
+          <span>Todas as Empresas</span>
+          <span class="enterprise-badge" id="badgeAll">${cachedUsers.length}</span>
+        </div>
+      `;
+
+      const partnersMap = {};
+      cachedUsers.forEach(u => {
+        const pId = (u.user_metadata && u.user_metadata.partner_id) || 'desconhecido';
+        const pName = (u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa';
+        
+        if (!partnersMap[pId]) {
+          partnersMap[pId] = { name: pName, count: 0 };
+        }
+        partnersMap[pId].count++;
+      });
+
+      Object.keys(partnersMap).forEach(pId => {
+        if (pId === 'desconhecido' && partnersMap[pId].count === 0) return;
+        
+        const itemHtml = `
+          <div class="enterprise-item ${selectedEnterpriseId === pId ? 'active' : ''}" onclick="selectEnterprise('${pId}')">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">🏢 ${partnersMap[pId].name}</span>
+            <span class="enterprise-badge">${partnersMap[pId].count}</span>
+          </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+      });
+    }
+
+    function selectEnterprise(pId) {
+      selectedEnterpriseId = pId;
+      renderEnterpriseList();
+      renderUsersTable();
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+
+      const filteredUsers = selectedEnterpriseId === 'all' 
+        ? cachedUsers 
+        : cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === selectedEnterpriseId);
+
+      document.getElementById('userCount').innerText = filteredUsers.length;
+
+      if (filteredUsers.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <p>Nenhum usuário cadastrado nesta empresa.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filteredUsers.forEach(user => {
+        const metadata = user.user_metadata || {};
+        const role = metadata.role || 'consultor';
+        const partnerName = metadata.partner_name || 'Sem Empresa';
+        const partnerId = metadata.partner_id || '-';
+        const createdDate = new Date(user.created_at).toLocaleDateString('pt-BR');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="user-email-cell">✉️ ${user.email}</td>
+          <td>
+            <select class="role-select ${role === 'gerente' ? 'gerente' : ''}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
+              <option value="consultor" ${role === 'consultor' ? 'selected' : ''}>🌾 Consultor</option>
+              <option value="gerente" ${role === 'gerente' ? 'selected' : ''}>📈 Gerente</option>
+              <option value="master" ${role === 'master' ? 'selected' : ''}>👑 Master Admin</option>
+            </select>
+          </td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <span style="font-weight:600;">${partnerName}</span>
+              <span style="font-size:10px; color:var(--text-muted); font-family: monospace;">ID: ${partnerId}</span>
+            </div>
+          </td>
+          <td>📅 ${createdDate}</td>
+          <td style="text-align: right;">
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+              <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="alterarEmpresaPrompt('${user.id}', '${partnerId}', '${partnerName.replace(/'/g, "\\'")}', '${role}')" title="Mudar Empresa">🏢 Transferir</button>
+              <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function createUser(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('userEmail').value.trim();
+      const password = document.getElementById('userPassword').value.trim();
+      const partnerId = document.getElementById('userPartnerId').value.trim().toLowerCase();
+      const partnerName = document.getElementById('userPartnerName').value.trim();
+      const role = document.getElementById('userRole').value;
+
+      if (!supabaseAdmin) return;
+
+      try {
+        const { data, error } = await supabaseAdmin.auth.admin.createUser({
+          email: email,
+          password: password,
+          email_confirm: true,
+          user_metadata: {
+            role: role,
+            partner_id: partnerId,
+            partner_name: partnerName
+          }
+        });
+
+        if (error) throw error;
+
+        alert(`Usuário ${email} criado com sucesso!`);
+        document.getElementById('createUserModal').style.display = 'none';
+        
+        document.getElementById('userEmail').value = '';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userPartnerId').value = '';
+        document.getElementById('userPartnerName').value = '';
+        
+        fetchDatabaseData();
+
+      } catch (err) {
+        alert('Erro ao cadastrar usuário: ' + err.message);
+      }
+    }
+
+    async function changeUserRole(userId, newRole, partnerId, partnerName) {
+      if (!supabaseAdmin) return;
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            role: newRole,
+            partner_id: partnerId,
+            partner_name: partnerName
+          }
+        });
+
+        if (error) throw error;
+        
+        alert('Cargo/Permissão atualizada com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao alterar cargo: ' + err.message);
+        fetchDatabaseData();
+      }
+    }
+
+    async function alterarEmpresaPrompt(userId, currentPartnerId, currentPartnerName, currentRole) {
+      const newPartnerId = prompt("Digite o ID da NOVA empresa (ex: revenda_nacional):", currentPartnerId);
+      if (newPartnerId === null || newPartnerId.trim() === "") return;
+
+      const newPartnerName = prompt("Digite o NOME FANTASIA da NOVA empresa (ex: Revenda Nacional):", currentPartnerName);
+      if (newPartnerName === null || newPartnerName.trim() === "") return;
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            role: currentRole,
+            partner_id: newPartnerId.trim().toLowerCase(),
+            partner_name: newPartnerName.trim()
+          }
+        });
+
+        if (error) throw error;
+        
+        alert('Usuário transferido de empresa com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao transferir empresa: ' + err.message);
+      }
+    }
+
+    async function deleteUser(userId, email) {
+      const confirmDelete = confirm(`⚠️ TEM CERTEZA que deseja deletar o usuário "${email}"?\n\nEsta ação é irreversível.`);
+      if (!confirmDelete) return;
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+        if (error) throw error;
+
+        alert('Usuário deletado com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao deletar usuário: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>

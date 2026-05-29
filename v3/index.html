@@ -1299,29 +1299,45 @@
       <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'"
           title="Fechar">&times;</button>
-        <h2>📖 Sobre o Spray Precision PRO</h2>
-        <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para garantir que sua aplicação no campo seja exatamente o que você planejou no software.</p>
+        <h2>📖 Como Utilizar o Simulador</h2>
+        <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para auxiliar consultores, agrônomos e revendas a recomendarem o bico de pulverização ideal, garantindo máxima precisão científica e economia no campo.</p>
 
-        <h3>🎯 Vazão de Calibração (Jaragem)</h3>
-        <p>O dado mais importante para o operador! O valor em destaque nos cards é a <strong>Vazão Real (L/min)</strong> que cada bico deve entregar para atingir seu alvo (L/ha) na velocidade média informada. Use este número para a calibração manual com jarra/caneca.</p>
-
-        <h3>🏆 Selos de Diagnóstico Interativos</h3>
-        <p>Você pode <strong>clicar nos selos</strong> de status (Atende, Parcial ou Não Recomendado) para abrir um diagnóstico técnico. Ali mostramos exatamente qual pressão a bomba atingirá na sua velocidade mínima e máxima, comparando com o limite que você definiu.</p>
-
-        <h3>⚖️ Correção por Densidade da Calda</h3>
-        <p>Diferente de tabelas comuns, este simulador utiliza <strong>Correção de Gravidade Específica</strong>.</p>
+        <h3>👥 1. Cadastro de Clientes e Máquinas (CRM)</h3>
+        <p>Ao tocar no ícone <b>👥</b> no cabeçalho do aplicativo, você acessa o painel de histórico 100% offline:</p>
         <ul>
-          <li><strong>Água (1.00):</strong> Calda limpa e padrão.</li>
-          <li><strong>Média (1.08):</strong> Recomendado para caldas com óleos, fungicidas e adjuvantes que tornam o líquido mais "pesado".</li>
-          <li><strong>Pesada (1.20):</strong> Para adubação líquida e nutrição foliar densa (vincosa).</li>
+          <li><b>Produtores:</b> Cadastre e edite clientes informando Nome, Fazenda e anotações.</li>
+          <li><b>Múltiplos Pulverizadores:</b> Adicione as máquinas de cada produtor informando a identificação, quantidade de bicos, espaçamento e o <b>Tamanho da Barra Comercial (metros)</b> de forma manual.</li>
         </ul>
-        <p style="margin-top: 4px; font-size: 13px; opacity: 0.8;">O simulador compensa a perda de fluxo causada pela densidade para que a leitura do seu manômetro seja 100% confiável.</p>
 
-        <h3>📊 Gráfico de Janela Segura</h3>
-        <p>As barras coloridas representam a janela de velocidade de cada bico. Os <strong>pontos brancos</strong> no gráfico marcam a performance padrão ISO (3 bar), facilitando a comparação visual entre a sua configuração e o padrão de fábrica.</p>
+        <h3>🚜 2. Carregamento e Sessão Ativa</h3>
+        <p>No card de qualquer pulverizador registrado, você tem ferramentas integradas:</p>
+        <ul>
+          <li><b>Carregar no Simulador (📂):</b> Reinjeta instantaneamente todos os parâmetros salvos de volta na calculadora.</li>
+          <li><b>Banner de Máquina Ativa:</b> Ao carregar a máquina, um banner azul no topo da calculadora sinaliza a sessão ativa. Qualquer calibração posterior que você salvar virá pré-selecionada para o mesmo cliente automaticamente!</li>
+        </ul>
 
-        <h3>💡 Extremo Operacional</h3>
-        <p>Se você configurar volumes muito altos (ex: 300 L/ha) e velocidades extremas onde nenhum bico no catálogo atende, o sistema ativará o modo de emergência, sugerindo a única <b>Melhor Alternativa</b> disponível matematicamente.</p>
+        <h3>🎯 3. Vazão de Calibração (Jaragem)</h3>
+        <p>O dado em destaque nos cards recomendados é a <b>Vazão Real (L/min)</b> individual que cada ponta deve entregar. Use esse número exato para realizar a calibração com a caneca/jarra de calibração na velocidade média informada.</p>
+
+        <h3>🏆 4. Selos de Diagnóstico Interativos</h3>
+        <p>Você pode <b>clicar nos selos de veredito</b> (Atende, Parcial ou Não Recomendado) para abrir um laudo detalhado sobre as pressões operacionais estimadas na velocidade mínima e máxima do pulverizador.</p>
+
+        <h3>⚖️ 5. Densidade da Calda (Gravidade Específica)</h3>
+        <p>Diferente de tabelas státicas, o app corrige a pressão do manômetro baseando-se na densidade:</p>
+        <ul>
+          <li><b>Água (1.00):</b> Calda padrão limpa.</li>
+          <li><b>Média (1.08):</b> Caldas pesadas com óleos e adjuvantes.</li>
+          <li><b>Pesada (1.20):</b> Nutrição foliar e adubação líquida densa.</li>
+        </ul>
+
+        <h3>📊 6. Gráfico de Janelas Seguras</h3>
+        <p>As barras horizontais coloridas mostram a faixa de velocidade permitida para cada bico operar dentro da pressão estipulada. Os <b>pontos brancos</b> mostram o padrão nominal ISO (3 bar) para comparação imediata.</p>
+
+        <h3>📄 7. Laudo Técnico em PDF e Orçamento</h3>
+        <ul>
+          <li><b>Gerar Relatório (📄):</b> Clique no botão de documento no cabeçalho para gerar um laudo de engenharia pronto para impressão ou envio por PDF. Se houver cliente e máquina ativos na sessão, o laudo unificará todos os dados cadastrais automaticamente no topo!</li>
+          <li><b>Orçamento via WhatsApp:</b> Ao tocar em um bico sugerido, você pode emitir um laudo visual resumido e solicitar orçamentos em 1 clique.</li>
+        </ul>
       </div>
     </div>
 

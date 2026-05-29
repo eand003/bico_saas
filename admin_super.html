@@ -1317,10 +1317,12 @@
       const select = document.getElementById(selectElementId);
       select.innerHTML = '';
 
-      if (cachedEmpresas.length === 0) {
-        select.innerHTML = '<option value="">Nenhuma empresa cadastrada no SaaS</option>';
-        return;
-      }
+      // Add default Autônomo (Sem Empresa) option at the top
+      const optIndividual = document.createElement('option');
+      optIndividual.value = 'individual';
+      optIndividual.innerText = '🌾 Usuário Autônomo (Sem Empresa)';
+      if (selectValue === 'individual' || !selectValue) optIndividual.selected = true;
+      select.appendChild(optIndividual);
 
       cachedEmpresas.forEach(comp => {
         const opt = document.createElement('option');
@@ -1787,10 +1789,23 @@
       const role = document.getElementById('userRole').value;
 
       if (!supabaseAdmin) return;
-      if (!selectedPartnerId) return alert('Selecione uma empresa válida.');
+      if (!selectedPartnerId) return alert('Selecione uma opção de empresa ou autônomo.');
 
-      const selectedCompany = cachedEmpresas.find(comp => comp.partner_id === selectedPartnerId);
-      if (!selectedCompany) return alert('Empresa não encontrada no cache.');
+      let partnerName = 'Autônomo';
+      let partnerColor = '#00d2ff';
+      let partnerLogo = './logo.png';
+      let partnerWhatsapp = '5565999106415';
+      let isEnterprise = false;
+
+      if (selectedPartnerId !== 'individual') {
+        const selectedCompany = cachedEmpresas.find(comp => comp.partner_id === selectedPartnerId);
+        if (!selectedCompany) return alert('Empresa não encontrada no cache.');
+        partnerName = selectedCompany.partner_name;
+        partnerColor = selectedCompany.partner_color || '#00d2ff';
+        partnerLogo = selectedCompany.partner_logo || './logo.png';
+        partnerWhatsapp = selectedCompany.partner_whatsapp || '';
+        isEnterprise = true;
+      }
 
       try {
         const { data, error } = await supabaseAdmin.auth.admin.createUser({
@@ -1800,17 +1815,17 @@
           user_metadata: {
             role: role,
             partner_id: selectedPartnerId,
-            partner_name: selectedCompany.partner_name,
-            partner_color: selectedCompany.partner_color || '#00d2ff',
-            partner_logo: selectedCompany.partner_logo || './logo.png',
-            partner_whatsapp: selectedCompany.partner_whatsapp || '',
-            is_enterprise: true
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+            is_enterprise: isEnterprise
           }
         });
 
         if (error) throw error;
 
-        alert(`Usuário ${email} criado com sucesso e associado à empresa ${selectedCompany.partner_name}!`);
+        alert(`Usuário ${email} criado com sucesso como ${isEnterprise ? 'membro da empresa ' + partnerName : 'Usuário Autônomo'}!`);
         document.getElementById('createUserModal').style.display = 'none';
         
         document.getElementById('userEmail').value = '';
@@ -1860,29 +1875,42 @@
 
       if (!supabaseAdmin || !userId || !newPartnerId) return;
 
-      const company = cachedEmpresas.find(comp => comp.partner_id === newPartnerId);
-      if (!company) return alert('Nova empresa não encontrada no cache.');
+      let partnerName = 'Autônomo';
+      let partnerColor = '#00d2ff';
+      let partnerLogo = './logo.png';
+      let partnerWhatsapp = '5565999106415';
+      let isEnterprise = false;
+
+      if (newPartnerId !== 'individual') {
+        const company = cachedEmpresas.find(comp => comp.partner_id === newPartnerId);
+        if (!company) return alert('Nova empresa não encontrada no cache.');
+        partnerName = company.partner_name;
+        partnerColor = company.partner_color || '#00d2ff';
+        partnerLogo = company.partner_logo || './logo.png';
+        partnerWhatsapp = company.partner_whatsapp || '';
+        isEnterprise = true;
+      }
 
       try {
         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: {
             role: role,
             partner_id: newPartnerId,
-            partner_name: company.partner_name,
-            partner_color: company.partner_color || '#00d2ff',
-            partner_logo: company.partner_logo || './logo.png',
-            partner_whatsapp: company.partner_whatsapp || '',
-            is_enterprise: true
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+            is_enterprise: isEnterprise
           }
         });
 
         if (error) throw error;
         
-        alert('Usuário transferido de empresa com sucesso!');
+        alert('Usuário transferido com sucesso!');
         document.getElementById('transferModal').style.display = 'none';
         fetchDatabaseData();
       } catch (err) {
-        alert('Erro ao transferir empresa: ' + err.message);
+        alert('Erro ao transferir: ' + err.message);
       }
     }
 

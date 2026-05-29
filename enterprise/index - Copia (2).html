@@ -86,6 +86,7 @@
       padding: 24px;
     }
 
+    /* Ambient Overlay */
     body::before {
       content: "";
       position: fixed;
@@ -97,6 +98,8 @@
       opacity: 0.95;
       z-index: -1;
     }
+
+    h1,
 
     h1,
     h2,
@@ -129,6 +132,7 @@
       box-shadow: var(--shadow);
     }
 
+    /* Header */
     .header {
       width: 100%;
       max-width: 1280px;
@@ -140,12 +144,14 @@
     }
 
     .header-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
+      height: 48px;
+      width: auto;
+      max-width: 160px;
+      border-radius: 8px;
       background: transparent;
-      object-fit: cover;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      object-fit: contain;
+      box-shadow: none;
+      /* Removido sombra para logos com fundo transparente ficarem limpos */
     }
 
     .header h1 {
@@ -164,6 +170,7 @@
       display: none;
     }
 
+    /* Controls Panel */
     .controls {
       display: flex;
       flex-direction: column;
@@ -193,6 +200,7 @@
       font-size: 15px;
     }
 
+    /* Custom Sliders */
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
@@ -292,6 +300,7 @@
       flex: 1;
     }
 
+    /* Number Inputs */
     input[type=number] {
       width: 100%;
       padding: 12px;
@@ -312,6 +321,7 @@
       box-shadow: 0 0 10px var(--accent-glow);
     }
 
+    /* Main Dashboard */
     .dashboard {
       display: flex;
       flex-direction: column;
@@ -517,6 +527,7 @@
       background: rgba(56, 239, 125, 0.12);
     }
 
+    /* Responsividade p/ Tabela em modo retrato (mobile) */
     @media screen and (max-width: 768px) and (orientation: portrait) {
       .premium-table {
         min-width: 100%;
@@ -569,6 +580,7 @@
       }
     }
 
+    /* Help Modal */
     .info-btn {
       width: 44px;
       height: 44px;
@@ -729,6 +741,7 @@
       }
     }
 
+    /* Login Form Styles */
     #loginScreen {
       display: flex;
       flex-direction: column;
@@ -785,185 +798,92 @@
       font-size: 14px;
     }
 
-    /* CRM / Custom History Styling */
-    .history-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-      width: 100%;
-    }
-
-    @media screen and (max-width: 600px) {
-      .history-list {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      body {
-        padding: 12px;
-      }
-      .glass-panel {
-        padding: 16px;
-      }
-      .container {
-        gap: 16px;
-      }
-      .history-card {
-        padding: 16px;
-        gap: 12px;
-      }
-      .machine-item-card {
-        padding: 12px;
-        gap: 6px;
-      }
-      .modal-content {
-        padding: 16px !important;
-      }
-    }
-
-    .history-card {
-      background: var(--control-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 20px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      transition: all 0.3s ease;
-    }
-
-    .history-card:hover {
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 1px dashed rgba(255,255,255,0.1);
-      padding-bottom: 10px;
-    }
-
-    .history-title {
-      font-weight: bold;
-      font-size: 18px;
-      color: var(--accent);
-    }
-
-    .history-sub {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Sub-Section Máquinas */
-    .machines-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-top: 4px;
-    }
-
-    .machine-item-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .machine-item-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--nz-color, var(--accent));
-    }
-
-    .machine-item-header {
-      display: flex;
-      justify-content: space-between;
+    /* v2 Features */
+    .fab-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 990;
+      background: var(--glass-bg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--accent);
+      color: var(--text-main);
+      padding: 16px 24px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: 'Outfit';
+      cursor: pointer;
+      display: none;
       align-items: center;
-      font-weight: bold;
-      font-size: 14px;
+      gap: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      transition: 0.3s;
     }
 
-    .machine-specs {
-      display: flex;
-      gap: 12px;
-      font-size: 11px;
-      color: var(--text-muted);
-      background: rgba(0, 0, 0, 0.2);
-      padding: 4px 8px;
-      border-radius: 6px;
-      width: fit-content;
+    .fab-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px var(--accent-glow);
     }
 
-    .machine-sim-data {
-      background: rgba(0, 210, 255, 0.05);
-      border: 1px dashed rgba(0, 210, 255, 0.2);
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.4;
+    .fab-btn.fab-ok {
+      border-color: var(--accent-green);
+      box-shadow: 0 8px 32px rgba(56, 239, 125, 0.2);
     }
 
-    .machine-action-row {
-      display: flex;
-      gap: 8px;
+    .fab-btn.fab-warning {
+      border-color: #FFC107;
+      box-shadow: 0 8px 32px rgba(255, 193, 7, 0.2);
+    }
+
+    .noz-flow-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--control-border);
+      padding: 8px 12px;
+      border-radius: 12px;
       margin-top: 4px;
     }
 
-    .crm-btn {
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      font-family: 'Inter';
-      transition: 0.2s;
+    .noz-flow-badge .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 2px;
     }
 
-    .crm-btn.primary {
-      background: var(--accent);
-      color: #000;
-    }
-
-    .crm-btn.primary:hover {
-      box-shadow: 0 0 8px var(--accent-glow);
-    }
-
-    .crm-btn.secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--control-border);
+    .noz-flow-badge .value {
+      font-size: 20px;
+      font-weight: 800;
       color: var(--text-main);
+      font-family: 'Outfit';
     }
 
-    .crm-btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
+    .result-hero {
+      text-align: center;
+      padding: 24px;
+      background: var(--control-bg);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 1px solid var(--glass-border);
     }
 
-    .crm-btn.danger {
-      background: rgba(255, 75, 75, 0.1);
-      border: 1px solid var(--accent-error);
-      color: var(--accent-error);
+    .result-hero .title {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    .crm-btn.danger:hover {
-      background: var(--accent-error);
-      color: white;
+    .result-hero .iso {
+      font-family: 'Outfit';
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1;
+      margin: 8px 0;
     }
   </style>
 </head>
@@ -1014,7 +934,8 @@
       </div>
 
       <p style="text-align: center; font-size: 11px; margin-bottom: 5px; color: var(--text-muted);">
-        Ao entrar, você concorda com os <a href="/termos_uso.html" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: none;">Termos de Uso</a>
+        Ao entrar, você concorda com os <a href="/termos_uso.html" target="_blank"
+          style="color: var(--accent); font-weight: 700; text-decoration: none;">Termos de Uso</a>
       </p>
       <div
         style="margin-top: 8px; text-align: center; font-size: 10px; color: var(--text-muted); padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);">
@@ -1038,7 +959,8 @@
         <img class="header-icon" src="./logo.png" alt="Spray Precision PRO Logo">
         <div style="flex:1; min-width: 250px;">
           <h1>Spray Precision <span style="font-weight:300;">PRO</span></h1>
-          <p style="color:var(--text-muted); font-size: 14px; margin-top: 4px; margin-bottom: 8px;">Simulador de Bicos ISO para Aplicação Agro</p>
+          <p style="color:var(--text-muted); font-size: 14px; margin-top: 4px; margin-bottom: 8px;">Simulador de Bicos
+            ISO para Aplicação Agro</p>
 
           <div class="header-info-card" style="margin-top: 8px; padding: 6px 10px;">
             <div class="header-info-content" style="justify-content: space-between; gap: 10px;">
@@ -1046,22 +968,30 @@
 
               <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <a href="https://wa.me/5565999106415?text=Bom%20dia!%20Vim%20pelo%20seu%20aplicativo%20de%20bicos%20ISO."
-                   target="_blank"
-                   title="WhatsApp"
-                   style="color:#25D366; text-decoration:none; display:flex; align-items:center; justify-content:center; width: 34px; height: 34px; background: rgba(37,211,102,0.1); border-radius: 8px; border: 1px solid rgba(37,211,102,0.2);">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                  target="_blank" title="WhatsApp"
+                  style="color:#25D366; text-decoration:none; display:flex; align-items:center; justify-content:center; width: 34px; height: 34px; background: rgba(37,211,102,0.1); border-radius: 8px; border: 1px solid rgba(37,211,102,0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
                 </a>
                 <a href="https://www.instagram.com/spray.precision?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                   target="_blank"
-                   title="Instagram"
-                   style="color:#E1306C; text-decoration:none; display:flex; align-items:center; justify-content:center; width: 34px; height: 34px; background: rgba(225,48,108,0.1); border-radius: 8px; border: 1px solid rgba(225,48,108,0.2);">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0 3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
+                  target="_blank" title="Instagram"
+                  style="color:#E1306C; text-decoration:none; display:flex; align-items:center; justify-content:center; width: 34px; height: 34px; background: rgba(225,48,108,0.1); border-radius: 8px; border: 1px solid rgba(225,48,108,0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
                 </a>
-                <button id="btnInstall" class="info-btn" title="Instalar App no Celular" style="display: none; width: 34px; height: 34px; font-size: 16px; background: var(--accent-green); color: #000; border-radius: 8px;">📱</button>
-                <button class="info-btn" id="btnToggleHistory" onclick="toggleHistoryTab()" title="Meus Clientes e Máquinas" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">👥</button>
-                <button class="info-btn" onclick="generateReport()" title="Gerar Relatório Técnico" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">📄</button>
-                <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">🌓</button>
-                <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'" title="Como Usar o Simulador" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">?</button>
+                <button id="btnInstall" class="info-btn" title="Instalar App no Celular"
+                  style="display: none; width: 34px; height: 34px; font-size: 16px; background: var(--accent-green); color: #000; border-radius: 8px;">📱</button>
+                <button class="info-btn" onclick="generateReport()" title="Gerar Relatório Técnico"
+                  style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">📄</button>
+                <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro"
+                  style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">🌓</button>
+                <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'"
+                  title="Como Usar o Simulador"
+                  style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">?</button>
               </div>
             </div>
           </div>
@@ -1069,22 +999,19 @@
       </div>
     </div>
 
-    <!-- MAIN CALCULATOR CONTAINER -->
-    <div class="container" id="mainContainer" style="display: grid;">
+    <div class="container">
       <!-- Controles -->
       <div class="glass-panel controls">
-        <!-- BANNER DE SESSÃO ATIVA -->
-        <div id="activeSessionBanner" style="display: none; background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 12px; padding: 12px; margin-bottom: 8px; flex-direction: column; gap: 4px; position: relative;"></div>
-
-        <h2 style="font-size: 18px; margin-bottom: 8px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; color: var(--accent);">
-          Parâmetros
-        </h2>
+        <h2
+          style="font-size: 18px; margin-bottom: 8px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px;">
+          Parâmetros</h2>
 
         <div class="control-group">
           <label>Espaçamento entre bicos (cm)</label>
           <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
             <button type="button" class="preset-btn spacing-btn" onclick="setSpacing(35)" data-val="35">35 cm</button>
-            <button type="button" class="preset-btn spacing-btn active" onclick="setSpacing(50)" data-val="50">50 cm</button>
+            <button type="button" class="preset-btn spacing-btn active" onclick="setSpacing(50)" data-val="50">50
+              cm</button>
           </div>
           <div class="flex-row" style="align-items: center; gap: 8px;">
             <input type="range" id="rngSpacing" min="30" max="100" step="1" value="50" style="flex: 2;">
@@ -1095,8 +1022,8 @@
         <div class="control-group">
           <label>Vazão desejada (L/ha)</label>
           <div class="flex-row" style="align-items: center; gap: 8px;">
-            <input type="range" id="rngRate" min="20" max="300" step="1" value="50" style="flex: 2;">
-            <input type="number" id="numRate" value="50" step="1" style="flex: 1; padding: 8px; font-size: 14px;">
+            <input type="range" id="rngRate" min="20" max="300" step="1" value="60" style="flex: 2;">
+            <input type="number" id="numRate" value="60" step="1" style="flex: 1; padding: 8px; font-size: 14px;">
           </div>
         </div>
 
@@ -1104,9 +1031,12 @@
           <label>Densidade da Calda (kg/L)</label>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" class="preset-btn active" onclick="setDensity(1.00)" data-val="1">Água (1.0)</button>
-            <button type="button" class="preset-btn" onclick="setDensity(1.08)" data-val="1.08" title="Fungicida + Óleo">Média (1.08)</button>
-            <button type="button" class="preset-btn" onclick="setDensity(1.20)" data-val="1.2" title="Nutrição Foliar">Pesada (1.20)</button>
-            <input type="number" id="numDensity" value="1.00" step="0.01" min="0.8" max="1.5" style="flex: 1; min-width: 80px;">
+            <button type="button" class="preset-btn" onclick="setDensity(1.08)" data-val="1.08"
+              title="Fungicida + Óleo">Média (1.08)</button>
+            <button type="button" class="preset-btn" onclick="setDensity(1.20)" data-val="1.2"
+              title="Nutrição Foliar">Pesada (1.20)</button>
+            <input type="number" id="numDensity" value="1.00" step="0.01" min="0.8" max="1.5"
+              style="flex: 1; min-width: 80px;">
           </div>
         </div>
 
@@ -1121,10 +1051,12 @@
         <div class="control-group" style="margin-top: 8px;">
           <label>Limites de Pressão (Mín / Máx)</label>
           <div class="flex-row">
-            <input type="number" id="numPMin" value="1.5" step="0.1">
-            <input type="number" id="numPMax" value="5.0" step="0.1">
+            <input type="number" id="numPMin" value="2" step="0.1">
+            <input type="number" id="numPMax" value="4.8" step="0.1">
           </div>
         </div>
+
+
 
         <div class="control-group" style="margin-top: 8px;">
           <label>Velocidades Reais (km/h)</label>
@@ -1145,10 +1077,6 @@
             </div>
           </div>
         </div>
-
-        <button type="button" class="login-btn" onclick="openSaveModal()" style="background: var(--accent); color: #000; margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border-radius: 8px;">
-          💾 Salvar Calibração
-        </button>
       </div>
 
       <!-- Resultados -->
@@ -1157,9 +1085,11 @@
           <div>
             <h2 style="font-size: 22px; display:flex; justify-content:space-between; align-items:center;">
               Top Recomendados
-              <span id="matchCount" style="font-size:14px; color:var(--text-muted); font-family:Inter; font-weight:400;">Buscando...</span>
+              <span id="matchCount"
+                style="font-size:14px; color:var(--text-muted); font-family:Inter; font-weight:400;">Buscando...</span>
             </h2>
-            <p style="color:var(--text-muted); font-size:14px; margin-top:4px;">Bicos que operam dentro da pressão ideal de forma segura para a faixa de velocidade.</p>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:4px;">Bicos que operam dentro da pressão ideal
+              de forma segura para a faixa de velocidade.</p>
           </div>
 
           <div id="topCards" class="recommended-grid">
@@ -1185,143 +1115,45 @@
       </div>
     </div>
 
-    <!-- TAB: MEUS CLIENTES / HISTORICO (TOGGLED BY HEADER BUTTON) -->
-    <div id="historyContainer" style="display: none; width: 100%; max-width: 1280px; margin-top: 10px;">
-      <div class="glass-panel" style="display: flex; flex-direction: column; gap: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <h2 style="font-size: 24px; color: var(--accent);">👥 Cadastro de Clientes & Máquinas</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Gerencie seus produtores e suas respectivas máquinas 100% offline.</p>
-          </div>
-          <button onclick="openClientModal(null)" class="login-btn" style="padding: 10px 16px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-            ➕ Adicionar Cliente
-          </button>
-        </div>
-
-        <div id="historyList" class="history-list">
-          <!-- Cards de histórico de clientes e máquinas injetados via JS -->
-        </div>
-
-        <div id="historyEmptyState" class="empty-state" style="padding: 60px 20px;">
-          <span style="font-size: 48px;">🌾</span>
-          <h3 style="font-size: 18px; margin-top: 10px; color: var(--text-main);">Nenhum cliente cadastrado</h3>
-          <p style="font-size: 14px; color: var(--text-muted); text-align: center; max-width: 400px; line-height: 1.5;">Clique em <b>"Adicionar Cliente"</b> acima para começar a registrar seus produtores!</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL: SALVAR CALIBRAÇÃO (SALVAR SIMULAÇÃO DO SIMULADOR EM UMA MÁQUINA) -->
-    <div id="saveModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
-      <div class="modal-content" style="max-width: 400px; padding: 24px;">
-        <button class="close-btn" onclick="document.getElementById('saveModal').style.display='none'">&times;</button>
-        <h2 style="font-size: 22px; margin-bottom: 6px; color: var(--accent);">💾 Salvar Calibração</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Vincule esta calibração ideal a uma máquina de um cliente.</p>
-        
-        <form id="saveForm" onsubmit="saveActiveSimulation(event)" style="display: flex; flex-direction: column; gap: 12px;">
-          <div class="control-group">
-            <label style="font-size: 11px;">Selecione o Cliente</label>
-            <select id="saveSelectClient" class="login-input" onchange="updateSaveSelectMachines()" required>
-              <!-- Injetado dinamicamente -->
-            </select>
-          </div>
-          <div class="control-group" id="saveSelectMachineContainer">
-            <label style="font-size: 11px;">Selecione a Máquina</label>
-            <select id="saveSelectMachine" class="login-input" required>
-              <!-- Injetado dinamicamente -->
-            </select>
-          </div>
-          <button type="submit" class="login-btn" style="background: var(--accent-green); color: #000; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; margin-top: 8px;">Vincular e Salvar</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- MODAL: ADICIONAR / EDITAR CLIENTE -->
-    <div id="clientModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
-      <div class="modal-content" style="max-width: 400px; padding: 24px;">
-        <button class="close-btn" onclick="document.getElementById('clientModal').style.display='none'">&times;</button>
-        <h2 id="clientModalTitle" style="font-size: 22px; margin-bottom: 6px; color: var(--accent);">👥 Novo Cliente</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Insira os dados cadastrais do produtor.</p>
-        
-        <form id="clientForm" onsubmit="submitClient(event)" style="display: flex; flex-direction: column; gap: 12px;">
-          <input type="hidden" id="clientEditId">
-          <div class="control-group">
-            <label style="font-size: 11px;">Nome do Produtor / Cliente</label>
-            <input type="text" id="clientName" class="login-input" placeholder="Ex: Eduardo Andrade" required>
-          </div>
-          <div class="control-group">
-            <label style="font-size: 11px;">Nome da Fazenda</label>
-            <input type="text" id="clientFarm" class="login-input" placeholder="Ex: Fazenda Primavera">
-          </div>
-          <div class="control-group">
-            <label style="font-size: 11px;">Anotações</label>
-            <textarea id="clientNotes" class="login-input" style="height: 60px; font-family: inherit; resize: none;" placeholder="Ex: Cliente prefere aplicação noturna..."></textarea>
-          </div>
-          <button type="submit" class="login-btn" style="background: var(--accent); color: #000; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; margin-top: 8px;">Salvar Produtor</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- MODAL: ADICIONAR / EDITAR MÁQUINA -->
-    <div id="machineModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
-      <div class="modal-content" style="max-width: 400px; padding: 24px;">
-        <button class="close-btn" onclick="document.getElementById('machineModal').style.display='none'">&times;</button>
-        <h2 id="machineModalTitle" style="font-size: 22px; margin-bottom: 6px; color: var(--accent);">🚜 Nova Máquina</h2>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Registre as especificações do pulverizador.</p>
-        
-        <form id="machineForm" onsubmit="submitMachine(event)" style="display: flex; flex-direction: column; gap: 12px;">
-          <input type="hidden" id="machineClientId">
-          <input type="hidden" id="machineEditId">
-          <div class="control-group">
-            <label style="font-size: 11px;">Identificação do Pulverizador</label>
-            <input type="text" id="machineName" class="login-input" placeholder="Ex: John Deere 4730" required>
-          </div>
-          <div class="flex-row">
-            <div class="control-group">
-              <label style="font-size: 11px;">Qtd. de Bicos</label>
-              <input type="number" id="machineNozzleCount" class="login-input" placeholder="Ex: 72" required min="1">
-            </div>
-            <div class="control-group">
-              <label style="font-size: 11px;">Espaçamento (cm)</label>
-              <input type="number" id="machineSpacing" class="login-input" placeholder="Ex: 50" required min="10" max="150">
-            </div>
-          </div>
-          <div class="control-group">
-            <label style="font-size: 11px;">Tamanho da Barra Comercial (metros)</label>
-            <input type="number" id="machineBoomSize" class="login-input" placeholder="Ex: 30" required min="1" max="100" step="0.1">
-          </div>
-          <button type="submit" class="login-btn" style="background: var(--accent); color: #000; font-weight: 700; width: 100%; padding: 12px; border-radius: 8px; margin-top: 8px;">Salvar Máquina</button>
-        </form>
-      </div>
-    </div>
-
     <!-- Help Modal Overlay -->
     <div id="helpModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
       <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'"
           title="Fechar">&times;</button>
         <h2>📖 Sobre o Spray Precision PRO</h2>
-        <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para garantir que sua aplicação no campo seja exatamente o que você planejou no software.</p>
+        <p>Este aplicativo é um <strong>Simulador Agronômico de Precisão</strong> desenvolvido para garantir que sua
+          aplicação no campo seja exatamente o que você planejou no software.</p>
 
-        <h3>🎯 Vazão de Calibração (Jaragem)</h3>
-        <p>O dado mais importante para o operador! O valor em destaque nos cards é a <strong>Vazão Real (L/min)</strong> que cada bico deve entregar para atingir seu alvo (L/ha) na velocidade média informada. Use este número para a calibração manual com jarra/caneca.</p>
+        <h3>🎯 Vazão de Calibração</h3>
+        <p>O dado mais importante para o operador! O valor em destaque nos cards é a <strong>Vazão Real (L/min)</strong>
+          que cada bico deve entregar para atingir seu alvo (L/ha) na velocidade média informada. Use este número para a
+          calibração manual com jarra/caneca.</p>
 
         <h3>🏆 Selos de Diagnóstico Interativos</h3>
-        <p>Você pode <strong>clicar nos selos</strong> de status (Atende, Parcial ou Não Recomendado) para abrir um diagnóstico técnico. Ali mostramos exatamente qual pressão a bomba atingirá na sua velocidade mínima e máxima, comparando com o limite que você definiu.</p>
+        <p>Você pode <strong>clicar nos selos</strong> de status (Atende, Parcial ou Não Recomendado) para abrir um
+          diagnóstico técnico. Ali mostramos exatamente qual pressão a bomba atingirá na sua velocidade mínima e máxima,
+          comparando com o limite que você definiu.</p>
 
         <h3>⚖️ Correção por Densidade da Calda</h3>
         <p>Diferente de tabelas comuns, este simulador utiliza <strong>Correção de Gravidade Específica</strong>.</p>
         <ul>
           <li><strong>Água (1.00):</strong> Calda limpa e padrão.</li>
-          <li><strong>Média (1.08):</strong> Recomendado para caldas com óleos, fungicidas e adjuvantes que tornam o líquido mais "pesado".</li>
+          <li><strong>Média (1.08):</strong> Recomendado para caldas com óleos, fungicidas e adjuvantes que tornam o
+            líquido mais "pesado".</li>
           <li><strong>Pesada (1.20):</strong> Para adubação líquida e nutrição foliar densa (vincosa).</li>
         </ul>
-        <p style="margin-top: 4px; font-size: 13px; opacity: 0.8;">O simulador compensa a perda de fluxo causada pela densidade para que a leitura do seu manômetro seja 100% confiável.</p>
+        <p style="margin-top: 4px; font-size: 13px; opacity: 0.8;">O simulador compensa a perda de fluxo causada pela
+          densidade para que a leitura do seu manômetro seja 100% confiável.</p>
 
         <h3>📊 Gráfico de Janela Segura</h3>
-        <p>As barras coloridas representam a janela de velocidade de cada bico. Os <strong>pontos brancos</strong> no gráfico marcam a performance padrão ISO (3 bar), facilitando a comparação visual entre a sua configuração e o padrão de fábrica.</p>
+        <p>As barras coloridas representam a janela de velocidade de cada bico. Os <strong>pontos brancos</strong> no
+          gráfico marcam a performance padrão ISO (3 bar), facilitando a comparação visual entre a sua configuração e o
+          padrão de fábrica.</p>
 
         <h3>💡 Extremo Operacional</h3>
-        <p>Se você configurar volumes muito altos (ex: 300 L/ha) e velocidades extremas onde nenhum bico no catálogo atende, o sistema ativará o modo de emergência, sugerindo a única <b>Melhor Alternativa</b> disponível matematicamente.</p>
+        <p>Se você configurar volumes muito altos (ex: 300 L/ha) e velocidades extremas onde nenhum bico no catálogo
+          atende, o sistema ativará o modo de emergência, sugerindo a única <b>Melhor Alternativa</b> disponível
+          matematicamente.</p>
       </div>
     </div>
 
@@ -1331,13 +1163,20 @@
         <button class="close-btn" onclick="document.getElementById('statusModal').style.display='none'">&times;</button>
         <div id="smIcon" style="font-size: 40px; margin-bottom: 12px;">🏆</div>
         <h3 id="smTitle" style="font-size: 20px; margin-bottom: 8px;">Status</h3>
-        <p id="smDesc" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 12px;">Descrição técnica do status.</p>
-        <div id="smTechnical" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px; opacity:0.7;">Sua Faixa: <span id="smUserRange">--</span></div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-weight:600;">Na V. Mínima: <span id="smPressMin">--</span></div>
-            <div style="display:flex; justify-content:space-between; font-weight:600;">Na V. Máxima: <span id="smPressMax">--</span></div>
+        <p id="smDesc" style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-bottom: 12px;">
+          Descrição técnica do status.</p>
+        <div id="smTechnical"
+          style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; text-align: left; border: 1px solid rgba(255,255,255,0.1);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px; opacity:0.7;">Sua Faixa: <span
+              id="smUserRange">--</span></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-weight:600;">Na V. Mínima:
+            <span id="smPressMin">--</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-weight:600;">Na V. Máxima: <span
+              id="smPressMax">--</span></div>
         </div>
-        <button onclick="document.getElementById('statusModal').style.display='none'" class="info-btn" style="width: 100%; height: 40px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600;">Entendi</button>
+        <button onclick="document.getElementById('statusModal').style.display='none'" class="info-btn"
+          style="width: 100%; height: 40px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600;">Entendi</button>
       </div>
     </div>
 
@@ -1347,45 +1186,63 @@
         <button class="close-btn" onclick="document.getElementById('resultModal').style.display='none'"
           style="color: white; z-index: 10;">&times;</button>
 
-          <div id="rmHeader"
-            style="padding: 40px 24px 32px; text-align: center; border-radius: 16px 16px 0 0; background: var(--accent); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 100%);"></div>
+        <div id="rmHeader"
+          style="padding: 40px 24px 32px; text-align: center; border-radius: 16px 16px 0 0; background: var(--accent); position: relative; overflow: hidden;">
+          <div
+            style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 100%);">
+          </div>
+          <div
+            style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.9); font-weight: 800; margin-bottom: 8px; position: relative;"
+            id="rmStatusText">Sugestão Ideal</div>
+          <div id="rmIso"
+            style="font-family: 'Outfit'; font-size: 64px; font-weight: 800; color: white; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative;">
+            ISO 02</div>
+        </div>
+
+        <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+          <div
+            style="text-align: center; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px; border: 1px dashed var(--control-border);">
             <div
-              style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.9); font-weight: 800; margin-bottom: 8px; position: relative;"
-              id="rmStatusText">Sugestão Ideal</div>
-            <div id="rmIso"
-              style="font-family: 'Outfit'; font-size: 64px; font-weight: 800; color: white; line-height: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative;">
-              ISO 02</div>
+              style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px;"
+              id="rmQ3Label">Vazão de Calibração</div>
+            <div id="rmQ3"
+              style="font-family: 'Outfit'; font-size: 40px; font-weight: 800; color: var(--text-main); line-height: 1;">
+              0.00</div>
+            <div id="rmQ3Iso"
+              style="font-size: 11px; color: var(--text-muted); opacity: 0.8; margin-top: 8px; font-weight: 500;">
+              Referência Catálogo: -- L/min @ 3.0 bar</div>
           </div>
 
-          <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
-            <div style="text-align: center; background: rgba(0,0,0,0.05); padding: 20px; border-radius: 12px; border: 1px dashed var(--control-border);">
-              <div
-                style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px;"
-                id="rmQ3Label">Vazão de Calibração</div>
-              <div id="rmQ3" style="font-family: 'Outfit'; font-size: 40px; font-weight: 800; color: var(--text-main); line-height: 1;">0.00</div>
-              <div id="rmQ3Iso" style="font-size: 11px; color: var(--text-muted); opacity: 0.8; margin-top: 8px; font-weight: 500;">Referência Catálogo: -- L/min @ 3.0 bar</div>
-            </div>
-
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 4px;">
             <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 4px;">
-              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Vazão Alvo</div>
-                <div id="rmTargetRate" style="font-weight: 700; font-size: 16px; color: var(--text-main);">50 L/ha</div>
-              </div>
-              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Velocidade</div>
-                <div id="rmTargetSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">17 km/h</div>
-              </div>
-              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Janela Ideal</div>
-                <div id="rmSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">12.8 - 23.5</div>
-              </div>
-              <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">P. Média</div>
-                <div id="rmPress" style="font-weight: 700; font-size: 16px; color: var(--accent-green);">2.6 BAR</div>
-              </div>
+              style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
+              <div
+                style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">
+                Vazão Alvo</div>
+              <div id="rmTargetRate" style="font-weight: 700; font-size: 16px; color: var(--text-main);">50 L/ha</div>
             </div>
+            <div
+              style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
+              <div
+                style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">
+                Velocidade</div>
+              <div id="rmTargetSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">17 km/h</div>
+            </div>
+            <div
+              style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
+              <div
+                style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">
+                Janela Ideal</div>
+              <div id="rmSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">12.8 - 23.5</div>
+            </div>
+            <div
+              style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
+              <div
+                style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">
+                P. Média</div>
+              <div id="rmPress" style="font-weight: 700; font-size: 16px; color: var(--accent-green);">2.6 BAR</div>
+            </div>
+          </div>
 
           <a id="rmWhatsapp" href="#" target="_blank"
             style="margin-top: 8px; background: #25D366; color: white; padding: 14px; border-radius: 12px; text-align: center; text-decoration: none; font-size: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); border: 1px solid rgba(255,255,255,0.2);">
@@ -1395,35 +1252,21 @@
                 d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
               </path>
             </svg>
-            Pedir Orçamento
+            Consultar Especialista
           </a>
         </div>
       </div>
     </div>
 
+    <button id="fabBtn" class="fab-btn" onclick="openResultModal()">
+      <span style="font-size: 20px;">✅</span> <span id="fabText">Melhor Bico</span>
+    </button>
     <script>
-      // --- DATABASE BICOS ISO OFFLINE ---
-      const NOZZLES = [
-        { iso: "01", q3: 0.40, color: "#F28C28" },
-        { iso: "0134", q3: 0.50, color: "#795548" },
-        { iso: "015", q3: 0.60, color: "#4CAF50" },
-        { iso: "0175", q3: 0.70, color: "#9E9E9E" },
-        { iso: "02", q3: 0.80, color: "#FFEB3B" },
-        { iso: "025", q3: 1.00, color: "#9C27B0" },
-        { iso: "03", q3: 1.20, color: "#2196F3" },
-        { iso: "04", q3: 1.60, color: "#F44336" },
-        { iso: "05", q3: 2.00, color: "#A1887F" },
-        { iso: "06", q3: 2.40, color: "#BDBDBD" },
-        { iso: "08", q3: 3.20, color: "#FFFFFF" }
-      ];
-
+      // Variáveis e funções removidas e migradas para o Backend (api/calcular.js)
       let PRESS_UNIT = 'bar';
       const BAR_TO_PSI = 14.5038;
-      const P_REF_BAR = 3.0;
 
-      function qPorBico(rate, vel, spacM) { return (rate * vel * spacM) / 600.0; }
-      function velPara(rate, spacM, q) { return (q * 600.0) / (rate * spacM); }
-
+      // Elementos
       const rngSpacing = document.getElementById('rngSpacing');
       const numSpacing = document.getElementById('numSpacing');
       const rngRate = document.getElementById('rngRate');
@@ -1436,6 +1279,7 @@
       const numVAvg = document.getElementById('numVAvg');
       const numVMax = document.getElementById('numVMax');
 
+      // Chart
       let myChart = null;
 
       function initChart() {
@@ -1554,98 +1398,70 @@
       function pRef() { return PRESS_UNIT === 'bar' ? 3.0 : (3.0 * BAR_TO_PSI); }
 
       async function update() {
-        const spacingM = parseFloat(numSpacing.value) / 100.0;
-        const rate = parseFloat(numRate.value);
-        const pMin = parseFloat(numPMin.value) || 0.1;
-        const pMax = parseFloat(numPMax.value) || 10.0;
-        const density = parseFloat(numDensity.value) || 1.0;
-        const vMin = parseFloat(numVMin.value) || 0;
-        const vAvg = parseFloat(numVAvg.value) || 0;
-        const vMax = parseFloat(numVMax.value) || 0;
-        const unit = PRESS_UNIT;
+        const payload = {
+          spacingM: parseFloat(numSpacing.value) / 100.0,
+          rate: parseFloat(numRate.value),
+          pMin: parseFloat(numPMin.value) || 0.1,
+          pMax: parseFloat(numPMax.value) || 10.0,
+          density: parseFloat(numDensity.value) || 1.0,
+          vMin: parseFloat(numVMin.value) || 0,
+          vAvg: parseFloat(numVAvg.value) || 0,
+          vMax: parseFloat(numVMax.value) || 0,
+          unit: PRESS_UNIT
+        };
 
-        const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
+        const maxLimitsValid = payload.pMax > payload.pMin && payload.rate > 0 && payload.spacingM > 0;
         if (!maxLimitsValid) return;
 
         try {
-          document.getElementById('matchCount').innerText = 'Processando (Offline)...';
+          // Exibe "Calculando..." no texto
+          document.getElementById('matchCount').innerText = 'Calculando na Nuvem...';
 
-          const pTarget = (pMin + pMax) / 2;
-          const pRef = unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
-          const pressaoNec = (qMix, q3, dens) => { 
-            const qWaterEq = qMix * Math.sqrt(dens); 
-            return pRef * Math.pow(qWaterEq / q3, 2); 
-          };
-
-          let rows = [];
-          NOZZLES.forEach(nz => {
-            const qAtPmin_water = nz.q3 * Math.sqrt(pMin / pRef);
-            const qAtPmax_water = nz.q3 * Math.sqrt(pMax / pRef);
-            const qAtPmin_mix = qAtPmin_water / Math.sqrt(density);
-            const qAtPmax_mix = qAtPmax_water / Math.sqrt(density);
-
-            const vAtPmin = velPara(rate, spacingM, qAtPmin_mix);
-            const vAtPmax = velPara(rate, spacingM, qAtPmax_mix);
-
-            const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
-            const vAt3Bar = velPara(rate, spacingM, qAt3Bar_mix);
-
-            const qVmin = qPorBico(rate, vMin, spacingM);
-            const pVmin = pressaoNec(qVmin, nz.q3, density);
-            const qVavg = qPorBico(rate, vAvg, spacingM);
-            const pVavg = pressaoNec(qVavg, nz.q3, density);
-            const qVmax = qPorBico(rate, vMax, spacingM);
-            const pVmax = pressaoNec(qVmax, nz.q3, density);
-
-            const fitsMin = pVmin >= pMin;
-            const fitsMax = pVmax <= pMax;
-            const ok = fitsMin && fitsMax;
-            
-            let statusText = "Não recomendado";
-            if (ok) statusText = "Atende";
-            else if (fitsMin || fitsMax) statusText = "Parcial";
-
-            const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
-            const deviation = Math.abs(pVavg - pTarget);
-
-            rows.push({
-              nz, vAtPmin, vAtPmax, vAt3Bar, pVavg, qVavg, ok, statusText, violation, deviation,
-              pressures: [pVmin, pVavg, pVmax]
-            });
+          // Faz o pedido para a Vercel 
+          // O backend irá rodar a matemática complexa sem ser exibida pro usuário final
+          const response = await fetch('/api/calcular', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
           });
 
-          rows.sort((a, b) => {
-            if (a.ok !== b.ok) return a.ok ? -1 : 1;
-            return a.ok ? (a.deviation - b.deviation) : (a.violation - b.violation);
-          });
+          if (!response.ok) throw new Error('Falha no calculo da API');
 
-          renderCards(rows, pMin, pMax, vMin, vMax);
-          updateChart(rows, vMin, vMax);
-          renderTable(rows, vMin, vAvg, vMax);
+          const result = await response.json();
+          const rows = result.rows || [];
+
+          renderCards(rows, payload.pMin, payload.pMax, payload.vMin, payload.vMax);
+          updateChart(rows, payload.vMin, payload.vMax);
+          renderTable(rows, payload.vMin, payload.vAvg, payload.vMax);
 
         } catch (err) {
-          console.error("Erro no cálculo local:", err);
-          document.getElementById('matchCount').innerText = 'Erro no processamento offline';
+          console.error("Erro na API:", err);
+          document.getElementById('matchCount').innerText = 'Calculadora offline - Publique na Vercel';
         }
       }
 
       function renderCards(rows, pMin, pMax, vMin, vMax) {
         const container = document.getElementById('topCards');
 
+        // FAB flutuante removido — os cards agora são clicáveis direto
+        const fabBtn = document.getElementById('fabBtn');
+        if (fabBtn) fabBtn.style.display = 'none';
+
         let tops = rows.filter(r => r.ok);
 
         let fallbackMode = false;
         if (tops.length === 0 && rows.length > 0) {
           fallbackMode = true;
+          // Exibe as 3 melhores alternativas parciais (rankeadas por distMin no backend)
           tops = rows.slice(0, 3);
         }
 
-        document.getElementById('matchCount').innerText = fallbackMode 
-          ? `${tops.length} alternativa${tops.length > 1 ? 's' : ''} mais próxima${tops.length > 1 ? 's' : ''}` 
+        document.getElementById('matchCount').innerText = fallbackMode
+          ? `${tops.length} alternativa${tops.length > 1 ? 's' : ''} mais próxima${tops.length > 1 ? 's' : ''}`
           : `${tops.length} encontrados`;
 
         window.topNozzle = tops[0] || null;
-        window.topNozzles = tops;
+        window.topNozzles = tops;  // array completo para o PDF comparativo
         window.topNozzleFallback = fallbackMode;
 
         container.innerHTML = '';
@@ -1656,29 +1472,25 @@
           msgDiv.style.cssText = "grid-column: 1/-1; padding: 12px 16px; background: var(--control-bg); border-left: 3px solid #FFC107; border-radius: 8px; display: flex; flex-direction: column; gap: 4px; margin-top: 4px;";
           msgDiv.innerHTML = `
             <span style="color: var(--text-main); font-size: 14px; font-weight: 600;">⚠️ Nenhum bico atende plenamente esta configuração</span>
-            <p style="color: var(--text-muted); font-size: 13px; line-height: 1.4; margin:0;">As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.</p>
+            <p style="color: var(--text-muted); font-size: 13px; line-height: 1.4; margin:0;">As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado. Bicos com pressão mínima abaixo do limite podem não abrir o ângulo de pulverização corretamente.</p>
         `;
           container.appendChild(msgDiv);
         } else {
+          // Top 2 em modo normal — layout limpo para captura de tela
           tops.slice(0, 2).forEach(r => container.appendChild(createCard(r, fallbackMode)));
         }
       }
+
 
       function createCard(r, isFallback) {
         const div = document.createElement('div');
         div.className = 'nozzle-card';
         div.style.setProperty('--nz-color', r.nz.color);
+        // Card clicavel: abre modal detalhado para captura de tela / envio por WhatsApp
         div.style.cursor = 'pointer';
         div.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
-
-        div.addEventListener('mouseenter', () => { 
-          div.style.transform = 'translateY(-3px)'; 
-          div.style.boxShadow = '0 12px 28px rgba(0,0,0,0.25)'; 
-        });
-        div.addEventListener('mouseleave', () => { 
-          div.style.transform = ''; 
-          div.style.boxShadow = ''; 
-        });
+        div.addEventListener('mouseenter', () => { div.style.transform = 'translateY(-3px)'; div.style.boxShadow = '0 12px 28px rgba(0,0,0,0.25)'; });
+        div.addEventListener('mouseleave', () => { div.style.transform = ''; div.style.boxShadow = ''; });
         div.addEventListener('click', (e) => {
           if (e.target.closest('.status-badge')) return;
           openResultModal(r, isFallback);
@@ -1724,6 +1536,7 @@
       }
 
       function openResultModal(r, isFallback) {
+        // Aceita um bico específico clicado ou cai no topNozzle como fallback
         if (!r) {
           r = window.topNozzle;
           isFallback = window.topNozzleFallback;
@@ -1736,11 +1549,11 @@
 
         document.getElementById('rmIso').innerText = 'ISO ' + r.nz.iso;
         document.getElementById('rmQ3').innerText = r.qVavg.toFixed(2) + ' L/min';
-        
+
         const pRefIso = PRESS_UNIT === 'bar' ? '3.0 bar' : '43.5 psi';
         document.getElementById('rmQ3Iso').innerText = `Referência Catálogo: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
-        
-        document.getElementById('rmQ3').style.color = 'var(--text-main)';
+
+        document.getElementById('rmQ3').style.color = 'var(--text-main)'; // Cor dinâmica (claro/escuro)
         document.getElementById('rmSpeed').innerText = r.vAtPmin.toFixed(1) + ' - ' + r.vAtPmax.toFixed(1) + ' km/h';
 
         const targetRate = document.getElementById('numRate').value;
@@ -1754,7 +1567,9 @@
 
         rmHeader.style.background = r.nz.color;
 
-        if (r.nz.iso === '02') {
+        // Ajuste para cores claras precisarem de texto escuro no cabeçalho
+        const isLightColor = ['02', '03', '04', '05'].includes(r.nz.iso); // Amarelo, Azul, Vermelho, Marrom geralmente ok, amarelo = claro
+        if (r.nz.iso === '02') { // Yellow
           document.getElementById('rmIso').style.color = '#1E1E1E';
           rmStatusText.style.color = 'rgba(0,0,0,0.7)';
         } else {
@@ -1770,8 +1585,8 @@
           rmStatusText.style.background = 'transparent';
         }
 
-        const msg = encodeURIComponent(`Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
-        document.getElementById('rmWhatsapp').href = `https://wa.me/5565999106415?text=${msg}`;
+        const msg = encodeURIComponent(`Olá! O sistema ${window.partnerName || 'Spray Precision PRO'} sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
+        document.getElementById('rmWhatsapp').href = `https://wa.me/${window.partnerWhatsApp || '5565999106415'}?text=${msg}`;
 
         modal.style.display = 'flex';
       }
@@ -1781,7 +1596,7 @@
         const icon = document.getElementById('smIcon');
         const title = document.getElementById('smTitle');
         const desc = document.getElementById('smDesc');
-        
+
         const pMin = parseFloat(document.getElementById('numPMin').value);
         const pMax = parseFloat(document.getElementById('numPMax').value);
         const unit = PRESS_UNIT.toUpperCase();
@@ -1790,6 +1605,7 @@
         document.getElementById('smPressMin').innerText = `${pVmin.toFixed(1)} ${unit}`;
         document.getElementById('smPressMax').innerText = `${pVmax.toFixed(1)} ${unit}`;
 
+        // Cores de alerta nos dados técnicos
         document.getElementById('smPressMin').style.color = pVmin < pMin ? 'var(--accent-error)' : 'var(--accent-green)';
         document.getElementById('smPressMax').style.color = pVmax > pMax ? 'var(--accent-error)' : 'var(--accent-green)';
 
@@ -1803,7 +1619,7 @@
           let reason = "";
           if (pVmin < pMin) reason = `Em baixa velocidade, a pressão cai para ${pVmin.toFixed(1)} ${unit} (abaixo do recomendado).`;
           else if (pVmax > pMax) reason = `Em alta velocidade, a pressão sobe para ${pVmax.toFixed(1)} ${unit} (acima do recomendado).`;
-          
+
           desc.innerHTML = `<b>Operação com ressalvas:</b> ${reason} O bico atende apenas parte da sua janela com segurança.`;
         } else {
           icon.innerText = '🚫';
@@ -1811,13 +1627,13 @@
           let suggestion = "Tente usar um bico de tamanho diferente ou ajustar o volume de calda (L/ha).";
 
           if (pVmin > pMax) {
-              reason = `A pressão necessária (${pVmin.toFixed(1)} ${unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.`;
-              suggestion = "<b>Sugestão:</b> Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.";
+            reason = `A pressão necessária (${pVmin.toFixed(1)} ${unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.`;
+            suggestion = "<b>Sugestão:</b> Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.";
           } else if (pVmax < pMin) {
-              reason = `A pressão gerada (${pVmax.toFixed(1)} ${unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.`;
-              suggestion = "<b>Sugestão:</b> Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.";
+            reason = `A pressão gerada (${pVmax.toFixed(1)} ${unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.`;
+            suggestion = "<b>Sugestão:</b> Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.";
           }
-          
+
           desc.innerHTML = `${reason}<br><br>${suggestion}`;
         }
 
@@ -1831,16 +1647,18 @@
         const sysPMax = parseFloat(numPMax.value);
         const targetRate = parseFloat(document.getElementById('numRate').value || 0);
 
+        // FILTRO RELEVANTE: Apenas bicos que tenham pelo menos UM parâmetro verde
         const filteredRows = rows.filter(r => {
           const hasGreen = (r.pressures[0] >= sysPMin && r.pressures[0] <= sysPMax) ||
-                           (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
-                           (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
+            (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
+            (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
           return hasGreen;
         });
 
-        const finalRows = filteredRows.length > 0 ? filteredRows : rows.sort((a,b) => {
-          const distA = Math.abs(a.pressures[1] - (sysPMin + sysPMax)/2);
-          const distB = Math.abs(b.pressures[1] - (sysPMin + sysPMax)/2);
+        // FALLBACK: Se nenhum bico atende nada, mostra os 3 mais próximos da média
+        const finalRows = filteredRows.length > 0 ? filteredRows : rows.sort((a, b) => {
+          const distA = Math.abs(a.pressures[1] - (sysPMin + sysPMax) / 2);
+          const distB = Math.abs(b.pressures[1] - (sysPMin + sysPMax) / 2);
           return distA - distB;
         }).slice(0, 3);
 
@@ -1868,15 +1686,15 @@
           let statusText = 'FORA';
           let statusClass = 'bad';
           let statusColor = 'var(--accent-error)';
-          
+
           if (greenCount === 3) {
             statusText = 'ATENDE';
             statusClass = 'ok';
             statusColor = 'var(--accent-green)';
           } else if (greenCount > 0) {
             statusText = 'PARCIAL';
-            statusClass = 'ok'; 
-            statusColor = '#FFC107'; 
+            statusClass = 'ok';
+            statusColor = '#FFC107'; // Amarelo/Dourado para parcial
           }
 
           const rowOkClass = (greenCount === 3) ? 'row-ok' : '';
@@ -1898,11 +1716,12 @@
         tbody.innerHTML = html;
       }
 
+      // --- GERAÇÃO DE RELATÓRIO TÉCNICO PROFISSIONAL ---
       function generateReport() {
-        const pName = 'Spray Precision PRO';
-        const pLogo = './logo.png';
-        const pColor = '#00d2ff';
-        
+        const pName = window.partnerName || 'Spray Precision PRO';
+        const pLogo = document.querySelector('.header-icon').src;
+        const pColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
         const report = document.getElementById('printReport');
         const now = new Date();
         const dateStr = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR');
@@ -1919,33 +1738,10 @@
           pMax: document.getElementById('numPMax').value
         };
 
-        const nozzleInfo = window.topNozzle ? 
-          `ISO ${window.topNozzle.nz.iso} (${window.topNozzle.statusText})` : 
+        // Capturar o bico recomendado (se existir)
+        const nozzleInfo = window.topNozzle ?
+          `ISO ${window.topNozzle.nz.iso} (${window.topNozzle.statusText})` :
           'Nenhuma recomendação ideal encontrada';
-
-        // Lógica de cabeçalho do produtor & equipamento vinculados
-        let clientInfoHtml = '';
-        if (window.activeClientId && window.activeMachineId) {
-          const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-          const c = clients.find(item => item.id === window.activeClientId);
-          if (c) {
-            const m = c.machines.find(item => item.id === window.activeMachineId);
-            if (m) {
-              const boomWidth = m.boomSize ? m.boomSize.toFixed(1) : ((m.spacing / 100) * m.nozzleCount).toFixed(1);
-              clientInfoHtml = `
-                <div style="background: #f8fafc; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 30px; font-size: 13px;">
-                  <h3 style="margin-top: 0; color: #0f172a; font-family: 'Outfit'; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 10px;">Identificação do Cliente & Equipamento</h3>
-                  <table style="width: 100%; border-collapse: collapse; color: #334155;">
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee; width: 40%;">Produtor / Cliente:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${c.name}</td></tr>
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Fazenda:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${c.farmName || 'Sem cadastro'}</td></tr>
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Identificação da Máquina:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${m.name}</td></tr>
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Configuração do Pulverizador:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${m.nozzleCount} bicos @ ${m.spacing} cm | Barra: ${boomWidth} m</td></tr>
-                  </table>
-                </div>
-              `;
-            }
-          }
-        }
 
         report.innerHTML = `
           <div style="border: 2px solid ${pColor}; padding: 40px; border-radius: 12px; background: white; min-height: 1000px;">
@@ -1961,8 +1757,6 @@
                 </div>
               </div>
             </div>
-
-            ${clientInfoHtml}
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
               <div>
@@ -1984,34 +1778,61 @@
               </div>
             </div>
 
-            <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
-              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 Recomendação Principal</h3>
-              <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
-              <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
-                Para este cenário, o bico indicado deve entregar uma vazão de <b>${window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--'} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--'} ${simulationData.unit}</b> na velocidade nominal.
-              </p>
+            <!-- BICOS RECOMENDADOS: CARDS COMPARATIVOS -->
+            <div style="margin-bottom: 30px;">
+              <h3 style="margin: 0 0 16px 0; color: ${pColor}; font-size: 16px; border-left: 5px solid ${pColor}; padding-left: 12px;">
+                ${window.topNozzleFallback ? '⚠️ Alternativas Mais Próximas' : '🏆 Bicos Recomendados'}
+              </h3>
+              <div style="display: grid; grid-template-columns: repeat(${Math.min((window.topNozzles||[window.topNozzle]).length, 3)}, 1fr); gap: 16px;">
+                ${(window.topNozzles || [window.topNozzle]).filter(Boolean).map((r, idx) => {
+                  const isTop = idx === 0;
+                  const badgeText = isTop ? (window.topNozzleFallback ? '1ª Alternativa' : 'Preferencial') : (window.topNozzleFallback ? `${idx+1}ª Alternativa` : `Opção ${idx+1}`);
+                  const badgeBg = isTop ? pColor : '#64748b';
+                  const borderStyle = isTop ? `border: 2px solid ${pColor};` : 'border: 1px solid #e2e8f0;';
+                  const bgStyle = isTop ? `background: linear-gradient(135deg, ${pColor}08, white);` : 'background: #f8fafc;';
+                  const statusColor = r.ok ? '#10b981' : '#f59e0b';
+                  const statusIcon = r.ok ? '✅' : '⚠️';
+                  return `
+                    <div style="${borderStyle} ${bgStyle} border-radius: 10px; padding: 18px; position: relative;">
+                      <div style="position: absolute; top: -1px; left: 16px; background: ${badgeBg}; color: white; font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 0 0 6px 6px; text-transform: uppercase; letter-spacing: 0.5px;">${badgeText}</div>
+                      <div style="font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: ${isTop ? pColor : '#1e293b'}; margin-top: 12px; margin-bottom: 4px;">ISO ${r.nz.iso}</div>
+                      <div style="font-size: 11px; color: ${statusColor}; font-weight: 700; margin-bottom: 14px;">${statusIcon} ${r.statusText}</div>
+                      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <tr><td style="padding: 5px 0; border-bottom: 1px solid #eee; color: #64748b;">Vazão Calibração</td><td style="text-align: right; font-weight: 700; color: #1e293b;">${r.qVavg.toFixed(2)} L/min</td></tr>
+                        <tr><td style="padding: 5px 0; border-bottom: 1px solid #eee; color: #64748b;">Pressão Média</td><td style="text-align: right; font-weight: 700; color: ${isTop ? pColor : '#1e293b'};">${r.pVavg.toFixed(1)} ${simulationData.unit}</td></tr>
+                        <tr><td style="padding: 5px 0; color: #64748b;">Faixa Ideal</td><td style="text-align: right; font-weight: 700; color: #1e293b;">${r.vAtPmin.toFixed(1)} – ${r.vAtPmax.toFixed(1)} km/h</td></tr>
+                      </table>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              ${window.topNozzleFallback ? `<p style="margin: 12px 0 0; font-size: 12px; color: #f59e0b; background: #fef3c7; padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f59e0b;">⚠️ Nenhum bico atende plenamente a configuração informada. As opções acima são as alternativas matematicamente mais próximas — verifique os parâmetros de operação.</p>` : ''}
             </div>
 
             <h3 style="font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">📊 Tabela de Desempenho por Ponta</h3>
             <div id="reportTableContainer"></div>
 
             <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 11px;">
-              Simulação gerada via <b>${pName} Demo</b>.
+              Este simulador utiliza correção por densidade específica. Certifique-se de que os bicos estejam limpos e o manômetro calibrado.<br>
+              Simulação gerada via <b>${pName} Enterprise PRO</b>.
             </div>
           </div>
         `;
 
+        // Clonar a tabela original e Filtrar apenas bicos com algum parâmetro verde
         const originalTable = document.getElementById('dataTable').cloneNode(true);
         originalTable.style.width = '100%';
         originalTable.style.borderCollapse = 'collapse';
         originalTable.style.fontSize = '12px';
-        
+
+        // Filtrar Linhas: Remover quem não tem nada verde
         const rowsToFilter = originalTable.querySelectorAll('tbody tr');
         rowsToFilter.forEach(tr => {
           const hasGreen = tr.innerHTML.indexOf('var(--accent-green)') !== -1;
           if (!hasGreen) {
-            tr.remove(); 
+            tr.remove();
           } else {
+            // Se for mantida, aplica o estilo de borda
             tr.querySelectorAll('td').forEach(cell => {
               cell.style.border = '1px solid #eee';
               cell.style.padding = '8px';
@@ -2019,6 +1840,7 @@
           }
         });
 
+        // Aplicar estilo nos headers (th)
         originalTable.querySelectorAll('th').forEach(th => {
           th.style.border = '1px solid #eee';
           th.style.padding = '10px';
@@ -2026,13 +1848,13 @@
           th.style.color = '#64748b';
         });
 
-        document.getElementById('reportTableContainer').innerHTML = '';
         document.getElementById('reportTableContainer').appendChild(originalTable);
 
+        // --- NOMEAR O PDF DINAMICAMENTE (compatível com iOS/Safari) ---
         const oldTitle = document.title;
         const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
         const cleanRate = Math.round(parseFloat(simulationData.rate));
-        const cleanVel  = Math.round(parseFloat(simulationData.vAvg));
+        const cleanVel = Math.round(parseFloat(simulationData.vAvg));
         const fileName = `Laudo_${cleanRate}Lha_${cleanVel}kmh${nzPart}`;
 
         const titleTag = document.querySelector('title');
@@ -2051,14 +1873,33 @@
       function updateChart(rows, sysVMin, sysVMax) {
         if (!myChart) return;
 
+        const sysPMin = parseFloat(document.getElementById('numPMin').value);
+        const sysPMax = parseFloat(document.getElementById('numPMax').value);
+        
+        // Aplica o mesmo filtro da Tabela de Dados
+        const filteredRows = rows.filter(r => {
+          const hasGreen = (r.pressures[0] >= sysPMin && r.pressures[0] <= sysPMax) ||
+            (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
+            (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
+          return hasGreen;
+        });
+
+        // Fallback se todos os bicos estiverem fora
+        const finalRows = filteredRows.length > 0 ? filteredRows : rows.sort((a, b) => {
+          const distA = Math.abs(a.pressures[1] - (sysPMin + sysPMax) / 2);
+          const distB = Math.abs(b.pressures[1] - (sysPMin + sysPMax) / 2);
+          return distA - distB;
+        }).slice(0, 3);
+
+        // Limita a exibição do gráfico para focar nas velocidades práticas
         myChart.options.scales.x.min = Math.max(0, sysVMin - 5);
-        myChart.options.scales.x.max = sysVMax + 10;
+        myChart.options.scales.x.max = sysVMax + 5;
 
-        const labels = rows.map(r => `ISO ${r.nz.iso}`);
+        const labels = finalRows.map(r => `ISO ${r.nz.iso}`);
 
-        const barData = rows.map(r => {
+        const barData = finalRows.map(r => {
           return {
-            x: [r.vAtPmin, r.vAtPmax],
+            x: [r.vAtPmin, r.vAtPmax], // [min_val, max_val] interval 
             y: `ISO ${r.nz.iso}`,
             min: r.vAtPmin,
             max: r.vAtPmax,
@@ -2067,7 +1908,7 @@
           }
         });
 
-        const scatterData = rows.map(r => {
+        const scatterData = finalRows.map(r => {
           return {
             x: r.vAt3Bar,
             y: `ISO ${r.nz.iso}`
@@ -2101,6 +1942,7 @@
           }
         ];
 
+        // Annotations for real speeds
         const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
         const dangerColor = isDark ? 'rgba(255, 75, 75, 1)' : 'rgba(220, 38, 38, 1)';
 
@@ -2114,6 +1956,7 @@
           myChart.options.plugins.annotation.annotations.line2.borderColor = dangerColor;
         }
 
+        // Ensure textual contrasts without destructive assignment
         const textColor = isDark ? 'rgba(255,255,255,0.9)' : '#000000';
         const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)';
 
@@ -2131,526 +1974,7 @@
         myChart.update();
       }
 
-      // --- ACTIVE SESSION BANNER LOGIC ---
-      window.activeClientId = null;
-      window.activeMachineId = null;
-
-      function updateSessionBanner() {
-        const banner = document.getElementById('activeSessionBanner');
-        if (!banner) return;
-
-        if (!window.activeClientId || !window.activeMachineId) {
-          banner.style.display = 'none';
-          return;
-        }
-
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        const c = clients.find(item => item.id === window.activeClientId);
-        if (!c) {
-          window.activeClientId = null;
-          window.activeMachineId = null;
-          banner.style.display = 'none';
-          return;
-        }
-
-        const m = c.machines.find(item => item.id === window.activeMachineId);
-        if (!m) {
-          window.activeMachineId = null;
-          banner.style.display = 'none';
-          return;
-        }
-
-        const boomWidth = m.boomSize ? m.boomSize.toFixed(1) : ((m.spacing / 100) * m.nozzleCount).toFixed(1);
-
-        banner.style.display = 'flex';
-        banner.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-            <div style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">🚜 Máquina Ativa</div>
-            <button onclick="clearActiveSession()" style="background: none; border: none; color: var(--accent-error); font-size: 14px; cursor: pointer; padding: 0 4px; line-height: 1;" title="Desvincular Máquina">&times;</button>
-          </div>
-          <div style="font-family: 'Outfit'; font-weight: 700; font-size: 14px; color: var(--text-main); margin-top: 2px;">
-            ${c.name}
-          </div>
-          <div style="font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px; margin-top: 4px;">
-            <span>🌾 Fazenda: <b>${c.farmName || 'Sem cadastro'}</b></span>
-            <span>Máquina: <b>${m.name}</b></span>
-            <span>Especificações: <b>${m.nozzleCount} bicos @ ${m.spacing}cm (${boomWidth} m)</b></span>
-          </div>
-        `;
-      }
-
-      function clearActiveSession() {
-        window.activeClientId = null;
-        window.activeMachineId = null;
-        updateSessionBanner();
-        update(); // Recalcula
-      }
-
-      // --- HEADER TAB TOGGLE SYSTEM (SUPER CLEAN, NO BOTTOM NAV) ---
-      function toggleHistoryTab() {
-        const sim = document.getElementById('mainContainer');
-        const hist = document.getElementById('historyContainer');
-        const btn = document.getElementById('btnToggleHistory');
-        
-        if (sim.style.display === 'none') {
-          sim.style.display = 'grid';
-          hist.style.display = 'none';
-          btn.innerText = '👥';
-          btn.title = 'Meus Clientes e Máquinas';
-          if (myChart) myChart.update();
-        } else {
-          sim.style.display = 'none';
-          hist.style.display = 'block';
-          btn.innerText = '🚜';
-          btn.title = 'Voltar ao Simulador';
-          renderHistory();
-        }
-      }
-
-      // --- ADVANCED OFFLINE CRM SYSTEM (CLIENTS & MULTIPLE MACHINES) ---
-      
-      // Abre Modal para cadastrar/editar Cliente
-      function openClientModal(clientId = null) {
-        const title = document.getElementById('clientModalTitle');
-        const form = document.getElementById('clientForm');
-        
-        form.reset();
-        
-        if (clientId) {
-          title.innerText = "✏️ Editar Cliente";
-          const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-          const c = clients.find(item => item.id === clientId);
-          if (c) {
-            document.getElementById('clientEditId').value = c.id;
-            document.getElementById('clientName').value = c.name;
-            document.getElementById('clientFarm').value = c.farmName || '';
-            document.getElementById('clientNotes').value = c.notes || '';
-          }
-        } else {
-          title.innerText = "👥 Novo Cliente";
-          document.getElementById('clientEditId').value = "";
-        }
-        
-        document.getElementById('clientModal').style.display = 'flex';
-      }
-
-      // Salva Cliente (criar ou editar)
-      function submitClient(event) {
-        event.preventDefault();
-        const id = document.getElementById('clientEditId').value;
-        const name = document.getElementById('clientName').value;
-        const farmName = document.getElementById('clientFarm').value;
-        const notes = document.getElementById('clientNotes').value;
-
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-
-        if (id) {
-          // Editando
-          clients = clients.map(c => {
-            if (c.id === id) {
-              return { ...c, name, farmName, notes };
-            }
-            return c;
-          });
-          alert("✅ Cliente editado com sucesso!");
-        } else {
-          // Criando
-          const newClient = {
-            id: Date.now().toString(),
-            name,
-            farmName,
-            notes,
-            machines: []
-          };
-          clients.unshift(newClient);
-          alert("✅ Cliente adicionado com sucesso!");
-        }
-
-        localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
-        document.getElementById('clientModal').style.display = 'none';
-        updateSessionBanner(); // Sincroniza o banner ativo
-        renderHistory();
-      }
-
-      // Exclui Cliente e todas as suas máquinas
-      function deleteClient(clientId) {
-        if (!confirm("Tem certeza que deseja excluir este produtor? Todas as máquinas vinculadas serão perdidas permanentemente.")) return;
-        
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        clients = clients.filter(c => c.id !== clientId);
-        localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
-        
-        if (window.activeClientId === clientId) {
-          clearActiveSession();
-        }
-        
-        renderHistory();
-      }
-
-      // Abre Modal para cadastrar/editar Máquina de um Cliente
-      function openMachineModal(clientId, machineId = null) {
-        const title = document.getElementById('machineModalTitle');
-        const form = document.getElementById('machineForm');
-        
-        form.reset();
-        document.getElementById('machineClientId').value = clientId;
-        
-        if (machineId) {
-          title.innerText = "✏️ Editar Máquina";
-          document.getElementById('machineEditId').value = machineId;
-          
-          const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-          const c = clients.find(item => item.id === clientId);
-          if (c) {
-            const m = c.machines.find(item => item.id === machineId);
-            if (m) {
-              document.getElementById('machineName').value = m.name;
-              document.getElementById('machineNozzleCount').value = m.nozzleCount || '';
-              document.getElementById('machineSpacing').value = m.spacing || '';
-              document.getElementById('machineBoomSize').value = m.boomSize || ''; // Carrega o tamanho da barra manual
-            }
-          }
-        } else {
-          title.innerText = "🚜 Nova Máquina";
-          document.getElementById('machineEditId').value = "";
-        }
-        
-        document.getElementById('machineModal').style.display = 'flex';
-      }
-
-      // Salva Máquina
-      function submitMachine(event) {
-        event.preventDefault();
-        const clientId = document.getElementById('machineClientId').value;
-        const id = document.getElementById('machineEditId').value;
-        const name = document.getElementById('machineName').value;
-        const nozzleCount = parseInt(document.getElementById('machineNozzleCount').value);
-        const spacing = parseFloat(document.getElementById('machineSpacing').value);
-        const boomSize = parseFloat(document.getElementById('machineBoomSize').value); // Lê o tamanho da barra manual
-
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        const cIndex = clients.findIndex(c => c.id === clientId);
-
-        if (cIndex !== -1) {
-          let machines = clients[cIndex].machines || [];
-
-          if (id) {
-            // Editando máquina
-            machines = machines.map(m => {
-              if (m.id === id) {
-                return { ...m, name, nozzleCount, spacing, boomSize };
-              }
-              return m;
-            });
-            alert("✅ Máquina editada!");
-          } else {
-            // Criando máquina
-            const newMachine = {
-              id: Date.now().toString(),
-              name,
-              nozzleCount,
-              spacing,
-              boomSize, // Salva o tamanho da barra manual
-              lastSimulation: null
-            };
-            machines.unshift(newMachine);
-            alert("✅ Máquina cadastrada para este produtor!");
-          }
-
-          clients[cIndex].machines = machines;
-          localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
-        }
-
-        document.getElementById('machineModal').style.display = 'none';
-        updateSessionBanner(); // Sincroniza o banner ativo
-        renderHistory();
-      }
-
-      // Exclui Máquina
-      function deleteMachine(clientId, machineId) {
-        if (!confirm("Tem certeza que deseja excluir esta máquina?")) return;
-
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        const cIndex = clients.findIndex(c => c.id === clientId);
-
-        if (cIndex !== -1) {
-          clients[cIndex].machines = clients[cIndex].machines.filter(m => m.id !== machineId);
-          localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
-        }
-
-        if (window.activeMachineId === machineId) {
-          clearActiveSession();
-        }
-
-        renderHistory();
-      }
-
-      // --- SALVAR A SIMULAÇÃO ATIVA EM UMA MÁQUINA CADASTRADA ---
-      function openSaveModal() {
-        if (!window.topNozzle) {
-          alert("Não há recomendação técnica ativa para salvar!");
-          return;
-        }
-
-        const selectClient = document.getElementById('saveSelectClient');
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-
-        if (clients.length === 0) {
-          if (confirm("Você precisa ter pelo menos um Cliente cadastrado para salvar a simulação. Deseja cadastrar um novo cliente agora?")) {
-            toggleHistoryTab(); // Alterna para a aba de clientes/histórico
-            openClientModal(null); // Abre o modal de cadastro
-          }
-          return;
-        }
-
-        selectClient.innerHTML = '';
-        clients.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.id;
-          opt.innerText = c.name + (c.farmName ? ` (Fazenda: ${c.farmName})` : '');
-          selectClient.appendChild(opt);
-        });
-
-        // Se houver cliente ativo na sessão, auto-seleciona ele!
-        if (window.activeClientId) {
-          selectClient.value = window.activeClientId;
-        }
-
-        updateSaveSelectMachines();
-        document.getElementById('saveModal').style.display = 'flex';
-      }
-
-      // Atualiza o dropdown de máquinas baseado no cliente selecionado no modal
-      function updateSaveSelectMachines() {
-        const clientId = document.getElementById('saveSelectClient').value;
-        const selectMachine = document.getElementById('saveSelectMachine');
-        const container = document.getElementById('saveSelectMachineContainer');
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        const c = clients.find(item => item.id === clientId);
-
-        selectMachine.innerHTML = '';
-
-        if (!c || c.machines.length === 0) {
-          const opt = document.createElement('option');
-          opt.innerText = "❌ Nenhuma máquina cadastrada";
-          opt.disabled = true;
-          selectMachine.appendChild(opt);
-          return;
-        }
-
-        c.machines.forEach(m => {
-          const opt = document.createElement('option');
-          opt.value = m.id;
-          opt.innerText = `${m.name} (${m.nozzleCount} bicos | ${m.spacing} cm)`;
-          selectMachine.appendChild(opt);
-        });
-
-        // Se houver máquina ativa na sessão, auto-seleciona ela!
-        if (window.activeMachineId) {
-          if (Array.from(selectMachine.options).some(opt => opt.value === window.activeMachineId)) {
-            selectMachine.value = window.activeMachineId;
-          }
-        }
-      }
-
-      // Salva a simulação ativa na máquina selecionada
-      function saveActiveSimulation(event) {
-        event.preventDefault();
-        const clientId = document.getElementById('saveSelectClient').value;
-        const machineId = document.getElementById('saveSelectMachine').value;
-
-        if (!machineId || machineId.includes('Nenhuma')) {
-          alert("Por favor, selecione ou cadastre uma máquina para este cliente primeiro!");
-          return;
-        }
-
-        const config = {
-          spacing: parseFloat(numSpacing.value),
-          rate: parseFloat(numRate.value),
-          density: parseFloat(numDensity.value),
-          pMin: parseFloat(numPMin.value),
-          pMax: parseFloat(numPMax.value),
-          vMin: parseFloat(numVMin.value),
-          vAvg: parseFloat(numVAvg.value),
-          vMax: parseFloat(numVMax.value),
-          unit: PRESS_UNIT
-        };
-
-        const rec = window.topNozzle ? {
-          iso: window.topNozzle.nz.iso,
-          color: window.topNozzle.nz.color,
-          qVavg: window.topNozzle.qVavg,
-          pVavg: window.topNozzle.pVavg,
-          vAtPmin: window.topNozzle.vAtPmin,
-          vAtPmax: window.topNozzle.vAtPmax,
-          statusText: window.topNozzle.statusText
-        } : null;
-
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        const cIndex = clients.findIndex(c => c.id === clientId);
-
-        if (cIndex !== -1) {
-          clients[cIndex].machines = clients[cIndex].machines.map(m => {
-            if (m.id === machineId) {
-              return {
-                ...m,
-                lastSimulation: {
-                  date: new Date().toLocaleDateString('pt-BR'),
-                  config,
-                  recommendation: rec
-                }
-              };
-            }
-            return m;
-          });
-          localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
-          alert("✅ Calibração vinculada à máquina do produtor com sucesso!");
-          document.getElementById('saveModal').style.display = 'none';
-          
-          // Vai para o Histórico de Clientes para visualizar
-          toggleHistoryTab();
-        }
-      }
-
-      // Renderiza a lista de clientes e suas máquinas
-      function renderHistory() {
-        const listContainer = document.getElementById('historyList');
-        const emptyState = document.getElementById('historyEmptyState');
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-
-        if (clients.length === 0) {
-          listContainer.style.display = 'none';
-          emptyState.style.display = 'flex';
-          return;
-        }
-
-        listContainer.style.display = 'grid';
-        emptyState.style.display = 'none';
-
-        listContainer.innerHTML = '';
-        clients.forEach(c => {
-          const card = document.createElement('div');
-          card.className = 'history-card';
-
-          // Renderizar lista de máquinas
-          let machinesHtml = '';
-          if (!c.machines || c.machines.length === 0) {
-            machinesHtml = '<p style="font-size:12px; color:var(--text-muted); font-style:italic;">Nenhuma máquina registrada para este produtor.</p>';
-          } else {
-            c.machines.forEach(m => {
-              let simHtml = '';
-              let recColor = 'var(--accent)';
-              const boomWidth = m.boomSize ? m.boomSize.toFixed(1) : ((m.spacing / 100) * m.nozzleCount).toFixed(1);
-              let flowSpecsHtml = `<span>Larg. Barra: <b>${boomWidth} m</b></span>`;
-
-              if (m.lastSimulation && m.lastSimulation.recommendation) {
-                const sim = m.lastSimulation;
-                recColor = sim.recommendation.color;
-                
-                const totalFlow = (m.nozzleCount * sim.recommendation.qVavg).toFixed(1);
-                flowSpecsHtml += ` | <span>Vazão Barra: <b>${totalFlow} L/min</b></span>`;
-
-                simHtml = `
-                  <div class="machine-sim-data">
-                    🏆 <b>ISO ${sim.recommendation.iso}</b> | Vazão Bico: <b>${sim.recommendation.qVavg.toFixed(2)} L/min</b><br>
-                    Alvo: <b>${sim.config.rate} L/ha</b> | Pressão Méd: <b>${sim.recommendation.pVavg.toFixed(1)} ${sim.config.unit.toUpperCase()}</b><br>
-                    Janela Ideal: <b>${sim.recommendation.vAtPmin.toFixed(1)} - ${sim.recommendation.vAtPmax.toFixed(1)} km/h</b> <span style="opacity: 0.6; font-size:10px;">(${sim.date})</span>
-                  </div>
-                `;
-              } else {
-                simHtml = '<div style="font-size:11px; color:var(--text-muted); font-style:italic;">Nenhuma calibração vinculada.</div>';
-              }
-
-              machinesHtml += `
-                <div class="machine-item-card" style="--nz-color: ${recColor}">
-                  <div class="machine-item-header">
-                    <span>🚜 ${m.name}</span>
-                    <div class="machine-specs">
-                      <span>Bicos: <b>${m.nozzleCount}</b></span>
-                      <span>Espac: <b>${m.spacing} cm</b></span>
-                    </div>
-                  </div>
-                  <div style="font-size: 11px; color: var(--text-muted); margin-top: -2px; margin-bottom: 4px; display: flex; gap: 8px;">
-                    ${flowSpecsHtml}
-                  </div>
-
-                  ${simHtml}
-
-                  <div class="machine-action-row">
-                    ${m.lastSimulation ? `<button class="crm-btn primary" onclick="loadMachineConfig('${c.id}', '${m.id}')">📂 Carregar no Simulador</button>` : ''}
-                    <button class="crm-btn secondary" onclick="openMachineModal('${c.id}', '${m.id}')">✏️ Editar</button>
-                    <button class="crm-btn danger" onclick="deleteMachine('${c.id}', '${m.id}')">❌</button>
-                  </div>
-                </div>
-              `;
-            });
-          }
-
-          card.innerHTML = `
-            <div class="history-header">
-              <div>
-                <div class="history-title">${c.name}</div>
-                <div class="history-sub">${c.farmName ? `🌾 Fazenda: ${c.farmName}` : 'Sem Fazenda cadastrada'}</div>
-              </div>
-              <div class="flex-row" style="gap: 6px;">
-                <button class="crm-btn secondary" style="padding: 6px 10px;" onclick="openClientModal('${c.id}')" title="Editar Cliente">✏️</button>
-                <button class="crm-btn danger" style="padding: 6px 10px;" onclick="deleteClient('${c.id}')" title="Excluir Cliente">❌</button>
-              </div>
-            </div>
-
-            ${c.notes ? `<div style="font-size:11px; font-style:italic; color:var(--text-muted); background:rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 8px; border:1px solid rgba(255,255,255,0.05);"><b>Obs:</b> ${c.notes}</div>` : ''}
-
-            <div class="machines-section">
-              <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
-                <span>📋 Máquinas registradas</span>
-                <a href="javascript:void(0)" onclick="openMachineModal('${c.id}')" style="color: var(--accent); text-decoration:none; font-size:11px; white-space: nowrap;">➕ Add Máquina</a>
-              </div>
-              ${machinesHtml}
-            </div>
-          `;
-          listContainer.appendChild(card);
-        });
-      }
-
-      // Carrega os parâmetros de uma simulação salva de volta na calculadora
-      function loadMachineConfig(clientId, machineId) {
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        const c = clients.find(item => item.id === clientId);
-        if (!c) return;
-        
-        const m = c.machines.find(item => item.id === machineId);
-        if (!m || !m.lastSimulation) return;
-
-        const sim = m.lastSimulation;
-
-        numSpacing.value = sim.config.spacing;
-        rngSpacing.value = sim.config.spacing;
-        numRate.value = sim.config.rate;
-        rngRate.value = sim.config.rate;
-        numDensity.value = sim.config.density;
-        numPMin.value = sim.config.pMin;
-        numPMax.value = sim.config.pMax;
-        numVMin.value = sim.config.vMin;
-        numVAvg.value = sim.config.vAvg;
-        numVMax.value = sim.config.vMax;
-        PRESS_UNIT = sim.config.unit;
-
-        document.getElementById('btnBar').classList.toggle('active', PRESS_UNIT === 'bar');
-        document.getElementById('btnPsi').classList.toggle('active', PRESS_UNIT === 'psi');
-
-        updateSpacingButtons();
-        updatePresetButtons();
-        update();
-
-        // Salva a sessão ativa global
-        window.activeClientId = clientId;
-        window.activeMachineId = machineId;
-        updateSessionBanner();
-
-        toggleHistoryTab(); // volta pro simulador
-        alert(`📂 Calibração carregada para a máquina "${m.name}" do produtor ${c.name}!`);
-      }
-
+      // Event Listeners
       rngSpacing.addEventListener('input', (e) => { numSpacing.value = e.target.value; updateSpacingButtons(); update(); });
       numSpacing.addEventListener('input', (e) => { rngSpacing.value = e.target.value; updateSpacingButtons(); update(); });
       rngRate.addEventListener('input', (e) => { numRate.value = e.target.value; update(); });
@@ -2684,6 +2008,7 @@
         }
       }
 
+      // Init
       window.addEventListener('load', () => {
         initChart();
         updateSpacingButtons();
@@ -2699,12 +2024,15 @@
         });
       }
 
+      // Instalação PWA Manual
       let deferredPrompt;
       const btnInstall = document.getElementById('btnInstall');
 
       window.addEventListener('beforeinstallprompt', (e) => {
+        // Previne o Chrome de mostrar o banner automático (nós controlamos agora)
         e.preventDefault();
         deferredPrompt = e;
+        // Mostra nosso botão verde de celular no cabeçalho
         btnInstall.style.display = 'flex';
       });
 
@@ -2722,12 +2050,14 @@
       window._updateApp = () => { if (typeof update === 'function') update(); };
     </script>
 
-    <div style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+    <div class="logout-btn-container" style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
       <button onclick="logout()"
-        style="background: transparent; border: 1px solid var(--accent-error); color: var(--accent-error); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">Sair do Sistema (Logout)</button>
+        style="background: transparent; border: 1px solid var(--accent-error); color: var(--accent-error); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">Sair
+        do Sistema (Logout)</button>
     </div>
-  </div>
+  </div> <!-- End mainApp -->
 
+  <!-- SCRIPT DE AUTENTICAÇÃO INCORPORADO -->
   <script>
     const SUPABASE_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
@@ -2750,6 +2080,7 @@
           btnSubmit.addEventListener('click', handleAuth);
         }
 
+        // Exibir campo de Nome e WhatsApp apenas se marcar que quer cadastrar
         const chkRegister = document.getElementById('chkRegister');
         const whatsappField = document.getElementById('whatsapp');
         const nomeField = document.getElementById('nome');
@@ -2785,6 +2116,7 @@
       const authError = document.getElementById('authError');
       const authSuccess = document.getElementById('authSuccess');
 
+      // Validação Manual
       if (!email || password.length < 6) {
         authError.innerText = 'Por favor, preencha o e-mail e uma senha com no mínimo 6 letras/números.';
         authError.style.display = 'block';
@@ -2802,8 +2134,13 @@
         if (isRegister) {
           if (!nome || !whatsapp) throw new Error("Por favor, preencha o seu Nome e o WhatsApp.");
 
-          const redirectBase = window.location.origin + window.location.pathname.replace(/[^\/]*$/, '').replace('/v3/', '/').replace(/v3\/$/, '');
-          const redirectUrl  = redirectBase + 'email_confirmado.html';
+          // Monta a URL raiz do projeto (sobe um nível de /enterprise/ para /)
+          const pathParts = window.location.pathname.split('/');
+          // Remove 'enterprise' e o arquivo da ponta para pegar a raiz
+          const rootPath = pathParts.slice(0, pathParts.length - 2).join('/') + '/';
+          const rootUrl = window.location.origin + rootPath;
+          // Redireciona para email_confirmado.html com destino enterprise após confirmar
+          const redirectUrl = rootUrl + 'email_confirmado.html?next=enterprise/index.html';
 
           const { data, error } = await clienteSupabase.auth.signUp({
             email: email,
@@ -2819,10 +2156,12 @@
           if (error) throw error;
 
           if (data.session) {
+            // Confirmação desativada no Supabase — entra direto
             authSuccess.innerText = 'Cadastro realizado! Entrando...';
             authSuccess.style.display = 'block';
             setTimeout(showApp, 1500);
           } else {
+            // Confirmação por e-mail ativada no Supabase
             authSuccess.style.display = 'block';
             authSuccess.innerHTML = `
               <strong>✅ Cadastro enviado para confirmação!</strong><br>
@@ -2856,6 +2195,7 @@
       }
     }
 
+    // Deixando funções acessíveis globalmente
     window.handleAuth = handleAuth;
 
     async function logout() {
@@ -2865,18 +2205,98 @@
     }
     window.logout = logout;
 
-    function showApp() {
+    async function showApp() {
+      // --- LOGICA ENTERPRISE: APLICAR BRANDING DO PARCEIRO ---
+      try {
+        console.log("Enterprise: Buscando dados do perfil...");
+        const { data: { user }, error } = await clienteSupabase.auth.getUser();
+
+        if (user && user.user_metadata) {
+          const meta = user.user_metadata;
+          // Se houver qualquer dado de parceiro, tentamos aplicar
+          if (meta.partner_name || meta.partner_color) {
+            console.log("Enterprise: Dados de branding encontrados!", meta);
+            applyPartnerBranding(meta);
+          } else {
+            console.log("Enterprise: Nenhum dado de branding no usuário.");
+          }
+        }
+      } catch (err) {
+        console.error("Erro fatal de branding:", err);
+      }
+
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
+
       if (window._updateApp) {
         window._updateApp();
       }
+    }
+
+    function applyPartnerBranding(meta) {
+      if (!meta) return;
+
+      const accent = meta.partner_color || '#00d2ff';
+      const logo = meta.partner_logo || './logo.png';
+      const name = meta.partner_name || 'Spray Precision PRO';
+      const whatsapp = meta.partner_whatsapp || '5565999106415';
+
+      // 1. Atualizar Variáveis CSS Primárias
+      const root = document.documentElement;
+      root.style.setProperty('--accent', accent);
+      root.style.setProperty('--accent-glow', accent + '66');
+
+      // 2. Atualizar Logotipos em todo o app (Login e Interno)
+      const logos = document.querySelectorAll('.header-icon, .login-box img');
+      logos.forEach(img => {
+        img.src = logo;
+        img.style.objectFit = 'contain'; // Garante que não corte no login também
+        img.onerror = () => { img.src = './logo.png'; };
+      });
+
+      // 3. Atualizar Título no Cabeçalho
+      const headerTitle = document.querySelector('.header h1');
+      if (headerTitle) {
+        headerTitle.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
+      }
+
+      // 4. Customizar Textos do Aplicativo
+      const subTitle = document.querySelector('.header p');
+      if (subTitle && meta.partner_name) {
+        subTitle.innerText = `Simulador Oficial - ${name}`;
+      }
+
+      // 5. Configurar Botões de WhatsApp Dinamicamente (Globais e Estáticos)
+      window.partnerWhatsApp = whatsapp;
+      window.partnerName = name;
+
+      const allWaLinks = document.querySelectorAll('a[href*="wa.me"]');
+      allWaLinks.forEach(link => {
+        try {
+          const url = new URL(link.href);
+          const originalText = url.searchParams.get('text') || 'Olá!';
+          const cleanText = originalText.replace('Spray Precision PRO', name);
+          link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(cleanText)}`;
+        } catch (e) { }
+      });
+
+      // 6. Atualizar Elementos Dinâmicos (Botões e Símbolos)
+      const customStyles = document.createElement('style');
+      customStyles.innerHTML = `
+        .info-btn, .login-btn, .status-badge.ok, .fab-btn.fab-ok { border-color: ${accent} !important; }
+        .preset-btn.active { background: ${accent} !important; border-color: ${accent} !important; color: #000 !important; }
+        .result-hero .iso { color: ${accent} !important; }
+      `;
+      document.head.appendChild(customStyles);
+
+      console.log(`✅ Sucesso: Branding do Parceiro "${name}" aplicado.`);
     }
 
     function showLogin() {
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('mainApp').style.display = 'none';
 
+      // Limpar alertas antigos para não acumular
       const authError = document.getElementById('authError');
       const authSuccess = document.getElementById('authSuccess');
       if (authError) authError.style.display = 'none';
@@ -2889,6 +2309,7 @@
       }
     }
 
+    // Inicializar
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initAuth);
     } else {
@@ -2896,46 +2317,86 @@
     }
   </script>
 
-  <div style="
-    width: 100%;
-    text-align: center;
-    margin-top: 40px;
-    padding: 16px;
-    font-size: 11px;
-    color: var(--text-muted);
-    opacity: 0.6;
-    letter-spacing: 0.5px;
-  ">
-    Made by
+  <div id="appFooter" style="
+  width: 100%;
+  text-align: center;
+  margin-top: 40px;
+  padding: 16px;
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  letter-spacing: 0.5px;
+">
     <span style="color: var(--accent); font-weight: 600;">Eduardo Andrade</span>
   </div>
 
+  <!-- Container Oculto para Impressão de Relatório Técnico -->
   <div id="printReport"></div>
+
   <style>
+    /* Estilos específicos para Impressão Profissional (Laudo Técnico) */
     @media print {
       :root {
         --text-main: #0f172a !important;
+        /* Forza o texto principal a ser escuro */
         --text-muted: #334155 !important;
       }
-      @page { size: auto; margin: 15mm; }
-      body { background: white !important; padding: 0 !important; color: black !important; }
-      #mainApp, #loginScreen, .header, .nav-bar, .fab-btn, .modal-overlay, #fabBtn, 
-      .glass-panel.controls, .dashboard, .container, #helpModal, #statusModal, #resultModal {
+
+      @page {
+        size: auto;
+        /* auto is the initial value */
+        margin: 0mm;
+        /* margem zerada para ocultar cabeçalho do navegador (URL) */
+      }
+
+      body {
+        background: white !important;
+        padding: 15mm !important; /* compensação da margem */
+        color: black !important;
+      }
+
+      /* Esconde toda a interface do Aplicativo e rodapés */
+      #mainApp,
+      #loginScreen,
+      .header,
+      .nav-bar,
+      .fab-btn,
+      .modal-overlay,
+      #fabBtn,
+      .glass-panel.controls,
+      .dashboard,
+      .container,
+      #helpModal,
+      #statusModal,
+      #resultModal,
+      #appFooter {
         display: none !important;
         visibility: hidden !important;
+        opacity: 0 !important;
       }
-      #printReport { 
-        display: block !important; 
-        visibility: visible !important; 
-        position: absolute !important; 
-        top: 0 !important; 
-        left: 0 !important; 
-        width: 100% !important; 
+
+      /* Ativa e Formata apenas o Laudo */
+      #printReport {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
       }
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      /* Força Cores e Backgrouds na Impressora */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
     }
-    #printReport { display: none; }
+
+    #printReport {
+      display: none;
+    }
   </style>
+
 </body>
 
 </html>

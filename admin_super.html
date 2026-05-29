@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Master Admin - Spray Precision SaaS</title>
   
   <!-- Fonts -->
@@ -319,8 +319,8 @@
     }
 
     .enterprise-item {
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 10px 14px;
+      border-radius: 8px;
       font-size: 13px;
       cursor: pointer;
       transition: all 0.2s;
@@ -328,6 +328,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: rgba(255,255,255,0.02);
     }
 
     .enterprise-item:hover {
@@ -342,9 +343,9 @@
 
     .enterprise-badge {
       background: rgba(255, 255, 255, 0.1);
-      padding: 2px 6px;
+      padding: 2px 8px;
       border-radius: 10px;
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-muted);
     }
 
@@ -353,6 +354,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      min-width: 0;
     }
 
     .table-header {
@@ -401,6 +403,7 @@
     .user-email-cell {
       font-weight: 600;
       color: var(--text-main);
+      word-break: break-all;
     }
 
     .role-select {
@@ -408,10 +411,11 @@
       border: 1px solid rgba(0, 210, 255, 0.2);
       color: var(--accent);
       font-weight: 700;
-      padding: 4px 8px;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 12px;
       cursor: pointer;
+      font-family: 'Inter', sans-serif;
     }
 
     .role-select.gerente {
@@ -446,6 +450,8 @@
       box-shadow: 0 20px 50px rgba(0, 210, 255, 0.15);
       position: relative;
       color: var(--text-main);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-header {
@@ -495,6 +501,127 @@
       flex-direction: column;
       align-items: center;
       gap: 12px;
+    }
+
+    /* 📱 HIGHLY ADVANCED MOBILE RESPONSIVENESS OVERRIDES */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .header-title {
+        text-align: center;
+      }
+
+      .header-title h1 {
+        font-size: 22px;
+        justify-content: center;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 13px;
+        padding: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 12px 14px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      /* Stacks filters above users */
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .enterprise-list {
+        max-height: 180px;
+      }
+
+      /* OVERHAULS THE TABLE INTO BEAUTIFUL VERTICAL GLASS CARDS FOR MOBILE SCREENSIZES */
+      .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .admin-table thead {
+        display: none; /* Hides columns */
+      }
+
+      .admin-table tr {
+        margin-bottom: 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 16px;
+        position: relative;
+      }
+
+      .admin-table td {
+        border-bottom: none;
+        padding: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+      }
+
+      .admin-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 10px;
+        text-align: left;
+        display: inline-block;
+        margin-right: 12px;
+      }
+
+      .admin-table td:last-child {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 12px;
+        margin-top: 8px;
+        justify-content: flex-end;
+      }
+
+      .admin-table td:last-child::before {
+        display: none; /* Hide actions text label */
+      }
+
+      .user-email-cell {
+        font-size: 14px;
+        justify-content: flex-end;
+      }
+
+      .role-select {
+        width: 150px;
+      }
     }
   </style>
 </head>
@@ -598,7 +725,7 @@
             <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px;">🔄 Recarregar</button>
           </div>
 
-          <div class="table-responsive">
+          <div class="table-responsive" style="border: none;">
             <table class="admin-table" id="usersTable">
               <thead>
                 <tr>
@@ -802,8 +929,7 @@
         // Verify if role metadata is master
         const role = data.user.user_metadata && data.user.user_metadata.role;
         if (role !== 'master') {
-          // Attempting update internally or warning
-          console.warn('Usuário autenticado, mas a role de metadado "master" não foi encontrada. Certifique-se de executar o script DDL SQL no Supabase.');
+          console.warn('Usuário autenticado, mas a role de metadado "master" não foi encontrada.');
         }
 
         document.getElementById('loggedAdminEmail').innerText = data.user.email;
@@ -853,7 +979,6 @@
       } catch (err) {
         alert('Atenção: ' + err.message + '\n\nO painel será aberto em modo de exibição local. Você terá que configurar a chave administrativa de forma manual nas configurações.');
         
-        // Fallback to local storage key if exists, else ask manually
         const fallbackKey = prompt("Digite a sua Service Role Key manualmente para prosseguir:");
         if (fallbackKey && fallbackKey.trim() !== "") {
           const url = localStorage.getItem('spray_super_supabase_url');
@@ -894,12 +1019,10 @@
       showLoading(true);
 
       try {
-        // 1. Fetch Auth Users (Admin Key required)
         const { data: { users }, error: authError } = await supabaseAdmin.auth.admin.listUsers();
         if (authError) throw authError;
         cachedUsers = users;
 
-        // 2. Fetch stats
         const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
         const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
 
@@ -1020,23 +1143,23 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="user-email-cell">✉️ ${user.email}</td>
-          <td>
+          <td class="user-email-cell" data-label="E-mail">✉️ ${user.email}</td>
+          <td data-label="Cargo">
             <select class="role-select ${role === 'gerente' ? 'gerente' : ''}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
               <option value="consultor" ${role === 'consultor' ? 'selected' : ''}>🌾 Consultor</option>
               <option value="gerente" ${role === 'gerente' ? 'selected' : ''}>📈 Gerente</option>
               <option value="master" ${role === 'master' ? 'selected' : ''}>👑 Master Admin</option>
             </select>
           </td>
-          <td>
-            <div style="display:flex; flex-direction:column; gap:2px;">
+          <td data-label="Empresa">
+            <div style="display:flex; flex-direction:column; gap:2px; align-items: flex-end;">
               <span style="font-weight:600;">${partnerName}</span>
               <span style="font-size:10px; color:var(--text-muted); font-family: monospace;">ID: ${partnerId}</span>
             </div>
           </td>
-          <td>📅 ${createdDate}</td>
-          <td style="text-align: right;">
-            <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <td data-label="Criado em">📅 ${createdDate}</td>
+          <td data-label="Ações" style="text-align: right;">
+            <div style="display:flex; justify-content:flex-end; gap:8px; width: 100%;">
               <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="alterarEmpresaPrompt('${user.id}', '${partnerId}', '${partnerName.replace(/'/g, "\\'")}', '${role}')" title="Mudar Empresa">🏢 Transferir</button>
               <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
             </div>

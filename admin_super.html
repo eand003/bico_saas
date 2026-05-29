@@ -359,6 +359,39 @@
       background: none;
     }
 
+    .color-suggestions-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .color-chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .color-chip {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.25);
+      transition: all 0.2s;
+    }
+
+    .color-chip:hover {
+      transform: scale(1.15);
+      border-color: white;
+      box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    }
+
     /* Enterprise list in sidebar */
     .enterprise-list {
       display: flex;
@@ -944,17 +977,29 @@
           <label>Nome Fantasia da Empresa</label>
           <input type="text" id="compPartnerName" class="input-field" placeholder="ex: Sol Agro Soluções" required>
         </div>
+        
+        <!-- Logo Link with color extraction hook -->
+        <div class="form-group">
+          <label>Link do Logo (Imagem PNG)</label>
+          <input type="url" id="compPartnerLogo" class="input-field" placeholder="ex: https://imgur.com/logo.png" required onchange="handleLogoUrlChange(this.value)">
+        </div>
+
         <div class="form-group">
           <label>Cor da Marca (Hexadecimal)</label>
           <div class="color-input-container">
             <input type="color" id="compColorPicker" class="color-preview" value="#00d2ff" oninput="document.getElementById('compPartnerColor').value = this.value">
             <input type="text" id="compPartnerColor" class="input-field" value="#00d2ff" placeholder="#00d2ff" required oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('compColorPicker').value = this.value">
           </div>
+          
+          <!-- Smart color suggestions container -->
+          <div class="color-suggestions-container">
+            <span id="colorSuggestionLabel">Sugestões de Cor (Marcas Máquinas Líderes):</span>
+            <div class="color-chips-row" id="companyColorSuggestions">
+              <!-- Dynamically populated color chips -->
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Link do Logo (Imagem PNG)</label>
-          <input type="url" id="compPartnerLogo" class="input-field" placeholder="ex: https://imgur.com/logo.png" required>
-        </div>
+
         <div class="form-group">
           <label>WhatsApp de Vendas (DDD + Número)</label>
           <input type="tel" id="compPartnerWhatsapp" class="input-field" placeholder="ex: 5565999998888" required>
@@ -1033,6 +1078,18 @@
     let selectedEnterpriseId = 'all';
     let currentTab = 'users';
 
+    // Curated leading machinery brands palette
+    const machineryBrandColors = [
+      { name: 'John Deere (Verde)', hex: '#367C2B' },
+      { name: 'John Deere (Amarelo)', hex: '#FFDE00' },
+      { name: 'Jacto (Laranja)', hex: '#FF7F00' },
+      { name: 'Case IH (Vermelho)', hex: '#C41230' },
+      { name: 'New Holland (Azul)', hex: '#002D62' },
+      { name: 'Stara (Laranja)', hex: '#FF6B00' },
+      { name: 'Massey Ferguson (Rubi)', hex: '#D11919' },
+      { name: 'Valtra (Vermelho)', hex: '#A80000' }
+    ];
+
     // Auto load credentials from localStorage on start
     window.addEventListener('DOMContentLoaded', () => {
       loadConnectionSettings();
@@ -1090,6 +1147,10 @@
       document.getElementById('compPartnerWhatsapp').value = '';
       document.getElementById('companyModalTitle').innerText = '🏢 Cadastrar Nova Empresa';
       document.getElementById('companySubmitBtn').innerText = 'Criar Empresa no Banco';
+      
+      // Load standard machinery suggestions initially
+      renderDefaultMachineColors();
+      
       document.getElementById('companyModal').style.display = 'flex';
     }
 
@@ -1107,7 +1168,127 @@
       document.getElementById('compPartnerWhatsapp').value = company.partner_whatsapp || '';
       document.getElementById('companyModalTitle').innerText = '✏️ Editar Empresa';
       document.getElementById('companySubmitBtn').innerText = 'Salvar Alterações';
+      
+      // Attempt color extraction if logo URL is already set
+      if (company.partner_logo) {
+        extractColorsFromLogo(company.partner_logo);
+      } else {
+        renderDefaultMachineColors();
+      }
+
       document.getElementById('companyModal').style.display = 'flex';
+    }
+
+    // Default palette for machinery brands
+    function renderDefaultMachineColors() {
+      document.getElementById('colorSuggestionLabel').innerText = 'Sugestões de Cor (Marcas Máquinas Líderes):';
+      const container = document.getElementById('companyColorSuggestions');
+      container.innerHTML = '';
+
+      machineryBrandColors.forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = 'color-chip';
+        chip.style.backgroundColor = item.hex;
+        chip.title = item.name;
+        chip.onclick = () => selectColor(item.hex);
+        container.appendChild(chip);
+      });
+    }
+
+    function selectColor(hex) {
+      document.getElementById('compPartnerColor').value = hex;
+      document.getElementById('compColorPicker').value = hex;
+    }
+
+    // Logo URL input change hook for real-time brand color extraction
+    function handleLogoUrlChange(url) {
+      const trimmed = url.trim();
+      if (!trimmed) {
+        renderDefaultMachineColors();
+        return;
+      }
+      extractColorsFromLogo(trimmed);
+    }
+
+    // High-tech dominant brand color extraction using HTML5 Canvas + local pixel clustering
+    function extractColorsFromLogo(url) {
+      const container = document.getElementById('companyColorSuggestions');
+      container.innerHTML = `
+        <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--accent);">
+          <div class="loader" style="width:12px; height:12px; border-width:2px;"></div>
+          <span>Extraindo cores do logotipo...</span>
+        </div>
+      `;
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = url;
+
+      img.onload = function() {
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 40;
+          canvas.height = 40;
+          ctx.drawImage(img, 0, 0, 40, 40);
+
+          const imgData = ctx.getImageData(0, 0, 40, 40).data;
+          const colorCounts = {};
+
+          for (let i = 0; i < imgData.length; i += 4) {
+            const r = imgData[i];
+            const g = imgData[i+1];
+            const b = imgData[i+2];
+            const a = imgData[i+3];
+
+            // Skip highly transparent, pure whites, pure blacks, and desaturated grey pixels
+            if (a < 180) continue;
+            if (r > 242 && g > 242 && b > 242) continue; // White
+            if (r < 22 && g < 22 && b < 22) continue;    // Black
+            
+            // Filter greys (r, g, b are very close)
+            if (Math.abs(r - g) < 16 && Math.abs(g - b) < 16 && Math.abs(r - b) < 16) continue;
+
+            const hex = rgbToHex(r, g, b);
+            colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+          }
+
+          const sortedColors = Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a]);
+          const dominantColors = sortedColors.slice(0, 5); // top 5 vibrant colors
+
+          if (dominantColors.length > 0) {
+            document.getElementById('colorSuggestionLabel').innerText = '✨ Paleta de Cores Extraídas do Logo:';
+            container.innerHTML = '';
+            
+            dominantColors.forEach(hex => {
+              const chip = document.createElement('div');
+              chip.className = 'color-chip';
+              chip.style.backgroundColor = hex;
+              chip.title = `Cor extraída: ${hex}`;
+              chip.onclick = () => selectColor(hex);
+              container.appendChild(chip);
+            });
+
+            // Auto-select the #1 dominant color for comfort
+            selectColor(dominantColors[0]);
+          } else {
+            renderDefaultMachineColors();
+          }
+
+        } catch (e) {
+          // CORS issue or context error
+          console.warn("CORS/Canvas restriction on reading image pixels. Fallback activated.");
+          renderDefaultMachineColors();
+        }
+      };
+
+      img.onerror = function() {
+        renderDefaultMachineColors();
+      };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
     }
 
     function openCreateUserModal() {
@@ -1142,18 +1323,6 @@
         if (comp.partner_id === selectValue) opt.selected = true;
         select.appendChild(opt);
       });
-    }
-
-    function saveConnection(e) {
-      e.preventDefault();
-      const url = document.getElementById('configUrl').value.trim();
-      const anon = document.getElementById('configAnon').value.trim();
-
-      localStorage.setItem('spray_super_supabase_url', url);
-      localStorage.setItem('spray_super_supabase_anon', anon);
-
-      document.getElementById('credentialsModal').style.display = 'none';
-      loadConnectionSettings();
     }
 
     // Check if eand003@gmail.com is already logged in
@@ -1289,26 +1458,22 @@
       showLoading(true);
 
       try {
-        // 1. Fetch Companies (SaaS Custom Table)
         const { data: companies, error: compError } = await supabaseAdmin
           .from('empresas')
           .select('*')
           .order('partner_name');
         
         if (compError) {
-          // If empresas table doesn't exist, show warning/instructions
-          console.warn('Tabela "empresas" não foi encontrada. Criando automaticamente com redundância local.');
+          console.warn('Tabela "empresas" não foi encontrada.');
           cachedEmpresas = [];
         } else {
           cachedEmpresas = companies || [];
         }
 
-        // 2. Fetch Auth Users (Admin Key required)
         const { data: { users }, error: authError } = await supabaseAdmin.auth.admin.listUsers();
         if (authError) throw authError;
         cachedUsers = users;
 
-        // 3. Fetch stats
         const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
         const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
 
@@ -1367,7 +1532,6 @@
         </div>
       `;
 
-      // Aggregate users by partner from auth list
       const partnersMap = {};
       cachedUsers.forEach(u => {
         const pId = (u.user_metadata && u.user_metadata.partner_id) || 'desconhecido';
@@ -1379,7 +1543,6 @@
         partnersMap[pId].count++;
       });
 
-      // Render all known companies from enterprises table, merging with actual user counts
       cachedEmpresas.forEach(comp => {
         const count = (partnersMap[comp.partner_id] && partnersMap[comp.partner_id].count) || 0;
         const itemHtml = `
@@ -1456,7 +1619,6 @@
       });
     }
 
-    // Render SaaS registered companies grid (Tab 2)
     function renderCompaniesGrid() {
       const grid = document.getElementById('companiesGrid');
       grid.innerHTML = '';
@@ -1479,7 +1641,6 @@
         const logo = comp.partner_logo || './logo.png';
         const wa = comp.partner_whatsapp || '-';
         
-        // Count users in this company
         const usersCount = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === comp.partner_id).length;
 
         const card = document.createElement('div');
@@ -1509,7 +1670,6 @@
       });
     }
 
-    // Show SQL configuration alert
     function showSqlHelp() {
       alert(`Execute este comando no SQL Editor do Supabase para ativar o gerenciamento de marcas:\n\n` +
             `create table if not exists empresas (\n` +
@@ -1529,7 +1689,6 @@
             `);`);
     }
 
-    // Save company form (Create / Edit)
     async function saveCompanyForm(e) {
       e.preventDefault();
       
@@ -1560,7 +1719,6 @@
 
         if (error) throw error;
 
-        // If we edited the company, optionally update metadata for existing users belonging to this company!
         if (mode === 'edit') {
           const confirmUpdateUsers = confirm(`Empresa "${partnerName}" atualizada com sucesso!\n\nDeseja propagar estas atualizações visuais (cor, logo, whatsapp) para todos os consultores já cadastrados nesta empresa automaticamente?`);
           
@@ -1599,9 +1757,8 @@
       }
     }
 
-    // Delete company from SaaS
     async function deleteCompany(partnerId) {
-      const confirmDel = confirm(`⚠️ TEM CERTEZA que deseja excluir a empresa "${partnerId}" do SaaS?\n\nIsso removerá as configurações de logotipo e cores, mas NÃO deletará as contas dos consultores vinculados (que passarão a ficar orfãos).`);
+      const confirmDel = confirm(`⚠️ TEM CERTEZA que deseja excluir a empresa "${partnerId}" do SaaS?\n\nIsso removerá as configurações de logotipo e cores, mas NÃO deletará as contas dos consultores vinculados.`);
       if (!confirmDel) return;
 
       try {
@@ -1615,7 +1772,6 @@
       }
     }
 
-    // Create User via Supabase Admin API inheriting company settings
     async function createUser(e) {
       e.preventDefault();
       
@@ -1641,7 +1797,7 @@
             partner_name: selectedCompany.partner_name,
             partner_color: selectedCompany.partner_color || '#00d2ff',
             partner_logo: selectedCompany.partner_logo || './logo.png',
-            partner_whatsapp: selectedCompany.partner_whatsapp || '',
+            partner_whatsapp: company.partner_whatsapp || '',
             is_enterprise: true
           }
         });
@@ -1661,7 +1817,6 @@
       }
     }
 
-    // Toggle User Role Dynamically
     async function changeUserRole(userId, newRole, partnerId, partnerName) {
       if (!supabaseAdmin) return;
 
@@ -1690,7 +1845,6 @@
       }
     }
 
-    // Execute transfer user using selected dropdown company
     async function executeTransferUser(e) {
       e.preventDefault();
       

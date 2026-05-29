@@ -1915,9 +1915,10 @@
       }
 
       function generateReport() {
-        const pName = 'Spray Precision PRO';
-        const pLogo = './logo.png';
-        const pColor = '#00d2ff';
+        const pName = window.partnerName || 'Spray Precision PRO';
+        const pLogo = document.querySelector('.header-icon') ? document.querySelector('.header-icon').src : './logo.png';
+        const pColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#00d2ff';
+        const consultantEmail = window.currentUserEmail || '';
         
         const report = document.getElementById('printReport');
         const now = new Date();
@@ -2012,7 +2013,7 @@
             <div id="reportTableContainer"></div>
 
             <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 11px;">
-              Simulação gerada via <b>${pName} Demo</b>.
+              Laudo Técnico gerado por <b>${consultantEmail ? consultantEmail : 'Consultor Técnico'}</b> | Emitido via <b>${pName}</b>.
             </div>
           </div>
         `;
@@ -2888,13 +2889,16 @@
         console.log("Enterprise: Buscando dados do perfil...");
         const { data: { user }, error } = await clienteSupabase.auth.getUser();
 
-        if (user && user.user_metadata) {
-          const meta = user.user_metadata;
-          if (meta.partner_name || meta.partner_color) {
-            console.log("Enterprise: Dados de branding encontrados!", meta);
-            applyPartnerBranding(meta);
-          } else {
-            console.log("Enterprise: Nenhum branding no usuário.");
+        if (user) {
+          window.currentUserEmail = user.email;
+          if (user.user_metadata) {
+            const meta = user.user_metadata;
+            if (meta.partner_name || meta.partner_color) {
+              console.log("Enterprise: Dados de branding encontrados!", meta);
+              applyPartnerBranding(meta);
+            } else {
+              console.log("Enterprise: Nenhum branding no usuário.");
+            }
           }
         }
       } catch (err) {

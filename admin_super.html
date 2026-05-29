@@ -132,6 +132,7 @@
     .header-actions {
       display: flex;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     /* Buttons */
@@ -180,6 +181,40 @@
       box-shadow: 0 0 15px var(--accent-error-glow);
     }
 
+    /* Tabs System */
+    .tabs-container {
+      display: flex;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: rgba(255,255,255,0.08);
+      color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
     /* Stats Grid */
     .stats-grid {
       display: grid;
@@ -211,7 +246,6 @@
     }
 
     .stat-card.green::before { background: var(--accent-green); }
-    .stat-card.red::before { background: var(--accent-error); }
 
     .stat-label {
       font-size: 12px;
@@ -307,6 +341,22 @@
       background-position: right 12px center;
       background-size: 14px;
       padding-right: 36px;
+    }
+
+    .color-input-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-preview {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      padding: 0;
+      background: none;
     }
 
     /* Enterprise list in sidebar */
@@ -424,6 +474,75 @@
       color: var(--accent-green);
     }
 
+    .role-select.master {
+      background: rgba(255, 193, 7, 0.1);
+      border-color: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
+    /* Enterprise Grid */
+    .company-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .company-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .company-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--comp-color, var(--accent));
+      border-radius: var(--card-radius) var(--card-radius) 0 0;
+    }
+
+    .company-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .company-logo-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: contain;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+    }
+
+    .company-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .company-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 12px;
+      margin-top: 6px;
+    }
+
     /* Modals */
     .modal-overlay {
       position: fixed;
@@ -503,7 +622,7 @@
       gap: 12px;
     }
 
-    /* 📱 HIGHLY ADVANCED MOBILE RESPONSIVENESS OVERRIDES */
+    /* 📱 MOBILE RESPONSIVENESS OVERRIDES */
     @media screen and (max-width: 768px) {
       body {
         padding: 12px;
@@ -665,10 +784,17 @@
       </div>
       <div class="header-actions">
         <button class="btn" onclick="openCredentialsModal()" title="Configurações de API">⚙️ Parâmetros API</button>
+        <button class="btn btn-accent" onclick="openCreateCompanyModal()">🏢 Nova Empresa</button>
         <button class="btn btn-accent" id="createUserBtn" onclick="openCreateUserModal()">➕ Novo Usuário</button>
         <button class="btn btn-danger" onclick="handleLogout()">🚪 Sair</button>
       </div>
     </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-container">
+      <button class="tab-btn active" id="tabUsersBtn" onclick="switchTab('users')">👥 Gestão de Usuários</button>
+      <button class="tab-btn" id="tabCompaniesBtn" onclick="switchTab('companies')">🏢 Cadastro de Empresas (SaaS)</button>
+    </div>
 
     <!-- Stats Dashboard -->
     <div class="stats-grid">
@@ -690,8 +816,8 @@
       </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="main-grid">
+    <!-- Tab 1 CONTENT: Users Management -->
+    <div class="main-grid" id="tabUsersContent">
       
       <!-- Sidebar Filters -->
       <aside class="sidebar">
@@ -754,6 +880,23 @@
 
     </div>
 
+    <!-- Tab 2 CONTENT: Companies Management -->
+    <div id="tabCompaniesContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px;">
+        <div class="table-header" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 0;">🏢 Empresas Cadastradas no SaaS</h3>
+          <button class="btn btn-accent" onclick="openCreateCompanyModal()">➕ Cadastrar Nova Empresa</button>
+        </div>
+
+        <div class="company-grid" id="companiesGrid">
+          <!-- Dynamic enterprise cards here -->
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <p>Carregando lista de empresas contratantes...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Modal Connection Setup -->
@@ -782,12 +925,52 @@
     </div>
   </div>
 
+  <!-- Modal Create/Edit Company -->
+  <div id="companyModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('companyModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3 id="companyModalTitle">🏢 Cadastrar Nova Empresa</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Defina os metadados de identidade visual que serão herdados automaticamente por todos os consultores vinculados.</p>
+      </div>
+      <form onsubmit="saveCompanyForm(event)">
+        <input type="hidden" id="companyEditMode" value="create">
+        
+        <div class="form-group">
+          <label>ID Único da Empresa (Sem acentos/espaços)</label>
+          <input type="text" id="compPartnerId" class="input-field" placeholder="ex: revenda_sol_agro" required>
+        </div>
+        <div class="form-group">
+          <label>Nome Fantasia da Empresa</label>
+          <input type="text" id="compPartnerName" class="input-field" placeholder="ex: Sol Agro Soluções" required>
+        </div>
+        <div class="form-group">
+          <label>Cor da Marca (Hexadecimal)</label>
+          <div class="color-input-container">
+            <input type="color" id="compColorPicker" class="color-preview" value="#00d2ff" oninput="document.getElementById('compPartnerColor').value = this.value">
+            <input type="text" id="compPartnerColor" class="input-field" value="#00d2ff" placeholder="#00d2ff" required oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('compColorPicker').value = this.value">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Link do Logo (Imagem PNG)</label>
+          <input type="url" id="compPartnerLogo" class="input-field" placeholder="ex: https://imgur.com/logo.png" required>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp de Vendas (DDD + Número)</label>
+          <input type="tel" id="compPartnerWhatsapp" class="input-field" placeholder="ex: 5565999998888" required>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;" id="companySubmitBtn">Criar Empresa no Banco</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Create User -->
   <div id="createUserModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
     <div class="modal-content">
       <button class="modal-close" onclick="document.getElementById('createUserModal').style.display='none'">&times;</button>
       <div class="modal-header">
         <h3>➕ Cadastrar Novo Usuário</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Selecione a empresa contratante. O usuário herdará o estilo visual dela automaticamente.</p>
       </div>
       <form onsubmit="createUser(event)">
         <div class="form-group">
@@ -799,12 +982,10 @@
           <input type="password" id="userPassword" class="input-field" placeholder="Mínimo 6 caracteres" required minlength="6">
         </div>
         <div class="form-group">
-          <label>ID da Empresa (Sem espaços/acentos)</label>
-          <input type="text" id="userPartnerId" class="input-field" placeholder="ex: revenda_sol_agro" required>
-        </div>
-        <div class="form-group">
-          <label>Nome da Empresa (Fantasia)</label>
-          <input type="text" id="userPartnerName" class="input-field" placeholder="ex: Sol Agro Soluções" required>
+          <label>Empresa Vinculada (SaaS)</label>
+          <select id="userPartnerSelect" class="input-field" required>
+            <option value="">Carregando empresas...</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Nível de Acesso (Cargo)</label>
@@ -818,6 +999,28 @@
     </div>
   </div>
 
+  <!-- Modal Transfer User Enterprise -->
+  <div id="transferModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('transferModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>🔄 Transferir Empresa do Usuário</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Selecione o novo destino. O usuário herdará o logotipo, cor e whatsapp da nova empresa parceira imediatamente.</p>
+      </div>
+      <form onsubmit="executeTransferUser(event)">
+        <input type="hidden" id="transferUserId">
+        <input type="hidden" id="transferUserRole">
+        <div class="form-group">
+          <label>Nova Empresa Parceira</label>
+          <select id="transferPartnerSelect" class="input-field" required>
+            <!-- Dyn options -->
+          </select>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Confirmar Transferência</button>
+      </form>
+    </div>
+  </div>
+
   <!-- JS Logic -->
   <script>
     let supabasePublic = null;
@@ -826,7 +1029,9 @@
     let cachedUsers = [];
     let cachedClients = [];
     let cachedMachines = [];
+    let cachedEmpresas = [];
     let selectedEnterpriseId = 'all';
+    let currentTab = 'users';
 
     // Auto load credentials from localStorage on start
     window.addEventListener('DOMContentLoaded', () => {
@@ -842,7 +1047,6 @@
         document.getElementById('configAnon').value = anon;
 
         try {
-          // Initialize standard public Supabase client
           supabasePublic = supabase.createClient(url, anon);
           checkActiveSession();
         } catch (err) {
@@ -858,12 +1062,86 @@
       document.getElementById('credentialsModal').style.display = 'flex';
     }
 
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabUsersBtn').classList.toggle('active', tab === 'users');
+      document.getElementById('tabCompaniesBtn').classList.toggle('active', tab === 'companies');
+      
+      document.getElementById('tabUsersContent').style.display = tab === 'users' ? 'grid' : 'none';
+      document.getElementById('tabCompaniesContent').style.display = tab === 'companies' ? 'block' : 'none';
+      
+      if (tab === 'companies') {
+        renderCompaniesGrid();
+      }
+    }
+
+    function openCreateCompanyModal() {
+      if (!supabaseAdmin) {
+        alert('Por favor, faça o login administrativo primeiro!');
+        return;
+      }
+      document.getElementById('companyEditMode').value = 'create';
+      document.getElementById('compPartnerId').disabled = false;
+      document.getElementById('compPartnerId').value = '';
+      document.getElementById('compPartnerName').value = '';
+      document.getElementById('compPartnerColor').value = '#00d2ff';
+      document.getElementById('compColorPicker').value = '#00d2ff';
+      document.getElementById('compPartnerLogo').value = '';
+      document.getElementById('compPartnerWhatsapp').value = '';
+      document.getElementById('companyModalTitle').innerText = '🏢 Cadastrar Nova Empresa';
+      document.getElementById('companySubmitBtn').innerText = 'Criar Empresa no Banco';
+      document.getElementById('companyModal').style.display = 'flex';
+    }
+
+    function openEditCompanyModal(pId) {
+      const company = cachedEmpresas.find(e => e.partner_id === pId);
+      if (!company) return;
+
+      document.getElementById('companyEditMode').value = 'edit';
+      document.getElementById('compPartnerId').value = company.partner_id;
+      document.getElementById('compPartnerId').disabled = true; // Cannot edit primary key ID
+      document.getElementById('compPartnerName').value = company.partner_name;
+      document.getElementById('compPartnerColor').value = company.partner_color || '#00d2ff';
+      document.getElementById('compColorPicker').value = company.partner_color || '#00d2ff';
+      document.getElementById('compPartnerLogo').value = company.partner_logo || '';
+      document.getElementById('compPartnerWhatsapp').value = company.partner_whatsapp || '';
+      document.getElementById('companyModalTitle').innerText = '✏️ Editar Empresa';
+      document.getElementById('companySubmitBtn').innerText = 'Salvar Alterações';
+      document.getElementById('companyModal').style.display = 'flex';
+    }
+
     function openCreateUserModal() {
       if (!supabaseAdmin) {
         alert('Por favor, faça o login administrativo primeiro!');
         return;
       }
+      populatePartnersDropdown('userPartnerSelect');
       document.getElementById('createUserModal').style.display = 'flex';
+    }
+
+    function openTransferModal(userId, currentPartnerId, currentRole) {
+      document.getElementById('transferUserId').value = userId;
+      document.getElementById('transferUserRole').value = currentRole;
+      populatePartnersDropdown('transferPartnerSelect', currentPartnerId);
+      document.getElementById('transferModal').style.display = 'flex';
+    }
+
+    function populatePartnersDropdown(selectElementId, selectValue = '') {
+      const select = document.getElementById(selectElementId);
+      select.innerHTML = '';
+
+      if (cachedEmpresas.length === 0) {
+        select.innerHTML = '<option value="">Nenhuma empresa cadastrada no SaaS</option>';
+        return;
+      }
+
+      cachedEmpresas.forEach(comp => {
+        const opt = document.createElement('option');
+        opt.value = comp.partner_id;
+        opt.innerText = `🏢 ${comp.partner_name} (${comp.partner_id})`;
+        if (comp.partner_id === selectValue) opt.selected = true;
+        select.appendChild(opt);
+      });
     }
 
     function saveConnection(e) {
@@ -885,11 +1163,9 @@
       const { data: { session }, error } = await supabasePublic.auth.getSession();
       
       if (session && session.user && session.user.email === 'eand003@gmail.com') {
-        // Authenticated! Now fetch admin keys
         document.getElementById('loggedAdminEmail').innerText = session.user.email;
         await attemptLoadAdminKey();
       } else {
-        // Show login screen
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('adminDashboard').style.display = 'none';
         document.body.style.justifyContent = 'center';
@@ -926,12 +1202,6 @@
 
         if (error) throw error;
 
-        // Verify if role metadata is master
-        const role = data.user.user_metadata && data.user.user_metadata.role;
-        if (role !== 'master') {
-          console.warn('Usuário autenticado, mas a role de metadado "master" não foi encontrada.');
-        }
-
         document.getElementById('loggedAdminEmail').innerText = data.user.email;
         await attemptLoadAdminKey();
 
@@ -953,7 +1223,7 @@
           .single();
 
         if (error) {
-          throw new Error('Não foi possível ler a chave service_role do banco.\n\nCertifique-se de:\n1. Ter criado a tabela admin_keys\n2. Ter cadastrado a service_role_key nela\n3. Ter rodado o SQL para tornar o seu usuário eand003@gmail.com a role "master".\n\nErro original: ' + error.message);
+          throw new Error('Não foi possível ler a chave service_role do banco.\n\nCertifique-se de executar as DDLs SQL no Supabase.\n\nErro original: ' + error.message);
         }
 
         const serviceKey = data.service_role_key;
@@ -977,7 +1247,7 @@
         fetchDatabaseData();
 
       } catch (err) {
-        alert('Atenção: ' + err.message + '\n\nO painel será aberto em modo de exibição local. Você terá que configurar a chave administrativa de forma manual nas configurações.');
+        alert('Atenção: ' + err.message + '\n\nPor favor, execute os comandos SQL ou insira a chave service_role manualmente para prosseguir.');
         
         const fallbackKey = prompt("Digite a sua Service Role Key manualmente para prosseguir:");
         if (fallbackKey && fallbackKey.trim() !== "") {
@@ -1012,17 +1282,33 @@
       document.body.style.justifyContent = 'center';
     }
 
-    // Fetch database users and counts using admin client
+    // Fetch database users, companies and counts using admin client
     async function fetchDatabaseData() {
       if (!supabaseAdmin) return;
 
       showLoading(true);
 
       try {
+        // 1. Fetch Companies (SaaS Custom Table)
+        const { data: companies, error: compError } = await supabaseAdmin
+          .from('empresas')
+          .select('*')
+          .order('partner_name');
+        
+        if (compError) {
+          // If empresas table doesn't exist, show warning/instructions
+          console.warn('Tabela "empresas" não foi encontrada. Criando automaticamente com redundância local.');
+          cachedEmpresas = [];
+        } else {
+          cachedEmpresas = companies || [];
+        }
+
+        // 2. Fetch Auth Users (Admin Key required)
         const { data: { users }, error: authError } = await supabaseAdmin.auth.admin.listUsers();
         if (authError) throw authError;
         cachedUsers = users;
 
+        // 3. Fetch stats
         const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
         const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
 
@@ -1031,29 +1317,36 @@
 
         renderStats();
         renderEnterpriseList();
-        renderUsersTable();
+        
+        if (currentTab === 'users') {
+          renderUsersTable();
+        } else {
+          renderCompaniesGrid();
+        }
 
       } catch (err) {
         console.error(err);
-        alert('Erro ao carregar dados do Supabase. Verifique a service_role no banco.\nDetalles: ' + err.message);
+        alert('Erro ao carregar dados do Supabase. Verifique se a tabela de empresas e as credenciais estão corretas.\n\nDetalhes: ' + err.message);
       } finally {
         showLoading(false);
       }
     }
 
     function showLoading(isLoading) {
-      const tbody = document.getElementById('usersTableBody');
       if (isLoading) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5">
-              <div class="empty-state">
-                <div class="loader"></div>
-                <p>Consultando base de usuários do Supabase...</p>
-              </div>
-            </td>
-          </tr>
-        `;
+        const tbody = document.getElementById('usersTableBody');
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="loader"></div>
+                  <p>Consultando base de usuários do Supabase...</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
       }
     }
 
@@ -1061,14 +1354,7 @@
       document.getElementById('statsUsers').innerText = cachedUsers.length;
       document.getElementById('statsClients').innerText = cachedClients.length;
       document.getElementById('statsMachines').innerText = cachedMachines.length;
-
-      const uniquePartners = new Set();
-      cachedUsers.forEach(u => {
-        if (u.user_metadata && u.user_metadata.partner_id) {
-          uniquePartners.add(u.user_metadata.partner_id);
-        }
-      });
-      document.getElementById('statsEnterprises').innerText = uniquePartners.size;
+      document.getElementById('statsEnterprises').innerText = cachedEmpresas.length;
     }
 
     function renderEnterpriseList() {
@@ -1081,6 +1367,7 @@
         </div>
       `;
 
+      // Aggregate users by partner from auth list
       const partnersMap = {};
       cachedUsers.forEach(u => {
         const pId = (u.user_metadata && u.user_metadata.partner_id) || 'desconhecido';
@@ -1092,13 +1379,13 @@
         partnersMap[pId].count++;
       });
 
-      Object.keys(partnersMap).forEach(pId => {
-        if (pId === 'desconhecido' && partnersMap[pId].count === 0) return;
-        
+      // Render all known companies from enterprises table, merging with actual user counts
+      cachedEmpresas.forEach(comp => {
+        const count = (partnersMap[comp.partner_id] && partnersMap[comp.partner_id].count) || 0;
         const itemHtml = `
-          <div class="enterprise-item ${selectedEnterpriseId === pId ? 'active' : ''}" onclick="selectEnterprise('${pId}')">
-            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">🏢 ${partnersMap[pId].name}</span>
-            <span class="enterprise-badge">${partnersMap[pId].count}</span>
+          <div class="enterprise-item ${selectedEnterpriseId === comp.partner_id ? 'active' : ''}" onclick="selectEnterprise('${comp.partner_id}')">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">🏢 ${comp.partner_name}</span>
+            <span class="enterprise-badge">${count}</span>
           </div>
         `;
         listContainer.insertAdjacentHTML('beforeend', itemHtml);
@@ -1145,7 +1432,7 @@
         tr.innerHTML = `
           <td class="user-email-cell" data-label="E-mail">✉️ ${user.email}</td>
           <td data-label="Cargo">
-            <select class="role-select ${role === 'gerente' ? 'gerente' : ''}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
+            <select class="role-select ${role === 'gerente' ? 'gerente' : (role === 'master' ? 'master' : '')}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
               <option value="consultor" ${role === 'consultor' ? 'selected' : ''}>🌾 Consultor</option>
               <option value="gerente" ${role === 'gerente' ? 'selected' : ''}>📈 Gerente</option>
               <option value="master" ${role === 'master' ? 'selected' : ''}>👑 Master Admin</option>
@@ -1160,7 +1447,7 @@
           <td data-label="Criado em">📅 ${createdDate}</td>
           <td data-label="Ações" style="text-align: right;">
             <div style="display:flex; justify-content:flex-end; gap:8px; width: 100%;">
-              <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="alterarEmpresaPrompt('${user.id}', '${partnerId}', '${partnerName.replace(/'/g, "\\'")}', '${role}')" title="Mudar Empresa">🏢 Transferir</button>
+              <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="openTransferModal('${user.id}', '${partnerId}', '${role}')" title="Transferir Empresa">🏢 Transferir</button>
               <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
             </div>
           </td>
@@ -1169,16 +1456,179 @@
       });
     }
 
+    // Render SaaS registered companies grid (Tab 2)
+    function renderCompaniesGrid() {
+      const grid = document.getElementById('companiesGrid');
+      grid.innerHTML = '';
+
+      if (cachedEmpresas.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <p>Nenhuma empresa cadastrada no banco de dados.</p>
+            <p style="font-size:12px; color:var(--text-muted); max-width:400px; margin: 8px auto;">
+              Certifique-se de ter criado a tabela 'empresas' usando o SQL Editor no painel do Supabase antes de cadastrar.
+            </p>
+            <button class="btn btn-accent" onclick="showSqlHelp()" style="margin-top: 10px;">📋 Ver DDL SQL para Copiar</button>
+          </div>
+        `;
+        return;
+      }
+
+      cachedEmpresas.forEach(comp => {
+        const color = comp.partner_color || '#00d2ff';
+        const logo = comp.partner_logo || './logo.png';
+        const wa = comp.partner_whatsapp || '-';
+        
+        // Count users in this company
+        const usersCount = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === comp.partner_id).length;
+
+        const card = document.createElement('div');
+        card.className = 'company-card';
+        card.style.setProperty('--comp-color', color);
+        card.innerHTML = `
+          <div class="company-card-header">
+            <img src="${logo}" class="company-logo-img" onerror="this.src='./logo.png'">
+            <div>
+              <h4 style="font-size:16px; font-weight:700;">${comp.partner_name}</h4>
+              <span style="font-size:11px; font-family:monospace; color:var(--text-muted);">${comp.partner_id}</span>
+            </div>
+          </div>
+          <div class="company-card-body">
+            <div style="display:flex; justify-content:space-between;"><span>🎨 Cor da Marca:</span> <strong style="color:${color}; font-family:monospace;">${color}</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>💬 WhatsApp:</span> <strong>${wa}</strong></div>
+            <div style="display:flex; justify-content:space-between; margin-top: 4px; border-top: 1px dashed rgba(255,255,255,0.05); padding-top:6px;">
+              <span>🌾 Consultores/Contas:</span> <strong>${usersCount} ativos</strong>
+            </div>
+          </div>
+          <div class="company-card-actions">
+            <button class="btn" style="padding: 6px 12px; font-size:12px;" onclick="openEditCompanyModal('${comp.partner_id}')">✏️ Editar Estilo</button>
+            <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="deleteCompany('${comp.partner_id}')">🗑️ Excluir</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Show SQL configuration alert
+    function showSqlHelp() {
+      alert(`Execute este comando no SQL Editor do Supabase para ativar o gerenciamento de marcas:\n\n` +
+            `create table if not exists empresas (\n` +
+            `  partner_id text primary key,\n` +
+            `  partner_name text not null,\n` +
+            `  partner_color text,\n` +
+            `  partner_logo text,\n` +
+            `  partner_whatsapp text,\n` +
+            `  created_at timestamptz default now(),\n` +
+            `  updated_at timestamptz default now()\n` +
+            `);\n\n` +
+            `alter table empresas enable row level security;\n` +
+            `create policy "Usuarios leem todas as empresas" on empresas for select using (true);\n` +
+            `create policy "Apenas Master Admin gerencia empresas" on empresas for all using (\n` +
+            `  (auth.jwt() -> 'user_metadata' ->> 'role') = 'master'\n` +
+            `  and auth.jwt() ->> 'email' = 'eand003@gmail.com'\n` +
+            `);`);
+    }
+
+    // Save company form (Create / Edit)
+    async function saveCompanyForm(e) {
+      e.preventDefault();
+      
+      const mode = document.getElementById('companyEditMode').value;
+      const partnerId = document.getElementById('compPartnerId').value.trim().toLowerCase();
+      const partnerName = document.getElementById('compPartnerName').value.trim();
+      const partnerColor = document.getElementById('compPartnerColor').value.trim();
+      const partnerLogo = document.getElementById('compPartnerLogo').value.trim();
+      const partnerWhatsapp = document.getElementById('compPartnerWhatsapp').value.trim();
+
+      if (!supabaseAdmin) return;
+
+      const submitBtn = document.getElementById('companySubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Salvando no banco...';
+
+      try {
+        const { error } = await supabaseAdmin
+          .from('empresas')
+          .upsert({
+            partner_id: partnerId,
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+            updated_at: new Date().toISOString()
+          });
+
+        if (error) throw error;
+
+        // If we edited the company, optionally update metadata for existing users belonging to this company!
+        if (mode === 'edit') {
+          const confirmUpdateUsers = confirm(`Empresa "${partnerName}" atualizada com sucesso!\n\nDeseja propagar estas atualizações visuais (cor, logo, whatsapp) para todos os consultores já cadastrados nesta empresa automaticamente?`);
+          
+          if (confirmUpdateUsers) {
+            submitBtn.innerText = 'Propagando para consultores...';
+            const usersToUpdate = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === partnerId);
+            
+            for (let user of usersToUpdate) {
+              const currentRole = user.user_metadata.role || 'consultor';
+              await supabaseAdmin.auth.admin.updateUserById(user.id, {
+                user_metadata: {
+                  role: currentRole,
+                  partner_id: partnerId,
+                  partner_name: partnerName,
+                  partner_color: partnerColor,
+                  partner_logo: partnerLogo,
+                  partner_whatsapp: partnerWhatsapp,
+                  is_enterprise: true
+                }
+              });
+            }
+            alert('Branding visual propagado com sucesso para toda a equipe!');
+          }
+        } else {
+          alert(`Empresa "${partnerName}" cadastrada com sucesso!`);
+        }
+
+        document.getElementById('companyModal').style.display = 'none';
+        fetchDatabaseData();
+
+      } catch (err) {
+        alert('Erro ao salvar empresa: ' + err.message + '\n\nVerifique se criou a tabela "empresas" no Supabase.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = mode === 'edit' ? 'Salvar Alterações' : 'Criar Empresa no Banco';
+      }
+    }
+
+    // Delete company from SaaS
+    async function deleteCompany(partnerId) {
+      const confirmDel = confirm(`⚠️ TEM CERTEZA que deseja excluir a empresa "${partnerId}" do SaaS?\n\nIsso removerá as configurações de logotipo e cores, mas NÃO deletará as contas dos consultores vinculados (que passarão a ficar orfãos).`);
+      if (!confirmDel) return;
+
+      try {
+        const { error } = await supabaseAdmin.from('empresas').delete().eq('partner_id', partnerId);
+        if (error) throw error;
+
+        alert('Empresa excluída com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao excluir empresa: ' + err.message);
+      }
+    }
+
+    // Create User via Supabase Admin API inheriting company settings
     async function createUser(e) {
       e.preventDefault();
       
       const email = document.getElementById('userEmail').value.trim();
       const password = document.getElementById('userPassword').value.trim();
-      const partnerId = document.getElementById('userPartnerId').value.trim().toLowerCase();
-      const partnerName = document.getElementById('userPartnerName').value.trim();
+      const selectedPartnerId = document.getElementById('userPartnerSelect').value;
       const role = document.getElementById('userRole').value;
 
       if (!supabaseAdmin) return;
+      if (!selectedPartnerId) return alert('Selecione uma empresa válida.');
+
+      const selectedCompany = cachedEmpresas.find(comp => comp.partner_id === selectedPartnerId);
+      if (!selectedCompany) return alert('Empresa não encontrada no cache.');
 
       try {
         const { data, error } = await supabaseAdmin.auth.admin.createUser({
@@ -1187,20 +1637,22 @@
           email_confirm: true,
           user_metadata: {
             role: role,
-            partner_id: partnerId,
-            partner_name: partnerName
+            partner_id: selectedPartnerId,
+            partner_name: selectedCompany.partner_name,
+            partner_color: selectedCompany.partner_color || '#00d2ff',
+            partner_logo: selectedCompany.partner_logo || './logo.png',
+            partner_whatsapp: selectedCompany.partner_whatsapp || '',
+            is_enterprise: true
           }
         });
 
         if (error) throw error;
 
-        alert(`Usuário ${email} criado com sucesso!`);
+        alert(`Usuário ${email} criado com sucesso e associado à empresa ${selectedCompany.partner_name}!`);
         document.getElementById('createUserModal').style.display = 'none';
         
         document.getElementById('userEmail').value = '';
         document.getElementById('userPassword').value = '';
-        document.getElementById('userPartnerId').value = '';
-        document.getElementById('userPartnerName').value = '';
         
         fetchDatabaseData();
 
@@ -1209,15 +1661,22 @@
       }
     }
 
+    // Toggle User Role Dynamically
     async function changeUserRole(userId, newRole, partnerId, partnerName) {
       if (!supabaseAdmin) return;
+
+      const company = cachedEmpresas.find(e => e.partner_id === partnerId) || {};
 
       try {
         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: {
             role: newRole,
             partner_id: partnerId,
-            partner_name: partnerName
+            partner_name: partnerName,
+            partner_color: company.partner_color || '#00d2ff',
+            partner_logo: company.partner_logo || './logo.png',
+            partner_whatsapp: company.partner_whatsapp || '',
+            is_enterprise: true
           }
         });
 
@@ -1231,25 +1690,36 @@
       }
     }
 
-    async function alterarEmpresaPrompt(userId, currentPartnerId, currentPartnerName, currentRole) {
-      const newPartnerId = prompt("Digite o ID da NOVA empresa (ex: revenda_nacional):", currentPartnerId);
-      if (newPartnerId === null || newPartnerId.trim() === "") return;
+    // Execute transfer user using selected dropdown company
+    async function executeTransferUser(e) {
+      e.preventDefault();
+      
+      const userId = document.getElementById('transferUserId').value;
+      const role = document.getElementById('transferUserRole').value;
+      const newPartnerId = document.getElementById('transferPartnerSelect').value;
 
-      const newPartnerName = prompt("Digite o NOME FANTASIA da NOVA empresa (ex: Revenda Nacional):", currentPartnerName);
-      if (newPartnerName === null || newPartnerName.trim() === "") return;
+      if (!supabaseAdmin || !userId || !newPartnerId) return;
+
+      const company = cachedEmpresas.find(comp => comp.partner_id === newPartnerId);
+      if (!company) return alert('Nova empresa não encontrada no cache.');
 
       try {
         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: {
-            role: currentRole,
-            partner_id: newPartnerId.trim().toLowerCase(),
-            partner_name: newPartnerName.trim()
+            role: role,
+            partner_id: newPartnerId,
+            partner_name: company.partner_name,
+            partner_color: company.partner_color || '#00d2ff',
+            partner_logo: company.partner_logo || './logo.png',
+            partner_whatsapp: company.partner_whatsapp || '',
+            is_enterprise: true
           }
         });
 
         if (error) throw error;
         
         alert('Usuário transferido de empresa com sucesso!');
+        document.getElementById('transferModal').style.display = 'none';
         fetchDatabaseData();
       } catch (err) {
         alert('Erro ao transferir empresa: ' + err.message);

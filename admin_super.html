@@ -1096,21 +1096,27 @@
     });
 
     function loadConnectionSettings() {
-      const url = localStorage.getItem('spray_super_supabase_url');
-      const anon = localStorage.getItem('spray_super_supabase_anon');
+      let url = localStorage.getItem('spray_super_supabase_url');
+      let anon = localStorage.getItem('spray_super_supabase_anon');
 
-      if (url && anon) {
-        document.getElementById('configUrl').value = url;
-        document.getElementById('configAnon').value = anon;
+      // Pre-fill automatically with the project's exact Supabase credentials
+      if (!url || url.includes('/rest/v1')) {
+        url = 'https://mjouahzglomvvcfpxtuq.supabase.co';
+        localStorage.setItem('spray_super_supabase_url', url);
+      }
+      if (!anon) {
+        anon = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
+        localStorage.setItem('spray_super_supabase_anon', anon);
+      }
 
-        try {
-          supabasePublic = supabase.createClient(url, anon);
-          checkActiveSession();
-        } catch (err) {
-          alert('Erro ao inicializar conexão: ' + err.message);
-          openCredentialsModal();
-        }
-      } else {
+      document.getElementById('configUrl').value = url;
+      document.getElementById('configAnon').value = anon;
+
+      try {
+        supabasePublic = supabase.createClient(url, anon);
+        checkActiveSession();
+      } catch (err) {
+        alert('Erro ao inicializar conexão: ' + err.message);
         openCredentialsModal();
       }
     }
@@ -1797,7 +1803,7 @@
             partner_name: selectedCompany.partner_name,
             partner_color: selectedCompany.partner_color || '#00d2ff',
             partner_logo: selectedCompany.partner_logo || './logo.png',
-            partner_whatsapp: company.partner_whatsapp || '',
+            partner_whatsapp: selectedCompany.partner_whatsapp || '',
             is_enterprise: true
           }
         });

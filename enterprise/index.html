@@ -1915,7 +1915,27 @@
       }
 
       function generateReport() {
-        const pName = window.partnerName || 'Spray Precision PRO';
+        // Tenta obter o nome da empresa de forma extremamente robusta e tolerante a falhas
+        let pName = window.partnerName;
+        
+        if (!pName) {
+          const headerTitle = document.querySelector('.header h1');
+          if (headerTitle) {
+            pName = headerTitle.innerText.replace(/\s*PRO$/i, '').trim();
+          }
+        }
+        
+        if (!pName) {
+          const subTitle = document.querySelector('.header p');
+          if (subTitle && subTitle.innerText.includes('Simulador Oficial - ')) {
+            pName = subTitle.innerText.replace('Simulador Oficial - ', '').trim();
+          }
+        }
+        
+        if (!pName || pName === 'Spray Precision') {
+          pName = 'Spray Precision PRO';
+        }
+
         const pLogo = document.querySelector('.header-icon') ? document.querySelector('.header-icon').src : './logo.png';
         const pColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#00d2ff';
         const consultantEmail = window.currentUserEmail || '';

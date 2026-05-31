@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0066cc">
+  <title>Diagnóstico de Vazão Manual - Spray Precision</title>
+  
+  <!-- Fontes do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bibliotecas externas via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Estilos Customizados -->
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- APP HEADER -->
+    <header class="app-header">
+      <div class="app-brand">
+        <img class="app-logo" src="../logo.png" alt="Spray Precision PRO Logo" onerror="this.src='https://placehold.co/100x100?text=SP'">
+        <div class="app-brand-text">
+          <h1>Spray Precision <span style="font-weight:300;">PRO</span></h1>
+          <p>Diagnóstico de Vazão Manual</p>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 8px;" class="no-print">
+        <button id="btn-header-new" class="btn btn-success" style="padding: 8px 12px; min-height: 38px; font-weight: bold;" title="Iniciar Novo Diagnóstico do Zero">
+          🚜 Novo
+        </button>
+        <button id="btn-show-history" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px;" title="Ver Histórico de Diagnósticos">
+          📂 Histórico
+        </button>
+        <button id="btn-show-db-config" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px;" title="Configurar Banco de Dados">
+          ⚙️ Conexão
+        </button>
+        <button id="btn-help" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px; font-weight: bold;" title="Ajuda">
+          ?
+        </button>
+      </div>
+    </header>
+
+    <!-- STEPPER NAVIGATION (no-print) -->
+    <nav class="stepper-nav no-print" id="app-stepper">
+      <button class="step-tab active" data-target="tab-identificacao">
+        <span class="step-number">Etapa 1</span>
+        Identificação
+      </button>
+      <button class="step-tab" data-target="tab-pulverizador">
+        <span class="step-number">Etapa 2</span>
+        Pulverizador
+      </button>
+      <button class="step-tab" data-target="tab-pontas">
+        <span class="step-number">Etapa 3</span>
+        Parâmetros Bicos
+      </button>
+      <button class="step-tab" data-target="tab-coleta">
+        <span class="step-number">Etapa 4</span>
+        Modo Coleta
+      </button>
+      <button class="step-tab" data-target="tab-relatorio">
+        <span class="step-number">Etapa 5</span>
+        Relatório Técnico
+      </button>
+    </nav>
+
+    <!-- TAB 1: IDENTIFICAÇÃO -->
+    <section id="tab-identificacao" class="tab-view active panel">
+      <h2 class="form-section-title">👤 Identificação do Produtor e Inspeção</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="input-cliente">Nome do Cliente *</label>
+          <input type="text" id="input-cliente" class="input-field" placeholder="Ex: Eduardo Andrade" required>
+        </div>
+        <div class="form-group">
+          <label for="input-fazenda">Nome da Fazenda / Propriedade</label>
+          <input type="text" id="input-fazenda" class="input-field" placeholder="Ex: Fazenda Primavera">
+        </div>
+        <div class="form-group">
+          <label for="input-cidade">Cidade *</label>
+          <input type="text" id="input-cidade" class="input-field" placeholder="Ex: Lucas do Rio Verde" required>
+        </div>
+        <div class="form-group">
+          <label for="input-estado">Estado (UF) *</label>
+          <select id="input-estado" class="input-field" required>
+            <option value="MT">Mato Grosso (MT)</option>
+            <option value="MS">Mato Grosso do Sul (MS)</option>
+            <option value="GO">Goiás (GO)</option>
+            <option value="PR">Paraná (PR)</option>
+            <option value="RS">Rio Grande do Sul (RS)</option>
+            <option value="SP">São Paulo (SP)</option>
+            <option value="MG">Minas Gerais (MG)</option>
+            <option value="BA">Bahia (BA)</option>
+            <option value="MA">Maranhão (MA)</option>
+            <option value="PI">Piauí (PI)</option>
+            <option value="TO">Tocantins (TO)</option>
+            <option value="PA">Pará (PA)</option>
+            <option value="RO">Rondônia (RO)</option>
+            <option value="other">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-talhao">Talhão / Área (opcional)</label>
+          <input type="text" id="input-talhao" class="input-field" placeholder="Ex: Talhão 12 B">
+        </div>
+        <div class="form-group">
+          <label for="input-cultura">Cultura</label>
+          <input type="text" id="input-cultura" class="input-field" placeholder="Ex: Soja, Milho, Algodão">
+        </div>
+        <div class="form-group">
+          <label for="input-operacao">Operação de Aplicação</label>
+          <select id="input-operacao" class="input-field">
+            <option value="dessecacao">Dessecação</option>
+            <option value="herbicida">Herbicida Pré-emergente</option>
+            <option value="inseticida">Inseticida</option>
+            <option value="fungicida" selected>Fungicida</option>
+            <option value="adubacao_foliar">Nutrição Foliar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-responsavel">Responsável Técnico / Inspetor *</label>
+          <input type="text" id="input-responsavel" class="input-field" placeholder="Nome do Consultor" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="input-notas-identificacao">Observações Iniciais</label>
+        <textarea id="input-notas-identificacao" class="input-field" style="height: 80px; resize: none;" placeholder="Anotações sobre as condições gerais de campo..."></textarea>
+      </div>
+      
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;" class="no-print">
+        <button id="btn-goto-pulverizador" class="btn btn-primary">Avançar para Pulverizador 🚜</button>
+      </div>
+    </section>
+
+    <!-- TAB 2: PULVERIZADOR -->
+    <section id="tab-pulverizador" class="tab-view panel">
+      <h2 class="form-section-title">🚜 Cadastro do Pulverizador Agrícola</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="input-marca">Marca do Pulverizador</label>
+          <input type="text" id="input-marca" class="input-field" placeholder="Ex: John Deere, Jacto">
+        </div>
+        <div class="form-group">
+          <label for="input-modelo">Modelo do Pulverizador</label>
+          <input type="text" id="input-modelo" class="input-field" placeholder="Ex: M4030, Uniport 3030">
+        </div>
+        <div class="form-group">
+          <label for="input-tipo-pulv">Tipo de Máquina</label>
+          <select id="input-tipo-pulv" class="input-field">
+            <option value="autopropelido" selected>Autopropelido</option>
+            <option value="arrasto">Arrasto</option>
+            <option value="acoplado">Acoplado (Três Pontos)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-largura-barra">Largura Comercial da Barra (m) *</label>
+          <input type="number" id="input-largura-barra" class="input-field" value="30" step="0.5" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="input-total-bicos">Número Total de Bicos na Barra *</label>
+          <input type="number" id="input-total-bicos" class="input-field" value="60" min="1" required>
+        </div>
+        <div class="form-group">
+          <label>Espaçamento entre Bicos (m) *</label>
+          <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+            <button type="button" class="timer-preset-btn active" data-spacing="0.5">0.50 m</button>
+            <button type="button" class="timer-preset-btn" data-spacing="0.35">0.35 m</button>
+          </div>
+          <input type="number" id="input-espacamento" class="input-field" value="0.5" step="0.05" min="0.1" required>
+        </div>
+        <div class="form-group">
+          <label for="input-pressao">Pressão Alvo de Trabalho *</label>
+          <div style="display: flex; gap: 4px;">
+            <input type="number" id="input-pressao" class="input-field" value="3.0" step="0.1" min="0.1" required style="flex: 2;">
+            <select id="select-unidade-pressao" class="input-field" style="flex: 1; padding: 12px 6px;">
+              <option value="bar" selected>BAR</option>
+              <option value="psi">PSI</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="input-velocidade">Velocidade Operacional (km/h) *</label>
+          <input type="number" id="input-velocidade" class="input-field" value="16.0" step="0.5" min="1" required>
+        </div>
+        <div class="form-group">
+          <label for="input-volume-alvo">Volume de Calda Alvo (L/ha) *</label>
+          <input type="number" id="input-volume-alvo" class="input-field" value="100" step="5" min="5" required>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;" class="no-print">
+        <button id="btn-back-to-identificacao" class="btn btn-secondary">⬅️ Voltar</button>
+        <button id="btn-goto-pontas" class="btn btn-primary">Avançar para Parâmetros Bicos 🎯</button>
+      </div>
+    </section>
+
+    <!-- TAB 3: PARÂMETROS BICOS -->
+    <section id="tab-pontas" class="tab-view panel">
+      <h2 class="form-section-title">🎯 Configuração da Ponta de Pulverização</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="select-iso-nozzle">Ponta ISO Recomendada (Autopreenche L/min) *</label>
+          <select id="select-iso-nozzle" class="input-field">
+            <option value="">Selecione ou use entrada manual...</option>
+            <!-- Injetado dinamicamente -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-vazao-nominal">Vazão Nominal Esperada (L/min) *</label>
+          <input type="number" id="input-vazao-nominal" class="input-field" value="1.20" step="0.01" min="0.05" required>
+        </div>
+        <div class="form-group">
+          <label for="select-ponta-tipo">Tipo de Ponta / Jato</label>
+          <select id="select-ponta-tipo" class="input-field">
+            <option value="leque_plano">Leque Plano Comum</option>
+            <option value="leque_inducao" selected>Leque Plano com Indução de Ar</option>
+            <option value="cone_vazio">Cone Vazio</option>
+            <option value="duplo_leque">Duplo Leque</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-ponta-modelo">Modelo Comercial do Bico</label>
+          <input type="text" id="input-ponta-modelo" class="input-field" placeholder="Ex: AIXR 11003, TTI">
+        </div>
+        <div class="form-group">
+          <label for="select-ponta-condicao">Condição Física Inicial</label>
+          <select id="select-ponta-condicao" class="input-field">
+            <option value="nova">Nova (Menos de 100 ha)</option>
+            <option value="usada" selected>Usada em Campo</option>
+            <option value="desconhecida">Desconhecida</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="input-tolerancia">Tolerância Aceitável (%) *</label>
+          <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+            <button type="button" class="timer-preset-btn" data-tolerance="5">±5% (Nova)</button>
+            <button type="button" class="timer-preset-btn active" data-tolerance="10">±10% (Usada)</button>
+          </div>
+          <input type="number" id="input-tolerancia" class="input-field" value="10" min="1" max="30" required>
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;" class="no-print">
+        <button id="btn-back-to-pulverizador" class="btn btn-secondary">⬅️ Voltar</button>
+        <button id="btn-goto-coleta" class="btn btn-primary">Avançar para Coleta ⏱️</button>
+      </div>
+    </section>
+
+    <!-- TAB 4: MODO COLETA -->
+    <section id="tab-coleta" class="tab-view panel">
+      <h2 class="form-section-title">
+        ⏱️ Coleta de Volume Bico a Bico
+        <div class="voice-indicator" id="voice-indicator" title="Clique para ligar/desligar microfone">
+          🎤 Assistente de Voz: Desligado
+        </div>
+      </h2>
+      
+      <!-- Seletor de tempo e modo de exibição -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;" class="no-print">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <label style="font-weight: 600; font-size: 13px;">Tempo de Coleta:</label>
+          <button type="button" class="timer-preset-btn active" data-time="30">30s</button>
+          <button type="button" class="timer-preset-btn" data-time="60">60s</button>
+          <input type="number" id="input-tempo-coleta" value="30" min="1" max="300" class="input-field" style="width: 70px; padding: 6px; text-align: center;">
+          <span style="font-size: 13px;">segundos</span>
+        </div>
+        
+        <div class="unit-toggle" style="padding: 2px;">
+          <button type="button" id="btn-mode-guided" class="active">Guided (Passo a Passo)</button>
+          <button type="button" id="btn-mode-bulk">Spreadsheet (Em Massa)</button>
+        </div>
+      </div>
+
+      <!-- MAPA VISUAL DA BARRA (Boom Visualizer) -->
+      <div class="no-print">
+        <p style="font-size: 12px; color: var(--text-light); margin-bottom: 4px; font-weight: 600;">MAPEAMENTO ESPACIAL DA BARRA (Selecione bico para focar/editar):</p>
+        <div class="boom-container">
+          <div class="boom-track" id="boom-track-visual">
+            <!-- Nós de bicos gerados dinamicamente via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- MODO 1: GUIDED (PASSO A PASSO MOBILE FIRST) -->
+      <div id="coleta-mode-guided" class="no-print">
+        <div class="coleta-card">
+          <div>
+            <p style="font-size: 14px; text-transform: uppercase; color: var(--text-light); letter-spacing: 1.5px; font-weight: bold;">Foco de Calibração</p>
+            <div class="coleta-nozzle-focus" id="focus-nozzle-num">01</div>
+          </div>
+          
+          <div class="timer-container">
+            <span class="timer-display" id="chronometer-display">00:30.0</span>
+            <div class="timer-controls-row">
+              <button class="btn btn-secondary" style="padding: 8px 16px; min-height: 38px;" id="btn-timer-start">▶️ Iniciar</button>
+              <button class="btn btn-secondary" style="padding: 8px 16px; min-height: 38px;" id="btn-timer-reset">🔄 Reiniciar</button>
+            </div>
+            <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">Pressione Iniciar e faça a jaragem física do bico correspondente.</p>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label style="font-size: 16px; font-weight: bold;">Volume Coletado (mL)</label>
+            <input type="number" id="input-volume-ml" class="coleta-input-volume" placeholder="---" min="0" max="6000" autofocus>
+          </div>
+
+          <!-- Feedback dinâmico em tempo real -->
+          <div id="realtime-nozzle-feedback" style="display: none; padding: 12px; border-radius: 12px; font-size: 14px;">
+            <!-- Preenchido via JS -->
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button id="btn-prev-nozzle" class="btn btn-secondary" style="flex: 1;">⬅️ Anterior</button>
+            <button id="btn-skip-nozzle" class="btn btn-secondary" style="flex: 1;">Pular ⏭️</button>
+            <button id="btn-save-next-nozzle" class="btn btn-success" style="flex: 2; font-weight: bold;">Salvar e Próximo ➡️</button>
+          </div>
+
+          <div style="display: flex; justify-content: center; gap: 8px; margin-top: 8px;">
+            <button id="btn-mark-clogged" class="btn btn-danger" style="padding: 8px 12px; min-height: 36px; font-size: 12px;">🚫 Marcar Entupido</button>
+            <button id="btn-mark-leaking" class="btn btn-danger" style="padding: 8px 12px; min-height: 36px; font-size: 12px;">💧 Marcar Vazando</button>
+          </div>
+
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="guided-progress-fill"></div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-light);" id="guided-progress-label">Bico 1 de 60 avaliados (0% completo)</p>
+        </div>
+      </div>
+
+      <!-- MODO 2: BULK GRID (PLANILHA EM MASSA RÁPIDA) -->
+      <div id="coleta-mode-bulk" style="display: none;" class="no-print">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Digite os volumes em mL correspondentes a cada bico. Use <kbd>Tab</kbd> para navegar rapidamente entre os campos.</p>
+        <div class="bulk-grid-container">
+          <table class="bulk-grid-table">
+            <thead>
+              <tr style="background: #f1f5f9; position: sticky; top:0; z-index:10; border-bottom: 2px solid #cbd5e1;">
+                <th style="padding: 8px;">Bico nº</th>
+                <th style="padding: 8px;">Volume Coletado (mL)</th>
+                <th style="padding: 8px;">Vazão Medida</th>
+                <th style="padding: 8px;">Desvio %</th>
+                <th style="padding: 8px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="bulk-grid-tbody">
+              <!-- Linhas geradas dinamicamente via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 24px;" class="no-print">
+        <button id="btn-back-to-pontas" class="btn btn-secondary">⬅️ Voltar</button>
+        <button id="btn-goto-relatorio" class="btn btn-success" style="font-weight: bold;">Gerar Relatório Técnico 📄</button>
+      </div>
+    </section>
+
+    <!-- TAB 5: RELATÓRIO TÉCNICO -->
+    <section id="tab-relatorio" class="tab-view panel">
+      
+      <!-- Cabeçalho Limpo para Impressão -->
+      <div class="report-header-sec">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+          <div>
+            <h1 style="font-size: 26px; color: #000; font-weight: 800;">Laudo Técnico de Inspeção de Pulverizador</h1>
+            <p style="color: var(--text-muted); font-size: 14px; font-weight: 500; margin-top: 2px;">Inspeção Espacial por Método Manual de Proveta</p>
+          </div>
+          <div style="text-align: right; display: flex; gap: 6px; flex-wrap: wrap;" class="no-print">
+            <button id="btn-print" class="btn btn-primary" style="padding: 8px 12px; min-height: 38px;">🖨️ PDF</button>
+            <button id="btn-export-csv" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px;">📥 CSV</button>
+            <button id="btn-export-json" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px;">💾 Backup JSON</button>
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; font-size: 13px; border-top: 1px solid #cbd5e1; padding-top: 12px;">
+          <div><strong>Produtor:</strong> <span id="rep-cliente">--</span></div>
+          <div><strong>Fazenda:</strong> <span id="rep-fazenda">--</span></div>
+          <div><strong>Localização:</strong> <span id="rep-local">--</span></div>
+          <div><strong>Data Inspeção:</strong> <span id="rep-data">--</span></div>
+          <div><strong>Pulverizador:</strong> <span id="rep-maquina">--</span></div>
+          <div><strong>Largura Barra:</strong> <span id="rep-barra">--</span></div>
+          <div><strong>Ponta Aferida:</strong> <span id="rep-ponta">--</span></div>
+          <div><strong>Responsável Técnico:</strong> <span id="rep-inspetor">--</span></div>
+        </div>
+      </div>
+
+      <!-- Resumo Executivo -->
+      <h3 style="margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 8px; font-size: 16px;">📊 Indicadores Gerais de Desempenho</h3>
+      
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-label">Bicos Avaliados</div>
+          <div class="summary-card-val" id="rep-card-avaliados">--</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Coef. Variação (CV)</div>
+          <div class="summary-card-val" id="rep-card-cv">--</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Veredito Geral</div>
+          <div class="summary-card-val" id="rep-card-veredito" style="font-size: 18px; margin-top: 10px;">--</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Vazão Média Real</div>
+          <div class="summary-card-val" id="rep-card-vazao">-- L/min</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">Taxa Média Aplicada</div>
+          <div class="summary-card-val" id="rep-card-taxa">-- L/ha</div>
+        </div>
+      </div>
+
+      <!-- Resumo Detalhado por Status de Pontas -->
+      <div class="summary-grid" style="margin-top: -8px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+        <div class="summary-card" style="border-top: 4px solid var(--accent-green);">
+          <div class="summary-card-label">Pontas OK (Dentro da Tolerância)</div>
+          <div class="summary-card-val" id="rep-card-ok" style="color: var(--accent-green); font-size: 24px; font-weight: 800;">--</div>
+        </div>
+        <div class="summary-card" style="border-top: 4px solid var(--accent-warning);">
+          <div class="summary-card-label">Pontas Abaixo (Obstrução Leve)</div>
+          <div class="summary-card-val" id="rep-card-status-abaixo" style="color: var(--accent-warning); font-size: 24px; font-weight: 800;">--</div>
+        </div>
+        <div class="summary-card" style="border-top: 4px solid var(--accent-error);">
+          <div class="summary-card-label">Pontas Acima (Desgaste Leve)</div>
+          <div class="summary-card-val" id="rep-card-status-acima" style="color: var(--accent-error); font-size: 24px; font-weight: 800;">--</div>
+        </div>
+        <div class="summary-card" style="border-top: 4px solid #dc2626;">
+          <div class="summary-card-label">Pontas Críticas (Substituir/Limpar)</div>
+          <div class="summary-card-val" id="rep-card-status-criticas" style="color: #dc2626; font-size: 24px; font-weight: 800;">--</div>
+        </div>
+      </div>
+
+      <!-- Legenda explicativa dos critérios de avaliação do laudo (Wow Factor & Acessibilidade) -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 20px; font-size: 12px; line-height: 1.5; color: var(--text-muted);">
+        <h4 style="font-size: 13px; color: var(--text-main); margin-bottom: 8px; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+          ℹ️ Entendendo os Critérios do Veredito Técnico
+        </h4>
+        <p style="margin-bottom: 10px; font-size: 12.5px;">
+          Para garantir uma pulverização de alta eficácia agrícola e econômica, a classificação de desempenho da barra é avaliada por critérios técnicos rigorosos baseados na engenharia de aplicação:
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+          <div>
+            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">1. Coeficiente de Variação (CV%):</strong>
+            Mede a <em>uniformidade relativa</em> de vazão ao longo da barra física (o desvio-padrão amostral em relação à média geral).
+            <ul style="padding-left: 18px; margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
+              <li>🟢 <strong>CV até 10%:</strong> Excelente uniformidade entre as pontas.</li>
+              <li>🟡 <strong>CV de 10.1% a 15%:</strong> Uniformidade limite (ressalvas/atenção).</li>
+              <li>🔴 <strong>CV acima de 15%:</strong> Severa desuniformidade mecânica (reprovado).</li>
+            </ul>
+          </div>
+          <div>
+            <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">2. Desvio Hidráulico da Vazão Alvo:</strong>
+            Mede se a vazão média real dos bicos corresponde à vazão nominal esperada para a aplicação (alvo calibrado).
+            <p style="margin-top: 4px; font-size: 11.5px; line-height: 1.4;">
+              ⚠️ <strong>Nota Crítica:</strong> Mesmo que o <strong>CV seja baixo</strong> (bicos aplicando volumes muito parecidos entre si), o pulverizador será <strong>reprovado</strong> se houver pontas críticas operando muito fora da tolerância nominal de vazão esperada (obstrução/entupimento severo ou desgaste severo das pontas). Isso evita subdosagens sistemáticas (falha de controle químico) ou sobredosagens (fitotoxicidade e desperdício de calda).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-size: 14px; line-height: 1.5;">
+        <strong>Conclusão Técnica da Barra:</strong> <span id="rep-texto-conclusao">--</span>
+      </div>
+
+      <!-- Gráfico de Desvios Chart.js -->
+      <div style="margin-bottom: 24px; page-break-inside: avoid;">
+        <h3 style="margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 8px; font-size: 16px;">📈 Perfil de Desvio Espacial dos Bicos (Tolerância: <span id="rep-tolerancia-num">--</span>%)</h3>
+        <div class="chart-panel">
+          <canvas id="report-chart-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Representação da Barra Espacial no Relatório -->
+      <div style="margin-bottom: 24px; page-break-inside: avoid;">
+        <h3 style="margin-bottom: 6px; border-left: 4px solid var(--accent); padding-left: 8px; font-size: 16px;">🎨 Representação Espacial da Barra</h3>
+        <p style="font-size: 11px; color: var(--text-light); margin-bottom: 8px;">Distribuição visual das inconformidades na barra física do pulverizador:</p>
+        <div class="boom-container">
+          <div class="boom-track" id="boom-track-report">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; font-weight: bold; justify-content: center;">
+          <div style="display: flex; align-items: center; gap: 4px;"><span class="boom-legend-color" style="background:var(--accent-green);"></span> Dentro da Tolerância (OK)</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span class="boom-legend-color" style="background:#fbbf24;"></span> Desgaste/Obstrução Leve (Atenção)</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span class="boom-legend-color" style="background:var(--accent-error);"></span> Desgaste/Obstrução Grave (Crítico)</div>
+        </div>
+      </div>
+
+      <!-- Simulador de Impacto Financeiro (Wow Factor) -->
+      <div class="finance-panel page-break" style="margin-bottom: 24px;">
+        <h3 style="font-size: 16px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+          💸 Simulação de Perda Financeira / Desperdício
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">
+          Cálculo estimado do prejuízo econômico causado pela desuniformidade mecânica das pontas na área prevista. 
+          Aplicações incorretas geram **desperdício de produto** (sobredosagem) e **risco severo de escapes de pragas** (subdosagem).
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;" class="no-print">
+          <div class="form-group">
+            <label>Área Total Prevista (Hectares)</label>
+            <input type="number" id="sim-area" class="input-field" value="250" min="1">
+          </div>
+          <div class="form-group">
+            <label>Custo da Calda/Defensivos (R$/ha)</label>
+            <input type="number" id="sim-custo" class="input-field" value="200" min="1">
+          </div>
+          <div class="form-group">
+            <label>Valor Prod. Lavoura (R$/ha)</label>
+            <input type="number" id="sim-valor-safra" class="input-field" value="3000" min="1" title="Valor estimado de faturamento bruto por hectare da cultura (ex: soja, milho)">
+          </div>
+          <div class="form-group">
+            <label>Risco Quebra Eficácia (%)</label>
+            <input type="number" id="sim-perda-percent" class="input-field" value="10" min="1" max="100" title="Porcentagem estimada de perda de rendimento na faixa onde ocorrer escape de pragas">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 10px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 12px;">
+          <div>
+            <div class="summary-card-label" style="color:#64748b;">Desperdício Direto (Sobredosagem)</div>
+            <div class="summary-card-val" id="rep-sim-desperdicio" style="color:#d97706; font-size:24px;">R$ 0,00</div>
+          </div>
+          <div>
+            <div class="summary-card-label" style="color:#64748b;">Risco de Escape / Quebra Efeito (Subdosagem)</div>
+            <div class="summary-card-val" id="rep-sim-escape" style="color:#ef4444; font-size:24px;">R$ 0,00</div>
+          </div>
+          <div>
+            <div class="summary-card-label" style="color:#0f172a; font-weight: bold;">Prejuízo Total Estimado</div>
+            <div class="finance-loss-val" id="rep-sim-total">R$ 0,00</div>
+          </div>
+        </div>
+
+        <!-- Legenda e Memória de Cálculo Dinâmica em PDF/Laudo -->
+        <div style="margin-top: 16px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 12px; font-size: 11px; color: var(--text-muted); line-height: 1.5;" class="finance-memo-sec">
+          <h4 style="font-size: 12px; color: var(--text-main); margin-bottom: 6px; font-weight: bold;">🧮 Relação dos Valores & Memória de Cálculo Agronômica:</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 12px;">
+            <div>
+              <strong>1. Desperdício Direto (Sobredosagem):</strong> Ocorre nos bicos que aplicam acima da tolerância ($> +10\%$). Representa o custo do defensivo pulverizado em excesso e jogado fora.<br>
+              <span style="font-family: monospace; background: rgba(0,0,0,0.03); padding: 2px 4px; border-radius: 4px; display: inline-block; margin-top: 4px;">Fórmula: Desvio Acima (%) × Custo Calda (R$/ha) × Área (ha)</span>
+            </div>
+            <div>
+              <strong>2. Risco de Escape (Subdosagem):</strong> Ocorre nos bicos entupidos/obstruídos ($< -10\%$). A dose insuficiente não atinge o limite letal de controle. A quebra de rendimento estimada (ex: 10%) é aplicada sobre a área proporcionalmente afetada pelas pontas defeituosas.<br>
+              <span style="font-family: monospace; background: rgba(0,0,0,0.03); padding: 2px 4px; border-radius: 4px; display: inline-block; margin-top: 4px;">Fórmula: Desvio Abaixo (%) × Valor Safra (R$/ha) × Risco Escape (%) × Área (ha)</span>
+            </div>
+          </div>
+          <div style="background: rgba(0, 102, 204, 0.04); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(0, 102, 204, 0.08); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-weight: 500;">
+            <div>🌾 <strong>Parâmetros Utilizados:</strong></div>
+            <div>Área Total: <span id="memo-area" style="color: var(--accent); font-weight: bold;">--</span> ha</div>
+            <div>Custo Calda: R$ <span id="memo-custo" style="color: var(--accent); font-weight: bold;">--</span>/ha</div>
+            <div>Faturamento Safra: R$ <span id="memo-valor-safra" style="color: var(--accent); font-weight: bold;">--</span>/ha</div>
+            <div>Quebra de Eficácia: <span id="memo-perda-percent" style="color: var(--accent); font-weight: bold;">--</span>% da área</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela Bico a Bico Completa -->
+      <div style="margin-bottom: 24px;">
+        <h3 style="margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 8px; font-size: 16px;">📋 Planilha Detalhada Bico a Bico</h3>
+        <div class="table-wrapper">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Volume (mL)</th>
+                <th>Tempo</th>
+                <th>Medido (L/min)</th>
+                <th>Esperado (L/min)</th>
+                <th>Desvio %</th>
+                <th>Taxa Real (L/ha)</th>
+                <th>Status</th>
+                <th>Ação Recomendada</th>
+              </tr>
+            </thead>
+            <tbody id="report-table-tbody">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Plano de Ação & Assinatura -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 30px; page-break-inside: avoid;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px; border-radius: 12px;">
+          <h4 style="font-size: 14px; color: var(--text-main); margin-bottom: 10px;">📋 Recomendações & Plano de Ação</h4>
+          <ul style="padding-left: 20px; font-size: 12px; line-height: 1.6; color: var(--text-muted);" id="rep-recomendacoes-lista">
+            <!-- Gerado dinamicamente -->
+          </ul>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; gap: 24px; border: 1px solid #e2e8f0; padding: 18px; border-radius: 12px; text-align: center;">
+          <div style="border-bottom: 1px solid #94a3b8; width: 80%; margin: 0 auto; height: 40px;"></div>
+          <div style="font-size: 12px; font-weight: bold; color: var(--text-main);">Assinatura do Responsável Técnico</div>
+          <div style="font-size: 10px; color: var(--text-light); margin-top: -16px;">
+            Inspetor: <span id="rep-sig-inspetor">--</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;" class="no-print">
+        <button id="btn-back-to-coleta" class="btn btn-secondary">⬅️ Editar Coleta</button>
+        <button id="btn-new-inspection-bottom" class="btn btn-success" style="font-weight: bold;">🚜 Novo Diagnóstico</button>
+      </div>
+    </section>
+
+  </div> <!-- End App Container -->
+
+  <!-- MODAL: HISTÓRICO DE DIAGNÓSTICOS -->
+  <div id="modal-history" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content" style="max-width: 680px;">
+      <button class="modal-close" onclick="document.getElementById('modal-history').style.display='none'">&times;</button>
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 10px;">
+        <h2 style="font-size: 20px; color: var(--accent); margin: 0;">📂 Histórico de Diagnósticos</h2>
+        <button id="btn-trigger-import" class="btn btn-success" style="padding: 6px 12px; min-height: 32px; font-size: 12px;">📥 Importar Diagnóstico (JSON)</button>
+      </div>
+      <input type="file" id="input-import-file" accept=".json" style="display: none;">
+      
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; margin-top: 10px;">Abra ou exclua relatórios gravados 100% offline neste dispositivo.</p>
+      
+      <div id="history-items-container" class="history-grid" style="margin-top: 10px;">
+        <!-- Preenchido via JS -->
+      </div>
+
+      <div id="history-empty-state" class="empty-state" style="display: none; padding: 40px 10px;">
+        <span style="font-size: 40px;">🌾</span>
+        <p style="font-size: 14px; margin-top: 10px;">Nenhum diagnóstico gravado localmente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURAÇÃO DE CONEXÃO SUPABASE -->
+  <div id="modal-db-config" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content" style="max-width: 420px;">
+      <button class="modal-close" onclick="document.getElementById('modal-db-config').style.display='none'">&times;</button>
+      <h2 style="font-size: 22px; color: var(--accent); margin-bottom: 6px;">⚙️ Conexão Supabase Online</h2>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+        Configure suas credenciais Supabase abaixo caso queira portar e sincronizar os relatórios locais com a nuvem de produção.
+      </p>
+      
+      <form id="db-config-form" onsubmit="saveDbConfig(event)" style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="form-group">
+          <label for="db-supabase-url">Supabase API URL</label>
+          <input type="url" id="db-supabase-url" class="input-field" placeholder="https://xxxx.supabase.co" required>
+        </div>
+        <div class="form-group">
+          <label for="db-supabase-key">Supabase Anon Key</label>
+          <input type="password" id="db-supabase-key" class="input-field" placeholder="eyJhbGciOi..." required>
+        </div>
+        
+        <div style="background: #f1f5f9; padding: 10px; border-radius: 8px; font-size: 11px; color: var(--text-muted); line-height: 1.4; border: 1px solid #cbd5e1;">
+          ⚠️ **Nota:** A flag de sincronização em `js/dbService.js` deve ser configurada (`USE_SUPABASE = true`) para ativar o envio automático online.
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px; font-weight: bold; width: 100%;">Salvar Credenciais</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AJUDA -->
+  <div id="modal-help" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('modal-help').style.display='none'">&times;</button>
+      <h2>📖 Guia de Diagnóstico de Vazão Manual</h2>
+      <p style="margin-bottom: 12px; font-size: 14px; line-height: 1.6; color: var(--text-muted);">
+        Bem-vindo ao módulo de aferição bico a bico! Esta ferramenta transforma a tradicional medição com proveta e copo graduado em um diagnóstico técnico-comercial de alta precisão agronômica.
+      </p>
+      
+      <h3 style="font-size: 16px; margin-top: 14px; margin-bottom: 6px; color: var(--accent);">Como funciona a coleta?</h3>
+      <ol style="padding-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+        <li>**Identificação & Parâmetros:** Preencha os dados do cliente, pulverizador, espaçamento, bico ISO nominal e tolerância (ex: ±10% para bicos usados).</li>
+        <li>**Opções de Coleta:** Colete bico a bico usando o cronômetro tátil do celular (Modo Guided) ou digite tudo rapidamente em tabela (Modo Spreadsheet).</li>
+        <li>**Assistente de Voz hands-free:** Ligue o microfone 🎤 e diga os volumes de campo por voz (Ex: "Bico um, quatrocentos e cinquenta", "Próximo") mantendo as mãos livres!</li>
+        <li>**Laudo Imediato:** Veja na hora a taxa média em L/ha, Coeficiente de Variação (CV%) e uma estimativa detalhada de calda/defensivo jogado fora por descalibração.</li>
+      </ol>
+      
+      <h3 style="font-size: 16px; margin-top: 14px; margin-bottom: 6px; color: var(--accent);">Fórmula Hidráulica Clássica</h3>
+      <p style="font-size: 13px; font-family: monospace; padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px;">
+        Vazão Esperada (L/min) = (Volume Alvo L/ha * Velocidade km/h * Espaçamento m) / 600
+      </p>
+    </div>
+  </div>
+
+  <!-- Controlador da SPA (Lógica Frontend) -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

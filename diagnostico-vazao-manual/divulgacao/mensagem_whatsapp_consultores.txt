@@ -1,0 +1,17 @@
+🌾 Novidade para o Campo: Diagnóstico de Pulverizador na hora pelo celular!
+
+Olá, tudo bem?
+
+Desenvolvi um novo aplicativo móvel chamado Spray Precision PRO e gostaria de te convidar para testar em primeira mão!
+
+Ele foi criado especificamente para quem realiza calibração de bicos de pulverizadores direto no talhão:
+
+📲 100% Offline: Sem sinal de internet no meio do campo? O app roda liso e salva tudo localmente.
+🎤 Assistente de Voz (Mãos Livres): Dite os volumes de mL que você coletou sem precisar tocar no celular ou tirar as luvas.
+💸 Simulador de Perdas em R$: Mostra na hora, em Reais, o prejuízo que bicos descalibrados estão gerando por desperdício de calda ou risco de escapes de pragas.
+📄 Laudo Técnico em PDF: Emite o relatório com gráfico de desvios e mapa de bicos no mesmo minuto para você enviar ao produtor.
+
+Liberei o link para você testar gratuitamente:
+👉 [SEU_LINK_AQUI]
+
+Teste aí e me conte o que achou! Forte abraço! 🚜

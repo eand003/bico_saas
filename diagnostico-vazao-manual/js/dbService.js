@@ -16,6 +16,180 @@ const KEYS = {
   MEASUREMENTS: 'spray_flow_measurements'
 };
 
+// ==========================================
+// MOCK DIAGNÓSTICOS DE DEMONSTRAÇÃO COMERCIAIS
+// ==========================================
+const STATIC_DEMO_INSPECTIONS = {
+  'demo-aprovado': {
+    inspection: {
+      id: 'demo-aprovado',
+      client_name: 'Fazenda Progresso',
+      farm_name: 'Fazenda Progresso (Aprovado)',
+      city: 'Sorriso',
+      state: 'MT',
+      field_name: 'Talhão 04',
+      crop: 'Soja',
+      operation_type: 'fungicida',
+      sprayer_brand: 'John Deere',
+      sprayer_model: 'M4030',
+      sprayer_type: 'autopropelido',
+      boom_width_m: 30,
+      total_nozzles: 10,
+      nozzle_spacing_m: 0.5,
+      pressure_value: 3.0,
+      pressure_unit: 'bar',
+      speed_kmh: 16.0,
+      target_rate_l_ha: 100,
+      nozzle_model: 'MGA ISO 03 Azul',
+      expected_flow_l_min: 1.20,
+      tolerance_percent: 10,
+      collection_time_seconds: 30,
+      created_at: new Date().toISOString(),
+      summary: {
+        totalNozzles: 10,
+        evaluatedNozzles: 10,
+        okCount: 10,
+        belowCount: 0,
+        criticalBelowCount: 0,
+        aboveCount: 0,
+        criticalAboveCount: 0,
+        notEvaluatedCount: 0,
+        averageFlowLMin: 1.205,
+        expectedFlowLMin: 1.20,
+        averageDeviationPercent: 0.4,
+        averageActualRateLHa: 100.4,
+        coefficientOfVariationPercent: 2.1,
+        generalClassification: 'aprovado'
+      },
+      notes: "Inspeção de Demonstração Geral.\nInspetor: Consultor Técnico (Spray Precision)"
+    },
+    measurements: [
+      { nozzle_number: 1, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 602, collection_time_seconds: 30, measured_flow_l_min: 1.204, expected_flow_l_min: 1.20, deviation_percent: 0.3, actual_rate_l_ha: 100.3, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 2, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 598, collection_time_seconds: 30, measured_flow_l_min: 1.196, expected_flow_l_min: 1.20, deviation_percent: -0.3, actual_rate_l_ha: 99.7, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 3, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 605, collection_time_seconds: 30, measured_flow_l_min: 1.21, expected_flow_l_min: 1.20, deviation_percent: 0.8, actual_rate_l_ha: 100.8, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 4, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 600, collection_time_seconds: 30, measured_flow_l_min: 1.20, expected_flow_l_min: 1.20, deviation_percent: 0.0, actual_rate_l_ha: 100.0, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 5, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 604, collection_time_seconds: 30, measured_flow_l_min: 1.208, expected_flow_l_min: 1.20, deviation_percent: 0.7, actual_rate_l_ha: 100.7, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 6, section_number: 2, boom_side: 'direito', collected_volume_ml: 595, collection_time_seconds: 30, measured_flow_l_min: 1.19, expected_flow_l_min: 1.20, deviation_percent: -0.8, actual_rate_l_ha: 99.2, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 7, section_number: 2, boom_side: 'direito', collected_volume_ml: 601, collection_time_seconds: 30, measured_flow_l_min: 1.202, expected_flow_l_min: 1.20, deviation_percent: 0.2, actual_rate_l_ha: 100.2, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 8, section_number: 2, boom_side: 'direito', collected_volume_ml: 608, collection_time_seconds: 30, measured_flow_l_min: 1.216, expected_flow_l_min: 1.20, deviation_percent: 1.3, actual_rate_l_ha: 101.3, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 9, section_number: 2, boom_side: 'direito', collected_volume_ml: 597, collection_time_seconds: 30, measured_flow_l_min: 1.194, expected_flow_l_min: 1.20, deviation_percent: -0.5, actual_rate_l_ha: 99.5, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' },
+      { nozzle_number: 10, section_number: 2, boom_side: 'direito', collected_volume_ml: 600, collection_time_seconds: 30, measured_flow_l_min: 1.20, expected_flow_l_min: 1.20, deviation_percent: 0.0, actual_rate_l_ha: 100.0, status: 'ok', recommendation: 'Manter ponta e acompanhar desgaste periódico.', notes: 'Ponta operando em perfeitas condições hidráulicas.' }
+    ]
+  },
+  'demo-ressalvas': {
+    inspection: {
+      id: 'demo-ressalvas',
+      client_name: 'Fazenda Boa Vista',
+      farm_name: 'Fazenda Boa Vista (Ressalvas)',
+      city: 'Lucas do Rio Verde',
+      state: 'MT',
+      field_name: 'Talhão Sede',
+      crop: 'Milho',
+      operation_type: 'inseticida',
+      sprayer_brand: 'Jacto',
+      sprayer_model: 'Uniport 3030',
+      sprayer_type: 'autopropelido',
+      boom_width_m: 30,
+      total_nozzles: 10,
+      nozzle_spacing_m: 0.5,
+      pressure_value: 3.0,
+      pressure_unit: 'bar',
+      speed_kmh: 16.0,
+      target_rate_l_ha: 100,
+      nozzle_model: 'MGA ISO 03 Azul',
+      expected_flow_l_min: 1.20,
+      tolerance_percent: 10,
+      collection_time_seconds: 30,
+      created_at: new Date().toISOString(),
+      summary: {
+        totalNozzles: 10,
+        evaluatedNozzles: 10,
+        okCount: 8,
+        belowCount: 1,
+        criticalBelowCount: 0,
+        aboveCount: 1,
+        criticalAboveCount: 0,
+        notEvaluatedCount: 0,
+        averageFlowLMin: 1.21,
+        expectedFlowLMin: 1.20,
+        averageDeviationPercent: 0.83,
+        averageActualRateLHa: 100.8,
+        coefficientOfVariationPercent: 11.2,
+        generalClassification: 'aprovado_com_ressalvas'
+      },
+      notes: "Inspeção de Demonstração Geral.\nInspetor: Consultor Técnico (Spray Precision)"
+    },
+    measurements: [
+      { nozzle_number: 1, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 602, collection_time_seconds: 30, measured_flow_l_min: 1.204, expected_flow_l_min: 1.20, deviation_percent: 0.3, actual_rate_l_ha: 100.3, status: 'ok', recommendation: 'Manter bico e acompanhar.', notes: 'Operando normalmente.' },
+      { nozzle_number: 2, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 598, collection_time_seconds: 30, measured_flow_l_min: 1.196, expected_flow_l_min: 1.20, deviation_percent: -0.3, actual_rate_l_ha: 99.7, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 3, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 520, collection_time_seconds: 30, measured_flow_l_min: 1.04, expected_flow_l_min: 1.20, deviation_percent: -13.3, actual_rate_l_ha: 86.7, status: 'abaixo', recommendation: 'Limpar filtro individual do bico e remover incrustações.', notes: 'Vazão ligeiramente abaixo da tolerância.' },
+      { nozzle_number: 4, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 600, collection_time_seconds: 30, measured_flow_l_min: 1.20, expected_flow_l_min: 1.20, deviation_percent: 0.0, actual_rate_l_ha: 100.0, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 5, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 604, collection_time_seconds: 30, measured_flow_l_min: 1.208, expected_flow_l_min: 1.20, deviation_percent: 0.7, actual_rate_l_ha: 100.7, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 6, section_number: 2, boom_side: 'direito', collected_volume_ml: 595, collection_time_seconds: 30, measured_flow_l_min: 1.19, expected_flow_l_min: 1.20, deviation_percent: -0.8, actual_rate_l_ha: 99.2, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 7, section_number: 2, boom_side: 'direito', collected_volume_ml: 601, collection_time_seconds: 30, measured_flow_l_min: 1.202, expected_flow_l_min: 1.20, deviation_percent: 0.2, actual_rate_l_ha: 100.2, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 8, section_number: 2, boom_side: 'direito', collected_volume_ml: 700, collection_time_seconds: 30, measured_flow_l_min: 1.40, expected_flow_l_min: 1.20, deviation_percent: 16.7, actual_rate_l_ha: 116.7, status: 'acima', recommendation: 'Substituir ponta. Desgaste físico orifício alargado.', notes: 'Vazão acima da tolerância.' },
+      { nozzle_number: 9, section_number: 2, boom_side: 'direito', collected_volume_ml: 597, collection_time_seconds: 30, measured_flow_l_min: 1.194, expected_flow_l_min: 1.20, deviation_percent: -0.5, actual_rate_l_ha: 99.5, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 10, section_number: 2, boom_side: 'direito', collected_volume_ml: 600, collection_time_seconds: 30, measured_flow_l_min: 1.20, expected_flow_l_min: 1.20, deviation_percent: 0.0, actual_rate_l_ha: 100.0, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' }
+    ]
+  },
+  'demo-reprovado': {
+    inspection: {
+      id: 'demo-reprovado',
+      client_name: 'Fazenda Santo Antônio',
+      farm_name: 'Fazenda Santo Antônio (Reprovado)',
+      city: 'Sorriso',
+      state: 'MT',
+      field_name: 'Talhão Secão',
+      crop: 'Algodão',
+      operation_type: 'herbicida',
+      sprayer_brand: 'Case IH',
+      sprayer_model: 'Patriot 350',
+      sprayer_type: 'autopropelido',
+      boom_width_m: 30,
+      total_nozzles: 10,
+      nozzle_spacing_m: 0.5,
+      pressure_value: 3.0,
+      pressure_unit: 'bar',
+      speed_kmh: 16.0,
+      target_rate_l_ha: 100,
+      nozzle_model: 'MGA ISO 03 Azul',
+      expected_flow_l_min: 1.20,
+      tolerance_percent: 10,
+      collection_time_seconds: 30,
+      created_at: new Date().toISOString(),
+      summary: {
+        totalNozzles: 10,
+        evaluatedNozzles: 10,
+        okCount: 5,
+        belowCount: 2,
+        criticalBelowCount: 1,
+        aboveCount: 1,
+        criticalAboveCount: 1,
+        notEvaluatedCount: 0,
+        averageFlowLMin: 1.15,
+        expectedFlowLMin: 1.20,
+        averageDeviationPercent: -4.16,
+        averageActualRateLHa: 95.8,
+        coefficientOfVariationPercent: 28.4,
+        generalClassification: 'reprovado'
+      },
+      notes: "⚠️ Calibração Reprovada. Desuniformidade severa na barra (CV% muito alto) e múltiplos bicos com obstrução/desgaste crítico.\nInspetor: Consultor Técnico (Spray Precision)"
+    },
+    measurements: [
+      { nozzle_number: 1, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 602, collection_time_seconds: 30, measured_flow_l_min: 1.204, expected_flow_l_min: 1.20, deviation_percent: 0.3, actual_rate_l_ha: 100.3, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 2, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 320, collection_time_seconds: 30, measured_flow_l_min: 0.64, expected_flow_l_min: 1.20, deviation_percent: -46.7, actual_rate_l_ha: 53.3, status: 'critico_abaixo', recommendation: '⚠️ Substituir ou efetuar desobstrução urgente da ponta.', notes: 'Restrição severa de vazão. Entupimento grave.' },
+      { nozzle_number: 3, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 530, collection_time_seconds: 30, measured_flow_l_min: 1.06, expected_flow_l_min: 1.20, deviation_percent: -11.7, actual_rate_l_ha: 88.3, status: 'abaixo', recommendation: 'Limpar filtro individual e bico.', notes: 'Vazão ligeiramente abaixo da tolerância.' },
+      { nozzle_number: 4, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 600, collection_time_seconds: 30, measured_flow_l_min: 1.20, expected_flow_l_min: 1.20, deviation_percent: 0.0, actual_rate_l_ha: 100.0, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 5, section_number: 1, boom_side: 'esquerdo', collected_volume_ml: 604, collection_time_seconds: 30, measured_flow_l_min: 1.208, expected_flow_l_min: 1.20, deviation_percent: 0.7, actual_rate_l_ha: 100.7, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 6, section_number: 2, boom_side: 'direito', collected_volume_ml: 595, collection_time_seconds: 30, measured_flow_l_min: 1.19, expected_flow_l_min: 1.20, deviation_percent: -0.8, actual_rate_l_ha: 99.2, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' },
+      { nozzle_number: 7, section_number: 2, boom_side: 'direito', collected_volume_ml: 515, collection_time_seconds: 30, measured_flow_l_min: 1.03, expected_flow_l_min: 1.20, deviation_percent: -14.2, actual_rate_l_ha: 85.8, status: 'abaixo', recommendation: 'Limpar bico e filtro.', notes: 'Vazão abaixo da tolerância.' },
+      { nozzle_number: 8, section_number: 2, boom_side: 'direito', collected_volume_ml: 710, collection_time_seconds: 30, measured_flow_l_min: 1.42, expected_flow_l_min: 1.20, deviation_percent: 18.3, actual_rate_l_ha: 118.3, status: 'acima', recommendation: 'Substituir ponta desgastada.', notes: 'Vazão acima da tolerância.' },
+      { nozzle_number: 9, section_number: 2, boom_side: 'direito', collected_volume_ml: 960, collection_time_seconds: 30, measured_flow_l_min: 1.92, expected_flow_l_min: 1.20, deviation_percent: 60.0, actual_rate_l_ha: 160.0, status: 'critico_acima', recommendation: '⚠️ Substituir imediatamente a ponta. Risco crítico de desperdício severo.', notes: 'Desgaste severo do orifício da ponta.' },
+      { nozzle_number: 10, section_number: 2, boom_side: 'direito', collected_volume_ml: 600, collection_time_seconds: 30, measured_flow_l_min: 1.20, expected_flow_l_min: 1.20, deviation_percent: 0.0, actual_rate_l_ha: 100.0, status: 'ok', recommendation: 'Manter bico.', notes: 'Operando normalmente.' }
+    ]
+  }
+};
+
 /**
  * Auxiliar para simular delay de rede nas operações locais (opcional, melhora a UX do loader)
  */
@@ -122,6 +296,66 @@ async function saveInspection(inspection, measurements) {
 async function getInspections() {
   await delay(150);
 
+  const demoHeaders = [
+    {
+      id: 'demo-aprovado',
+      client_name: '🚀 DEMO - Fazenda Progresso',
+      farm_name: 'Fazenda Progresso (Aprovado)',
+      city: 'Sorriso',
+      state: 'MT',
+      sprayer_brand: 'John Deere',
+      sprayer_model: 'M4030',
+      nozzle_model: 'MGA ISO 03 Azul',
+      created_at: new Date().toISOString(),
+      summary: {
+        totalNozzles: 10,
+        evaluatedNozzles: 10,
+        okCount: 10,
+        coefficientOfVariationPercent: 2.1,
+        generalClassification: 'aprovado'
+      },
+      is_demo: true
+    },
+    {
+      id: 'demo-ressalvas',
+      client_name: '💡 DEMO - Fazenda Boa Vista',
+      farm_name: 'Fazenda Boa Vista (Ressalvas)',
+      city: 'Lucas do Rio Verde',
+      state: 'MT',
+      sprayer_brand: 'Jacto',
+      sprayer_model: 'Uniport 3030',
+      nozzle_model: 'MGA ISO 03 Azul',
+      created_at: new Date().toISOString(),
+      summary: {
+        totalNozzles: 10,
+        evaluatedNozzles: 10,
+        okCount: 8,
+        coefficientOfVariationPercent: 11.2,
+        generalClassification: 'aprovado_com_ressalvas'
+      },
+      is_demo: true
+    },
+    {
+      id: 'demo-reprovado',
+      client_name: '🔴 DEMO - Fazenda Santo Antônio',
+      farm_name: 'Fazenda Santo Antônio (Reprovado)',
+      city: 'Sorriso',
+      state: 'MT',
+      sprayer_brand: 'Case IH',
+      sprayer_model: 'Patriot 350',
+      nozzle_model: 'MGA ISO 03 Azul',
+      created_at: new Date().toISOString(),
+      summary: {
+        totalNozzles: 10,
+        evaluatedNozzles: 10,
+        okCount: 5,
+        coefficientOfVariationPercent: 28.4,
+        generalClassification: 'reprovado'
+      },
+      is_demo: true
+    }
+  ];
+
   if (USE_SUPABASE) {
     const supabase = window.supabaseClient;
     if (!supabase) throw new Error("Cliente Supabase não inicializado!");
@@ -132,11 +366,12 @@ async function getInspections() {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return [...demoHeaders, ...(data || [])];
   } else {
     // ---- FLUXO OFFLINE ----
     const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
-    return inspections.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const sorted = inspections.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    return [...demoHeaders, ...sorted];
   }
 }
 
@@ -144,6 +379,11 @@ async function getInspections() {
  * Obtém uma inspeção específica pelo seu ID (cabeçalho + medições)
  */
 async function getInspectionById(id) {
+  // Interceptar demos comerciais
+  if (id === 'demo-aprovado' || id === 'demo-ressalvas' || id === 'demo-reprovado') {
+    return STATIC_DEMO_INSPECTIONS[id];
+  }
+
   await delay(150);
 
   if (USE_SUPABASE) {

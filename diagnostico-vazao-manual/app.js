@@ -1201,7 +1201,10 @@ async function renderHistoryList() {
       card.className = `history-item-card ${badgeClass}`;
       
       card.innerHTML = `
-        <div style="font-weight:bold; font-size:16px; color:var(--text-main); font-family:'Outfit';">${item.client_name}</div>
+        <div style="font-weight:bold; font-size:16px; color:var(--text-main); font-family:'Outfit'; display:flex; align-items:center; justify-content:space-between;">
+          <span>${item.client_name}</span>
+          ${item.is_demo ? `<span style="font-size:10px; background:var(--accent-glow); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:bold; border: 1px solid rgba(0, 102, 204, 0.12);">💡 DEMO</span>` : ''}
+        </div>
         <div style="font-size:12px; color:var(--text-muted); margin-top:-6px;">
           🏡 ${item.farm_name || 'Fazenda S/N'} | 📍 ${item.city} - ${item.state}
         </div>
@@ -1300,6 +1303,11 @@ async function loadInspectionIntoApp(id) {
 }
 
 async function deleteInspectionFromHistory(id) {
+  if (id === 'demo-aprovado' || id === 'demo-ressalvas' || id === 'demo-reprovado') {
+    alert("Ops! Esta é uma inspeção de demonstração estática e não pode ser excluída.");
+    return;
+  }
+
   if (!confirm("Tem certeza que deseja excluir permanentemente este diagnóstico e todas as suas medições de bico?")) {
     return;
   }

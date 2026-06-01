@@ -39,6 +39,7 @@ async function saveInspection(inspection, measurements) {
     
     const inspectionData = {
       ...inspection,
+      id: inspection.id || generateUUID(),
       owner_id: user.id,
       updated_at: new Date().toISOString()
     };

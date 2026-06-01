@@ -30,6 +30,7 @@ async function saveInspection(inspection, measurements) {
   await delay(200);
 
   if (USE_SUPABASE) {
+    const supabase = window.supabaseClient;
     if (!supabase) throw new Error("Cliente Supabase não inicializado!");
     
     // Obter usuário logado atual do Supabase
@@ -121,6 +122,7 @@ async function getInspections() {
   await delay(150);
 
   if (USE_SUPABASE) {
+    const supabase = window.supabaseClient;
     if (!supabase) throw new Error("Cliente Supabase não inicializado!");
 
     const { data, error } = await supabase
@@ -144,6 +146,7 @@ async function getInspectionById(id) {
   await delay(150);
 
   if (USE_SUPABASE) {
+    const supabase = window.supabaseClient;
     if (!supabase) throw new Error("Cliente Supabase não inicializado!");
 
     // 1. Buscar cabeçalho
@@ -188,6 +191,7 @@ async function deleteInspection(id) {
   await delay(200);
 
   if (USE_SUPABASE) {
+    const supabase = window.supabaseClient;
     if (!supabase) throw new Error("Cliente Supabase não inicializado!");
 
     // Graças ao "on delete cascade" nas FKs do banco, ao deletar a inspeção principal

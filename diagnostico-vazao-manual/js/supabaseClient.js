@@ -3,8 +3,6 @@
  * Permite reutilizar o cliente já existente da aplicação Spray Precision ou configurar chaves dinamicamente.
  */
 
-let supabase = null;
-
 // Tentar obter chaves que possam estar gravadas no localStorage com segurança (evita erros em abas anônimas)
 let storedUrl = '';
 let storedKey = '';
@@ -25,15 +23,12 @@ if (!storedKey) {
   storedKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
 }
 
-// Tentar inicializar o cliente
+// Tentar inicializar o cliente global
 if (typeof window !== 'undefined') {
   // 1. Tentar reutilizar um cliente global já instanciado pela aplicação-mãe
-  if (window.supabaseClient) {
-    supabase = window.supabaseClient;
-  } else if (window.supabase && storedUrl && storedKey) {
+  if (!window.supabaseClient && window.supabase && storedUrl && storedKey) {
     try {
-      supabase = window.supabase.createClient(storedUrl, storedKey);
-      window.supabaseClient = supabase;
+      window.supabaseClient = window.supabase.createClient(storedUrl, storedKey);
     } catch (e) {
       console.error("Falha ao inicializar Supabase a partir de credenciais:", e);
     }
@@ -51,7 +46,7 @@ function configureSupabase(url, key) {
   }
   
   try {
-    supabase = window.supabase.createClient(url, key);
+    const client = window.supabase.createClient(url, key);
     
     // Gravar no localStorage para persistência de sessões locais (com segurança em modo anônimo)
     try {
@@ -64,9 +59,9 @@ function configureSupabase(url, key) {
     }
     
     // Disponibilizar globalmente
-    window.supabaseClient = supabase;
+    window.supabaseClient = client;
     
-    return supabase;
+    return client;
   } catch (e) {
     console.error("Erro ao configurar cliente Supabase:", e);
     throw e;
@@ -77,5 +72,5 @@ function configureSupabase(url, key) {
  * Verifica se o Supabase está ativado e configurado
  */
 function isSupabaseConnected() {
-  return supabase !== null;
+  return typeof window !== 'undefined' && window.supabaseClient !== undefined && window.supabaseClient !== null;
 }

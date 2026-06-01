@@ -50,7 +50,8 @@ if (document.readyState === 'loading') {
 // SISTEMA DE AUTENTICAÇÃO UNIFICADA (NUVEM SAAS)
 // ==========================================
 async function checkAuthSession() {
-  if (typeof supabase === 'undefined' || !supabase) {
+  const supabase = window.supabaseClient;
+  if (!supabase) {
     // Se o Supabase não estiver carregado (ex: sem internet), abre o app offline por padrão
     console.warn("Cliente Supabase não detectado. Iniciando em modo de contingência offline.");
     handleOfflineBypass();
@@ -122,8 +123,9 @@ async function handleUserLogin(event) {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value.trim();
   const submitBtn = document.getElementById('btn-login-submit');
+  const supabase = window.supabaseClient;
   
-  if (typeof supabase === 'undefined' || !supabase) {
+  if (!supabase) {
     alert("Erro: O conector Supabase não foi carregado. Verifique sua conexão de rede.");
     return;
   }
@@ -157,8 +159,9 @@ async function handleUserLogout() {
     return;
   }
   
+  const supabase = window.supabaseClient;
   try {
-    if (typeof supabase !== 'undefined' && supabase) {
+    if (supabase) {
       await supabase.auth.signOut();
     }
     

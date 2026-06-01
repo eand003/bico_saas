@@ -49,12 +49,42 @@ if (document.readyState === 'loading') {
 // ==========================================
 // SISTEMA DE AUTENTICAÇÃO UNIFICADA (NUVEM SAAS)
 // ==========================================
+function checkOfflinePreAuthorization() {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return window.localStorage.getItem('spray_offline_authorized') === 'true';
+    }
+  } catch (e) {
+    console.warn("Erro ao ler autorização offline do localStorage:", e);
+  }
+  return false;
+}
+
+function setOfflinePreAuthorization(status) {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      if (status) {
+        window.localStorage.setItem('spray_offline_authorized', 'true');
+      } else {
+        window.localStorage.removeItem('spray_offline_authorized');
+      }
+    }
+  } catch (e) {
+    console.warn("Erro ao gravar autorização offline no localStorage:", e);
+  }
+}
+
 async function checkAuthSession() {
   const supabase = window.supabaseClient;
+  const isPreAuthorized = checkOfflinePreAuthorization();
+  
   if (!supabase) {
-    // Se o Supabase não estiver carregado (ex: sem internet), abre o app offline por padrão
-    console.warn("Cliente Supabase não detectado. Iniciando em modo de contingência offline.");
-    handleOfflineBypass();
+    console.warn("Cliente Supabase não detectado. Verificando contingência offline.");
+    if (isPreAuthorized) {
+      handleOfflineBypass();
+    } else {
+      showLoginScreen({ noNetwork: true });
+    }
     return;
   }
   
@@ -67,13 +97,51 @@ async function checkAuthSession() {
     }
   } catch (e) {
     console.error("Erro ao verificar sessão do usuário:", e);
-    handleOfflineBypass();
+    if (isPreAuthorized) {
+      handleOfflineBypass();
+    } else {
+      showLoginScreen({ noNetwork: true });
+    }
   }
 }
 
-function showLoginScreen() {
+function showLoginScreen(options = {}) {
   document.getElementById('app-login-screen').style.display = 'flex';
   document.querySelector('.app-container').style.display = 'none';
+  
+  const isPreAuthorized = checkOfflinePreAuthorization();
+  const skipBtn = document.getElementById('btn-login-skip');
+  const blockedMsg = document.getElementById('login-offline-blocked-msg');
+  
+  if (options.noNetwork) {
+    if (isPreAuthorized) {
+      skipBtn.style.display = 'block';
+      blockedMsg.style.display = 'none';
+      document.getElementById('login-email').disabled = false;
+      document.getElementById('login-password').disabled = false;
+      document.getElementById('btn-login-submit').disabled = false;
+      document.getElementById('btn-login-submit').textContent = "🔐 Entrar no Sistema";
+    } else {
+      skipBtn.style.display = 'none';
+      blockedMsg.style.display = 'block';
+      document.getElementById('login-email').disabled = true;
+      document.getElementById('login-password').disabled = true;
+      document.getElementById('btn-login-submit').disabled = true;
+      document.getElementById('btn-login-submit').textContent = "❌ Sem Conexão de Rede";
+    }
+  } else {
+    document.getElementById('login-email').disabled = false;
+    document.getElementById('login-password').disabled = false;
+    document.getElementById('btn-login-submit').disabled = false;
+    document.getElementById('btn-login-submit').textContent = "🔐 Entrar no Sistema";
+    blockedMsg.style.display = 'none';
+    
+    if (isPreAuthorized) {
+      skipBtn.style.display = 'block';
+    } else {
+      skipBtn.style.display = 'none';
+    }
+  }
 }
 
 function showAppContainer() {
@@ -95,6 +163,9 @@ function handleOfflineBypass() {
 }
 
 function handleUserLoggedIn(user) {
+  // Salvar pré-autorização offline bem sucedida no dispositivo
+  setOfflinePreAuthorization(true);
+  
   showAppContainer();
   
   // Alternar visibilidade dos badges no cabeçalho

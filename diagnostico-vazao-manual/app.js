@@ -1064,6 +1064,11 @@ function renderReportChart(summary, expectedFlow, tolerancePercent) {
 // 9. PERSISTÊNCIA & HISTÓRICO (DATABASE)
 // ==========================================
 async function saveInspectionToDatabase(summary) {
+  if (currentInspectionId === 'demo-aprovado' || currentInspectionId === 'demo-ressalvas' || currentInspectionId === 'demo-reprovado') {
+    console.log("Rascunho de demonstração - Impedindo salvamento automático no banco.");
+    return;
+  }
+
   const cliente = document.getElementById('input-cliente').value.trim();
   const fazenda = document.getElementById('input-fazenda').value.trim();
   const cidade = document.getElementById('input-cidade').value.trim();

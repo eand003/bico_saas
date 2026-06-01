@@ -1110,7 +1110,45 @@ async function saveInspectionToDatabase(summary) {
     currentInspectionId = saved.id;
     console.log("Diagnóstico salvo com sucesso no banco de dados!", saved.id);
   } catch (error) {
-    console.error("Falha ao salvar diagnóstico:", error);
+    console.error("Falha ao salvar diagnóstico online, executando contingência local:", error);
+    
+    // CONTINGÊNCIA: Salvar localmente via localStorage de forma segura
+    try {
+      const now = new Date().toISOString();
+      const backupInspection = {
+        ...header,
+        id: header.id || generateUUID(),
+        created_at: now,
+        updated_at: now
+      };
+      
+      const inspections = getLocalStorageItem('spray_flow_inspections', []);
+      const allMeasurements = getLocalStorageItem('spray_flow_measurements', []);
+      
+      let existingIndex = inspections.findIndex(i => i.id === backupInspection.id);
+      if (existingIndex >= 0) {
+        inspections[existingIndex] = backupInspection;
+      } else {
+        inspections.push(backupInspection);
+      }
+      
+      setLocalStorageItem('spray_flow_inspections', inspections);
+      
+      const cleanMeasurements = allMeasurements.filter(m => m.inspection_id !== backupInspection.id);
+      const newMeasurements = measurements.map(m => ({
+        ...m,
+        id: m.id || generateUUID(),
+        inspection_id: backupInspection.id
+      }));
+      setLocalStorageItem('spray_flow_measurements', [...cleanMeasurements, ...newMeasurements]);
+      
+      currentInspectionId = backupInspection.id;
+      
+      alert("⚠️ Alerta: Falha ao sincronizar com a nuvem (verifique se as tabelas do Supabase foram criadas via painel SQL). O laudo foi salvo localmente no aparelho por segurança.");
+    } catch (e2) {
+      console.error("Falha gravíssima no fallback offline:", e2);
+      alert("Erro ao gravar laudo. Verifique o espaço de armazenamento do seu aparelho.");
+    }
   }
 }
 
@@ -1421,9 +1459,7 @@ function setupEventListeners() {
     renderHistoryList();
   });
   
-  document.getElementById('btn-show-db-config').addEventListener('click', () => {
-    document.getElementById('modal-db-config').style.display = 'flex';
-  });
+
 
   document.getElementById('btn-help').addEventListener('click', () => {
     document.getElementById('modal-help').style.display = 'flex';

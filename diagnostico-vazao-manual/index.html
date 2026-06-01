@@ -685,40 +685,102 @@
       
       <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; margin-top: 10px;">Abra ou exclua relatórios gravados 100% offline neste dispositivo.</p>
       
-      <div id="history-items-container" class="history-grid" style="margin-top: 10px;">
-        <!-- Preenchido via JS -->
-      </div>
-
-      <div id="history-empty-state" class="empty-state" style="display: none; padding: 40px 10px;">
-        <span style="font-size: 40px;">🌾</span>
-        <p style="font-size: 14px; margin-top: 10px;">Nenhum diagnóstico gravado localmente.</p>
-      </div>
-    </div>
-  </div>
-
-
-
-  <!-- MODAL: AJUDA -->
+    <!-- MODAL: AJUDA -->
   <div id="modal-help" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 680px;">
       <button class="modal-close" onclick="document.getElementById('modal-help').style.display='none'">&times;</button>
-      <h2>📖 Guia de Diagnóstico de Vazão Manual</h2>
-      <p style="margin-bottom: 12px; font-size: 14px; line-height: 1.6; color: var(--text-muted);">
-        Bem-vindo ao módulo de aferição bico a bico! Esta ferramenta transforma a tradicional medição com proveta e copo graduado em um diagnóstico técnico-comercial de alta precisão agronômica.
-      </p>
       
-      <h3 style="font-size: 16px; margin-top: 14px; margin-bottom: 6px; color: var(--accent);">Como funciona a coleta?</h3>
-      <ol style="padding-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
-        <li>**Identificação & Parâmetros:** Preencha os dados do cliente, pulverizador, espaçamento, bico ISO nominal e tolerância (ex: ±10% para bicos usados).</li>
-        <li>**Opções de Coleta:** Colete bico a bico usando o cronômetro tátil do celular (Modo Guided) ou digite tudo rapidamente em tabela (Modo Spreadsheet).</li>
-        <li>**Assistente de Voz hands-free:** Ligue o microfone 🎤 e diga os volumes de campo por voz (Ex: "Bico um, quatrocentos e cinquenta", "Próximo") mantendo as mãos livres!</li>
-        <li>**Laudo Imediato:** Veja na hora a taxa média em L/ha, Coeficiente de Variação (CV%) e uma estimativa detalhada de calda/defensivo jogado fora por descalibração.</li>
-      </ol>
-      
-      <h3 style="font-size: 16px; margin-top: 14px; margin-bottom: 6px; color: var(--accent);">Fórmula Hidráulica Clássica</h3>
-      <p style="font-size: 13px; font-family: monospace; padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px;">
-        Vazão Esperada (L/min) = (Volume Alvo L/ha * Velocidade km/h * Espaçamento m) / 600
+      <div style="border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 10px; margin-bottom: 16px;">
+        <h2 style="font-size: 20px; color: var(--accent); margin: 0; display: flex; align-items: center; gap: 8px;">
+          📖 Guia de Diagnóstico de Vazão
+        </h2>
+      </div>
+
+      <p style="margin-bottom: 16px; font-size: 13.5px; line-height: 1.6; color: var(--text-muted);">
+        Bem-vindo ao módulo de aferição bico a bico! Esta ferramenta transforma a tradicional medição com proveta e copo graduado em um laudo técnico-comercial inteligente com alta precisão agronômica e cálculo de perda financeira.
       </p>
+
+      <!-- CARD 1: COMO FUNCIONA A COLETA -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 16px; padding: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <h3 style="font-size: 15px; margin-top: 0; margin-bottom: 10px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+          🚜 Como funciona a coleta?
+        </h3>
+        <ol style="padding-left: 18px; font-size: 12.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px; margin: 0; line-height: 1.5;">
+          <li><strong>Parâmetros Iniciais:</strong> Preencha os dados de velocidade, espaçamento, pressão, bico nominal ISO e tolerância (ex: ±10% padrão).</li>
+          <li><strong>Método de Coleta:</strong> Selecione bico a bico usando o cronômetro com aviso sonoro (Modo Guided) ou digite em lote (Modo Spreadsheet).</li>
+          <li><strong>Assistente de Voz Hands-Free:</strong> Ative o microfone 🎤 e dite os volumes sem tocar no celular enquanto segura a proveta em campo.</li>
+          <li><strong>Laudo & Conclusão:</strong> O sistema calcula a taxa média (L/ha), a perda financeira por sobre/subdosagem e gera o laudo para impressão PDF ou exportação.</li>
+        </ol>
+      </div>
+
+      <!-- CARD 2: CRITÉRIOS DO VEREDITO TÉCNICO -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 16px; padding: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <h3 style="font-size: 15px; margin-top: 0; margin-bottom: 8px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+          📊 Regras do Veredito Técnico Geral
+        </h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+          A classificação da barra de pulverização é regida pelo Coeficiente de Variação (CV% - uniformidade) e pela porcentagem de bicos operando dentro da tolerância (aderência ao alvo calibrado):
+        </p>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                <th style="padding: 8px; font-weight: 600; color: var(--text-main);">Veredito</th>
+                <th style="padding: 8px; font-weight: 600; color: var(--text-main);">% Bicos OK (Alvo)</th>
+                <th style="padding: 8px; font-weight: 600; color: var(--text-main);">Uniformidade (CV%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #f1f5f9; background: rgba(16, 185, 129, 0.03);">
+                <td style="padding: 8px; font-weight: bold; color: var(--accent-green);">🟢 APROVADO</td>
+                <td style="padding: 8px; color: var(--text-muted);">90% ou mais</td>
+                <td style="padding: 8px; color: var(--text-muted);">menor ou igual a 10%</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #f1f5f9; background: rgba(245, 158, 11, 0.03);">
+                <td style="padding: 8px; font-weight: bold; color: var(--accent-warning);">🟡 RESSALVAS</td>
+                <td style="padding: 8px; color: var(--text-muted);">75% a 89.9%</td>
+                <td style="padding: 8px; color: var(--text-muted);">menor ou igual a 15%</td>
+              </tr>
+              <tr style="background: rgba(239, 68, 68, 0.03);">
+                <td style="padding: 8px; font-weight: bold; color: var(--accent-error);">🔴 REPROVADO</td>
+                <td style="padding: 8px; color: var(--text-muted);">Menos de 75%</td>
+                <td style="padding: 8px; color: var(--text-muted);">maior que 15% (ou qualquer um acima)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size: 11.5px; color: var(--text-light); margin-top: 10px; line-height: 1.4; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
+          ⚠️ <strong>Nota:</strong> Se o desvio da vazão média estiver fora do alvo calibrado (mesmo com bicos idênticos e CV baixo), o laudo dará <strong>Reprovado</strong> para evitar subdosagem ou desperdício de calda no campo.
+        </p>
+      </div>
+
+      <!-- CARD 3: ASSISTENTE DE VOZ (HANDS-FREE) -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 16px; padding: 16px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <h3 style="font-size: 15px; margin-top: 0; margin-bottom: 10px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+          🎤 Comandos de Voz Suportados
+        </h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
+          Ao ligar o assistente de voz na Etapa 4, você pode usar os seguintes termos de controle:
+        </p>
+        <ul style="padding-left: 18px; font-size: 12.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px; margin: 0; line-height: 1.5;">
+          <li><strong>Digitar Volume (bico ativo):</strong> Diga apenas o número. <br><span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--accent);">"quatrocentos e cinquenta"</span> ou <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--accent);">"quinhentos"</span> (salva em mL).</li>
+          <li><strong>Bico Específico:</strong> Diga o bico seguido do volume. <br><span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--accent);">"bico cinco quatrocentos e cinquenta"</span></li>
+          <li><strong>Cronômetro:</strong> <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"iniciar"</span>, <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"cronômetro"</span> ou <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"começar"</span>.</li>
+          <li><strong>Navegação:</strong> <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"próximo"</span>, <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"salvar"</span>, <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"voltar"</span> ou <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"anterior"</span>.</li>
+          <li><strong>Avisos Rápidos:</strong> <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--accent-error);">"entupido"</span> / <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--accent-error);">"vazando"</span> (marcam o bico atual instantaneamente).</li>
+          <li><strong>Reiniciar:</strong> <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"zerar"</span>, <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"limpar"</span> ou <span style="font-family: monospace; font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: var(--text-main);">"repetir"</span>.</li>
+        </ul>
+      </div>
+
+      <!-- CARD 4: EQUAÇÃO HIDRÁULICA CLÁSSICA -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #f8fafc;">
+        <h3 style="font-size: 14px; margin-top: 0; margin-bottom: 6px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+          🧮 Fórmula Hidráulica Clássica da Calibração
+        </h3>
+        <p style="font-size: 12px; font-family: monospace; padding: 10px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; margin: 0; text-align: center; color: var(--accent); font-weight: bold; overflow-x: auto; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);">
+          Vazão Esperada (L/min) = (Volume Alvo L/ha * Velocidade km/h * Espaçamento m) / 600
+        </p>
+      </div>
     </div>
   </div>
 

@@ -226,14 +226,14 @@ function calculateBarSummary(measurements, expectedFlowLMin, speedKmh, nozzleSpa
   
   // Classificação Geral
   // Aprovado: >= 90% dos bicos OK e CV <= 10%
-  // Aprovado com Ressalvas: 75% a 89% dos bicos OK ou CV entre 10% e 15%
+  // Aprovado com Ressalvas: >= 75% dos bicos OK e CV <= 15% (excluindo faixa aprovada)
   // Reprovado: < 75% dos bicos OK ou CV > 15%
   const okPercent = (okCount / evaluatedCount) * 100;
   let generalClassification = 'reprovado';
   
   if (okPercent >= 90 && cv <= 10) {
     generalClassification = 'aprovado';
-  } else if (okPercent >= 75 || (cv > 10 && cv <= 15)) {
+  } else if (okPercent >= 75 && cv <= 15) {
     generalClassification = 'aprovado_com_ressalvas';
   } else {
     generalClassification = 'reprovado';

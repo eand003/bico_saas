@@ -42,8 +42,12 @@
           <input type="password" id="login-password" class="input-field" placeholder="Sua senha secreta" required>
         </div>
         
-        <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; margin-top: 8px; font-weight: bold; min-height: 44px;">
+        <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; margin-top: 4px; font-weight: bold; min-height: 44px;">
           🔐 Entrar no Sistema
+        </button>
+        
+        <button type="button" id="btn-login-skip" class="btn btn-secondary" style="width: 100%; font-weight: bold; min-height: 44px;" title="Utilizar aplicativo sem sincronização de nuvem">
+          🚜 Usar em Modo Local (Offline)
         </button>
       </form>
       
@@ -70,6 +74,12 @@
         <div id="user-profile-badge" style="display: none; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(0, 102, 204, 0.06); border: 1px solid rgba(0, 102, 204, 0.15); border-radius: 20px; font-size: 11px; color: var(--text-muted); font-weight: bold;" title="Consultor Autenticado">
           👤 <span id="logged-user-email">--</span>
           <button id="btn-logout" title="Sair da Conta (Logout)" style="background: none; border: none; color: var(--accent-error); font-weight: bold; cursor: pointer; padding: 0 2px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">🚪</button>
+        </div>
+        
+        <!-- Badge de Modo de Contingência Offline -->
+        <div id="offline-profile-badge" style="display: none; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 20px; font-size: 11px; color: var(--accent-warning); font-weight: bold;" title="Clique na porta para voltar ao login">
+          ⚠️ Modo Local Offline
+          <button id="btn-trigger-login" title="Voltar para a Tela de Login (Sair)" style="background: none; border: none; color: var(--accent-error); font-weight: bold; cursor: pointer; padding: 0 2px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">🚪</button>
         </div>
         <button id="btn-header-new" class="btn btn-success" style="padding: 8px 12px; min-height: 38px; font-weight: bold;" title="Iniciar Novo Diagnóstico do Zero">
           🚜 Novo

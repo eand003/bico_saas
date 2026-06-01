@@ -53,7 +53,7 @@ async function checkAuthSession() {
   if (typeof supabase === 'undefined' || !supabase) {
     // Se o Supabase não estiver carregado (ex: sem internet), abre o app offline por padrão
     console.warn("Cliente Supabase não detectado. Iniciando em modo de contingência offline.");
-    showAppContainer();
+    handleOfflineBypass();
     return;
   }
   
@@ -66,7 +66,7 @@ async function checkAuthSession() {
     }
   } catch (e) {
     console.error("Erro ao verificar sessão do usuário:", e);
-    showAppContainer();
+    handleOfflineBypass();
   }
 }
 
@@ -80,15 +80,30 @@ function showAppContainer() {
   document.querySelector('.app-container').style.display = 'flex';
 }
 
+function handleOfflineBypass() {
+  showAppContainer();
+  
+  // Alternar visibilidade dos badges no cabeçalho
+  const badgeOnline = document.getElementById('user-profile-badge');
+  const badgeOffline = document.getElementById('offline-profile-badge');
+  if (badgeOnline) badgeOnline.style.display = 'none';
+  if (badgeOffline) badgeOffline.style.display = 'flex';
+  
+  // Carregar histórico local
+  renderHistoryList();
+}
+
 function handleUserLoggedIn(user) {
   showAppContainer();
   
-  // Exibir perfil do consultor logado
-  const badge = document.getElementById('user-profile-badge');
-  if (badge) {
-    badge.style.display = 'flex';
-    document.getElementById('logged-user-email').textContent = user.email;
+  // Alternar visibilidade dos badges no cabeçalho
+  const badgeOnline = document.getElementById('user-profile-badge');
+  const badgeOffline = document.getElementById('offline-profile-badge');
+  if (badgeOnline) {
+    badgeOnline.style.display = 'flex';
+    document.getElementById('logged-user-email').textContent = user.email.toUpperCase();
   }
+  if (badgeOffline) badgeOffline.style.display = 'none';
   
   // Auto-preencher o Inspetor Técnico se estiver em branco
   const responsavel = document.getElementById('input-responsavel');
@@ -1444,6 +1459,8 @@ function setupEventListeners() {
   // Eventos de Autenticação Supabase
   document.getElementById('login-form').addEventListener('submit', handleUserLogin);
   document.getElementById('btn-logout').addEventListener('click', handleUserLogout);
+  document.getElementById('btn-login-skip').addEventListener('click', handleOfflineBypass);
+  document.getElementById('btn-trigger-login').addEventListener('click', showLoginScreen);
 }
 
 // Exportador CSV

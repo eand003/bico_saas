@@ -47,6 +47,10 @@
   padding: 0;
 }
 
+html, body {
+  overscroll-behavior-y: contain; /* Impede pull-to-refresh em iPhones e navegadores móveis */
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-main);

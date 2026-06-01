@@ -28,7 +28,13 @@ function initApp() {
   setupNavigation();
   setupNozzleIsoCatalog();
   setupEventListeners();
-  initMeasurements();
+  
+  // Tentar restaurar rascunho anterior de calibração em andamento
+  const restored = restoreActiveDraft();
+  if (!restored) {
+    initMeasurements();
+  }
+  
   setupVoiceAssistant();
   loadSavedCredentials();
   
@@ -38,6 +44,9 @@ function initApp() {
   // Registrar data atual na identificação
   const today = new Date().toLocaleDateString('pt-BR');
   document.getElementById('input-notas-identificacao').placeholder = `Inspeção realizada em ${today}...`;
+  
+  // Iniciar escuta para auto-save de rascunhos em tempo real
+  setupDraftAutoSave();
 }
 
 if (document.readyState === 'loading') {
@@ -302,6 +311,7 @@ function switchTab(tabId) {
   }
 
   activeTab = tabId;
+  saveActiveDraft();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -731,6 +741,7 @@ function updateNozzleData(index, volumeMl, duration, expectedFlow, tolerance) {
       m.notes = '';
     }
   }
+  saveActiveDraft();
 }
 
 // ==========================================
@@ -1150,6 +1161,9 @@ async function saveInspectionToDatabase(summary) {
       alert("Erro ao gravar laudo. Verifique o espaço de armazenamento do seu aparelho.");
     }
   }
+  try {
+    localStorage.removeItem('spray_flow_active_draft');
+  } catch (e) {}
 }
 
 async function renderHistoryList() {
@@ -1770,6 +1784,156 @@ function createNewInspectionWorkflow() {
   switchTab('tab-identificacao');
   
   // Efeitos sonoros e assistente de voz
+  try {
+    localStorage.removeItem('spray_flow_active_draft');
+  } catch (e) {}
   playBeep('success');
   speak("Iniciando nova calibração.");
+}
+
+// ==========================================
+// 15. PERSISTÊNCIA E AUTO-SAVE DO RASCUNHO ATIVO (PROTEÇÃO CONTRA RELOAD NO IPHONE)
+// ==========================================
+function saveActiveDraft() {
+  try {
+    // Não salvar rascunho se estiver no laudo
+    if (activeTab === 'tab-relatorio') return;
+    
+    // Apenas salva se houver algum dado relevante
+    const cliente = document.getElementById('input-cliente')?.value.trim() || '';
+    const responsavel = document.getElementById('input-responsavel')?.value.trim() || '';
+    const totalMeasurementsWithVolume = measurements.filter(m => m.collected_volume_ml > 0 || m.status !== 'nao_avaliado').length;
+    
+    if (!cliente && !responsavel && totalMeasurementsWithVolume === 0) {
+      return; // Rascunho vazio, não vale a pena salvar
+    }
+    
+    const draft = {
+      currentInspectionId,
+      activeNozzleIndex,
+      totalNozzles,
+      activeTab,
+      measurements,
+      inputs: {
+        cliente,
+        fazenda: document.getElementById('input-fazenda')?.value.trim() || '',
+        cidade: document.getElementById('input-cidade')?.value.trim() || '',
+        estado: document.getElementById('input-estado')?.value || 'MT',
+        talhao: document.getElementById('input-talhao')?.value.trim() || '',
+        cultura: document.getElementById('input-cultura')?.value.trim() || '',
+        operacao: document.getElementById('input-operacao')?.value || 'fungicida',
+        responsavel,
+        notas_identificacao: document.getElementById('input-notas-identificacao')?.value.trim() || '',
+        
+        marca: document.getElementById('input-marca')?.value.trim() || '',
+        modelo: document.getElementById('input-modelo')?.value.trim() || '',
+        tipo_pulv: document.getElementById('input-tipo-pulv')?.value || 'autopropelido',
+        largura_barra: parseFloat(document.getElementById('input-largura-barra')?.value) || 30,
+        total_bicos: parseInt(document.getElementById('input-total-bicos')?.value) || 60,
+        espacamento: parseFloat(document.getElementById('input-espacamento')?.value) || 0.5,
+        pressao: parseFloat(document.getElementById('input-pressao')?.value) || 3.0,
+        unidade_pressao: document.getElementById('select-unidade-pressao')?.value || 'bar',
+        velocidade: parseFloat(document.getElementById('input-velocidade')?.value) || 16,
+        volume_alvo: parseFloat(document.getElementById('input-volume-alvo')?.value) || 100,
+        
+        iso_nozzle: document.getElementById('select-iso-nozzle')?.value || '',
+        vazao_nominal: parseFloat(document.getElementById('input-vazao-nominal')?.value) || 1.2,
+        ponta_tipo: document.getElementById('select-ponta-tipo')?.value || 'leque_inducao',
+        ponta_modelo: document.getElementById('input-ponta-modelo')?.value.trim() || '',
+        ponta_condicao: document.getElementById('select-ponta-condicao')?.value || 'usada',
+        tolerancia: parseFloat(document.getElementById('input-tolerancia')?.value) || 10,
+        
+        tempo_coleta: parseInt(document.getElementById('input-tempo-coleta')?.value) || 30
+      }
+    };
+    
+    localStorage.setItem('spray_flow_active_draft', JSON.stringify(draft));
+  } catch (e) {
+    console.error("Erro ao salvar rascunho de calibração:", e);
+  }
+}
+
+function restoreActiveDraft() {
+  try {
+    const rawDraft = localStorage.getItem('spray_flow_active_draft');
+    if (!rawDraft) return false;
+    
+    const draft = JSON.parse(rawDraft);
+    if (!draft || !draft.measurements || draft.measurements.length === 0) return false;
+    
+    // Restaurar IDs e Estado
+    currentInspectionId = draft.currentInspectionId;
+    activeNozzleIndex = draft.activeNozzleIndex;
+    totalNozzles = draft.totalNozzles;
+    measurements = draft.measurements;
+    activeTab = draft.activeTab || 'tab-identificacao';
+    
+    // Restaurar inputs
+    const inputs = draft.inputs;
+    if (inputs) {
+      if (document.getElementById('input-cliente')) document.getElementById('input-cliente').value = inputs.cliente || '';
+      if (document.getElementById('input-fazenda')) document.getElementById('input-fazenda').value = inputs.fazenda || '';
+      if (document.getElementById('input-cidade')) document.getElementById('input-cidade').value = inputs.cidade || '';
+      if (document.getElementById('input-estado')) document.getElementById('input-estado').value = inputs.estado || 'MT';
+      if (document.getElementById('input-talhao')) document.getElementById('input-talhao').value = inputs.talhao || '';
+      if (document.getElementById('input-cultura')) document.getElementById('input-cultura').value = inputs.cultura || '';
+      if (document.getElementById('input-operacao')) document.getElementById('input-operacao').value = inputs.operacao || 'fungicida';
+      if (document.getElementById('input-responsavel')) document.getElementById('input-responsavel').value = inputs.responsavel || '';
+      if (document.getElementById('input-notas-identificacao')) document.getElementById('input-notas-identificacao').value = inputs.notas_identificacao || '';
+      
+      if (document.getElementById('input-marca')) document.getElementById('input-marca').value = inputs.marca || '';
+      if (document.getElementById('input-modelo')) document.getElementById('input-modelo').value = inputs.modelo || '';
+      if (document.getElementById('input-tipo-pulv')) document.getElementById('input-tipo-pulv').value = inputs.tipo_pulv || 'autopropelido';
+      if (document.getElementById('input-largura-barra')) document.getElementById('input-largura-barra').value = inputs.largura_barra || 30;
+      if (document.getElementById('input-total-bicos')) document.getElementById('input-total-bicos').value = inputs.total_bicos || 60;
+      if (document.getElementById('input-espacamento')) document.getElementById('input-espacamento').value = inputs.espacamento || 0.5;
+      if (document.getElementById('input-pressao')) document.getElementById('input-pressao').value = inputs.pressao || 3.0;
+      if (document.getElementById('select-unidade-pressao')) document.getElementById('select-unidade-pressao').value = inputs.unidade_pressao || 'bar';
+      if (document.getElementById('input-velocidade')) document.getElementById('input-velocidade').value = inputs.velocidade || 16;
+      if (document.getElementById('input-volume-alvo')) document.getElementById('input-volume-alvo').value = inputs.volume_alvo || 100;
+      
+      if (document.getElementById('select-iso-nozzle')) document.getElementById('select-iso-nozzle').value = inputs.iso_nozzle || '';
+      if (document.getElementById('input-vazao-nominal')) document.getElementById('input-vazao-nominal').value = inputs.vazao_nominal || 1.2;
+      if (document.getElementById('select-ponta-tipo')) document.getElementById('select-ponta-tipo').value = inputs.ponta_tipo || 'leque_inducao';
+      if (document.getElementById('input-ponta-modelo')) document.getElementById('input-ponta-modelo').value = inputs.ponta_modelo || '';
+      if (document.getElementById('select-ponta-condicao')) document.getElementById('select-ponta-condicao').value = inputs.ponta_condicao || 'usada';
+      if (document.getElementById('input-tolerancia')) document.getElementById('input-tolerancia').value = inputs.tolerancia || 10;
+      
+      if (document.getElementById('input-tempo-coleta')) document.getElementById('input-tempo-coleta').value = inputs.tempo_coleta || 30;
+    }
+    
+    // Atualizar UI
+    renderBoomVisualizer('boom-track-visual');
+    updateGuidedNozzleFocus();
+    rebuildBulkGrid();
+    
+    // Forçar a visualização da aba ativa restaurada
+    switchTab(activeTab);
+    
+    console.log("Rascunho de calibração ativa restaurado do localStorage!");
+    return true;
+  } catch (e) {
+    console.error("Erro ao restaurar rascunho de calibração:", e);
+    return false;
+  }
+}
+
+function setupDraftAutoSave() {
+  const container = document.querySelector('.app-container');
+  if (container) {
+    // Escutar por alterações de input para salvar rascunho instantaneamente
+    container.addEventListener('input', saveActiveDraft);
+    container.addEventListener('change', saveActiveDraft);
+  }
+  
+  // Evitar Pull-To-Refresh no Safari/Chrome móvel (além do CSS)
+  window.addEventListener('beforeunload', (event) => {
+    // Se houver algum bico coletado, pedir confirmação antes de sair
+    const hasVolume = measurements.some(m => m.collected_volume_ml > 0 || m.status !== 'nao_avaliado');
+    if (hasVolume && activeTab !== 'tab-relatorio') {
+      event.preventDefault();
+      event.returnValue = 'Você possui coletas em andamento. Deseja realmente atualizar a página?';
+      return event.returnValue;
+    }
+  });
 }

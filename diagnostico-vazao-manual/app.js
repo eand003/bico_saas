@@ -1259,7 +1259,18 @@ async function loadInspectionIntoApp(id) {
     // Carregar notas
     const notesArray = inspection.notes ? inspection.notes.split('\nInspetor:') : ['', ''];
     document.getElementById('input-notas-identificacao').value = notesArray[0].trim();
-    document.getElementById('input-responsavel').value = notesArray[1] ? notesArray[1].trim() : '';
+    
+    // Recuperar Responsável Técnico (ou auto-preencher se vazio para evitar bloqueios de validação)
+    let inspectorVal = notesArray[1] ? notesArray[1].trim() : '';
+    if (!inspectorVal) {
+      const emailSpan = document.getElementById('logged-user-email');
+      if (emailSpan && emailSpan.textContent && emailSpan.textContent !== '--') {
+        inspectorVal = emailSpan.textContent.split('@')[0].toUpperCase();
+      } else {
+        inspectorVal = 'CONSULTOR';
+      }
+    }
+    document.getElementById('input-responsavel').value = inspectorVal;
 
     // Fechar modal do histórico
     document.getElementById('modal-history').style.display = 'none';

@@ -4,7 +4,7 @@
  */
 
 // Catálogo de bicos padrão ISO (vazão nominal em L/min a 3.0 BAR e cores padrão)
-export const ISO_NOZZLES = [
+const ISO_NOZZLES = [
   { code: '01', color: '#FFB347', label: '01 - Laranja', flow3bar: 0.40 },
   { code: '015', color: '#38EF7D', label: '015 - Verde', flow3bar: 0.60 },
   { code: '02', color: '#F1C40F', label: '02 - Amarelo', flow3bar: 0.80 },
@@ -20,14 +20,14 @@ export const ISO_NOZZLES = [
 /**
  * Converte pressão de PSI para BAR
  */
-export function psiToBar(psi) {
+function psiToBar(psi) {
   return psi / 14.5038;
 }
 
 /**
  * Converte pressão de BAR para PSI
  */
-export function barToPsi(bar) {
+function barToPsi(bar) {
   return bar * 14.5038;
 }
 
@@ -35,7 +35,7 @@ export function barToPsi(bar) {
  * Calcula a vazão teórica de um bico ISO com base na pressão (Lei da Afinidade Hidráulica)
  * Q1 / Q2 = sqrt(P1 / P2) -> Q_pressao = Q_3bar * sqrt(pressao / 3.0)
  */
-export function calculateExpectedFlowByISO(flow3bar, pressureValue, pressureUnit = 'bar') {
+function calculateExpectedFlowByISO(flow3bar, pressureValue, pressureUnit = 'bar') {
   if (!flow3bar || !pressureValue) return 0;
   
   // Garantir pressão em BAR para a fórmula
@@ -50,7 +50,7 @@ export function calculateExpectedFlowByISO(flow3bar, pressureValue, pressureUnit
  * Calcula a vazão medida em L/min com base no volume coletado em mL e o tempo em segundos
  * vazao_l_min = (volume_ml / 1000) / (tempo_segundos / 60)
  */
-export function calculateMeasuredFlowLMin(volumeMl, timeSeconds) {
+function calculateMeasuredFlowLMin(volumeMl, timeSeconds) {
   if (!volumeMl || !timeSeconds || timeSeconds <= 0) return 0;
   return (volumeMl / 1000.0) / (timeSeconds / 60.0);
 }
@@ -59,7 +59,7 @@ export function calculateMeasuredFlowLMin(volumeMl, timeSeconds) {
  * Calcula a vazão esperada em L/min com base nos parâmetros da aplicação
  * vazao_esperada_l_min = (volume_alvo_l_ha * velocidade_km_h * espacamento_bicos_m) / 600
  */
-export function calculateExpectedFlowLMin(targetRateLHa, speedKmh, nozzleSpacingM) {
+function calculateExpectedFlowLMin(targetRateLHa, speedKmh, nozzleSpacingM) {
   if (!targetRateLHa || !speedKmh || !nozzleSpacingM) return 0;
   return (targetRateLHa * speedKmh * nozzleSpacingM) / 600.0;
 }
@@ -68,7 +68,7 @@ export function calculateExpectedFlowLMin(targetRateLHa, speedKmh, nozzleSpacing
  * Calcula o desvio percentual da vazão medida em relação à vazão esperada
  * desvio = ((vazao_medida - vazao_esperada) / vazao_esperada) * 100
  */
-export function calculateDeviationPercent(measuredFlowLMin, expectedFlowLMin) {
+function calculateDeviationPercent(measuredFlowLMin, expectedFlowLMin) {
   if (!expectedFlowLMin || expectedFlowLMin <= 0) return 0;
   return ((measuredFlowLMin - expectedFlowLMin) / expectedFlowLMin) * 100.0;
 }
@@ -77,7 +77,7 @@ export function calculateDeviationPercent(measuredFlowLMin, expectedFlowLMin) {
  * Calcula a taxa real aplicada por um bico em L/ha
  * taxa_real_l_ha = (vazao_medida_l_min * 600) / (velocidade_km_h * espacamento_bicos_m)
  */
-export function calculateActualRateLHa(measuredFlowLMin, speedKmh, nozzleSpacingM) {
+function calculateActualRateLHa(measuredFlowLMin, speedKmh, nozzleSpacingM) {
   if (!measuredFlowLMin || !speedKmh || !nozzleSpacingM) return 0;
   return (measuredFlowLMin * 600.0) / (speedKmh * nozzleSpacingM);
 }
@@ -85,7 +85,7 @@ export function calculateActualRateLHa(measuredFlowLMin, speedKmh, nozzleSpacing
 /**
  * Classifica a condição de um bico com base no desvio percentual e tolerância configurada
  */
-export function classifyNozzle(deviationPercent, tolerancePercent = 10) {
+function classifyNozzle(deviationPercent, tolerancePercent = 10) {
   if (deviationPercent === null || deviationPercent === undefined || isNaN(deviationPercent)) {
     return 'nao_avaliado';
   }
@@ -109,7 +109,7 @@ export function classifyNozzle(deviationPercent, tolerancePercent = 10) {
 /**
  * Retorna a recomendação técnica e ação sugerida com base no status do bico
  */
-export function getNozzleRecommendation(status, nozzleNumber) {
+function getNozzleRecommendation(status, nozzleNumber) {
   switch (status) {
     case 'ok':
       return {
@@ -148,7 +148,7 @@ export function getNozzleRecommendation(status, nozzleNumber) {
 /**
  * Calcula estatísticas gerais da barra de pulverização
  */
-export function calculateBarSummary(measurements, expectedFlowLMin, speedKmh, nozzleSpacingM, tolerancePercent, totalNozzles) {
+function calculateBarSummary(measurements, expectedFlowLMin, speedKmh, nozzleSpacingM, tolerancePercent, totalNozzles) {
   const evaluated = measurements.filter(m => m.status !== 'nao_avaliado');
   const evaluatedCount = evaluated.length;
   
@@ -263,7 +263,7 @@ export function calculateBarSummary(measurements, expectedFlowLMin, speedKmh, no
  * Simula o impacto financeiro estimado da aplicação com bicos descalibrados
  * Baseia-se no desvio individual de cada bico
  */
-export function simulateFinancialLoss(measurements, targetRateLHa, speedKmh, nozzleSpacingM, costCaldaLha, areaHa, valorSafraHa = 3000, perdaSafraPercent = 10) {
+function simulateFinancialLoss(measurements, targetRateLHa, speedKmh, nozzleSpacingM, costCaldaLha, areaHa, valorSafraHa = 3000, perdaSafraPercent = 10) {
   if (!measurements || measurements.length === 0 || !costCaldaLha || !areaHa) {
     return { wastedCost: 0, efficiencyLossRiskCost: 0, totalLoss: 0 };
   }

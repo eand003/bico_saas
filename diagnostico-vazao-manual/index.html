@@ -21,7 +21,39 @@
 </head>
 <body>
 
-  <div class="app-container">
+  <!-- TELA DE LOGIN PREMIUM (Sincronização Nuvem Supabase) -->
+  <div id="app-login-screen" class="login-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">
+    <div class="login-box">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <img class="app-logo" src="../logo.png" alt="Spray Precision PRO Logo" onerror="this.src='https://placehold.co/100x100?text=SP'" style="width: 64px; height: 64px; border-radius: 12px; margin: 0 auto; display: block;">
+      </div>
+      <h2>Acesso ao Sistema</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 12.5px; margin-top: -10px; margin-bottom: 12px; line-height: 1.4;">
+        Digite suas credenciais unificadas do Spray Precision para sincronizar seus relatórios e histórico na nuvem.
+      </p>
+      
+      <form id="login-form" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group" style="text-align: left;">
+          <label for="login-email" style="font-weight: 600; font-size: 12.5px; margin-bottom: 4px;">E-mail do Consultor / Produtor</label>
+          <input type="email" id="login-email" class="input-field" placeholder="seuemail@empresa.com" required>
+        </div>
+        <div class="form-group" style="text-align: left;">
+          <label for="login-password" style="font-weight: 600; font-size: 12.5px; margin-bottom: 4px;">Senha de Acesso</label>
+          <input type="password" id="login-password" class="input-field" placeholder="Sua senha secreta" required>
+        </div>
+        
+        <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; margin-top: 8px; font-weight: bold; min-height: 44px;">
+          🔐 Entrar no Sistema
+        </button>
+      </form>
+      
+      <div style="text-align: center; margin-top: 12px; font-size: 11px; color: var(--text-light); border-top: 1px dashed rgba(0,0,0,0.08); padding-top: 12px;">
+        🔒 Conexão corporativa criptografada via Supabase SSL.
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container" style="display: none;">
     
     <!-- APP HEADER -->
     <header class="app-header">
@@ -33,7 +65,12 @@
         </div>
       </div>
       
-      <div style="display: flex; gap: 8px;" class="no-print">
+      <div style="display: flex; gap: 8px; align-items: center;" class="no-print">
+        <!-- Badge de Perfil do Consultor Logado (Nuvem SaaS) -->
+        <div id="user-profile-badge" style="display: none; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(0, 102, 204, 0.06); border: 1px solid rgba(0, 102, 204, 0.15); border-radius: 20px; font-size: 11px; color: var(--text-muted); font-weight: bold;" title="Consultor Autenticado">
+          👤 <span id="logged-user-email">--</span>
+          <button id="btn-logout" title="Sair da Conta (Logout)" style="background: none; border: none; color: var(--accent-error); font-weight: bold; cursor: pointer; padding: 0 2px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">🚪</button>
+        </div>
         <button id="btn-header-new" class="btn btn-success" style="padding: 8px 12px; min-height: 38px; font-weight: bold;" title="Iniciar Novo Diagnóstico do Zero">
           🚜 Novo
         </button>
@@ -400,7 +437,7 @@
           <div class="summary-card-label">Bicos Avaliados</div>
           <div class="summary-card-val" id="rep-card-avaliados">--</div>
         </div>
-        <div class="summary-card">
+        <div class="summary-card" style="border-top: 4px solid var(--accent);">
           <div class="summary-card-label">Coef. Variação (CV)</div>
           <div class="summary-card-val" id="rep-card-cv">--</div>
         </div>
@@ -408,11 +445,22 @@
           <div class="summary-card-label">Veredito Geral</div>
           <div class="summary-card-val" id="rep-card-veredito" style="font-size: 18px; margin-top: 10px;">--</div>
         </div>
-        <div class="summary-card">
+      </div>
+
+      <div class="summary-grid" style="margin-top: -8px;">
+        <div class="summary-card" style="background: rgba(0, 102, 204, 0.02); border: 1px dashed var(--accent);">
+          <div class="summary-card-label" style="color: var(--accent); font-weight: bold;">Vazão Nominal Esperada</div>
+          <div class="summary-card-val" id="rep-card-vazao-esperada" style="color: var(--accent);">-- L/min</div>
+        </div>
+        <div class="summary-card" style="border-top: 4px solid var(--accent-green);">
           <div class="summary-card-label">Vazão Média Real</div>
           <div class="summary-card-val" id="rep-card-vazao">-- L/min</div>
         </div>
-        <div class="summary-card">
+        <div class="summary-card" style="background: rgba(0, 102, 204, 0.02); border: 1px dashed var(--accent);">
+          <div class="summary-card-label" style="color: var(--accent); font-weight: bold;">Taxa Calda Alvo</div>
+          <div class="summary-card-val" id="rep-card-taxa-esperada" style="color: var(--accent);">-- L/ha</div>
+        </div>
+        <div class="summary-card" style="border-top: 4px solid var(--accent-green);">
           <div class="summary-card-label">Taxa Média Aplicada</div>
           <div class="summary-card-val" id="rep-card-taxa">-- L/ha</div>
         </div>
@@ -689,7 +737,11 @@
     </div>
   </div>
 
-  <!-- Controlador da SPA (Lógica Frontend) -->
-  <script type="module" src="./app.js"></script>
+  <!-- Controlador da SPA (Lógica Frontend de Alta Acessibilidade Offline) -->
+  <script src="./js/calculations.js?v=2.0.1"></script>
+  <script src="./js/supabaseClient.js?v=2.0.1"></script>
+  <script src="./js/dbService.js?v=2.0.1"></script>
+  <script src="./js/voiceService.js?v=2.0.1"></script>
+  <script src="./app.js?v=2.0.1"></script>
 </body>
 </html>

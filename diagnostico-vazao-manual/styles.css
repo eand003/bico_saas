@@ -135,9 +135,10 @@ h1, h2, h3, h4, .font-display {
   font-weight: 600;
 }
 
-/* Abas de Navegação (Stepper Virtual) */
+/* Abas de Navegação (Stepper Virtual) - Otimizado para Mobile Horizontais */
 .stepper-nav {
   display: flex;
+  flex-wrap: nowrap; /* Garante rolagem e impede quebra de linha */
   justify-content: space-between;
   background: #ffffff;
   padding: 8px;
@@ -149,9 +150,19 @@ h1, h2, h3, h4, .font-display {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Ocultar barra de rolagem visual mantendo a funcionalidade de swipe */
+.stepper-nav::-webkit-scrollbar {
+  display: none;
+}
+.stepper-nav {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .step-tab {
-  flex: 1;
+  flex: 1 0 auto; /* Permite crescer mas impede encolhimento distorcido */
   min-width: 120px;
+  flex-shrink: 0; /* Trava largura em telas pequenas */
   padding: 12px 8px;
   border: none;
   background: transparent;
@@ -1012,4 +1023,47 @@ h1, h2, h3, h4, .font-display {
   .page-break {
     page-break-before: always !important;
   }
+}
+
+/* ==========================================
+ * TELA DE LOGIN PREMIUM
+ * ========================================== */
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-main);
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.login-box {
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  padding: 36px 28px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: var(--shadow-hover);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.4s ease-out;
+  box-sizing: border-box;
+}
+
+.login-box h2 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  text-align: center;
+  color: var(--accent);
+  margin-top: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

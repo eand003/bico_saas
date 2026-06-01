@@ -19,7 +19,7 @@ let statusCallback = null; // Atualizações de status do microfone
 /**
  * Inicializa o assistente de voz e verifica suporte nativo no navegador
  */
-export function initVoiceService() {
+function initVoiceService() {
   if (typeof window === 'undefined') return { supported: false };
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -75,7 +75,7 @@ export function initVoiceService() {
 /**
  * Registra callbacks de escuta para a interface
  */
-export function registerVoiceCallbacks({ onResult, onCommand, onStatus }) {
+function registerVoiceCallbacks({ onResult, onCommand, onStatus }) {
   if (onResult) resultCallback = onResult;
   if (onCommand) commandCallback = onCommand;
   if (onStatus) statusCallback = onStatus;
@@ -84,7 +84,7 @@ export function registerVoiceCallbacks({ onResult, onCommand, onStatus }) {
 /**
  * Ativa o microfone e começa a escutar comandos
  */
-export function startListening() {
+function startListening() {
   if (!recognition) {
     const check = initVoiceService();
     if (!check.supported) return false;
@@ -103,7 +103,7 @@ export function startListening() {
 /**
  * Desliga o microfone
  */
-export function stopListening() {
+function stopListening() {
   if (!recognition) return;
   try {
     isListening = false;
@@ -116,14 +116,14 @@ export function stopListening() {
 /**
  * Retorna se o assistente está escutando no momento
  */
-export function isCurrentlyListening() {
+function isCurrentlyListening() {
   return isListening;
 }
 
 /**
  * Executa síntese de fala (fala um texto em português brasileiro)
  */
-export function speak(text, interrupt = true) {
+function speak(text, interrupt = true) {
   if (!synth) return;
   
   if (interrupt) {
@@ -141,7 +141,7 @@ export function speak(text, interrupt = true) {
 /**
  * Emite um beep de áudio customizado usando a Web Audio API (evita dependências de arquivos de áudio locais)
  */
-export function playBeep(type = 'success') {
+function playBeep(type = 'success') {
   if (typeof window === 'undefined') return;
   
   try {

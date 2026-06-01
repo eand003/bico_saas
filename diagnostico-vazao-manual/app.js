@@ -4,10 +4,8 @@
  * assistente de voz e integração com o dbService.
  */
 
-import { ISO_NOZZLES, calculateExpectedFlowByISO, calculateMeasuredFlowLMin, calculateExpectedFlowLMin, calculateDeviationPercent, calculateActualRateLHa, classifyNozzle, getNozzleRecommendation, calculateBarSummary, simulateFinancialLoss, psiToBar, barToPsi } from './js/calculations.js';
-import { saveInspection, getInspections, getInspectionById, deleteInspection, USE_SUPABASE } from './js/dbService.js';
-import { configureSupabase, isSupabaseConnected } from './js/supabaseClient.js';
-import { initVoiceService, startListening, stopListening, isCurrentlyListening, registerVoiceCallbacks, speak, playBeep } from './js/voiceService.js';
+// Os módulos de suporte (calculations.js, dbService.js, supabaseClient.js, voiceService.js)
+// são carregados no escopo global através de tags <script> individuais no index.html.
 
 // ==========================================
 // ESTADO GLOBAL DA APLICAÇÃO
@@ -26,10 +24,7 @@ let timerInterval = null;
 let timerTimeLeft = 30; // segundos
 let timerDuration = 30;
 
-// ==========================================
-// INICIALIZAÇÃO DA APP
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   setupNavigation();
   setupNozzleIsoCatalog();
   setupEventListeners();
@@ -37,10 +32,136 @@ document.addEventListener('DOMContentLoaded', () => {
   setupVoiceAssistant();
   loadSavedCredentials();
   
+  // Executar autenticação Supabase online
+  checkAuthSession();
+  
   // Registrar data atual na identificação
   const today = new Date().toLocaleDateString('pt-BR');
   document.getElementById('input-notas-identificacao').placeholder = `Inspeção realizada em ${today}...`;
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+// ==========================================
+// SISTEMA DE AUTENTICAÇÃO UNIFICADA (NUVEM SAAS)
+// ==========================================
+async function checkAuthSession() {
+  if (typeof supabase === 'undefined' || !supabase) {
+    // Se o Supabase não estiver carregado (ex: sem internet), abre o app offline por padrão
+    console.warn("Cliente Supabase não detectado. Iniciando em modo de contingência offline.");
+    showAppContainer();
+    return;
+  }
+  
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      handleUserLoggedIn(session.user);
+    } else {
+      showLoginScreen();
+    }
+  } catch (e) {
+    console.error("Erro ao verificar sessão do usuário:", e);
+    showAppContainer();
+  }
+}
+
+function showLoginScreen() {
+  document.getElementById('app-login-screen').style.display = 'flex';
+  document.querySelector('.app-container').style.display = 'none';
+}
+
+function showAppContainer() {
+  document.getElementById('app-login-screen').style.display = 'none';
+  document.querySelector('.app-container').style.display = 'flex';
+}
+
+function handleUserLoggedIn(user) {
+  showAppContainer();
+  
+  // Exibir perfil do consultor logado
+  const badge = document.getElementById('user-profile-badge');
+  if (badge) {
+    badge.style.display = 'flex';
+    document.getElementById('logged-user-email').textContent = user.email;
+  }
+  
+  // Auto-preencher o Inspetor Técnico se estiver em branco
+  const responsavel = document.getElementById('input-responsavel');
+  if (responsavel && !responsavel.value) {
+    // Extrai o nome de exibição do e-mail
+    responsavel.value = user.email.split('@')[0].toUpperCase();
+  }
+  
+  // Carregar histórico de inspeções sincronizadas da nuvem
+  renderHistoryList();
+}
+
+async function handleUserLogin(event) {
+  event.preventDefault();
+  
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const submitBtn = document.getElementById('btn-login-submit');
+  
+  if (typeof supabase === 'undefined' || !supabase) {
+    alert("Erro: O conector Supabase não foi carregado. Verifique sua conexão de rede.");
+    return;
+  }
+  
+  submitBtn.disabled = true;
+  submitBtn.textContent = "⌛ Entrando no Sistema...";
+  
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+    
+    if (error) throw error;
+    
+    playBeep('success');
+    speak("Login efetuado com sucesso.");
+    handleUserLoggedIn(data.user);
+  } catch (err) {
+    playBeep('error');
+    console.error("Erro de login:", err);
+    alert("Falha ao entrar: " + (err.message || "E-mail ou senha incorretos."));
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "🔐 Entrar no Sistema";
+  }
+}
+
+async function handleUserLogout() {
+  if (!confirm("Tem certeza que deseja sair do aplicativo? Suas credenciais de sincronização serão limpas.")) {
+    return;
+  }
+  
+  try {
+    if (typeof supabase !== 'undefined' && supabase) {
+      await supabase.auth.signOut();
+    }
+    
+    // Limpar exibição de perfil
+    const badge = document.getElementById('user-profile-badge');
+    if (badge) badge.style.display = 'none';
+    
+    // Limpar formulário de login
+    document.getElementById('login-password').value = '';
+    
+    playBeep('success');
+    speak("Sessão encerrada.");
+    showLoginScreen();
+  } catch (err) {
+    console.error("Erro ao efetuar logout:", err);
+    alert("Erro ao desconectar: " + err.message);
+  }
+}
 
 // ==========================================
 // 1. SISTEMA DE NAVEGAÇÃO & ABAS (SPA)
@@ -267,10 +388,14 @@ function updateGuidedNozzleFocus() {
   const currentNozzle = measurements[activeNozzleIndex];
   document.getElementById('focus-nozzle-num').textContent = String(currentNozzle.nozzle_number).padStart(2, '0');
   
-  // Limpar e preencher input
+  // Limpar e preencher input (com desativação do autofocus em mobile para evitar saltos de teclado)
   const inputVol = document.getElementById('input-volume-ml');
   inputVol.value = currentNozzle.collected_volume_ml > 0 ? currentNozzle.collected_volume_ml : '';
-  inputVol.focus();
+  
+  const isMobile = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  if (!isMobile) {
+    inputVol.focus();
+  }
 
   // Resetar cronômetro se tempo mudou
   const expectedDuration = parseInt(document.getElementById('input-tempo-coleta').value) || 30;
@@ -363,8 +488,11 @@ function startChronometer() {
       playBeep('timer_end');
       speak(`Tempo esgotado para o bico ${activeNozzleIndex + 1}. Registre o volume.`);
       
-      // Tentar focar no input de volume automaticamente
-      document.getElementById('input-volume-ml').focus();
+      // Tentar focar no input de volume automaticamente (desativado em mobile)
+      const isMobile = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+      if (!isMobile) {
+        document.getElementById('input-volume-ml').focus();
+      }
     }
     document.getElementById('chronometer-display').textContent = formatTimerTime(timerTimeLeft);
   }, 100);
@@ -565,7 +693,11 @@ function generateReportAndRender() {
     veredito.style.color = 'var(--accent-error)';
   }
 
+  document.getElementById('rep-card-vazao-esperada').textContent = `${expectedFlow.toFixed(2)} L/min`;
   document.getElementById('rep-card-vazao').textContent = `${summary.averageFlowLMin.toFixed(2)} L/min`;
+  
+  const targetRateVal = parseFloat(document.getElementById('input-volume-alvo').value) || 100;
+  document.getElementById('rep-card-taxa-esperada').textContent = `${targetRateVal.toFixed(0)} L/ha`;
   document.getElementById('rep-card-taxa').textContent = `${summary.averageActualRateLHa.toFixed(1)} L/ha`;
 
   // Preencher quantidades detalhadas por status de bicos
@@ -1151,11 +1283,17 @@ function markNozzleStatus(status) {
 // 11. CREDENCIAIS SUPABASE (PORTABILIDADE)
 // ==========================================
 function loadSavedCredentials() {
-  const url = localStorage.getItem('spray_supabase_url');
-  const key = localStorage.getItem('spray_supabase_key');
-  if (url && key) {
-    document.getElementById('db-supabase-url').value = url;
-    document.getElementById('db-supabase-key').value = key;
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const url = localStorage.getItem('spray_supabase_url');
+      const key = localStorage.getItem('spray_supabase_key');
+      if (url && key) {
+        document.getElementById('db-supabase-url').value = url;
+        document.getElementById('db-supabase-key').value = key;
+      }
+    }
+  } catch (e) {
+    console.warn("localStorage não está acessível para recuperar as chaves salvas do Supabase:", e);
   }
 }
 
@@ -1302,6 +1440,10 @@ function setupEventListeners() {
       saveAndNextNozzle();
     }
   });
+
+  // Eventos de Autenticação Supabase
+  document.getElementById('login-form').addEventListener('submit', handleUserLogin);
+  document.getElementById('btn-logout').addEventListener('click', handleUserLogout);
 }
 
 // Exportador CSV

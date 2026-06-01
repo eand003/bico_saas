@@ -3,10 +3,10 @@
  * Abstração de persistência: LocalStorage (Offline) <-> Supabase (Online)
  */
 
-import { supabase } from './supabaseClient.js';
+// supabase import removed
 
 // Alterar para true para ativar o banco de dados online do Supabase
-export const USE_SUPABASE = false; 
+const USE_SUPABASE = true; 
 
 /**
  * Retorna as chaves locais usadas no localStorage
@@ -26,7 +26,7 @@ function delay(ms = 100) {
 /**
  * Salva ou atualiza uma Inspeção de Vazão (Cabeçalho) e suas Medições (Bicos)
  */
-export async function saveInspection(inspection, measurements) {
+async function saveInspection(inspection, measurements) {
   await delay(200);
 
   if (USE_SUPABASE) {
@@ -117,7 +117,7 @@ export async function saveInspection(inspection, measurements) {
 /**
  * Retorna todas as inspeções salvas (ordenadas por data decrescente)
  */
-export async function getInspections() {
+async function getInspections() {
   await delay(150);
 
   if (USE_SUPABASE) {
@@ -140,7 +140,7 @@ export async function getInspections() {
 /**
  * Obtém uma inspeção específica pelo seu ID (cabeçalho + medições)
  */
-export async function getInspectionById(id) {
+async function getInspectionById(id) {
   await delay(150);
 
   if (USE_SUPABASE) {
@@ -184,7 +184,7 @@ export async function getInspectionById(id) {
 /**
  * Deleta uma inspeção e suas medições associadas
  */
-export async function deleteInspection(id) {
+async function deleteInspection(id) {
   await delay(200);
 
   if (USE_SUPABASE) {
@@ -215,25 +215,45 @@ export async function deleteInspection(id) {
 }
 
 // ==========================================
-// FUNÇÕES AUXILIARES DE SUPORTE
+// FUNÇÕES AUXILIARES DE SUPORTE (Com Fallback em Memória se localStorage estiver bloqueado)
 // ==========================================
 
-function getLocalStorageItem(key, defaultValue) {
-  try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
-  } catch (e) {
-    console.error(`Erro ao ler chave ${key} do localStorage`, e);
-    return defaultValue;
+let isLocalStorageAvailable = false;
+const memoryStorage = {};
+
+try {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    // Fazer teste de gravação/leitura para confirmar disponibilidade real
+    window.localStorage.setItem('__spray_test_ls__', '1');
+    window.localStorage.removeItem('__spray_test_ls__');
+    isLocalStorageAvailable = true;
   }
+} catch (e) {
+  console.warn("localStorage não está acessível ou está desativado pelo navegador. Usando fallback em memória (in-memory data store) para garantir execução.", e);
+}
+
+function getLocalStorageItem(key, defaultValue) {
+  if (isLocalStorageAvailable) {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultValue;
+    } catch (e) {
+      console.error(`Erro ao ler chave ${key} do localStorage`, e);
+    }
+  }
+  return memoryStorage[key] !== undefined ? memoryStorage[key] : defaultValue;
 }
 
 function setLocalStorageItem(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (e) {
-    console.error(`Erro ao gravar chave ${key} no localStorage`, e);
+  if (isLocalStorageAvailable) {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+      return;
+    } catch (e) {
+      console.error(`Erro ao gravar chave ${key} no localStorage`, e);
+    }
   }
+  memoryStorage[key] = value;
 }
 
 function generateUUID() {

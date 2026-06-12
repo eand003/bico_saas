@@ -968,9 +968,6 @@ function generateReportAndRender() {
 
   // Acionar simulador financeiro interativo
   triggerFinancialLossSimulator();
-  
-  // Salvar diagnóstico no histórico do localStorage automaticamente ao abrir relatório
-  saveInspectionToDatabase(summary);
 }
 
 // Simulador financeiro dinâmico
@@ -1275,6 +1272,54 @@ async function saveInspectionToDatabase(summary) {
   } catch (e) {}
 }
 
+async function handleSaveInspectionWorkflow() {
+  const cliente = document.getElementById('input-cliente').value.trim();
+  const fazenda = document.getElementById('input-fazenda').value.trim();
+  
+  if (!cliente) {
+    alert("Por favor, preencha o Nome do Cliente na Etapa 1 antes de salvar o relatório.");
+    switchTab('tab-identificacao');
+    return;
+  }
+  
+  // Criar uma sugestão de nome de identificação amigável: Cliente - Fazenda (Data)
+  const today = new Date().toLocaleDateString('pt-BR');
+  const defaultSaveName = fazenda 
+    ? `${cliente} - ${fazenda} (${today})` 
+    : `${cliente} (${today})`;
+    
+  const chosenName = prompt("Digite um nome de identificação para este diagnóstico no histórico:", defaultSaveName);
+  
+  if (chosenName === null) {
+    return; // Cancelou
+  }
+  
+  const finalName = chosenName.trim() || defaultSaveName;
+  
+  const expectedFlow = parseFloat(document.getElementById('input-vazao-nominal').value) || 1.2;
+  const speed = parseFloat(document.getElementById('input-velocidade').value) || 16;
+  const spacing = parseFloat(document.getElementById('input-espacamento').value) || 0.5;
+  const tolerance = parseFloat(document.getElementById('input-tolerancia').value) || 10;
+  
+  const summary = calculateBarSummary(measurements, expectedFlow, speed, spacing, tolerance, totalNozzles);
+  
+  // Guardar o nome customizado no summary para renderização no histórico
+  summary.custom_save_name = finalName;
+  
+  try {
+    // Chamar a função original de salvar no banco/localStorage
+    await saveInspectionToDatabase(summary);
+    
+    // Atualizar a lista de histórico exibida no modal
+    renderHistoryList();
+    
+    alert(`Diagnóstico "${finalName}" salvo com sucesso no histórico!`);
+  } catch (err) {
+    console.error("Erro ao salvar diagnóstico:", err);
+    alert("Houve um problema ao salvar o diagnóstico.");
+  }
+}
+
 async function renderHistoryList() {
   const container = document.getElementById('history-items-container');
   const empty = document.getElementById('history-empty-state');
@@ -1309,13 +1354,16 @@ async function renderHistoryList() {
 
       card.className = `history-item-card ${badgeClass}`;
       
+      const displayName = item.summary?.custom_save_name || item.client_name;
+      const showProducerSub = item.summary?.custom_save_name ? `👤 ${item.client_name} | ` : '';
+
       card.innerHTML = `
         <div style="font-weight:bold; font-size:16px; color:var(--text-main); font-family:'Outfit'; display:flex; align-items:center; justify-content:space-between;">
-          <span>${item.client_name}</span>
+          <span>${displayName}</span>
           ${item.is_demo ? `<span style="font-size:10px; background:var(--accent-glow); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:bold; border: 1px solid rgba(0, 102, 204, 0.12);">💡 DEMO</span>` : ''}
         </div>
         <div style="font-size:12px; color:var(--text-muted); margin-top:-6px;">
-          🏡 ${item.farm_name || 'Fazenda S/N'} | 📍 ${item.city} - ${item.state}
+          ${showProducerSub}🏡 ${item.farm_name || 'Fazenda S/N'} | 📍 ${item.city} - ${item.state}
         </div>
         <div style="font-size:11px; background:#f1f5f9; padding:6px; border-radius:8px; display:flex; flex-direction:column; gap:2px; border:1px solid #cbd5e1;">
           <div>🚜 Pulverizador: **${item.sprayer_brand || ''} ${item.sprayer_model || ''}**</div>
@@ -1634,6 +1682,8 @@ function setupEventListeners() {
   document.getElementById('btn-mark-leaking').addEventListener('click', () => markNozzleStatus('critico_acima'));
 
   // Ações de relatório
+  document.getElementById('btn-save-report').addEventListener('click', handleSaveInspectionWorkflow);
+  document.getElementById('btn-save-report-bottom').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-print').addEventListener('click', () => window.print());
   document.getElementById('btn-export-csv').addEventListener('click', exportToCSV);
   document.getElementById('btn-export-json').addEventListener('click', exportToJSON);

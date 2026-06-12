@@ -422,6 +422,7 @@
             <p style="color: var(--text-muted); font-size: 14px; font-weight: 500; margin-top: 2px;">Inspeção Espacial por Método Manual de Proveta</p>
           </div>
           <div style="text-align: right; display: flex; gap: 6px; flex-wrap: wrap;" class="no-print">
+            <button id="btn-save-report" class="btn btn-success" style="padding: 8px 12px; min-height: 38px; font-weight: bold;">💾 Salvar no Histórico</button>
             <button id="btn-print" class="btn btn-primary" style="padding: 8px 12px; min-height: 38px;">🖨️ PDF</button>
             <button id="btn-export-csv" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px;">📥 CSV</button>
             <button id="btn-export-json" class="btn btn-secondary" style="padding: 8px 12px; min-height: 38px;">💾 Backup JSON</button>
@@ -666,7 +667,10 @@
 
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;" class="no-print">
         <button id="btn-back-to-coleta" class="btn btn-secondary">⬅️ Editar Coleta</button>
-        <button id="btn-new-inspection-bottom" class="btn btn-success" style="font-weight: bold;">🚜 Novo Diagnóstico</button>
+        <div style="display: flex; gap: 8px;">
+          <button id="btn-save-report-bottom" class="btn btn-primary" style="font-weight: bold; min-height: 48px;">💾 Salvar no Histórico</button>
+          <button id="btn-new-inspection-bottom" class="btn btn-success" style="font-weight: bold; min-height: 48px;">🚜 Novo Diagnóstico</button>
+        </div>
       </div>
     </section>
 

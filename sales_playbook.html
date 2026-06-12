@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playbook de Vendas - Spray Precision</title>
+  <meta name="theme-color" content="#05080a">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./logo.png">
+  <link rel="icon" type="image/png" href="./logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    :root {
+      --bg-dark: #05080a;
+      --glass-bg: rgba(15, 20, 24, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-border-hover: rgba(0, 210, 255, 0.3);
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.25);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.15);
+      --accent-orange: #f28c28;
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --card-radius: 24px;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      --bg-img: url('bg_premium.png');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark) var(--bg-img) no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at top, rgba(10, 18, 30, 0.8) 0%, rgba(5, 8, 10, 0.98) 100%);
+      z-index: -1;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      z-index: 1;
+    }
+
+    /* Header controls */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      transform: translateX(-3px);
+    }
+
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent) 0%, #0066cc 100%);
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .print-btn:hover {
+      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Cover section */
+    .playbook-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .doc-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      color: var(--accent);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .doc-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .doc-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ROI Interactive Calculator */
+    .roi-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .roi-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ffffff;
+    }
+
+    .roi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .roi-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .roi-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .roi-input-wrapper {
+      position: relative;
+    }
+
+    .roi-symbol {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .roi-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 14px 14px 14px 40px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .roi-input:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+    }
+
+    .roi-results-card {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.05) 0%, rgba(56, 239, 125, 0.05) 100%);
+      border: 1px solid rgba(56, 239, 125, 0.15);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .roi-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .roi-result-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .roi-result-label {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .roi-result-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .roi-highlight-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent-green);
+      text-shadow: 0 0 15px rgba(56, 239, 125, 0.3);
+    }
+
+    /* Tabs/Pitches Section */
+    .tabs-container {
+      margin-bottom: 40px;
+    }
+
+    .tabs-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background: var(--glass-bg);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.1);
+    }
+
+    .tab-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 40px;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .pitch-header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 16px;
+    }
+
+    .pitch-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .pitch-sub {
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Pitch Grid info */
+    .pitch-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+    }
+
+    .pain-points-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .pain-points-list {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .pain-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .pain-text {
+      color: #ffd0a0;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .solution-text {
+      color: #c5ffda;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .arg-box {
+      background: rgba(0, 210, 255, 0.03);
+      border: 1px solid rgba(0, 210, 255, 0.12);
+      padding: 24px;
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .arg-box strong {
+      color: var(--accent);
+    }
+
+    /* Objections Section */
+    .obj-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .obj-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #ffffff;
+    }
+
+    .obj-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .obj-item {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 20px;
+    }
+
+    .obj-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .obj-q {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #ffd0a0;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .obj-a {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding-left: 24px;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      padding: 40px 24px 30px 24px;
+      text-align: center;
+      background: rgba(5, 8, 10, 0.85);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .copyright {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 24px 16px;
+      }
+      .doc-title {
+        font-size: 1.8rem;
+      }
+      .roi-panel, .tab-content, .obj-section {
+        padding: 24px;
+      }
+      .roi-highlight-value {
+        font-size: 1.4rem;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      body::before {
+        display: none !important;
+      }
+      .main-content {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .top-bar, .back-btn, .print-btn, .tabs-header, .cta-close-btn {
+        display: none !important;
+      }
+      .roi-panel, .tab-content, .obj-section {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        color: black !important;
+        box-shadow: none !important;
+        page-break-after: always;
+        padding: 30px !important;
+        margin-bottom: 20px !important;
+      }
+      .roi-input {
+        background: white !important;
+        border: 1px solid #ccc !important;
+        color: black !important;
+      }
+      .doc-title {
+        background: none !important;
+        -webkit-text-fill-color: black !important;
+        color: black !important;
+      }
+      .roi-results-card {
+        background: #f0fdf4 !important;
+        border: 1px solid #bbf7d0 !important;
+      }
+      .roi-result-value, .roi-result-label {
+        color: black !important;
+      }
+      .roi-highlight-value {
+        color: #16a34a !important;
+      }
+      .tab-content {
+        display: block !important;
+      }
+      .pain-card {
+        border: 1px solid #eee !important;
+      }
+      .pain-text {
+        color: #b45309 !important;
+      }
+      .solution-text {
+        color: #15803d !important;
+      }
+      .arg-box {
+        border: 1px solid #ddd !important;
+        color: #333 !important;
+      }
+      .obj-q {
+        color: #b45309 !important;
+      }
+      .obj-a {
+        color: #444 !important;
+      }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-content">
+    <div class="top-bar">
+      <a href="./" class="back-btn">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Voltar ao Portal
+      </a>
+      <button class="print-btn" onclick="window.print()">
+        <i data-lucide="printer" style="width:16px;height:16px;"></i> Imprimir Material (PDF)
+      </button>
+    </div>
+
+    <header class="playbook-header">
+      <span class="doc-badge">Playbook Comercial</span>
+      <h1 class="doc-title">Guia de Vendas e Negociação</h1>
+      <p class="doc-subtitle">Manual prático para sua equipe apresentar e comercializar a plataforma Spray Precision.</p>
+    </header>
+
+    <!-- ROI Calculator -->
+    <section class="roi-panel">
+      <h2 class="roi-title">
+        <i data-lucide="calculator" style="color:var(--accent);"></i>
+        Calculadora Interativa de ROI (Venda de Impacto)
+      </h2>
+      <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:20px; line-height:1.6;">
+        Use esta calculadora na frente do cliente (celular ou tablet). Digite a área dele e os custos estimados para demonstrar na hora o tamanho do prejuízo evitado com a calibração precisa.
+      </p>
+
+      <div class="roi-grid">
+        <div class="roi-input-group">
+          <label class="roi-label" for="roi-area">Área Total Plantada</label>
+          <div class="roi-input-wrapper">
+            <span class="roi-symbol">ha</span>
+            <input type="number" id="roi-area" class="roi-input" value="1000" oninput="calculateROI()">
+          </div>
+        </div>
+
+        <div class="roi-input-group">
+          <label class="roi-label" for="roi-chem-cost">Custo Médio de Defensivos</label>
+          <div class="roi-input-wrapper">
+            <span class="roi-symbol">R$</span>
+            <input type="number" id="roi-chem-cost" class="roi-input" value="850" oninput="calculateROI()">
+          </div>
+        </div>
+
+        <div class="roi-results-card">
+          <div class="roi-result-row">
+            <span class="roi-result-label">Gasto Total com Calda (Estimado):</span>
+            <span class="roi-result-value" id="res-total-budget">R$ 850.000,00</span>
+          </div>
+          <div class="roi-result-row">
+            <span class="roi-result-label">Perda Estimada por Desgaste/Desregulagem (12%):</span>
+            <span class="roi-result-value" style="color:#f87171;" id="res-loss-value">R$ 102.000,00</span>
+          </div>
+          <div class="roi-result-row" style="border-top:1px dashed rgba(255,255,255,0.15); padding-top:16px; margin-top:8px;">
+            <span class="roi-result-label" style="font-weight:600; color:#ffffff;">Economia Garantida (Spray Precision):</span>
+            <span class="roi-highlight-value" id="res-savings">R$ 85.000,00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pitch Tabs -->
+    <section class="tabs-container">
+      <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('consultor')">🎯 Foco: Consultores e Agrônomos</button>
+        <button class="tab-btn" onclick="switchTab('revenda')">🚜 Foco: Revendas e Cooperativas</button>
+        <button class="tab-btn" onclick="switchTab('produtor')">🌱 Foco: Grandes Produtores</button>
+      </div>
+
+      <!-- Content: Consultor -->
+      <div class="tab-content active" id="content-consultor">
+        <header class="pitch-header">
+          <h3 class="pitch-title">Como Vender para Consultores de Tecnologia de Aplicação</h3>
+          <p class="pitch-sub">Foco: Produtividade Pessoal e Branding Técnico</p>
+        </header>
+
+        <div class="pitch-section">
+          <h4 class="section-title">
+            <i data-lucide="target" style="color:#ffd0a0;"></i>
+            O que o consultor quer resolver? (Dores do cliente)
+          </h4>
+          <div class="pain-points-list">
+            <div class="pain-card">
+              <div class="pain-text"><i data-lucide="alert-triangle"></i> Dor: Demora em calcular o Coeficiente de Variação (CV%).</div>
+              <div class="solution-text"><i data-lucide="check-circle-2"></i> Solução: A plataforma calcula o CV% instantaneamente à medida que ele preenche os mililitros de vazão de cada bico.</div>
+            </div>
+            <div class="pain-card">
+              <div class="pain-text"><i data-lucide="alert-triangle"></i> Dor: Entregar laudos amadores em Excel para o produtor.</div>
+              <div class="solution-text"><i data-lucide="check-circle-2"></i> Solução: Laudo profissional em PDF completo gerado no celular, com gráfico de desvios legível e plano de ação automático.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pitch-section">
+          <h4 class="section-title">
+            <i data-lucide="message-square" style="color:var(--accent);"></i>
+            Script de Abordagem Sugerido
+          </h4>
+          <div class="arg-box">
+            "Olá! Eu vejo que você presta serviços excelentes de consultoria de pulverização. Quanto tempo você gasta hoje calculando o CV% no campo e depois digitando em planilha para enviar um relatório para seu cliente? 
+            Com o <strong>Spray Precision</strong>, você faz isso na frente do produtor em 1 minuto. Você digita a vazão de cada bico no celular (mesmo offline no campo) e ele gera o relatório técnico completo em PDF com <strong>sua própria logo</strong>. Você entrega mais valor, cobra mais caro pelo seu serviço e fideliza o produtor rural."
+          </div>
+        </div>
+      </div>
+
+      <!-- Content: Revenda -->
+      <div class="tab-content" id="content-revenda">
+        <header class="pitch-header">
+          <h3 class="pitch-title">Como Vender para Revendas Agrícolas e Cooperativas</h3>
+          <p class="pitch-sub">Foco: Fechamento de Vendas de Bicos e Atendimento Técnico</p>
+        </header>
+
+        <div class="pitch-section">
+          <h4 class="section-title">
+            <i data-lucide="target" style="color:#ffd0a0;"></i>
+            O que o gerente da revenda quer resolver?
+          </h4>
+          <div class="pain-points-list">
+            <div class="pain-card">
+              <div class="pain-text"><i data-lucide="alert-triangle"></i> Dor: O técnico de campo diz ao agricultor que ele precisa trocar os bicos, mas o cliente desconfia e não compra.</div>
+              <div class="solution-text"><i data-lucide="check-circle-2"></i> Solução: O técnico roda a ferramenta e o laudo mostra que os bicos estão com 'Desgaste Crítico' (em vermelho). O cliente vê o gráfico e compra na hora.</div>
+            </div>
+            <div class="pain-card">
+              <div class="pain-text"><i data-lucide="alert-triangle"></i> Dor: Vendedores sem foco técnico.</div>
+              <div class="solution-text"><i data-lucide="check-circle-2"></i> Solução: Venda consultiva guiada. A plataforma diz exatamente qual bico ISO indicar conforme os dados inseridos.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pitch-section">
+          <h4 class="section-title">
+            <i data-lucide="message-square" style="color:var(--accent);"></i>
+            Script de Abordagem Sugerido
+          </h4>
+          <div class="arg-box">
+            "Olá! Como seus agrônomos de campo estão argumentando com os clientes que é hora de trocar as pontas de pulverização? 
+            Com a nossa plataforma, a sua equipe faz o teste físico, digita os mililitros coletados na barra e exibe o gráfico de desvios. A plataforma pinta os bicos desgastados de vermelho e emite um laudo oficial. O produtor visualiza que está jogando dinheiro fora e <strong>compra os bicos de reposição na sua mão na mesma hora</strong>. É um acelerador de vendas com base científica."
+          </div>
+        </div>
+      </div>
+
+      <!-- Content: Produtor -->
+      <div class="tab-content" id="content-produtor">
+        <header class="pitch-header">
+          <h3 class="pitch-title">Como Vender para Grandes Produtores e Fazendas</h3>
+          <p class="pitch-sub">Foco: Redução de Custos de Calda e Aumento do Coeficiente de Cobertura</p>
+        </header>
+
+        <div class="pitch-section">
+          <h4 class="section-title">
+            <i data-lucide="target" style="color:#ffd0a0;"></i>
+            O que o proprietário da fazenda quer resolver?
+          </h4>
+          <div class="pain-points-list">
+            <div class="pain-card">
+              <div class="pain-text"><i data-lucide="alert-triangle"></i> Dor: O alto custo dos defensivos agrícolas sendo desperdiçado no solo ou por evaporação/deriva.</div>
+              <div class="solution-text"><i data-lucide="check-circle-2"></i> Solução: Seleção correta da ponta de pulverização e calibração constante, reduzindo desperdícios em mais de 10%.</div>
+            </div>
+            <div class="pain-card">
+              <div class="pain-text"><i data-lucide="alert-triangle"></i> Dor: Erros de regulagem das máquinas feitas pelos operadores.</div>
+              <div class="solution-text"><i data-lucide="check-circle-2"></i> Solução: A plataforma gera o manual de calibração exato (velocidade ideal de trabalho e pressão) para os operadores seguirem.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pitch-section">
+          <h4 class="section-title">
+            <i data-lucide="message-square" style="color:var(--accent);"></i>
+            Script de Abordagem Sugerido
+          </h4>
+          <div class="arg-box">
+            "Seu custo de insumos por hectare subiu drasticamente. Você sabia que bicos levemente desregulados ou gastos desperdiçam mais de 10% de toda a calda que você prepara? Em uma fazenda de 1000 hectares, isso equivale a <strong>dezenas de milhares de reais jogados no chão</strong> ou perdidos no ar. 
+            O <strong>Spray Precision</strong> permite auditar e calibrar as máquinas em poucos minutos no celular. Garanta que a gota saia no diâmetro ideal para controlar a praga sem derivar ou escorrer. O aplicativo se paga logo no primeiro talhão pulverizado."
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Handling Objections -->
+    <section class="obj-section">
+      <h2 class="obj-title">
+        <i data-lucide="help-circle" style="color:var(--accent-orange);"></i>
+        Quebrando Objeções Comuns no Campo
+      </h2>
+
+      <div class="obj-list">
+        <div class="obj-item">
+          <div class="obj-q">❌ Objeção: "Eu já uso copo graduado/caneca para testar os bicos, não preciso de aplicativo."</div>
+          <div class="obj-a">
+            <b>Como responder:</b> "Ótimo que você faz a coleta física! O copo mede apenas os números de forma isolada, mas não te diz o Coeficiente de Variação (CV%) da barra inteira nem gera um histórico profissional dos desvios. O aplicativo transforma as suas coletas manuais de mililitros em um gráfico visual colorido de diagnóstico de desgaste e emite um laudo oficial para o proprietário assinar. É o copo graduado profissionalizado."
+          </div>
+        </div>
+
+        <div class="obj-item">
+          <div class="obj-q">❌ Objeção: "No meio da fazenda não tem sinal de celular (internet) para usar isso."</div>
+          <div class="obj-a">
+            <b>Como responder:</b> "A plataforma funciona com tecnologia de contingência offline. Você carrega a página do hub antes de ir para o campo, e ela continua abrindo e calculando tudo mesmo com o celular em modo avião. O histórico fica salvo localmente e é sincronizado com a nuvem automaticamente quando o sinal retornar."
+          </div>
+        </div>
+
+        <div class="obj-item">
+          <div class="obj-q">❌ Objeção: "Achei o acesso mensal caro."</div>
+          <div class="obj-a">
+            <b>Como responder:</b> "Se você consertar o desgaste de apenas 2 bicos de pulverização que estavam aplicando a mais (jogando calda fora) ou a menos (causando falha de controle de lagarta, exigindo retrabalho), você já paga a mensalidade do ano inteiro. Compare o custo da mensalidade com o preço de um galão de fungicida."
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p class="copyright">&copy; 2026 Spray Precision. Todos os direitos reservados. TecnoAgro Inovações.</p>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // Tab Switching Logic
+    function switchTab(tabId) {
+      // Deactivate all tab buttons and content panels
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      // Activate selected tab and content panel
+      const targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+      const targetContent = document.getElementById(`content-${tabId}`);
+      
+      if (targetBtn) targetBtn.classList.add('active');
+      if (targetContent) targetContent.classList.add('active');
+    }
+
+    // Dynamic ROI Calculation Logic
+    function calculateROI() {
+      const area = parseFloat(document.getElementById('roi-area').value) || 0;
+      const chemCost = parseFloat(document.getElementById('roi-chem-cost').value) || 0;
+
+      const totalBudget = area * chemCost;
+      const estimatedLoss = totalBudget * 0.12; // 12% loss average
+      const guaranteedSavings = totalBudget * 0.10; // 10% savings guaranteed
+
+      // Format to BRL
+      const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      document.getElementById('res-total-budget').innerText = formatter.format(totalBudget);
+      document.getElementById('res-loss-value').innerText = formatter.format(estimatedLoss);
+      document.getElementById('res-savings').innerText = formatter.format(guaranteedSavings);
+    }
+
+    // Initial calculation on load
+    window.addEventListener('load', calculateROI);
+  </script>
+</body>
+</html>

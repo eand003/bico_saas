@@ -135,13 +135,14 @@
       line-height: 1.6;
     }
 
-    /* Hub Grid */
+    /* Grid do Hub */
     .hub-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 30px;
       width: 100%;
-      margin-bottom: 50px;
+      max-width: 860px;
+      margin: 0 auto 50px auto;
       animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
     }
 
@@ -415,7 +416,7 @@
 
     <div class="hub-grid">
       <!-- Card: Seletor de Bicos ISO -->
-      <a href="./seletor-bico/" class="hub-card card-selector" id="link-seletor">
+      <a href="./enterprise/" class="hub-card card-selector" id="link-seletor">
         <div class="card-header-info">
           <span class="badge badge-blue">Simulador PRO</span>
           <span class="card-icon">🎯</span>
@@ -438,20 +439,6 @@
         </div>
         <div class="card-button btn-green">
           <span>Acessar Diagnóstico</span>
-          <span class="arrow-icon">➡️</span>
-        </div>
-      </a>
-
-      <!-- Card: Spray Precision Enterprise -->
-      <a href="./enterprise/" class="hub-card card-enterprise" id="link-enterprise">
-        <div class="card-header-info">
-          <span class="badge badge-purple">Plataforma SaaS</span>
-          <span class="card-icon">🏢</span>
-          <h2 class="card-title">Precision Enterprise</h2>
-          <p class="card-desc">Gestão corporativa de frotas, equipes de campo, histórico consolidado em nuvem e telemetria de pulverização.</p>
-        </div>
-        <div class="card-button btn-purple">
-          <span>Login Enterprise</span>
           <span class="arrow-icon">➡️</span>
         </div>
       </a>

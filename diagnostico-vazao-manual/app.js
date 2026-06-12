@@ -1296,6 +1296,20 @@ async function handleSaveInspectionWorkflow() {
   
   const finalName = chosenName.trim() || defaultSaveName;
   
+  // Decidir se cria novo ou sobrescreve
+  let saveAsNew = false;
+  if (currentInspectionId) {
+    saveAsNew = confirm(
+      "Deseja salvar este relatório como um NOVO registro (criar uma cópia) no histórico?\n\n" +
+      "• Clique em 'OK' para salvar como NOVO (cria uma cópia).\n" +
+      "• Clique em 'Cancelar' para SOBRESCREVER (atualizar) o diagnóstico já existente."
+    );
+    
+    if (saveAsNew) {
+      currentInspectionId = null; // Zera o ID para que gere um novo registro no banco/local
+    }
+  }
+  
   const expectedFlow = parseFloat(document.getElementById('input-vazao-nominal').value) || 1.2;
   const speed = parseFloat(document.getElementById('input-velocidade').value) || 16;
   const spacing = parseFloat(document.getElementById('input-espacamento').value) || 0.5;
@@ -1319,6 +1333,7 @@ async function handleSaveInspectionWorkflow() {
     alert("Houve um problema ao salvar o diagnóstico.");
   }
 }
+
 
 async function renderHistoryList() {
   const container = document.getElementById('history-items-container');

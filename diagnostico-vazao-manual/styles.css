@@ -644,9 +644,16 @@ h1, h2, h3, h4, .font-display {
 /* Gráfico Chart.js */
 .chart-panel {
   position: relative;
-  height: 320px;
+  height: auto;
   width: 100%;
   margin-top: 16px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 240px;
+  width: 100%;
+  margin-bottom: 24px;
 }
 
 /* Painéis SPA de Exibição */
@@ -875,6 +882,7 @@ h1, h2, h3, h4, .font-display {
     color: #000000 !important;
     padding: 0 !important;
     font-size: 11px !important;
+    min-width: 800px !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -889,8 +897,10 @@ h1, h2, h3, h4, .font-display {
   }
 
   .app-container {
-    max-width: 100% !important;
-    margin: 0 !important;
+    width: 800px !important;
+    min-width: 800px !important;
+    max-width: 800px !important;
+    margin: 0 auto !important;
     gap: 0 !important;
   }
 
@@ -971,14 +981,21 @@ h1, h2, h3, h4, .font-display {
 
   /* Correção do Overlap do Gráfico Chart.js */
   .chart-panel {
-    height: 320px !important;
-    max-height: 320px !important;
+    height: auto !important;
+    max-height: none !important;
     padding-left: 20px !important;
     margin-top: 10px !important;
-    margin-bottom: 35px !important;
-    page-break-inside: avoid !important;
-    overflow: visible !important; /* Permite exibir o eixo X completo sem cortes */
+    margin-bottom: 15px !important;
+    page-break-inside: auto !important;
+    overflow: visible !important;
     display: block !important;
+  }
+
+  .chart-wrapper {
+    height: 220px !important;
+    max-height: 220px !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 20px !important;
   }
 
   /* Ajuste Dinâmico da Barra de Pulverização (Evita corte lateral e ativa flex-wrap) */

@@ -17,7 +17,7 @@ let measurements = []; // Array de FlowMeasurement
 let activeTab = 'tab-identificacao';
 
 // Gráficos
-let reportChartInstance = null;
+let reportChartInstances = [];
 
 // Cronômetro
 let timerInterval = null;
@@ -1002,131 +1002,166 @@ function triggerFinancialLossSimulator() {
 // 8. RENDERIZADOR DO GRÁFICO (CHART.JS)
 // ==========================================
 function renderReportChart(summary, expectedFlow, tolerancePercent) {
-  if (reportChartInstance) {
-    reportChartInstance.destroy();
+  // Destruir instâncias antigas de gráficos
+  if (reportChartInstances && reportChartInstances.length > 0) {
+    reportChartInstances.forEach(inst => {
+      if (inst) inst.destroy();
+    });
   }
+  reportChartInstances = [];
 
-  const ctx = document.getElementById('report-chart-canvas').getContext('2d');
-  
-  const labels = [];
-  const dataFlows = [];
-  const barColors = [];
-  
-  // Limites de tolerância
-  const upperTol = expectedFlow * (1 + tolerancePercent / 100);
-  const lowerTol = expectedFlow * (1 - tolerancePercent / 100);
+  const container = document.querySelector('.chart-panel');
+  if (!container) return;
+  container.innerHTML = ''; // Limpar canvases antigos
 
-  measurements.forEach(m => {
-    labels.push(String(m.nozzle_number));
-    dataFlows.push(m.measured_flow_l_min > 0 ? m.measured_flow_l_min : null);
+  // Limitar a no máximo 30 bicos por gráfico para manter a legibilidade
+  const maxBicosPerChart = 30;
+  const totalNozzlesCount = measurements.length;
+  const numCharts = Math.ceil(totalNozzlesCount / maxBicosPerChart);
+  const chunkSize = Math.ceil(totalNozzlesCount / numCharts);
+
+  for (let c = 0; c < numCharts; c++) {
+    const startIdx = c * chunkSize;
+    const endIdx = Math.min(startIdx + chunkSize, totalNozzlesCount);
+    const chartMeasurements = measurements.slice(startIdx, endIdx);
+
+    // Div container para cada bloco de gráfico
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chart-wrapper';
+    wrapper.style.position = 'relative';
+    wrapper.style.height = '240px';
+    wrapper.style.width = '100%';
+    wrapper.style.marginBottom = '24px';
+    wrapper.style.pageBreakInside = 'avoid';
+
+    // Canvas do gráfico
+    const canvas = document.createElement('canvas');
+    wrapper.appendChild(canvas);
+    container.appendChild(wrapper);
+
+    const ctx = canvas.getContext('2d');
+    const labels = [];
+    const dataFlows = [];
+    const barColors = [];
     
-    // Cor por bico baseada no desvio
-    if (m.status === 'ok') {
-      barColors.push('#10b981'); // Emerald 500
-    } else if (m.status === 'abaixo' || m.status === 'acima') {
-      barColors.push('#f59e0b'); // Amber 500
-    } else if (m.status.includes('critico')) {
-      barColors.push('#ef4444'); // Red 500
-    } else {
-      barColors.push('#e2e8f0');
-    }
-  });
+    // Limites de tolerância
+    const upperTol = expectedFlow * (1 + tolerancePercent / 100);
+    const lowerTol = expectedFlow * (1 - tolerancePercent / 100);
 
-  reportChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Vazão Medida (L/min)',
-        data: dataFlows,
-        backgroundColor: barColors,
-        borderWidth: 1,
-        borderRadius: 2,
-        barPercentage: 0.8,
-        categoryPercentage: 0.8
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-        padding: {
-          left: 15,
-          right: 5,
-          top: 5,
-          bottom: 5
-        }
+    chartMeasurements.forEach(m => {
+      labels.push(String(m.nozzle_number));
+      dataFlows.push(m.measured_flow_l_min > 0 ? m.measured_flow_l_min : null);
+      
+      // Cor por bico baseada no desvio
+      if (m.status === 'ok') {
+        barColors.push('#10b981'); // Emerald 500
+      } else if (m.status === 'abaixo' || m.status === 'acima') {
+        barColors.push('#f59e0b'); // Amber 500
+      } else if (m.status.includes('critico')) {
+        barColors.push('#ef4444'); // Red 500
+      } else {
+        barColors.push('#e2e8f0');
+      }
+    });
+
+    const inst = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Vazão Medida (L/min)',
+          data: dataFlows,
+          backgroundColor: barColors,
+          borderWidth: 1,
+          borderRadius: 2,
+          barPercentage: 0.8,
+          categoryPercentage: 0.8
+        }]
       },
-      plugins: {
-        legend: { display: false },
-        annotation: {
-          annotations: {
-            lineTarget: {
-              type: 'line',
-              yMin: expectedFlow,
-              yMax: expectedFlow,
-              borderColor: '#0066cc',
-              borderWidth: 2,
-              label: {
-                content: `Esperado: ${expectedFlow.toFixed(2)} L/min`,
-                display: true,
-                position: 'start',
-                backgroundColor: 'rgba(0,102,204,0.85)',
-                font: { family: 'Outfit', weight: 'bold', size: 10 }
-              }
-            },
-            lineUpper: {
-              type: 'line',
-              yMin: upperTol,
-              yMax: upperTol,
-              borderColor: '#f59e0b',
-              borderDash: [5, 5],
-              borderWidth: 1.5,
-              label: {
-                content: `+${tolerancePercent}%`,
-                display: true,
-                position: 'end',
-                backgroundColor: 'rgba(245,158,11,0.85)',
-                font: { size: 9 }
-              }
-            },
-            lineLower: {
-              type: 'line',
-              yMin: lowerTol,
-              yMax: lowerTol,
-              borderColor: '#ef4444',
-              borderDash: [5, 5],
-              borderWidth: 1.5,
-              label: {
-                content: `-${tolerancePercent}%`,
-                display: true,
-                position: 'end',
-                backgroundColor: 'rgba(239,68,68,0.85)',
-                font: { size: 9 }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            left: 15,
+            right: 5,
+            top: 5,
+            bottom: 5
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          annotation: {
+            annotations: {
+              lineTarget: {
+                type: 'line',
+                yMin: expectedFlow,
+                yMax: expectedFlow,
+                borderColor: '#0066cc',
+                borderWidth: 2,
+                label: {
+                  content: `Esperado: ${expectedFlow.toFixed(2)} L/min`,
+                  display: true,
+                  position: 'start',
+                  backgroundColor: 'rgba(0,102,204,0.85)',
+                  font: { family: 'Outfit', weight: 'bold', size: 10 }
+                }
+              },
+              lineUpper: {
+                type: 'line',
+                yMin: upperTol,
+                yMax: upperTol,
+                borderColor: '#f59e0b',
+                borderDash: [5, 5],
+                borderWidth: 1.5,
+                label: {
+                  content: `+${tolerancePercent}%`,
+                  display: true,
+                  position: 'end',
+                  backgroundColor: 'rgba(245,158,11,0.85)',
+                  font: { size: 9 }
+                }
+              },
+              lineLower: {
+                type: 'line',
+                yMin: lowerTol,
+                yMax: lowerTol,
+                borderColor: '#ef4444',
+                borderDash: [5, 5],
+                borderWidth: 1.5,
+                label: {
+                  content: `-${tolerancePercent}%`,
+                  display: true,
+                  position: 'end',
+                  backgroundColor: 'rgba(239,68,68,0.85)',
+                  font: { size: 9 }
+                }
               }
             }
           }
-        }
-      },
-      scales: {
-        y: {
-          title: { display: true, text: 'Vazão por Bico (L/min)', font: { family: 'Outfit', weight: 'bold', size: 12 } },
-          min: 0,
-          max: Math.max(2.0, parseFloat((expectedFlow * 1.5).toFixed(2))),
-          grid: { color: 'rgba(15, 23, 42, 0.05)' }
         },
-        x: {
-          ticks: {
-            maxRotation: 0,
-            minRotation: 0,
-            autoSkip: false,
-            font: { size: 7.5, weight: 'bold' }
+        scales: {
+          y: {
+            title: { display: true, text: 'Vazão (L/min)', font: { family: 'Outfit', weight: 'bold', size: 11 } },
+            min: 0,
+            max: Math.max(2.0, parseFloat((expectedFlow * 1.5).toFixed(2))),
+            grid: { color: 'rgba(15, 23, 42, 0.05)' }
           },
-          grid: { display: false }
+          x: {
+            ticks: {
+              maxRotation: 0,
+              minRotation: 0,
+              autoSkip: false,
+              font: { size: 9, weight: 'bold' }
+            },
+            grid: { display: false }
+          }
         }
       }
-    }
-  });
+    });
+
+    reportChartInstances.push(inst);
+  }
 }
 
 // ==========================================

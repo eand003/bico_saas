@@ -254,7 +254,7 @@ async function handleUserLogout() {
     
     playBeep('success');
     speak("Sessão encerrada.");
-    showLoginScreen();
+    window.location.href = '../';
   } catch (err) {
     console.error("Erro ao efetuar logout:", err);
     alert("Erro ao desconectar: " + err.message);

@@ -2877,7 +2877,7 @@
     async function logout() {
       await clienteSupabase.auth.signOut();
       document.getElementById('mainApp').style.display = 'none';
-      showLogin();
+      window.location.href = '../';
     }
     window.logout = logout;
 

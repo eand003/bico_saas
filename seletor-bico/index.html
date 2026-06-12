@@ -1942,7 +1942,7 @@
         // Lógica de cabeçalho do produtor & equipamento vinculados
         let clientInfoHtml = '';
         if (window.activeClientId && window.activeMachineId) {
-          const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+          const clients = getCRMClients();
           const c = clients.find(item => item.id === window.activeClientId);
           if (c) {
             const m = c.machines.find(item => item.id === window.activeMachineId);
@@ -2160,7 +2160,7 @@
           return;
         }
 
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const clients = getCRMClients();
         const c = clients.find(item => item.id === window.activeClientId);
         if (!c) {
           window.activeClientId = null;
@@ -2223,10 +2223,143 @@
         }
       }
 
+      // --- DADOS DEMO E REGISTROS DE EXEMPLO DO CRM ---
+      function getCRMClients() {
+        const stored = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        
+        // Nossos clientes estáticos de demonstração
+        const demoClients = [
+          {
+            id: 'demo-client-1',
+            name: '🚀 DEMO - Fazenda Novo Horizonte',
+            farmName: 'Fazenda Novo Horizonte (Herbicida)',
+            notes: 'Exemplo de calibração para aplicação de herbicida pré-emergente com bicos de baixa deriva.',
+            is_demo: true,
+            machines: [
+              {
+                id: 'demo-machine-1-1',
+                name: 'Pulverizador John Deere M4030',
+                nozzleCount: 72,
+                spacing: 50,
+                boomSize: 36.0,
+                lastSimulation: {
+                  date: new Date().toLocaleDateString('pt-BR'),
+                  config: {
+                    spacing: 50,
+                    rate: 80,
+                    density: 1.00,
+                    pMin: 2.0,
+                    pMax: 5.0,
+                    vMin: 12.0,
+                    vAvg: 16.0,
+                    vMax: 20.0,
+                    unit: 'bar'
+                  },
+                  recommendation: {
+                    iso: '025',
+                    color: '#9C27B0',
+                    qVavg: 0.965,
+                    pVavg: 3.2,
+                    vAtPmin: 11.2,
+                    vAtPmax: 17.8,
+                    statusText: 'RECOMENDADO'
+                  }
+                }
+              }
+            ]
+          },
+          {
+            id: 'demo-client-2',
+            name: '💡 DEMO - Fazenda Santa Maria',
+            farmName: 'Fazenda Santa Maria (Fungicida)',
+            notes: 'Cenário típico de aplicação de fungicida espesso (densidade 1.08 kg/L) com bicos de gotas médias.',
+            is_demo: true,
+            machines: [
+              {
+                id: 'demo-machine-2-1',
+                name: 'Pulverizador Jacto Uniport 3030',
+                nozzleCount: 60,
+                spacing: 50,
+                boomSize: 30.0,
+                lastSimulation: {
+                  date: new Date().toLocaleDateString('pt-BR'),
+                  config: {
+                    spacing: 50,
+                    rate: 120,
+                    density: 1.08,
+                    pMin: 2.5,
+                    pMax: 5.5,
+                    vMin: 14.0,
+                    vAvg: 17.0,
+                    vMax: 20.0,
+                    unit: 'bar'
+                  },
+                  recommendation: {
+                    iso: '04',
+                    color: '#F44336',
+                    qVavg: 1.546,
+                    pVavg: 3.4,
+                    vAtPmin: 13.5,
+                    vAtPmax: 20.0,
+                    statusText: 'RECOMENDADO'
+                  }
+                }
+              }
+            ]
+          },
+          {
+            id: 'demo-client-3',
+            name: '🌱 DEMO - Fazenda Rio Verde',
+            farmName: 'Fazenda Rio Verde (Nutrição Foliar)',
+            notes: 'Adubação de alta vazão e calda pesada (densidade 1.20 kg/L) exigindo bicos de alta capacidade.',
+            is_demo: true,
+            machines: [
+              {
+                id: 'demo-machine-3-1',
+                name: 'Pulverizador Case Patriot 350',
+                nozzleCount: 84,
+                spacing: 35,
+                boomSize: 29.4,
+                lastSimulation: {
+                  date: new Date().toLocaleDateString('pt-BR'),
+                  config: {
+                    spacing: 35,
+                    rate: 200,
+                    density: 1.20,
+                    pMin: 2.0,
+                    pMax: 4.5,
+                    vMin: 10.0,
+                    vAvg: 14.0,
+                    vMax: 18.0,
+                    unit: 'bar'
+                  },
+                  recommendation: {
+                    iso: '06',
+                    color: '#BDBDBD',
+                    qVavg: 2.27,
+                    pVavg: 3.3,
+                    vAtPmin: 9.8,
+                    vAtPmax: 14.6,
+                    statusText: 'RECOMENDADO'
+                  }
+                }
+              }
+            ]
+          }
+        ];
+        
+        return [...demoClients, ...stored];
+      }
+
       // --- ADVANCED OFFLINE CRM SYSTEM (CLIENTS & MULTIPLE MACHINES) ---
       
       // Abre Modal para cadastrar/editar Cliente
       function openClientModal(clientId = null) {
+        if (clientId && clientId.toString().startsWith('demo-')) {
+          alert("Ops! Registros de demonstração são protegidos contra edição.");
+          return;
+        }
+
         const title = document.getElementById('clientModalTitle');
         const form = document.getElementById('clientForm');
         
@@ -2290,6 +2423,11 @@
 
       // Exclui Cliente e todas as suas máquinas
       function deleteClient(clientId) {
+        if (clientId.toString().startsWith('demo-')) {
+          alert("Ops! Produtores de demonstração não podem ser excluídos.");
+          return;
+        }
+
         if (!confirm("Tem certeza que deseja excluir este produtor? Todas as máquinas vinculadas serão perdidas permanentemente.")) return;
         
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
@@ -2305,6 +2443,11 @@
 
       // Abre Modal para cadastrar/editar Máquina de um Cliente
       function openMachineModal(clientId, machineId = null) {
+        if (machineId && machineId.toString().startsWith('demo-')) {
+          alert("Ops! Registros de demonstração são protegidos contra edição.");
+          return;
+        }
+
         const title = document.getElementById('machineModalTitle');
         const form = document.getElementById('machineForm');
         
@@ -2384,6 +2527,11 @@
 
       // Exclui Máquina
       function deleteMachine(clientId, machineId) {
+        if (machineId.toString().startsWith('demo-')) {
+          alert("Ops! Máquinas de demonstração não podem ser excluídas.");
+          return;
+        }
+
         if (!confirm("Tem certeza que deseja excluir esta máquina?")) return;
 
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
@@ -2409,7 +2557,7 @@
         }
 
         const selectClient = document.getElementById('saveSelectClient');
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const clients = getCRMClients();
 
         if (clients.length === 0) {
           if (confirm("Você precisa ter pelo menos um Cliente cadastrado para salvar a simulação. Deseja cadastrar um novo cliente agora?")) {
@@ -2441,7 +2589,7 @@
         const clientId = document.getElementById('saveSelectClient').value;
         const selectMachine = document.getElementById('saveSelectMachine');
         const container = document.getElementById('saveSelectMachineContainer');
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const clients = getCRMClients();
         const c = clients.find(item => item.id === clientId);
 
         selectMachine.innerHTML = '';
@@ -2474,6 +2622,11 @@
         event.preventDefault();
         const clientId = document.getElementById('saveSelectClient').value;
         const machineId = document.getElementById('saveSelectMachine').value;
+
+        if (clientId.toString().startsWith('demo-') || machineId.toString().startsWith('demo-')) {
+          alert("Registros de demonstração são de leitura protegida. Cadastre seu próprio produtor e máquina para salvar calibrações personalizadas.");
+          return;
+        }
 
         if (!machineId || machineId.includes('Nenhuma')) {
           alert("Por favor, selecione ou cadastre uma máquina para este cliente primeiro!");
@@ -2532,7 +2685,7 @@
       function renderHistory() {
         const listContainer = document.getElementById('historyList');
         const emptyState = document.getElementById('historyEmptyState');
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const clients = getCRMClients();
 
         if (clients.length === 0) {
           listContainer.style.display = 'none';
@@ -2594,8 +2747,10 @@
 
                   <div class="machine-action-row">
                     ${m.lastSimulation ? `<button class="crm-btn primary" onclick="loadMachineConfig('${c.id}', '${m.id}')">📂 Carregar no Simulador</button>` : ''}
+                    ${c.is_demo ? '' : `
                     <button class="crm-btn secondary" onclick="openMachineModal('${c.id}', '${m.id}')">✏️ Editar</button>
                     <button class="crm-btn danger" onclick="deleteMachine('${c.id}', '${m.id}')">❌</button>
+                    `}
                   </div>
                 </div>
               `;
@@ -2605,12 +2760,17 @@
           card.innerHTML = `
             <div class="history-header">
               <div>
-                <div class="history-title">${c.name}</div>
+                <div class="history-title" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  ${c.name}
+                  ${c.is_demo ? `<span style="font-size:10px; background:rgba(0, 210, 255, 0.15); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:bold; border: 1px solid rgba(0, 210, 255, 0.3);">DEMO</span>` : ''}
+                </div>
                 <div class="history-sub">${c.farmName ? `🌾 Fazenda: ${c.farmName}` : 'Sem Fazenda cadastrada'}</div>
               </div>
               <div class="flex-row" style="gap: 6px;">
+                ${c.is_demo ? '' : `
                 <button class="crm-btn secondary" style="padding: 6px 10px;" onclick="openClientModal('${c.id}')" title="Editar Cliente">✏️</button>
                 <button class="crm-btn danger" style="padding: 6px 10px;" onclick="deleteClient('${c.id}')" title="Excluir Cliente">❌</button>
+                `}
               </div>
             </div>
 
@@ -2619,7 +2779,7 @@
             <div class="machines-section">
               <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
                 <span>📋 Máquinas registradas</span>
-                <a href="javascript:void(0)" onclick="openMachineModal('${c.id}')" style="color: var(--accent); text-decoration:none; font-size:11px; white-space: nowrap;">➕ Add Máquina</a>
+                ${c.is_demo ? '' : `<a href="javascript:void(0)" onclick="openMachineModal('${c.id}')" style="color: var(--accent); text-decoration:none; font-size:11px; white-space: nowrap;">➕ Add Máquina</a>`}
               </div>
               ${machinesHtml}
             </div>
@@ -2630,7 +2790,7 @@
 
       // Carrega os parâmetros de uma simulação salva de volta na calculadora
       function loadMachineConfig(clientId, machineId) {
-        const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const clients = getCRMClients();
         const c = clients.find(item => item.id === clientId);
         if (!c) return;
         

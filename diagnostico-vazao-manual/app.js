@@ -921,8 +921,10 @@ function generateReportAndRender() {
     tr.className = m.status === 'nao_avaliado' ? 'no-print' : '';
     
     let badgeClass = 'status-ok';
-    if (m.status.includes('abaixo')) badgeClass = 'status-critico_abaixo';
-    else if (m.status.includes('acima')) badgeClass = 'status-acima';
+    if (m.status === 'abaixo') badgeClass = 'status-abaixo';
+    else if (m.status === 'critico_abaixo') badgeClass = 'status-critico_abaixo';
+    else if (m.status === 'acima') badgeClass = 'status-acima';
+    else if (m.status === 'critico_acima') badgeClass = 'status-critico_acima';
 
     tr.innerHTML = `
       <td style="font-weight:bold;">${String(m.nozzle_number).padStart(2, '0')}</td>

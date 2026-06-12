@@ -386,6 +386,9 @@ function autoCalculateNominalFlow() {
   
   // Injetar no input de vazão nominal da ponta
   document.getElementById('input-vazao-nominal').value = expectedNominalFlow.toFixed(2);
+  
+  // Recalcular medições com a nova vazão nominal esperada
+  recalculateAllMeasurements();
 }
 
 // Presets de atalhos
@@ -396,6 +399,7 @@ window.setSpacingValue = function(val) {
     const bSpacing = parseFloat(b.getAttribute('data-spacing'));
     b.classList.toggle('active', bSpacing === val);
   });
+  recalculateAllMeasurements();
 };
 
 window.setToleranceValue = function(val) {
@@ -405,6 +409,7 @@ window.setToleranceValue = function(val) {
     const bTolerance = parseFloat(b.getAttribute('data-tolerance'));
     b.classList.toggle('active', bTolerance === val);
   });
+  recalculateAllMeasurements();
 };
 
 window.setCollectionTime = function(val) {
@@ -416,12 +421,14 @@ window.setCollectionTime = function(val) {
     const bTime = parseInt(b.getAttribute('data-time'));
     b.classList.toggle('active', bTime === val);
   });
+  recalculateAllMeasurements();
 };
 
 // ==========================================
 // 3. ESTRUTURA DOS DADOS (MEDICOES)
 // ==========================================
 function initMeasurements() {
+  const expectedFlow = parseFloat(document.getElementById('input-vazao-nominal')?.value) || 1.20;
   measurements = [];
   for (let i = 1; i <= totalNozzles; i++) {
     measurements.push({
@@ -431,7 +438,7 @@ function initMeasurements() {
       collected_volume_ml: 0,
       collection_time_seconds: 30,
       measured_flow_l_min: 0,
-      expected_flow_l_min: 1.20,
+      expected_flow_l_min: expectedFlow,
       deviation_percent: 0,
       actual_rate_l_ha: 0,
       status: 'nao_avaliado',
@@ -703,6 +710,7 @@ function updateNozzleData(index, volumeMl, duration, expectedFlow, tolerance) {
   const m = measurements[index];
   m.collected_volume_ml = volumeMl;
   m.collection_time_seconds = duration;
+  m.expected_flow_l_min = expectedFlow;
   
   if (volumeMl > 0) {
     m.measured_flow_l_min = calculateMeasuredFlowLMin(volumeMl, duration);
@@ -741,6 +749,67 @@ function updateNozzleData(index, volumeMl, duration, expectedFlow, tolerance) {
       m.notes = '';
     }
   }
+  saveActiveDraft();
+}
+
+function recalculateAllMeasurements() {
+  const expectedFlow = parseFloat(document.getElementById('input-vazao-nominal')?.value) || 1.20;
+  const tolerance = parseFloat(document.getElementById('input-tolerancia')?.value) || 10;
+  const speed = parseFloat(document.getElementById('input-velocidade')?.value) || 16;
+  const spacing = parseFloat(document.getElementById('input-espacamento')?.value) || 0.5;
+  const duration = parseInt(document.getElementById('input-tempo-coleta')?.value) || 30;
+
+  measurements.forEach((m, idx) => {
+    m.expected_flow_l_min = expectedFlow;
+
+    if (m.collected_volume_ml > 0) {
+      const timeSec = m.collection_time_seconds || duration;
+      m.measured_flow_l_min = calculateMeasuredFlowLMin(m.collected_volume_ml, timeSec);
+      m.deviation_percent = calculateDeviationPercent(m.measured_flow_l_min, expectedFlow);
+      m.status = classifyNozzle(m.deviation_percent, tolerance);
+      m.actual_rate_l_ha = calculateActualRateLHa(m.measured_flow_l_min, speed, spacing);
+      
+      const rec = getNozzleRecommendation(m.status, m.nozzle_number);
+      m.recommendation = rec.action;
+      m.notes = rec.diagnostic;
+    } else {
+      if (m.status === 'critico_abaixo') {
+        m.measured_flow_l_min = 0;
+        m.deviation_percent = -100;
+        m.actual_rate_l_ha = 0;
+        const rec = getNozzleRecommendation('critico_abaixo', m.nozzle_number);
+        m.recommendation = rec.action;
+        m.notes = rec.diagnostic;
+      } else if (m.status === 'critico_acima') {
+        m.measured_flow_l_min = 0;
+        m.deviation_percent = 100;
+        m.actual_rate_l_ha = 0;
+        const rec = getNozzleRecommendation('critico_acima', m.nozzle_number);
+        m.recommendation = rec.action;
+        m.notes = rec.diagnostic;
+      } else {
+        m.measured_flow_l_min = 0;
+        m.deviation_percent = 0;
+        m.actual_rate_l_ha = 0;
+        m.status = 'nao_avaliado';
+        m.recommendation = '';
+        m.notes = '';
+      }
+    }
+  });
+
+  const boomTrackVisual = document.getElementById('boom-track-visual');
+  if (boomTrackVisual) {
+    renderBoomVisualizer('boom-track-visual');
+  }
+  
+  updateGuidedNozzleFocus();
+  
+  const bulkTbody = document.getElementById('bulk-grid-tbody');
+  if (bulkTbody) {
+    rebuildBulkGrid();
+  }
+  
   saveActiveDraft();
 }
 
@@ -1591,6 +1660,7 @@ function setupEventListeners() {
         const bTime = parseInt(b.getAttribute('data-time'));
         b.classList.toggle('active', bTime === val);
       });
+      recalculateAllMeasurements();
     }
   };
   const inputTempoColeta = document.getElementById('input-tempo-coleta');
@@ -1609,6 +1679,16 @@ function setupEventListeners() {
   document.getElementById('btn-logout').addEventListener('click', handleUserLogout);
   document.getElementById('btn-login-skip').addEventListener('click', handleOfflineBypass);
   document.getElementById('btn-trigger-login').addEventListener('click', showLoginScreen);
+
+  // Listeners para alteração manual de configurações acionarem recálculo
+  const configInputs = ['input-vazao-nominal', 'input-tolerancia', 'input-velocidade', 'input-espacamento'];
+  configInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', recalculateAllMeasurements);
+      el.addEventListener('change', recalculateAllMeasurements);
+    }
+  });
 }
 
 // Exportador CSV

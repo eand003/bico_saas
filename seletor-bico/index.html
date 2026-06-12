@@ -2874,14 +2874,68 @@
 
     window.handleAuth = handleAuth;
 
+    // Registra a sessão ativa do usuário no Supabase e localStorage
+    async function registerActiveSession(userId) {
+      try {
+        const sessionToken = 'sess_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem('spray_active_session_token', sessionToken);
+        
+        const { error } = await clienteSupabase
+          .from('user_sessions')
+          .upsert({ user_id: userId, session_token: sessionToken, updated_at: new Date().toISOString() });
+          
+        if (error) console.error("Erro ao registrar sessão ativa:", error);
+      } catch (err) {
+        console.error("Falha no registro de sessão:", err);
+      }
+    }
+
+    // Verifica a integridade da sessão do usuário
+    async function verifySessionIntegrity(userId) {
+      const localToken = localStorage.getItem('spray_active_session_token');
+      if (!localToken) return;
+
+      try {
+        const { data, error } = await clienteSupabase
+          .from('user_sessions')
+          .select('session_token')
+          .eq('user_id', userId)
+          .single();
+
+        if (error || !data) return;
+
+        if (data.session_token !== localToken) {
+          alert("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!");
+          await logout();
+        }
+      } catch (err) {
+        console.log("Falha ao checar integridade da sessão (possivelmente offline):", err);
+      }
+    }
+
     async function logout() {
+      if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
+      localStorage.removeItem('spray_active_session_token');
       await clienteSupabase.auth.signOut();
       document.getElementById('mainApp').style.display = 'none';
       window.location.href = '../';
     }
     window.logout = logout;
 
-    function showApp() {
+    async function showApp() {
+      try {
+        const { data: { user }, error } = await clienteSupabase.auth.getUser();
+        if (user) {
+          await registerActiveSession(user.id);
+          if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
+          window.sessionCheckInterval = setInterval(async () => {
+            await verifySessionIntegrity(user.id);
+          }, 30000); // Checa a cada 30 segundos
+        }
+      } catch (err) {
+        console.error("Erro ao iniciar sessão ativa no Simulador:", err);
+      }
+
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'flex';
       if (window._updateApp) {

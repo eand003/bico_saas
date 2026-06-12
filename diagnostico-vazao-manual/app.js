@@ -171,11 +171,63 @@ function handleOfflineBypass() {
   renderHistoryList();
 }
 
-function handleUserLoggedIn(user) {
+// Registra a sessão ativa do usuário no Supabase e localStorage
+async function registerActiveSession(userId) {
+  const supabase = window.supabaseClient;
+  if (!supabase) return;
+  
+  try {
+    const sessionToken = 'sess_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('spray_active_session_token', sessionToken);
+    
+    const { error } = await supabase
+      .from('user_sessions')
+      .upsert({ user_id: userId, session_token: sessionToken, updated_at: new Date().toISOString() });
+      
+    if (error) console.error("Erro ao registrar sessão ativa:", error);
+  } catch (err) {
+    console.error("Falha no registro de sessão:", err);
+  }
+}
+
+// Verifica a integridade da sessão do usuário
+async function verifySessionIntegrity(userId) {
+  const localToken = localStorage.getItem('spray_active_session_token');
+  if (!localToken) return;
+
+  const supabase = window.supabaseClient;
+  if (!supabase) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('user_sessions')
+      .select('session_token')
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !data) return;
+
+    if (data.session_token !== localToken) {
+      alert("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!");
+      await forceUserLogout();
+    }
+  } catch (err) {
+    console.log("Falha ao checar integridade da sessão (possivelmente offline):", err);
+  }
+}
+
+async function handleUserLoggedIn(user) {
   // Salvar pré-autorização offline bem sucedida no dispositivo
   setOfflinePreAuthorization(true);
   
   showAppContainer();
+  
+  // Registrar nova sessão ativa
+  await registerActiveSession(user.id);
+  if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
+  window.sessionCheckInterval = setInterval(async () => {
+    await verifySessionIntegrity(user.id);
+  }, 30000); // Checa a cada 30 segundos
   
   // Alternar visibilidade dos badges no cabeçalho
   const badgeOnline = document.getElementById('user-profile-badge');
@@ -234,10 +286,34 @@ async function handleUserLogin(event) {
   }
 }
 
+async function forceUserLogout() {
+  if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
+  localStorage.removeItem('spray_active_session_token');
+  
+  const supabase = window.supabaseClient;
+  try {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    
+    const badge = document.getElementById('user-profile-badge');
+    if (badge) badge.style.display = 'none';
+    
+    document.getElementById('login-password').value = '';
+    window.location.href = '../';
+  } catch (err) {
+    console.error("Erro ao efetuar logout forçado:", err);
+    window.location.href = '../';
+  }
+}
+
 async function handleUserLogout() {
   if (!confirm("Tem certeza que deseja sair do aplicativo? Suas credenciais de sincronização serão limpas.")) {
     return;
   }
+  
+  if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
+  localStorage.removeItem('spray_active_session_token');
   
   const supabase = window.supabaseClient;
   try {

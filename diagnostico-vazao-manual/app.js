@@ -1363,6 +1363,9 @@ async function loadInspectionIntoApp(id) {
     }
     document.getElementById('input-responsavel').value = inspectorVal;
 
+    // Recalcular todas as medições para garantir consistência com os parâmetros carregados
+    recalculateAllMeasurements();
+
     // Fechar modal do histórico
     document.getElementById('modal-history').style.display = 'none';
 
@@ -1995,10 +1998,8 @@ function restoreActiveDraft() {
       if (document.getElementById('input-tempo-coleta')) document.getElementById('input-tempo-coleta').value = inputs.tempo_coleta || 30;
     }
     
-    // Atualizar UI
-    renderBoomVisualizer('boom-track-visual');
-    updateGuidedNozzleFocus();
-    rebuildBulkGrid();
+    // Recalcular medições para garantir consistência e atualizar UI
+    recalculateAllMeasurements();
     
     // Forçar a visualização da aba ativa restaurada
     switchTab(activeTab);

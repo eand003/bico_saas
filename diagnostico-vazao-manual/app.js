@@ -2066,3 +2066,43 @@ function setupDraftAutoSave() {
     }
   });
 }
+
+// Otimizar redimensionamento dos gráficos para visualização de PDF/impressão no celular
+window.addEventListener('beforeprint', () => {
+  // Define largura explícita temporária no container para forçar as dimensões de impressão no celular
+  const container = document.querySelector('.app-container');
+  if (container) {
+    container.style.setProperty('width', '800px', 'important');
+    container.style.setProperty('min-width', '800px', 'important');
+    container.style.setProperty('max-width', '800px', 'important');
+  }
+  
+  // Forçar redimensionamento imediato das instâncias do Chart.js
+  if (reportChartInstances && reportChartInstances.length > 0) {
+    reportChartInstances.forEach(inst => {
+      if (inst) {
+        inst.resize();
+      }
+    });
+  }
+});
+
+window.addEventListener('afterprint', () => {
+  // Remove larguras temporárias para retornar à responsividade normal na tela do celular
+  const container = document.querySelector('.app-container');
+  if (container) {
+    container.style.removeProperty('width');
+    container.style.removeProperty('min-width');
+    container.style.removeProperty('max-width');
+  }
+  
+  // Restaurar dimensões normais do gráfico para a tela do celular
+  if (reportChartInstances && reportChartInstances.length > 0) {
+    reportChartInstances.forEach(inst => {
+      if (inst) {
+        inst.resize();
+      }
+    });
+  }
+});
+

@@ -146,6 +146,91 @@
       animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
     }
 
+    /* Quick CTA Banner */
+    .quick-cta-banner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: rgba(0, 210, 255, 0.04);
+      border: 1px solid rgba(0, 210, 255, 0.15);
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+      box-shadow: 0 4px 20px rgba(0, 210, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .cta-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cta-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .cta-pulse {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+    }
+
+    .cta-pulse::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      animation: pulseGlow 1.8s infinite ease-in-out;
+    }
+
+    .cta-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+      line-height: 1;
+      margin-left: 8px;
+      padding: 0 4px;
+      transition: color 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cta-close-btn:hover {
+      color: #ffffff;
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(2.8);
+        opacity: 0;
+      }
+    }
+
     /* App Card */
     .hub-card {
       background: var(--glass-bg);
@@ -414,6 +499,12 @@
       <p class="brand-subtitle">Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.</p>
     </header>
 
+    <div class="quick-cta-banner" id="quick-cta" style="display: none;">
+      <span class="cta-pulse"></span>
+      <span>Possui conta corporativa? <a href="./enterprise/" class="cta-link">Acesse o Precision Enterprise ➔</a></span>
+      <button class="cta-close-btn" onclick="dismissCTA()" title="Fechar">&times;</button>
+    </div>
+
     <div class="hub-grid">
       <!-- Card: Seletor de Bicos ISO -->
       <a href="./enterprise/" class="hub-card card-selector" id="link-seletor">
@@ -466,6 +557,23 @@
           .catch(err => console.log('Falha no SW:', err));
       });
     }
+
+    // Dismiss CTA function
+    function dismissCTA() {
+      const banner = document.getElementById('quick-cta');
+      if (banner) {
+        banner.style.display = 'none';
+        localStorage.setItem('hide-enterprise-cta', 'true');
+      }
+    }
+
+    // Check localStorage on load
+    window.addEventListener('load', () => {
+      if (localStorage.getItem('hide-enterprise-cta') !== 'true') {
+        const banner = document.getElementById('quick-cta');
+        if (banner) banner.style.display = 'inline-flex';
+      }
+    });
   </script>
 
 </body>

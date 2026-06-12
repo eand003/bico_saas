@@ -1,9 +1,14 @@
-const CACHE_NAME = 'spray-pro-v13';
+const CACHE_NAME = 'spray-pro-v14';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
-  './logo.png'
+  './logo.png',
+  './bg_premium.png',
+  './seletor-bico/index.html',
+  './diagnostico-vazao-manual/index.html',
+  './diagnostico-vazao-manual/app.js',
+  './diagnostico-vazao-manual/styles.css'
 ];
 
 self.addEventListener('install', event => {

@@ -1,8 +1,9 @@
-const CACHE_NAME = 'spray-pro-v16';
+const CACHE_NAME = 'spray-pro-v17';
 const urlsToCache = [
   './',
   './index.html',
   './sales_playbook.html',
+  './apresentacao_consultores.html',
   './manifest.json',
   './logo.png',
   './bg_premium.png',

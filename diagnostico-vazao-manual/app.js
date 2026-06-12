@@ -1261,7 +1261,8 @@ async function saveInspectionToDatabase(summary) {
       
       currentInspectionId = backupInspection.id;
       
-      alert("⚠️ Alerta: Falha ao sincronizar com a nuvem (verifique se as tabelas do Supabase foram criadas via painel SQL). O laudo foi salvo localmente no aparelho por segurança.");
+      const errMsg = error && error.message ? ` (${error.message})` : '';
+      alert(`⚠️ Alerta: Falha ao sincronizar com a nuvem${errMsg}.\n\nO laudo foi salvo localmente no seu aparelho por segurança e está acessível no menu "Histórico".`);
     } catch (e2) {
       console.error("Falha gravíssima no fallback offline:", e2);
       alert("Erro ao gravar laudo. Verifique o espaço de armazenamento do seu aparelho.");

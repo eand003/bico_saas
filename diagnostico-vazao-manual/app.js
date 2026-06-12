@@ -1308,6 +1308,11 @@ async function handleSaveInspectionWorkflow() {
     
     if (saveAsNew) {
       currentInspectionId = null; // Zera o ID para que gere um novo registro no banco/local
+      // Limpar os IDs das medições para que o banco/Supabase gere novos UUIDs e evite erros de chave duplicada
+      measurements.forEach(m => {
+        if (m.id) delete m.id;
+        if (m.inspection_id) delete m.inspection_id;
+      });
     }
   }
   

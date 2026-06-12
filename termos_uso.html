@@ -1,78 +1,280 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Termos de Uso e Licenciamento - Spray Precision PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #00d2ff;
-            --secondary: #0077b6;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --bg: #f8fafc;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Termos de Uso - Spray Precision</title>
+  <meta name="theme-color" content="#05080a">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./logo.png">
+  <link rel="icon" type="image/png" href="./logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #05080a;
+      --glass-bg: rgba(15, 20, 24, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.25);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --card-radius: 24px;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      --bg-img: url('bg_premium.png');
+    }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.6; margin: 0; padding: 40px 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 50px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid var(--primary); padding-bottom: 30px; }
-        .header h1 { font-family: 'Outfit'; color: var(--secondary); margin: 0; font-size: 28px; }
-        .header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark) var(--bg-img) no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
 
-        h2 { font-family: 'Outfit'; color: var(--secondary); font-size: 20px; margin-top: 35px; border-left: 4px solid var(--primary); padding-left: 15px; }
-        p, li { font-size: 15px; color: #475569; margin-bottom: 15px; text-align: justify; }
-        
-        .important-box { background: #fffbeb; border: 1px solid #fef3c7; padding: 20px; border-radius: 12px; margin: 20px 0; color: #92400e; font-weight: 500; }
-        
-        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: var(--text-muted); }
-        
-        @media (max-width: 600px) {
-            .container { padding: 30px 20px; }
-            .header h1 { font-size: 22px; }
-        }
-    </style>
+    /* Dark gradient overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at top, rgba(10, 18, 30, 0.8) 0%, rgba(5, 8, 10, 0.98) 100%);
+      z-index: -1;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      z-index: 1;
+    }
+
+    /* Back Navigation Button */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(-3px);
+    }
+
+    /* Document Card */
+    .document-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 50px;
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .doc-header {
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 30px;
+      margin-bottom: 35px;
+    }
+
+    .doc-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .doc-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .doc-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Typography & Sections */
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-top: 35px;
+      margin-bottom: 15px;
+      border-left: 3px solid var(--accent);
+      padding-left: 14px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.7;
+      margin-bottom: 16px;
+      text-align: justify;
+    }
+
+    ul {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    /* Important Warning Box */
+    .warning-box {
+      background: rgba(242, 140, 40, 0.08);
+      border: 1px solid rgba(242, 140, 40, 0.25);
+      padding: 24px;
+      border-radius: 16px;
+      margin: 28px 0;
+      color: #ffd0a0;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .warning-box strong {
+      color: #ff9d3b;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* Footer */
+    footer {
+      width: 100%;
+      padding: 30px 24px;
+      text-align: center;
+      background: rgba(5, 8, 10, 0.85);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      z-index: 1;
+    }
+
+    .copyright {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .document-card {
+        padding: 30px 20px;
+      }
+      .doc-title {
+        font-size: 1.8rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      p, li {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Termos de Uso e Licenciamento</h1>
-            <p>Versão 2.4 - Atualizado em 01 de Abril de 2026</p>
-        </div>
+  <main class="main-content">
+    <a href="./" class="back-btn">
+      <span>⬅️</span> Voltar ao Portal
+    </a>
 
-        <p>Bem-vindo ao <strong>Spray Precision PRO</strong>. O acesso e uso desta plataforma e de seus algoritmos ("Software") estão condicionados à aceitação e ao cumprimento dos presentes Termos de Uso.</p>
+    <article class="document-card">
+      <header class="doc-header">
+        <img src="./logo.png" alt="Spray Precision Logo" class="doc-logo">
+        <h1 class="doc-title">Termos de Uso</h1>
+        <p class="doc-meta">Versão 3.0 &bull; Atualizado em 12 de Junho de 2026</p>
+      </header>
 
-        <h2>1. Licenciamento e Propriedade Intelectual</h2>
-        <p>Este Software é licenciado, não vendido. Todo o conteúdo, incluindo, mas não se limitando a: algoritmos de cálculo de bicos, lógicas de seleção de ranking, interface visual (design), códigos JavaScript, e metodologias de resiliência operacional, são de propriedade exclusiva da <strong>Spray Precision Technology</strong>.</p>
-        
-        <div class="important-box">
-            <strong>ATENÇÃO:</strong> Fica expressamente proibida a engenharia reversa, descompilação, ofuscação ou extração de qualquer parte do código-fonte ou das fórmulas matemáticas proprietárias para uso em plataformas externas ou concorrentes sem autorização prévia por escrito.
-        </div>
+      <p>Bem-vindo ao ecossistema <strong>Spray Precision</strong>. O acesso e uso de nossas aplicações — incluindo a ferramenta de <strong>Diagnóstico de Vazão Manual</strong>, o <strong>Seletor de Bicos ISO</strong> e o portal de gestão <strong>Precision Enterprise</strong> — estão integralmente sujeitos aos presentes Termos de Uso.</p>
 
-        <h2>2. Restrições de Uso Comercial</h2>
-        <p>O licenciamento nas modalidades "Enterprise" ou "White Label" permite o uso estrito para fins de assessoria técnica ao produtor rural. Não é permitida a sublocação da plataforma para terceiros não autorizados ou o uso da marca sem a devida conformidade contratual.</p>
+      <h2>1. Âmbito do Ecossistema e Propriedade Intelectual</h2>
+      <p>Este Software e suas ferramentas são licenciados, e não vendidos. Todo o conteúdo contido no ecossistema, o que inclui algoritmos de classificação de gotas, lógicas de seleção e ranking de bicos, ferramentas de cálculo de Coeficiente de Variação (CV%), designs de interface, códigos-fonte e materiais técnicos, são de propriedade intelectual exclusiva da <strong>Spray Precision Technology</strong>.</p>
+      
+      <div class="warning-box">
+        <strong>Aviso Importante sobre Engenharia Reversa:</strong>
+        É expressamente proibida qualquer tentativa de engenharia reversa, cópia ou extração de parte das rotinas de cálculo matemático, tabelas de conformidade ISO ou scripts de formatação física e de laudos de calibração para uso externo sem consentimento contratual expresso e por escrito.
+      </div>
 
-        <h2>3. Isenção de Responsabilidade Técnica</h2>
-        <p>O Spray Precision PRO é uma ferramenta de <strong>simulação e suporte à decisão</strong>. Embora os cálculos sigam a norma ISO 10625 e padrões de calibração agrícola, o usuário (aplicador, engenheiro agrônomo ou consultor) permanece como o único responsável por:</p>
-        <ul>
-            <li>Validar fisicamente a vazão dos bicos no pulverizador (caneca graduada);</li>
-            <li>Configurar corretamente o manômetro da máquina;</li>
-            <li>Observar as condições climáticas (vento, temperatura, umidade) no momento da aplicação;</li>
-            <li>Gerir corretamente a bula e toxicidade dos defensivos utilizados.</li>
-        </ul>
+      <h2>2. Modalidades de Uso Comercial e Contas</h2>
+      <p>O uso comercial está sujeito à contratação de licenças corporativas (SaaS ou White Label). As credenciais de acesso disponibilizadas para o <strong>Precision Enterprise</strong> são de caráter pessoal e intransferível. Fica proibida a sublocação, redistribuição comercial ou comercialização não autorizada de relatórios em PDF gerados por contas que não possuam licenciamento ativo e regular.</p>
 
-        <h2>4. Proteção de Dados e LGPD</h2>
-        <p>A plataforma coleta dados mínimos de simulação para fins de relatório técnico. Dados pessoais de e-mail e WhatsApp coletados para login ou geração de leads são tratados em conformidade com a Lei Geral de Proteção de Dados (LGPD), sendo utilizados apenas para a finalidade consentida pelo usuário.</p>
+      <h2>3. Isenção de Responsabilidade Técnica</h2>
+      <p>O ecossistema Spray Precision atua como uma ferramenta digital de <strong>suporte à decisão técnica</strong>. Consequentemente:</p>
+      <ul>
+        <li>O **Diagnóstico de Vazão** realiza cálculos estatísticos baseados estritamente nos dados de mililitros inseridos pelo usuário operador. Cabe ao profissional responsável atestar a exatidão das medições manuais e realizar a validação com proveta física de modo adequado.</li>
+        <li>O **Seletor de Bicos ISO** fornece sugestões ideais seguindo a norma ISO 10625. As faixas de pressão, tamanho de gotas e velocidades são estimativas ideais. Variações físicas na pressão de trabalho de pontas desgastadas ou falhas de calibração eletrônica da máquina são de inteira responsabilidade do proprietário/operador.</li>
+        <li>Fatores de campo, tais como condições microclimáticas (vento, umidade e temperatura), velocidade real de trabalho do pulverizador, estabilidade da barra e a mistura química de caldas de defensivos permanecem sob gestão direta do aplicador.</li>
+      </ul>
 
-        <h2>5. Foros e Legislação Aplicável</h2>
-        <p>Estes Termos de Uso são regidos pelas leis da República Federativa do Brasil. Eventuais controvérsias não solucionadas amigavelmente entre as partes serão submetidas ao foro de eleição da comarca do licenciado proprietário do sistema.</p>
+      <h2>4. Privacidade, Armazenamento e LGPD</h2>
+      <p>As nossas ferramentas respeitam a Lei Geral de Proteção de Dados (LGPD). As informações de simulações, relatórios e dados cadastrais de clientes inseridos em nosso ecossistema são criptografados e armazenados com segurança em nuvem (ou localmente, no caso de recursos offline) para a emissão exclusiva de relatórios técnicos e uso interno consentido das fazendas clientes.</p>
 
-        <div class="footer">
-            Spray Precision PRO &copy; 2026 - Tecnologia Brasileira para Agricultura de Precisão.
-        </div>
-    </div>
+      <h2>5. Alterações nos Termos e Legislação</h2>
+      <p>Estes Termos são regidos pelas leis da República Federativa do Brasil. Reservamo-nos o direito de atualizar este documento periodicamente para refletir novas funcionalidades integradas ao nosso ecossistema.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p class="copyright">&copy; 2026 Spray Precision. Todos os direitos reservados. TecnoAgro Inovações.</p>
+  </footer>
 
 </body>
 </html>

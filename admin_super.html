@@ -920,12 +920,15 @@
                   <th onclick="toggleUserSort('created_at')" style="user-select: none;">
                     Criado Em <span id="sortIcon-created_at" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
+                  <th onclick="toggleUserSort('last_access')" style="user-select: none;">
+                    Atividade <span id="sortIcon-last_access" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
                   <th style="text-align: right; user-select: none;">Ações</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody">
                 <tr>
-                  <td colspan="5">
+                  <td colspan="6">
                     <div class="empty-state">
                       <div class="loader"></div>
                       <p>Aguardando login administrativo...</p>
@@ -1544,7 +1547,7 @@
         if (tbody) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5">
+              <td colspan="6">
                 <div class="empty-state">
                   <div class="loader"></div>
                   <p>Consultando base de usuários do Supabase...</p>
@@ -1655,7 +1658,7 @@
       if (filteredUsers.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5">
+            <td colspan="6">
               <div class="empty-state">
                 <p>Nenhum usuário correspondente encontrado.</p>
               </div>
@@ -1682,6 +1685,11 @@
         } else if (userSortField === 'created_at') {
           valA = new Date(a.created_at || 0).getTime();
           valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'last_access') {
+          const sessA = cachedSessions.find(s => s.user_id === a.id);
+          const sessB = cachedSessions.find(s => s.user_id === b.id);
+          valA = sessA ? new Date(sessA.updated_at).getTime() : 0;
+          valB = sessB ? new Date(sessB.updated_at).getTime() : 0;
         }
 
         if (valA < valB) return userSortDirection === 'asc' ? -1 : 1;
@@ -1690,7 +1698,7 @@
       });
 
       // Atualiza ícones de ordenação visualmente
-      const fields = ['email', 'role', 'enterprise', 'created_at'];
+      const fields = ['email', 'role', 'enterprise', 'created_at', 'last_access'];
       fields.forEach(f => {
         const iconEl = document.getElementById(`sortIcon-${f}`);
         if (iconEl) {
@@ -1715,10 +1723,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="user-email-cell" data-label="E-mail">
-            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-              <span>✉️ ${user.email}</span>
-              ${badgeHtml}
-            </div>
+            <span>✉️ ${user.email}</span>
           </td>
           <td data-label="Cargo">
             <select class="role-select ${role === 'gerente' ? 'gerente' : (role === 'master' ? 'master' : '')}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
@@ -1734,6 +1739,7 @@
             </div>
           </td>
           <td data-label="Criado em">📅 ${createdDate}</td>
+          <td data-label="Atividade">${badgeHtml}</td>
           <td data-label="Ações" style="text-align: right;">
             <div style="display:flex; justify-content:flex-end; gap:8px; width: 100%;">
               <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="openTransferModal('${user.id}', '${partnerId}', '${role}')" title="Transferir Empresa">🏢 Transferir</button>
@@ -1750,7 +1756,7 @@
         userSortDirection = userSortDirection === 'asc' ? 'desc' : 'asc';
       } else {
         userSortField = field;
-        userSortDirection = 'asc';
+        userSortDirection = (field === 'last_access' || field === 'created_at') ? 'desc' : 'asc';
       }
       renderUsersTable();
     }

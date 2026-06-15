@@ -1190,8 +1190,11 @@
       <div class="glass-panel" style="display: flex; flex-direction: column; gap: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h2 style="font-size: 24px; color: var(--accent);">👥 Cadastro de Clientes & Máquinas</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Gerencie seus produtores e suas respectivas máquinas 100% offline.</p>
+            <h2 style="font-size: 24px; color: var(--accent); display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span>👥 Cadastro de Clientes & Máquinas</span>
+              <span id="crmSyncStatus" style="font-size: 13px; font-weight: normal; color: var(--text-muted); font-family: Inter;"></span>
+            </h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Gerencie seus produtores e suas respectivas máquinas online e offline.</p>
           </div>
           <button onclick="openClientModal(null)" class="login-btn" style="padding: 10px 16px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
             ➕ Adicionar Cliente
@@ -2245,8 +2248,212 @@
       }
 
       // --- DADOS DEMO E REGISTROS DE EXEMPLO DO CRM ---
+      // --- AUXILIARES E SINCRONIZAÇÃO DE DADOS CRM (SUPABASE) ---
+      function flattenCRMData(nestedClients) {
+        const clients = [];
+        const machines = [];
+        nestedClients.forEach(c => {
+          if (c.id.toString().startsWith('demo-')) return;
+          clients.push({
+            id: c.id,
+            name: c.name,
+            farm_name: c.farmName || null,
+            notes: c.notes || null,
+            created_by_email: c.created_by_email || null,
+            is_deleted: c.is_deleted || false,
+            updated_at: c.updated_at || new Date().toISOString()
+          });
+          if (c.machines) {
+            c.machines.forEach(m => {
+              if (m.id.toString().startsWith('demo-')) return;
+              machines.push({
+                id: m.id,
+                client_id: c.id,
+                name: m.name,
+                nozzle_count: m.nozzleCount || null,
+                spacing: m.spacing || null,
+                boom_size: m.boomSize || null,
+                last_simulation: m.lastSimulation || null,
+                is_deleted: m.is_deleted || false,
+                updated_at: m.updated_at || new Date().toISOString()
+              });
+            });
+          }
+        });
+        return { clients, machines };
+      }
+
+      function nestCRMData(flatClients, flatMachines) {
+        const clientsMap = {};
+        flatClients.forEach(c => {
+          clientsMap[c.id] = {
+            id: c.id,
+            name: c.name,
+            farmName: c.farm_name,
+            notes: c.notes,
+            created_by_email: c.created_by_email,
+            is_deleted: c.is_deleted,
+            updated_at: c.updated_at,
+            machines: []
+          };
+        });
+        flatMachines.forEach(m => {
+          const client = clientsMap[m.client_id];
+          if (client) {
+            client.machines.push({
+              id: m.id,
+              name: m.name,
+              nozzleCount: m.nozzle_count,
+              spacing: m.spacing,
+              boomSize: m.boom_size,
+              lastSimulation: m.last_simulation,
+              is_deleted: m.is_deleted,
+              updated_at: m.updated_at
+            });
+          }
+        });
+        return Object.values(clientsMap);
+      }
+
+      function updateSyncStatus(status) {
+        const el = document.getElementById('crmSyncStatus');
+        if (!el) return;
+        if (status === 'offline') {
+          el.innerHTML = '☁️ Offline (Salvo local)';
+          el.style.color = 'var(--text-muted)';
+        } else if (status === 'syncing') {
+          el.innerHTML = '🔄 Sincronizando...';
+          el.style.color = 'var(--accent)';
+        } else if (status === 'synced') {
+          el.innerHTML = '🟢 Nuvem Sincronizada';
+          el.style.color = 'var(--accent-green)';
+        } else {
+          el.innerHTML = '';
+        }
+      }
+
+      async function syncCRM() {
+        if (!clienteSupabase) {
+          updateSyncStatus('offline');
+          return;
+        }
+        
+        const { data: { session } } = await clienteSupabase.auth.getSession().catch(() => ({ data: { session: null } }));
+        if (!session || !session.user) {
+          updateSyncStatus('');
+          return;
+        }
+
+        if (!navigator.onLine) {
+          updateSyncStatus('offline');
+          return;
+        }
+
+        updateSyncStatus('syncing');
+        const user = session.user;
+
+        try {
+          const localData = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+          const { clients: localClients, machines: localMachines } = flattenCRMData(localData);
+
+          const { data: dbClients, error: cErr } = await clienteSupabase.from('clientes').select('*');
+          if (cErr) throw cErr;
+
+          const { data: dbMachines, error: mErr } = await clienteSupabase.from('maquinas').select('*');
+          if (mErr) throw mErr;
+
+          const mergedClients = {};
+          dbClients.forEach(c => {
+            mergedClients[c.id] = c;
+          });
+
+          localClients.forEach(c => {
+            const dbC = mergedClients[c.id];
+            if (!dbC) {
+              c.user_id = user.id;
+              if (!c.created_by_email) c.created_by_email = user.email;
+              mergedClients[c.id] = c;
+              c._needsUpload = true;
+            } else {
+              const localTime = new Date(c.updated_at).getTime();
+              const dbTime = new Date(dbC.updated_at).getTime();
+              if (localTime > dbTime) {
+                c.user_id = dbC.user_id;
+                c.created_by_email = dbC.created_by_email;
+                mergedClients[c.id] = c;
+                c._needsUpload = true;
+              }
+            }
+          });
+
+          const mergedMachines = {};
+          dbMachines.forEach(m => {
+            mergedMachines[m.id] = m;
+          });
+
+          localMachines.forEach(m => {
+            const dbM = mergedMachines[m.id];
+            if (!dbM) {
+              m.user_id = user.id;
+              mergedMachines[m.id] = m;
+              m._needsUpload = true;
+            } else {
+              const localTime = new Date(m.updated_at).getTime();
+              const dbTime = new Date(dbM.updated_at).getTime();
+              if (localTime > dbTime) {
+                m.user_id = dbM.user_id;
+                mergedMachines[m.id] = m;
+                m._needsUpload = true;
+              }
+            }
+          });
+
+          const clientsToUpsert = Object.values(mergedClients).filter(c => c._needsUpload).map(c => {
+            const { _needsUpload, ...rest } = c;
+            return rest;
+          });
+
+          const machinesToUpsert = Object.values(mergedMachines).filter(m => m._needsUpload).map(m => {
+            const { _needsUpload, ...rest } = m;
+            return rest;
+          });
+
+          if (clientsToUpsert.length > 0) {
+            const { error: upsertErr } = await clienteSupabase.from('clientes').upsert(clientsToUpsert);
+            if (upsertErr) console.error("Error upserting clients:", upsertErr);
+          }
+
+          if (machinesToUpsert.length > 0) {
+            const { error: upsertErr } = await clienteSupabase.from('maquinas').upsert(machinesToUpsert);
+            if (upsertErr) console.error("Error upserting machines:", upsertErr);
+          }
+
+          const activeClients = Object.values(mergedClients).filter(c => !c.is_deleted);
+          const activeMachines = Object.values(mergedMachines).filter(m => !m.is_deleted);
+
+          const nestedData = nestCRMData(activeClients, activeMachines);
+          localStorage.setItem('spray_crm_clients', JSON.stringify(nestedData));
+
+          updateSyncStatus('synced');
+          renderHistory();
+        } catch (err) {
+          console.error("Failed to sync CRM with Supabase:", err);
+          updateSyncStatus('offline');
+        }
+      }
+
+      window.addEventListener('online', syncCRM);
+      window.addEventListener('offline', () => updateSyncStatus('offline'));
+
+      // --- DADOS DEMO E REGISTROS DE EXEMPLO DO CRM ---
       function getCRMClients() {
         const stored = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const activeStored = stored.filter(c => !c.is_deleted).map(c => {
+          if (c.machines) {
+            c.machines = c.machines.filter(m => !m.is_deleted);
+          }
+          return c;
+        });
         
         // Nossos clientes estáticos de demonstração
         const demoClients = [
@@ -2369,7 +2576,7 @@
           }
         ];
         
-        return [...demoClients, ...stored];
+        return [...demoClients, ...activeStored];
       }
 
       // --- ADVANCED OFFLINE CRM SYSTEM (CLIENTS & MULTIPLE MACHINES) ---
@@ -2413,12 +2620,13 @@
         const notes = document.getElementById('clientNotes').value;
 
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const now = new Date().toISOString();
 
         if (id) {
           // Editando
           clients = clients.map(c => {
             if (c.id === id) {
-              return { ...c, name, farmName, notes };
+              return { ...c, name, farmName, notes, updated_at: now, is_deleted: false };
             }
             return c;
           });
@@ -2430,6 +2638,10 @@
             name,
             farmName,
             notes,
+            created_by_email: window.currentUserEmail || null,
+            is_deleted: false,
+            created_at: now,
+            updated_at: now,
             machines: []
           };
           clients.unshift(newClient);
@@ -2439,6 +2651,7 @@
         localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
         document.getElementById('clientModal').style.display = 'none';
         updateSessionBanner(); // Sincroniza o banner ativo
+        syncCRM();
         renderHistory();
       }
 
@@ -2452,13 +2665,22 @@
         if (!confirm("Tem certeza que deseja excluir este produtor? Todas as máquinas vinculadas serão perdidas permanentemente.")) return;
         
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
-        clients = clients.filter(c => c.id !== clientId);
+        const now = new Date().toISOString();
+        
+        clients = clients.map(c => {
+          if (c.id === clientId) {
+            const machines = (c.machines || []).map(m => ({ ...m, is_deleted: true, updated_at: now }));
+            return { ...c, is_deleted: true, updated_at: now, machines };
+          }
+          return c;
+        });
         localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
         
         if (window.activeClientId === clientId) {
           clearActiveSession();
         }
         
+        syncCRM();
         renderHistory();
       }
 
@@ -2507,6 +2729,7 @@
         const nozzleCount = parseInt(document.getElementById('machineNozzleCount').value);
         const spacing = parseFloat(document.getElementById('machineSpacing').value);
         const boomSize = parseFloat(document.getElementById('machineBoomSize').value); // Lê o tamanho da barra manual
+        const now = new Date().toISOString();
 
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
@@ -2518,7 +2741,7 @@
             // Editando máquina
             machines = machines.map(m => {
               if (m.id === id) {
-                return { ...m, name, nozzleCount, spacing, boomSize };
+                return { ...m, name, nozzleCount, spacing, boomSize, updated_at: now, is_deleted: false };
               }
               return m;
             });
@@ -2531,18 +2754,23 @@
               nozzleCount,
               spacing,
               boomSize, // Salva o tamanho da barra manual
-              lastSimulation: null
+              lastSimulation: null,
+              is_deleted: false,
+              created_at: now,
+              updated_at: now
             };
             machines.unshift(newMachine);
             alert("✅ Máquina cadastrada para este produtor!");
           }
 
           clients[cIndex].machines = machines;
+          clients[cIndex].updated_at = now;
           localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
         }
 
         document.getElementById('machineModal').style.display = 'none';
         updateSessionBanner(); // Sincroniza o banner ativo
+        syncCRM();
         renderHistory();
       }
 
@@ -2557,9 +2785,16 @@
 
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
+        const now = new Date().toISOString();
 
         if (cIndex !== -1) {
-          clients[cIndex].machines = clients[cIndex].machines.filter(m => m.id !== machineId);
+          clients[cIndex].machines = clients[cIndex].machines.map(m => {
+            if (m.id === machineId) {
+              return { ...m, is_deleted: true, updated_at: now };
+            }
+            return m;
+          });
+          clients[cIndex].updated_at = now;
           localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
         }
 
@@ -2567,6 +2802,7 @@
           clearActiveSession();
         }
 
+        syncCRM();
         renderHistory();
       }
 
@@ -2678,12 +2914,15 @@
 
         let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
+        const now = new Date().toISOString();
 
         if (cIndex !== -1) {
           clients[cIndex].machines = clients[cIndex].machines.map(m => {
             if (m.id === machineId) {
               return {
                 ...m,
+                updated_at: now,
+                is_deleted: false,
                 lastSimulation: {
                   date: new Date().toLocaleDateString('pt-BR'),
                   config,
@@ -2693,10 +2932,13 @@
             }
             return m;
           });
+          clients[cIndex].updated_at = now;
           localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
           alert("✅ Calibração vinculada à máquina do produtor com sucesso!");
           document.getElementById('saveModal').style.display = 'none';
           
+          syncCRM();
+
           // Vai para o Histórico de Clientes para visualizar
           toggleHistoryTab();
         }
@@ -2778,6 +3020,10 @@
             });
           }
 
+          const createdByHtml = (c.created_by_email && c.created_by_email !== window.currentUserEmail)
+            ? `<div style="font-size: 10px; color: var(--accent); margin-top: 2px; font-weight: 500; display: flex; align-items: center; gap: 4px;">👤 Por: ${c.created_by_email}</div>`
+            : '';
+
           card.innerHTML = `
             <div class="history-header">
               <div>
@@ -2786,6 +3032,7 @@
                   ${c.is_demo ? `<span style="font-size:10px; background:rgba(0, 210, 255, 0.15); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:bold; border: 1px solid rgba(0, 210, 255, 0.3);">DEMO</span>` : ''}
                 </div>
                 <div class="history-sub">${c.farmName ? `🌾 Fazenda: ${c.farmName}` : 'Sem Fazenda cadastrada'}</div>
+                ${createdByHtml}
               </div>
               <div class="flex-row" style="gap: 6px;">
                 ${c.is_demo ? '' : `
@@ -3129,6 +3376,9 @@
               console.log("Enterprise: Nenhum branding no usuário.");
             }
           }
+
+          // Inicia a sincronização do CRM
+          syncCRM();
         }
       } catch (err) {
         console.error("Erro fatal de branding:", err);

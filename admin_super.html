@@ -1103,6 +1103,7 @@
     let cachedClients = [];
     let cachedMachines = [];
     let cachedEmpresas = [];
+    let cachedSessions = [];
     let selectedEnterpriseId = 'all';
     let currentTab = 'users';
     let userSortField = 'created_at';
@@ -1514,9 +1515,11 @@
 
         const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
         const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
+        const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at');
 
         cachedClients = clients || [];
         cachedMachines = machines || [];
+        cachedSessions = sessions || [];
 
         renderStats();
         renderEnterpriseList();
@@ -1591,6 +1594,34 @@
         `;
         listContainer.insertAdjacentHTML('beforeend', itemHtml);
       });
+    }
+
+    function getStatusBadge(userId) {
+      const sess = cachedSessions.find(s => s.user_id === userId);
+      if (!sess) return '<span style="font-size: 10px; color: var(--text-muted); opacity: 0.6; font-style: italic;">Nunca ativo</span>';
+      
+      const now = new Date();
+      const past = new Date(sess.updated_at);
+      const diffMs = now.getTime() - past.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      
+      if (diffMins < 2) {
+        return '<span style="background: var(--accent-green); color: black; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; width: fit-content;">🟢 Online</span>';
+      }
+      
+      let text = '';
+      if (diffMins < 60) {
+        text = `Ativo há ${diffMins}m`;
+      } else {
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) {
+          text = `Ativo há ${diffHours}h`;
+        } else {
+          const diffDays = Math.floor(diffHours / 24);
+          text = `Ativo há ${diffDays}d`;
+        }
+      }
+      return `<span style="font-size: 10px; color: var(--text-muted); opacity: 0.85;">🕒 ${text}</span>`;
     }
 
     function selectEnterprise(pId) {
@@ -1679,10 +1710,16 @@
         const partnerName = metadata.partner_name || 'Sem Empresa';
         const partnerId = metadata.partner_id || '-';
         const createdDate = new Date(user.created_at).toLocaleDateString('pt-BR');
+        const badgeHtml = getStatusBadge(user.id);
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="user-email-cell" data-label="E-mail">✉️ ${user.email}</td>
+          <td class="user-email-cell" data-label="E-mail">
+            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+              <span>✉️ ${user.email}</span>
+              ${badgeHtml}
+            </div>
+          </td>
           <td data-label="Cargo">
             <select class="role-select ${role === 'gerente' ? 'gerente' : (role === 'master' ? 'master' : '')}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
               <option value="consultor" ${role === 'consultor' ? 'selected' : ''}>🌾 Consultor</option>

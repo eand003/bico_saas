@@ -3312,7 +3312,12 @@
         
         const { error } = await clienteSupabase
           .from('user_sessions')
-          .upsert({ user_id: userId, session_token: sessionToken, updated_at: new Date().toISOString() });
+          .upsert({ 
+            user_id: userId, 
+            session_token: sessionToken, 
+            updated_at: new Date().toISOString(),
+            accessed_app: 'Hub Enterprise'
+          });
           
         if (error) console.error("Erro ao registrar sessão ativa:", error);
       } catch (err) {

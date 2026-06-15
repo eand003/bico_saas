@@ -1518,7 +1518,7 @@
 
         const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
         const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
-        const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at');
+        const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at, accessed_app');
 
         cachedClients = clients || [];
         cachedMachines = machines || [];
@@ -1608,8 +1608,13 @@
       const diffMs = now.getTime() - past.getTime();
       const diffMins = Math.floor(diffMs / 60000);
       
+      const appName = sess.accessed_app || 'Desconhecido';
+      
       if (diffMins < 2) {
-        return '<span style="background: var(--accent-green); color: black; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; width: fit-content;">🟢 Online</span>';
+        return `<div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                  <span style="background: var(--accent-green); color: black; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; width: fit-content;">🟢 Online</span>
+                  <span style="font-size: 10px; color: var(--accent); opacity: 0.85;">💻 ${appName}</span>
+                </div>`;
       }
       
       let text = '';
@@ -1624,7 +1629,10 @@
           text = `Ativo há ${diffDays}d`;
         }
       }
-      return `<span style="font-size: 10px; color: var(--text-muted); opacity: 0.85;">🕒 ${text}</span>`;
+      return `<div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                <span style="font-size: 10px; color: var(--text-muted); opacity: 0.85;">🕒 ${text}</span>
+                <span style="font-size: 10px; color: var(--text-muted); opacity: 0.6;">💻 ${appName}</span>
+              </div>`;
     }
 
     function selectEnterprise(pId) {

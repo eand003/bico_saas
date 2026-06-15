@@ -182,7 +182,12 @@ async function registerActiveSession(userId) {
     
     const { error } = await supabase
       .from('user_sessions')
-      .upsert({ user_id: userId, session_token: sessionToken, updated_at: new Date().toISOString() });
+      .upsert({ 
+        user_id: userId, 
+        session_token: sessionToken, 
+        updated_at: new Date().toISOString(),
+        accessed_app: 'Diagnóstico de Vazão'
+      });
       
     if (error) console.error("Erro ao registrar sessão ativa:", error);
   } catch (err) {

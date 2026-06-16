@@ -558,14 +558,6 @@
           <div class="summary-card-label">Vazão Média Real</div>
           <div class="summary-card-val" id="rep-card-vazao">-- L/min</div>
         </div>
-        <div class="summary-card" style="background: rgba(0, 102, 204, 0.02); border: 1px dashed var(--accent);">
-          <div class="summary-card-label" style="color: var(--accent); font-weight: bold;">Taxa Calda Alvo</div>
-          <div class="summary-card-val" id="rep-card-taxa-esperada" style="color: var(--accent);">-- L/ha</div>
-        </div>
-        <div class="summary-card" style="border-top: 4px solid var(--accent-green);">
-          <div class="summary-card-label">Taxa Média Aplicada</div>
-          <div class="summary-card-val" id="rep-card-taxa">-- L/ha</div>
-        </div>
       </div>
 
       <!-- Resumo Detalhado por Status de Pontas -->
@@ -725,7 +717,6 @@
                 <th>Medido (L/min)</th>
                 <th>Esperado (L/min)</th>
                 <th>Desvio %</th>
-                <th>Taxa Real (L/ha)</th>
                 <th>Status</th>
                 <th>Ação Recomendada</th>
               </tr>
@@ -917,6 +908,7 @@
         "Aprovado com Ressalvas": "Aprobado con Reservas",
         "Reprovado": "Reprobado",
         "Não informado": "No informado",
+        "⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!": "⚠️ Acceso interrompido: ¡Esta cuenta se ha conectado en otro dispositivo!",
         "Fazenda S/N": "Hacienda S/N",
         "Acesso ao Sistema": "Acceso al Sistema",
         "Digite suas credenciais unificadas do Spray Precision para sincronizar seus relatórios e histórico na nuvem.": "Ingrese sus credenciales unificadas de Spray Precision para sincronizar sus informes e historial en la nube.",
@@ -1126,7 +1118,13 @@
         "Sem cadastro": "Sin registro",
         "Bico:": "Boquilla:",
         "CV da Barra:": "CV de la Barra:",
-        "bicos aferidos": "boquillas medidas"
+        "bicos aferidos": "boquillas medidas",
+        "Por favor, preencha os campos obrigatórios (*): Cliente, Cidade e Responsável Técnico.": "Por favor, complete los campos obligatorios (*): Cliente, Ciudad y Responsable Técnico.",
+        "Por favor, preencha todos os parâmetros numéricos obrigatórios do pulverizador.": "Por favor, complete todos los parámetros numéricos obligatorios del pulverizador.",
+        "Por favor, preencha o Nome do Cliente na Etapa 1 antes de salvar o relatório.": "Por favor, complete el Nombre del Cliente en el Paso 1 antes de guardar el reporte.",
+        "Ops! Esta é uma inspeção de demonstração estática e não pode ser excluída.": "¡Ups! Esta es una inspección de demostración estática y no se puede eliminar.",
+        "Tem certeza que deseja excluir permanentemente este diagnóstico e todas as suas medições de bico?": "¿Está seguro de que desea eliminar permanentemente este diagnóstico y todas sus mediciones de boquilla?",
+        "Deseja realmente iniciar uma nova calibração? Todos os dados atuais da coleta (volumes e identificações) serão limpos localmente. Certifique-se de ter impresso o PDF ou exportado o Backup JSON se precisar guardar esses registros.": "¿Realmente desea iniciar una nueva calibración? Todos los datos de recolección actuales (volúmenes e identificaciones) se borrarán localmente. Asegúrese de haber impreso el PDF o exportado la copia de seguridad JSON si necesita conservar estos registros."
       },
       en: {
         "Dessecação": "Desiccation",
@@ -1146,6 +1144,7 @@
         "Aprovado com Ressalvas": "Approved with Cautions",
         "Reprovado": "Rejected",
         "Não informado": "Not informed",
+        "⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!": "⚠️ Interrupted access: This account has been connected on another device!",
         "Fazenda S/N": "Farm S/N",
         "Acesso ao Sistema": "System Login",
         "Digite suas credenciais unificadas do Spray Precision para sincronizar seus relatórios e histórico na nuvem.": "Enter your unified Spray Precision credentials to sync your reports and history in the cloud.",
@@ -1356,7 +1355,13 @@
         "Sem cadastro": "Not registered",
         "Bico:": "Nozzle:",
         "CV da Barra:": "Boom CV:",
-        "bicos aferidos": "nozzles evaluated"
+        "bicos aferidos": "nozzles evaluated",
+        "Por favor, preencha os campos obrigatórios (*): Cliente, Cidade e Responsável Técnico.": "Please fill in the required fields (*): Client, City, and Technical Advisor.",
+        "Por favor, preencha todos os parâmetros numéricos obrigatórios do pulverizador.": "Please fill in all the required numeric parameters for the sprayer.",
+        "Por favor, preencha o Nome do Cliente na Etapa 1 antes de salvar o relatório.": "Please fill in the Client Name in Step 1 before saving the report.",
+        "Ops! Esta é uma inspeção de demonstração estática e não pode ser excluída.": "Oops! This is a static demo inspection and cannot be deleted.",
+        "Tem certeza que deseja excluir permanentemente este diagnóstico e todas as suas medições de bico?": "Are you sure you want to permanently delete this diagnosis and all its nozzle measurements?",
+        "Deseja realmente iniciar uma nova calibração? Todos os dados atuais da coleta (volumes e identificações) serão limpos localmente. Certifique-se de ter impresso o PDF ou exportado o Backup JSON se precisar guardar esses registros.": "Do you really want to start a new calibration? All current collection data (volumes and identifications) will be cleared locally. Make sure you have printed the PDF or exported the JSON Backup if you need to keep these records."
       }
     };
 
@@ -1400,17 +1405,26 @@
     function translateDOM(node, dict) {
       if (node.nodeType === Node.TEXT_NODE) {
         const trimmed = node.nodeValue.trim();
-        if (dict[trimmed]) {
-          node.nodeValue = node.nodeValue.replace(trimmed, dict[trimmed]);
+        if (trimmed) {
+          const normalized = trimmed.replace(/\s+/g, ' ');
+          if (dict[normalized]) {
+            node.nodeValue = dict[normalized];
+          }
         }
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         if (node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'TEXTAREA') {
           node.childNodes.forEach(child => translateDOM(child, dict));
-          if (node.placeholder && dict[node.placeholder.trim()]) {
-            node.placeholder = dict[node.placeholder.trim()];
+          if (node.placeholder) {
+            const normPlaceholder = node.placeholder.trim().replace(/\s+/g, ' ');
+            if (dict[normPlaceholder]) {
+              node.placeholder = dict[normPlaceholder];
+            }
           }
-          if (node.title && dict[node.title.trim()]) {
-            node.title = dict[node.title.trim()];
+          if (node.title) {
+            const normTitle = node.title.trim().replace(/\s+/g, ' ');
+            if (dict[normTitle]) {
+              node.title = dict[normTitle];
+            }
           }
         }
       }

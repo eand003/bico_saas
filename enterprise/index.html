@@ -992,6 +992,16 @@
       background: var(--table-row-hover);
       border-color: var(--accent);
     }
+    [data-theme="light"] .lang-btn {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    [data-theme="light"] .lang-btn:hover {
+      background: #f8fafc;
+      border-color: var(--accent);
+    }
     .lang-dropdown {
       display: none;
       position: absolute;
@@ -1007,6 +1017,18 @@
       flex-direction: column;
       gap: 4px;
       z-index: 2000;
+    }
+    [data-theme="light"] .lang-dropdown {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    [data-theme="light"] .lang-dropdown button {
+      color: #475569;
+    }
+    [data-theme="light"] .lang-dropdown button:hover {
+      background: #f1f5f9;
+      color: #0f172a;
     }
     .lang-dropdown.show {
       display: flex;
@@ -1558,6 +1580,7 @@
           "Seu WhatsApp (apenas números)": "Su WhatsApp (solo números)",
           "Sucesso!": "¡Éxito!",
           "Erro ao entrar": "Error al entrar",
+          "⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!": "⚠️ Acceso interrumpido: ¡Esta cuenta se ha conectado en outro dispositivo!",
           "Como Utilizar o Simulador": "Cómo utilizar el simulador",
           "1. Cadastro de Clientes e Máquinas (CRM)": "1. Registro de clientes y máquinas (CRM)",
           "2. Carregamento e Sessão Ativa": "2. Carga y sesión activa",
@@ -1739,6 +1762,7 @@
           "Seu WhatsApp (apenas números)": "Your WhatsApp (numbers only)",
           "Sucesso!": "Success!",
           "Erro ao entrar": "Login error",
+          "⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!": "⚠️ Interrupted access: This account has been connected on another device!",
           "Como Utilizar o Simulador": "How to Use the Simulator",
           "1. Cadastro de Clientes e Máquinas (CRM)": "1. Client & Machine Registration (CRM)",
           "2. Carregamento e Sessão Ativa": "2. Session Management",
@@ -3821,11 +3845,34 @@
         const sessionToken = 'sess_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         localStorage.setItem('spray_active_session_token', sessionToken);
         
+        // Buscar registro de sessão atual para preservar outras aplicações abertas
+        const { data: currentData } = await clienteSupabase
+          .from('user_sessions')
+          .select('session_token')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        let tokenMap = {};
+        if (currentData && currentData.session_token) {
+          try {
+            tokenMap = JSON.parse(currentData.session_token);
+            if (typeof tokenMap !== 'object' || tokenMap === null) {
+              tokenMap = { legacy: currentData.session_token };
+            }
+          } catch (e) {
+            tokenMap = { legacy: currentData.session_token };
+          }
+        }
+
+        // Atualiza token para o módulo Enterprise
+        tokenMap.enterprise = sessionToken;
+        const serializedToken = JSON.stringify(tokenMap);
+
         const { error } = await clienteSupabase
           .from('user_sessions')
           .upsert({ 
             user_id: userId, 
-            session_token: sessionToken, 
+            session_token: serializedToken, 
             updated_at: new Date().toISOString(),
             accessed_app: 'Hub Enterprise'
           });
@@ -3850,8 +3897,20 @@
 
         if (error || !data) return;
 
-        if (data.session_token !== localToken) {
-          alert("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!");
+        let dbToken = null;
+        try {
+          const tokenMap = JSON.parse(data.session_token);
+          if (tokenMap && typeof tokenMap === 'object') {
+            dbToken = tokenMap.enterprise || tokenMap.legacy;
+          } else {
+            dbToken = data.session_token;
+          }
+        } catch (e) {
+          dbToken = data.session_token;
+        }
+
+        if (dbToken && dbToken !== localToken) {
+          alert(t("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!"));
           await logout();
         }
       } catch (err) {
@@ -4016,17 +4075,26 @@
     function translateDOM(node, dict) {
       if (node.nodeType === Node.TEXT_NODE) {
         const trimmed = node.nodeValue.trim();
-        if (dict[trimmed]) {
-          node.nodeValue = node.nodeValue.replace(trimmed, dict[trimmed]);
+        if (trimmed) {
+          const normalized = trimmed.replace(/\s+/g, ' ');
+          if (dict[normalized]) {
+            node.nodeValue = dict[normalized];
+          }
         }
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         if (node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'TEXTAREA') {
           node.childNodes.forEach(child => translateDOM(child, dict));
-          if (node.placeholder && dict[node.placeholder.trim()]) {
-            node.placeholder = dict[node.placeholder.trim()];
+          if (node.placeholder) {
+            const normPlaceholder = node.placeholder.trim().replace(/\s+/g, ' ');
+            if (dict[normPlaceholder]) {
+              node.placeholder = dict[normPlaceholder];
+            }
           }
-          if (node.title && dict[node.title.trim()]) {
-            node.title = dict[node.title.trim()];
+          if (node.title) {
+            const normTitle = node.title.trim().replace(/\s+/g, ' ');
+            if (dict[normTitle]) {
+              node.title = dict[normTitle];
+            }
           }
         }
       }

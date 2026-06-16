@@ -708,17 +708,26 @@
     function translateDOM(node, dict) {
       if (node.nodeType === Node.TEXT_NODE) {
         const trimmed = node.nodeValue.trim();
-        if (dict[trimmed]) {
-          node.nodeValue = node.nodeValue.replace(trimmed, dict[trimmed]);
+        if (trimmed) {
+          const normalized = trimmed.replace(/\s+/g, ' ');
+          if (dict[normalized]) {
+            node.nodeValue = dict[normalized];
+          }
         }
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         if (node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'TEXTAREA') {
           node.childNodes.forEach(child => translateDOM(child, dict));
-          if (node.placeholder && dict[node.placeholder.trim()]) {
-            node.placeholder = dict[node.placeholder.trim()];
+          if (node.placeholder) {
+            const normPlaceholder = node.placeholder.trim().replace(/\s+/g, ' ');
+            if (dict[normPlaceholder]) {
+              node.placeholder = dict[normPlaceholder];
+            }
           }
-          if (node.title && dict[node.title.trim()]) {
-            node.title = dict[node.title.trim()];
+          if (node.title) {
+            const normTitle = node.title.trim().replace(/\s+/g, ' ');
+            if (dict[normTitle]) {
+              node.title = dict[normTitle];
+            }
           }
         }
       }

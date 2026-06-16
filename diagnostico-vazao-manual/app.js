@@ -200,11 +200,34 @@ async function registerActiveSession(userId) {
     const sessionToken = 'sess_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     localStorage.setItem('spray_active_session_token', sessionToken);
     
+    // Buscar registro de sessão atual para preservar outras aplicações abertas
+    const { data: currentData } = await supabase
+      .from('user_sessions')
+      .select('session_token')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    let tokenMap = {};
+    if (currentData && currentData.session_token) {
+      try {
+        tokenMap = JSON.parse(currentData.session_token);
+        if (typeof tokenMap !== 'object' || tokenMap === null) {
+          tokenMap = { legacy: currentData.session_token };
+        }
+      } catch (e) {
+        tokenMap = { legacy: currentData.session_token };
+      }
+    }
+
+    // Atualiza token para o módulo de diagnóstico
+    tokenMap.diagnostico = sessionToken;
+    const serializedToken = JSON.stringify(tokenMap);
+    
     const { error } = await supabase
       .from('user_sessions')
       .upsert({ 
         user_id: userId, 
-        session_token: sessionToken, 
+        session_token: serializedToken, 
         updated_at: new Date().toISOString(),
         accessed_app: 'Diagnóstico de Vazão'
       });
@@ -232,8 +255,20 @@ async function verifySessionIntegrity(userId) {
 
     if (error || !data) return;
 
-    if (data.session_token !== localToken) {
-      alert("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!");
+    let dbToken = null;
+    try {
+      const tokenMap = JSON.parse(data.session_token);
+      if (tokenMap && typeof tokenMap === 'object') {
+        dbToken = tokenMap.diagnostico || tokenMap.legacy;
+      } else {
+        dbToken = data.session_token;
+      }
+    } catch (e) {
+      dbToken = data.session_token;
+    }
+
+    if (dbToken && dbToken !== localToken) {
+      alert(t("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!"));
       await forceUserLogout();
     }
   } catch (err) {
@@ -422,7 +457,7 @@ function validateTabIdentificacao() {
   const responsavel = document.getElementById('input-responsavel').value.trim();
   
   if (!cliente || !cidade || !responsavel) {
-    alert("Por favor, preencha os campos obrigatórios (*): Cliente, Cidade e Responsável Técnico.");
+    alert(t("Por favor, preencha os campos obrigatórios (*): Cliente, Cidade e Responsável Técnico."));
     return false;
   }
   return true;
@@ -437,7 +472,7 @@ function validateTabPulverizador() {
   const volume = parseFloat(document.getElementById('input-volume-alvo').value);
 
   if (isNaN(largura) || isNaN(bicos) || isNaN(espacamento) || isNaN(pressao) || isNaN(velocidade) || isNaN(volume)) {
-    alert("Por favor, preencha todos os parâmetros numéricos obrigatórios do pulverizador.");
+    alert(t("Por favor, preencha todos os parâmetros numéricos obrigatórios do pulverizador."));
     return false;
   }
 
@@ -457,7 +492,7 @@ function setupNozzleIsoCatalog() {
   const select = document.getElementById('select-iso-nozzle');
   
   // Limpar e preencher
-  select.innerHTML = '<option value="">Use entrada manual de vazão nominal...</option>';
+  select.innerHTML = `<option value="">${t('Use entrada manual de vazão nominal...')}</option>`;
   ISO_NOZZLES.forEach(nz => {
     const opt = document.createElement('option');
     opt.value = nz.code;
@@ -970,10 +1005,6 @@ function generateReportAndRender() {
 
   document.getElementById('rep-card-vazao-esperada').textContent = `${expectedFlow.toFixed(2)} L/min`;
   document.getElementById('rep-card-vazao').textContent = `${summary.averageFlowLMin.toFixed(2)} L/min`;
-  
-  const targetRateVal = parseFloat(document.getElementById('input-volume-alvo').value) || 100;
-  document.getElementById('rep-card-taxa-esperada').textContent = `${targetRateVal.toFixed(0)} L/ha`;
-  document.getElementById('rep-card-taxa').textContent = `${summary.averageActualRateLHa.toFixed(1)} L/ha`;
 
   // Preencher quantidades detalhadas por status de bicos
   document.getElementById('rep-card-ok').textContent = summary.okCount;
@@ -1078,7 +1109,6 @@ function generateReportAndRender() {
       <td style="font-weight:bold; color: ${m.deviation_percent > 0 ? '#b45309' : (m.deviation_percent < 0 ? '#ef4444' : 'inherit')}">
         ${m.collected_volume_ml > 0 ? (m.deviation_percent > 0 ? '+' : '') + m.deviation_percent.toFixed(1) + '%' : '--'}
       </td>
-      <td>${m.actual_rate_l_ha > 0 ? m.actual_rate_l_ha.toFixed(1) : '--'}</td>
       <td><span class="badge ${badgeClass}">${t(m.status.replace('_', ' '))}</span></td>
       <td style="font-size:12px; color:var(--text-muted);">${t(m.recommendation) || t('Nenhuma ação necessária.')}</td>
     `;
@@ -1426,7 +1456,7 @@ async function handleSaveInspectionWorkflow() {
   const fazenda = document.getElementById('input-fazenda').value.trim();
   
   if (!cliente) {
-    alert("Por favor, preencha o Nome do Cliente na Etapa 1 antes de salvar o relatório.");
+    alert(t("Por favor, preencha o Nome do Cliente na Etapa 1 antes de salvar o relatório."));
     switchTab('tab-identificacao');
     return;
   }
@@ -1636,11 +1666,11 @@ async function loadInspectionIntoApp(id) {
 
 async function deleteInspectionFromHistory(id) {
   if (id === 'demo-aprovado' || id === 'demo-ressalvas' || id === 'demo-reprovado') {
-    alert("Ops! Esta é uma inspeção de demonstração estática e não pode ser excluída.");
+    alert(t("Ops! Esta é uma inspeção de demonstração estática e não pode ser excluída."));
     return;
   }
 
-  if (!confirm("Tem certeza que deseja excluir permanentemente este diagnóstico e todas as suas medições de bico?")) {
+  if (!confirm(t("Tem certeza que deseja excluir permanentemente este diagnóstico e todas as suas medições de bico?"))) {
     return;
   }
   
@@ -2076,7 +2106,7 @@ function importFromJSON(event) {
 
 // Inicializa o fluxo de um novo diagnóstico limpo do zero
 function createNewInspectionWorkflow() {
-  if (!confirm("Deseja realmente iniciar uma nova calibração? Todos os dados atuais da coleta (volumes e identificações) serão limpos localmente. Certifique-se de ter impresso o PDF ou exportado o Backup JSON se precisar guardar esses registros.")) {
+  if (!confirm(t("Deseja realmente iniciar uma nova calibração? Todos os dados atuais da coleta (volumes e identificações) serão limpos localmente. Certifique-se de ter impresso o PDF ou exportado o Backup JSON se precisar guardar esses registros."))) {
     return;
   }
 

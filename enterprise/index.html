@@ -965,6 +965,73 @@
       background: var(--accent-error);
       color: white;
     }
+
+    /* Language Selector Styles */
+    .lang-selector-container {
+      position: relative;
+      display: inline-block;
+      z-index: 1000;
+    }
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+      outline: none;
+    }
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent, #00d2ff);
+    }
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: rgba(15, 20, 24, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 6px;
+      min-width: 150px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(20px);
+      flex-direction: column;
+      gap: 4px;
+      z-index: 2000;
+    }
+    .lang-dropdown.show {
+      display: flex;
+    }
+    .lang-dropdown button {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      outline: none;
+    }
+    .lang-dropdown button:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
   </style>
 </head>
 
@@ -972,7 +1039,18 @@
 
   <!-- AUTH SCREEN -->
   <div id="loginScreen">
-    <div class="login-box">
+    <div class="login-box" style="position: relative;">
+      <!-- Language Selector Widget (Login Screen) -->
+      <div class="lang-selector-container" style="position: absolute; top: 16px; right: 16px;">
+        <button class="lang-btn" onclick="toggleLangDropdown(event)" id="currentLangBtnAuth" title="Alterar Idioma / Change Language">
+          <span class="flag-icon">🇧🇷</span> <span class="lang-text">PT</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdownAuth">
+          <button onclick="changeLanguage('pt')">🇧🇷 Português</button>
+          <button onclick="changeLanguage('es')">🇪🇸 Español</button>
+          <button onclick="changeLanguage('en')">🇺🇸 English</button>
+        </div>
+      </div>
       <div style="text-align: center; margin-bottom: 4px;">
         <img src="./logo.png" style="width: 70px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
       </div>
@@ -1044,7 +1122,18 @@
             <div class="header-info-content" style="justify-content: space-between; gap: 10px;">
               <span></span>
 
-              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <div id="header-social-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <!-- Language Selector Widget (Main App) -->
+                <div class="lang-selector-container" style="margin-right: 4px;">
+                  <button class="lang-btn" onclick="toggleLangDropdown(event)" id="currentLangBtn" title="Alterar Idioma / Change Language">
+                    <span class="flag-icon">🇧🇷</span> <span class="lang-text">PT</span>
+                  </button>
+                  <div class="lang-dropdown" id="langDropdown">
+                    <button onclick="changeLanguage('pt')">🇧🇷 Português</button>
+                    <button onclick="changeLanguage('es')">🇪🇸 Español</button>
+                    <button onclick="changeLanguage('en')">🇺🇸 English</button>
+                  </div>
+                </div>
                 <a href="https://wa.me/5565999106415?text=Bom%20dia!%20Vim%20pelo%20seu%20aplicativo%20de%20bicos%20ISO."
                    target="_blank"
                    title="WhatsApp"
@@ -1681,6 +1770,7 @@
         } else {
           tops.slice(0, 2).forEach(r => container.appendChild(createCard(r, fallbackMode)));
         }
+        if (typeof applyTranslations === 'function') applyTranslations();
       }
 
       function createCard(r, isFallback) {
@@ -1915,6 +2005,7 @@
         });
         html += `</tbody>`;
         tbody.innerHTML = html;
+        if (typeof applyTranslations === 'function') applyTranslations();
       }
 
       function generateReport() {
@@ -3054,6 +3145,7 @@
           `;
           listContainer.appendChild(card);
         });
+        if (typeof applyTranslations === 'function') applyTranslations();
       }
 
       // Carrega os parâmetros de uma simulação salva de volta na calculadora
@@ -3470,6 +3562,239 @@
     } else {
       setTimeout(initAuth, 100);
     }
+
+    // === MULTI-LANGUAGE SYSTEM ===
+    const translationDict = {
+      es: {
+        "Como Utilizar o Simulador": "Cómo utilizar el simulador",
+        "1. Cadastro de Clientes e Máquinas (CRM)": "1. Registro de clientes y máquinas (CRM)",
+        "2. Carregamento e Sessão Ativa": "2. Carga y sesión activa",
+        "3. Vazão de Calibração (Jaragem)": "3. Caudal de calibración (Jarreo)",
+        "4. Selos de Diagnóstico Interativos": "4. Sellos de diagnóstico interactivos",
+        "5. Densidade da Calda (Gravidade Específica)": "5. Densidad del caldo (Gravedad específica)",
+        "6. Gráfico de Janelas Seguras": "6. Gráfico de ventanas seguras",
+        "7. Laudo Técnico em PDF e Orçamento": "7. Laudo técnico en PDF y presupuesto",
+        "Simulador de Bicos ISO para Aplicação Agro": "Simulador de boquillas ISO para aplicación agrícola",
+        "Configurações Operacionais": "Configuraciones operacionales",
+        "Velocidade do Trator (km/h)": "Velocidad del tractor (km/h)",
+        "Vazão Alvo da Aplicação (L/ha)": "Tasa de aplicación objetivo (L/ha)",
+        "Espaçamento entre Bicos (cm)": "Espaciado entre boquillas (cm)",
+        "Pressão Mínima Desejada": "Presión mínima deseada",
+        "Pressão Máxima Desejada": "Presión máxima deseada",
+        "Cadastrar novo Produtor": "Registrar nuevo productor",
+        "Clientes e Frotas (CRM)": "Clientes y flotas (CRM)",
+        "Configurações da Calda": "Configuraciones del caldo",
+        "Densidade da Calda (Gravidade Específica)": "Densidad del caldo (Gravedad específica)",
+        "Água Limpa (Padrão)": "Agua limpia (Estándar)",
+        "Calda Leve": "Caldo ligero",
+        "Calda Média / Adubação": "Caldo medio / Fertilizante",
+        "Calda Pesada": "Caldo pesado",
+        "Gráfico da Janela Operacional Segura": "Gráfico de la ventana operativa segura",
+        "Janela Operacional Recomendada": "Ventana operativa recomendada",
+        "Nenhum bico atende plenamente esta configuração": "Ninguna boquilla cumple plenamente con esta configuración",
+        "As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.": "Las opciones anteriores son las alternativas más cercanas, ordenadas por la menor distancia entre la presión mínima real y el límite mínimo configurado.",
+        "Histórico de Simulações": "Historial de simulaciones",
+        "Nenhuma calibração vinculada.": "Ninguna calibración vinculada.",
+        "Nenhuma máquina registrada para este produtor.": "Ninguna máquina registrada para este productor.",
+        "Sem Fazenda cadastrada": "Sin hacienda registrada",
+        "Máquinas registradas": "Máquinas registradas",
+        "Obs:": "Nota:",
+        "Larg. Barra:": "Ancho Barra:",
+        "Vazão Barra:": "Caudal Barra:",
+        "Vazão Bico:": "Caudal Boquilla:",
+        "Alvo:": "Objetivo:",
+        "Pressão Méd:": "Presión Prom:",
+        "Janela Ideal:": "Ventana Ideal:",
+        "Carregar no Simulador": "Cargar en el Simulador",
+        "Editar": "Editar",
+        "Excluir": "Eliminar",
+        "Salvar Configuração": "Guardar Configuración",
+        "Acesso ao Sistema": "Acceso al sistema",
+        "Digite seu e-mail cadastrado e senha para carregar seus dados na nuvem.": "Ingrese seu correo electrónico registrado y contraseña para cargar sus datos en la nube.",
+        "Entrar / Cadastrar": "Entrar / Registrar",
+        "Usar em Modo Local (Offline)": "Usar en modo local (Offline)",
+        "Aguarde...": "Espere...",
+        "Voltar": "Volver",
+        "Salvar Calibração": "Guardar calibración",
+        "Escolher Ponta por Tabela Completa": "Elegir boquilla por tabla completa",
+        "Gerar Laudo Técnico PDF": "Generar laudo técnico en PDF",
+        "Fator de Conversão de Calda": "Factor de conversión del caldo",
+        "Pressão Requerida": "Presión requerida",
+        "Estabilidade": "Estabilidad",
+        "Volume de Calda": "Volumen de caldo",
+        "Velocidade Ideal": "Velocidad ideal",
+        "Pressão Mínima": "Presión mínima",
+        "Pressão Máxima": "Presión máxima",
+        "Tamanho de Gota": "Tamaño de gota",
+        "Muito Fina": "Muy fina",
+        "Fina": "Fina",
+        "Média": "Media",
+        "Grossa": "Gruesa",
+        "Muito Grossa": "Muy gruesa",
+        "Extremadamente Grossa": "Extremadamente gruesa",
+        "Ultra Grossa": "Ultra gruesa"
+      },
+      en: {
+        "Como Utilizar o Simulador": "How to Use the Simulator",
+        "1. Cadastro de Clientes e Máquinas (CRM)": "1. Client & Machine Registration (CRM)",
+        "2. Carregamento e Sessão Ativa": "2. Session Management",
+        "3. Vazão de Calibração (Jaragem)": "3. Calibration Flow Rate",
+        "4. Selos de Diagnóstico Interativos": "4. Interactive Diagnostic Stamps",
+        "5. Densidade da Calda (Gravidade Específica)": "5. Mix Density (Specific Gravity)",
+        "6. Gráfico de Janelas Seguras": "6. Safe Operating Window Chart",
+        "7. Laudo Técnico em PDF e Orçamento": "7. Technical PDF Report & Quotes",
+        "Simulador de Bicos ISO para Aplicação Agro": "ISO Nozzle Simulator for Agricultural Application",
+        "Configurações Operacionais": "Operational Configurations",
+        "Velocidade do Trator (km/h)": "Tractor Speed (km/h)",
+        "Vazão Alvo da Aplicação (L/ha)": "Target Application Rate (L/ha)",
+        "Espaçamento entre Bicos (cm)": "Nozzle Spacing (cm)",
+        "Pressão Mínima Desejada": "Desired Minimum Pressure",
+        "Pressão Máxima Desejada": "Desired Maximum Pressure",
+        "Cadastrar novo Produtor": "Register New Grower",
+        "Clientes e Frotas (CRM)": "Clients and Fleets (CRM)",
+        "Configurações da Calda": "Mix Configurations",
+        "Densidade da Calda (Gravidade Específica)": "Mix Density (Specific Gravity)",
+        "Água Limpa (Padrão)": "Clean Water (Standard)",
+        "Calda Leve": "Light Mix",
+        "Calda Média / Adubação": "Medium Mix / Fertilizer",
+        "Calda Pesada": "Heavy Mix",
+        "Gráfico da Janela Operacional Segura": "Safe Operating Window Chart",
+        "Janela Operacional Recomendada": "Recommended Operating Window",
+        "Nenhum bico atende plenamente esta configuração": "No nozzle fully meets this configuration",
+        "As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.": "The options above are the closest alternatives, sorted by the smallest distance between the actual minimum pressure and the configured minimum limit.",
+        "Histórico de Simulações": "Simulation History",
+        "Nenhuma calibração vinculada.": "No calibrations linked.",
+        "Nenhuma máquina registrada para este produtor.": "No machines registered for this grower.",
+        "Sem Fazenda cadastrada": "No farm registered",
+        "Máquinas registradas": "Registered machines",
+        "Obs:": "Notes:",
+        "Larg. Barra:": "Boom Width:",
+        "Vazão Barra:": "Boom Flow:",
+        "Vazão Bico:": "Nozzle Flow:",
+        "Alvo:": "Target:",
+        "Pressão Méd:": "Avg Pressure:",
+        "Janela Ideal:": "Ideal Window:",
+        "Carregar no Simulador": "Load in Simulator",
+        "Editar": "Edit",
+        "Excluir": "Delete",
+        "Salvar Configuração": "Save Configuration",
+        "Acesso ao Sistema": "System Login",
+        "Digite seu e-mail cadastrado e senha para carregar seus dados na nuvem.": "Enter your registered email and password to load your cloud data.",
+        "Entrar / Cadastrar": "Login / Sign Up",
+        "Usar em Modo Local (Offline)": "Use in Local Mode (Offline)",
+        "Aguarde...": "Please wait...",
+        "Voltar": "Back",
+        "Salvar Calibração": "Save Calibration",
+        "Escolher Ponta por Tabela Completa": "Choose Nozzle from Full Table",
+        "Gerar Laudo Técnico PDF": "Generate Technical PDF Report",
+        "Fator de Conversão de Calda": "Mix Conversion Factor",
+        "Pressão Requerida": "Required Pressure",
+        "Estabilidade": "Stability",
+        "Volume de Calda": "Spray Volume",
+        "Velocidade Ideal": "Ideal Speed",
+        "Pressão Mínima": "Minimum Pressure",
+        "Pressão Máxima": "Maximum Pressure",
+        "Tamanho de Gota": "Droplet Size",
+        "Muito Fina": "Very Fine",
+        "Fina": "Fine",
+        "Média": "Medium",
+        "Grossa": "Coarse",
+        "Muito Grossa": "Very Coarse",
+        "Extremadamente Grossa": "Extremely Coarse",
+        "Ultra Grossa": "Ultra Coarse"
+      }
+    };
+
+    function toggleLangDropdown(event) {
+      if (event) event.stopPropagation();
+      const isAuthVisible = document.getElementById('loginScreen').style.display !== 'none';
+      const dropdownId = isAuthVisible ? 'langDropdownAuth' : 'langDropdown';
+      
+      // Close all dropdowns first
+      const d1 = document.getElementById('langDropdownAuth');
+      const d2 = document.getElementById('langDropdown');
+      if (d1 && dropdownId !== 'langDropdownAuth') d1.style.display = 'none';
+      if (d2 && dropdownId !== 'langDropdown') d2.style.display = 'none';
+
+      const dropdown = document.getElementById(dropdownId);
+      if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+      }
+    }
+
+    // Exported function for onclick triggers
+    window.toggleLangDropdown = toggleLangDropdown;
+
+    function changeLanguage(lang) {
+      localStorage.setItem('spray_language', lang);
+      window.location.reload();
+    }
+
+    // Exported function for onclick triggers
+    window.changeLanguage = changeLanguage;
+
+    function translateDOM(node, dict) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const trimmed = node.nodeValue.trim();
+        if (dict[trimmed]) {
+          node.nodeValue = node.nodeValue.replace(trimmed, dict[trimmed]);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'TEXTAREA') {
+          node.childNodes.forEach(child => translateDOM(child, dict));
+          if (node.placeholder && dict[node.placeholder.trim()]) {
+            node.placeholder = dict[node.placeholder.trim()];
+          }
+          if (node.title && dict[node.title.trim()]) {
+            node.title = dict[node.title.trim()];
+          }
+        }
+      }
+    }
+
+    function applyTranslations() {
+      const lang = localStorage.getItem('spray_language') || 'pt';
+      if (lang === 'pt') return;
+      const dict = translationDict[lang];
+      if (dict) {
+        translateDOM(document.body, dict);
+      }
+    }
+
+    window.applyTranslations = applyTranslations;
+
+    function initLanguage() {
+      const lang = localStorage.getItem('spray_language') || 'pt';
+      const flagMap = { pt: '🇧🇷', es: '🇪🇸', en: '🇺🇸' };
+      const labelMap = { pt: 'PT', es: 'ES', en: 'EN' };
+      
+      const currentLangBtn = document.getElementById('currentLangBtn');
+      const currentLangBtnAuth = document.getElementById('currentLangBtnAuth');
+      
+      if (currentLangBtn) {
+        currentLangBtn.querySelector('.flag-icon').innerText = flagMap[lang];
+        currentLangBtn.querySelector('.lang-text').innerText = labelMap[lang];
+      }
+      if (currentLangBtnAuth) {
+        currentLangBtnAuth.querySelector('.flag-icon').innerText = flagMap[lang];
+        currentLangBtnAuth.querySelector('.lang-text').innerText = labelMap[lang];
+      }
+
+      applyTranslations();
+    }
+
+    // Close language dropdown if clicking outside
+    window.addEventListener('click', () => {
+      const d1 = document.getElementById('langDropdownAuth');
+      const d2 = document.getElementById('langDropdown');
+      if (d1) d1.style.display = 'none';
+      if (d2) d2.style.display = 'none';
+    });
+
+    // Run lang initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initLanguage();
+    });
   </script>
 
   <div style="

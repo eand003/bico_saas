@@ -18,12 +18,91 @@
   
   <!-- Estilos Customizados -->
   <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* Language Selector Styles */
+    .lang-selector-container {
+      position: relative;
+      display: inline-block;
+      z-index: 1000;
+    }
+    .lang-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+      outline: none;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    .lang-btn:hover {
+      background: #f8fafc;
+      border-color: var(--accent, #0066cc);
+    }
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 6px;
+      min-width: 150px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      flex-direction: column;
+      gap: 4px;
+      z-index: 2000;
+    }
+    .lang-dropdown.show {
+      display: flex;
+    }
+    .lang-dropdown button {
+      background: none;
+      border: none;
+      color: #475569;
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      outline: none;
+    }
+    .lang-dropdown button:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+  </style>
 </head>
 <body>
 
   <!-- TELA DE LOGIN PREMIUM (Sincronização Nuvem Supabase) -->
   <div id="app-login-screen" class="login-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">
-    <div class="login-box">
+    <div class="login-box" style="position: relative;">
+      <!-- Language Selector Widget (Login Screen) -->
+      <div class="lang-selector-container" style="position: absolute; top: 16px; right: 16px;">
+        <button class="lang-btn" onclick="toggleLangDropdown(event)" id="currentLangBtnAuth" title="Alterar Idioma / Change Language">
+          <span class="flag-icon">🇧🇷</span> <span class="lang-text">PT</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdownAuth">
+          <button onclick="changeLanguage('pt')">🇧🇷 Português</button>
+          <button onclick="changeLanguage('es')">🇪🇸 Español</button>
+          <button onclick="changeLanguage('en')">🇺🇸 English</button>
+        </div>
+      </div>
       <div style="text-align: center; margin-bottom: 8px;">
         <img class="app-logo" src="../logo.png" alt="Spray Precision PRO Logo" onerror="this.src='https://placehold.co/100x100?text=SP'" style="width: 64px; height: 64px; border-radius: 12px; margin: 0 auto; display: block;">
       </div>
@@ -73,7 +152,18 @@
         </div>
       </div>
       
-      <div class="header-actions no-print">
+      <div class="header-actions no-print" id="header-social-actions">
+        <!-- Language Selector Widget (Main App) -->
+        <div class="lang-selector-container">
+          <button class="lang-btn" onclick="toggleLangDropdown(event)" id="currentLangBtn" title="Alterar Idioma / Change Language">
+            <span class="flag-icon">🇧🇷</span> <span class="lang-text">PT</span>
+          </button>
+          <div class="lang-dropdown" id="langDropdown">
+            <button onclick="changeLanguage('pt')">🇧🇷 Português</button>
+            <button onclick="changeLanguage('es')">🇪🇸 Español</button>
+            <button onclick="changeLanguage('en')">🇺🇸 English</button>
+          </div>
+        </div>
         <!-- Badge de Perfil do Consultor Logado (Nuvem SaaS) -->
         <div id="user-profile-badge" style="display: none; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(0, 102, 204, 0.06); border: 1px solid rgba(0, 102, 204, 0.15); border-radius: 20px; font-size: 11px; color: var(--text-muted); font-weight: bold;" title="Consultor Autenticado">
           👤 <span id="logged-user-email">--</span>
@@ -805,5 +895,203 @@
   <script src="./js/dbService.js?v=2.0.1"></script>
   <script src="./js/voiceService.js?v=2.0.1"></script>
   <script src="./app.js?v=2.0.1"></script>
+
+  <!-- === MULTI-LANGUAGE SYSTEM === -->
+  <script>
+    const translationDict = {
+      es: {
+        "Acesso ao Sistema": "Acceso al Sistema",
+        "Digite suas credenciais unificadas do Spray Precision para sincronizar seus relatórios e histórico na nuvem.": "Ingrese sus credenciales unificadas de Spray Precision para sincronizar sus informes e historial en la nube.",
+        "E-mail do Consultor / Produtor": "Correo del Consultor / Productor",
+        "Senha de Acesso": "Contraseña de Acceso",
+        "Entrar no Sistema": "Entrar al Sistema",
+        "Usar em Modo Local (Offline)": "Usar en Modo Local (Offline)",
+        "Modo Local Offline": "Modo Local Offline",
+        "Novo": "Nuevo",
+        "Histórico": "Historial",
+        "Ajuda": "Ayuda",
+        "Diagnóstico de Vazão Manual": "Diagnóstico de Caudal Manual",
+        "Como Utilizar o Sistema": "Cómo usar el sistema",
+        "Voltar": "Volver",
+        "Avançar": "Avanzar",
+        "Etapa 1: Identificação": "Etapa 1: Identificación",
+        "Etapa 2: Pulverizador": "Etapa 2: Pulverizador",
+        "Etapa 3: Configuração de Pontas": "Etapa 3: Configuración de Boquillas",
+        "Etapa 4: Coleta de Vazão": "Etapa 4: Colecta de Caudal",
+        "Etapa 5: Diagnóstico e Relatório": "Etapa 5: Diagnóstico e Informe",
+        "Identificação do Produtor e Propriedade": "Identificación del Productor y Propiedad",
+        "Nome do Produtor / Cliente": "Nombre del Productor / Cliente",
+        "Nome da Fazenda / Propriedade": "Nombre de la Hacienda / Propiedad",
+        "Cidade": "Ciudad",
+        "Estado": "Estado",
+        "Salvar Diagnóstico": "Guardar Diagnóstico",
+        "Exportar PDF": "Exportar PDF",
+        "Imprimir Relatório": "Imprimir Informe",
+        "Fórmulas Utilizadas": "Fórmulas Utilizadas",
+        "Coeficiente de Variação": "Coeficiente de Variación",
+        "Tolerância": "Tolerancia",
+        "Vazão Nominal": "Caudal Nominal",
+        "Velocidade": "Velocidad",
+        "Espaçamento": "Espaciado",
+        "Volume Coletado": "Volumen Colectado",
+        "Vazão Medida": "Caudal Medido",
+        "Desvio": "Desvío",
+        "Veredito": "Veredicto",
+        "Ação Recomendada": "Acción Recomendada",
+        "APROVADO": "APROBADO",
+        "RESSALVAS": "RESERVAS",
+        "REPROVADO": "REPROBADO",
+        "aprovado": "aprobado",
+        "reprovado": "reprobado",
+        "abaixo": "abajo",
+        "acima": "arriba",
+        "critico abaixo": "crítico abajo",
+        "critico acima": "crítico arriba",
+        "nao avaliado": "no evaluado",
+        "Limpar pontas com vazão abaixo da tolerância": "Limpiar boquillas con caudal abajo de la tolerancia",
+        "Substituir pontas com vazão excessiva": "Reemplazar boquillas con caudal excesivo",
+        "Verificar no manômetro de cabine": "Verificar en el manómetro de cabina"
+      },
+      en: {
+        "Acesso ao Sistema": "System Login",
+        "Digite suas credenciais unificadas do Spray Precision para sincronizar seus relatórios e histórico na nuvem.": "Enter your unified Spray Precision credentials to sync your reports and history in the cloud.",
+        "E-mail do Consultor / Produtor": "Consultant / Grower Email",
+        "Senha de Acesso": "Access Password",
+        "Entrar no Sistema": "Login to System",
+        "Usar em Modo Local (Offline)": "Use in Local Mode (Offline)",
+        "Modo Local Offline": "Local Mode Offline",
+        "Novo": "New",
+        "Histórico": "History",
+        "Ajuda": "Help",
+        "Diagnóstico de Vazão Manual": "Manual Flow Rate Diagnosis",
+        "Como Utilizar o Sistema": "How to Use the System",
+        "Voltar": "Back",
+        "Avançar": "Next",
+        "Etapa 1: Identificação": "Step 1: Identification",
+        "Etapa 2: Pulverizador": "Step 2: Sprayer",
+        "Etapa 3: Configuração de Pontas": "Step 3: Nozzles Configuration",
+        "Etapa 4: Coleta de Vazão": "Step 4: Flow Collection",
+        "Etapa 5: Diagnóstico e Relatório": "Step 5: Diagnostic & Report",
+        "Identificação do Produtor e Propriedade": "Grower & Farm Identification",
+        "Nome do Produtor / Cliente": "Grower / Client Name",
+        "Nome da Fazenda / Propriedade": "Farm / Property Name",
+        "Cidade": "City",
+        "Estado": "State",
+        "Salvar Diagnóstico": "Save Diagnostic",
+        "Exportar PDF": "Export PDF",
+        "Imprimir Relatório": "Print Report",
+        "Fórmulas Utilizadas": "Formulas Used",
+        "Coeficiente de Variação": "Coefficient of Variation",
+        "Tolerância": "Tolerance",
+        "Vazão Nominal": "Nominal Flow",
+        "Velocidade": "Speed",
+        "Espaçamento": "Spacing",
+        "Volume Coletado": "Volume Collected",
+        "Vazão Medida": "Measured Flow",
+        "Desvio": "Deviation",
+        "Veredito": "Verdict",
+        "Ação Recomendada": "Recommended Action",
+        "APROVADO": "APPROVED",
+        "RESSALVAS": "RESERVATIONS",
+        "REPROVADO": "REJECTED",
+        "aprovado": "approved",
+        "reprovado": "rejected",
+        "abaixo": "below",
+        "acima": "above",
+        "critico abaixo": "critical below",
+        "critico acima": "critical above",
+        "nao avaliado": "not evaluated",
+        "Limpar pontas com vazão abaixo da tolerância": "Clean nozzles with flow below tolerance",
+        "Substituir pontas com vazão excessiva": "Replace nozzles with excessive flow",
+        "Verificar no manômetro de cabine": "Check cabin pressure gauge"
+      }
+    };
+
+    function toggleLangDropdown(event) {
+      if (event) event.stopPropagation();
+      const isAuthVisible = document.getElementById('app-login-screen').style.display !== 'none';
+      const dropdownId = isAuthVisible ? 'langDropdownAuth' : 'langDropdown';
+      
+      const d1 = document.getElementById('langDropdownAuth');
+      const d2 = document.getElementById('langDropdown');
+      if (d1 && dropdownId !== 'langDropdownAuth') d1.style.display = 'none';
+      if (d2 && dropdownId !== 'langDropdown') d2.style.display = 'none';
+
+      const dropdown = document.getElementById(dropdownId);
+      if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+      }
+    }
+
+    window.toggleLangDropdown = toggleLangDropdown;
+
+    function changeLanguage(lang) {
+      localStorage.setItem('spray_language', lang);
+      window.location.reload();
+    }
+
+    window.changeLanguage = changeLanguage;
+
+    function translateDOM(node, dict) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const trimmed = node.nodeValue.trim();
+        if (dict[trimmed]) {
+          node.nodeValue = node.nodeValue.replace(trimmed, dict[trimmed]);
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'TEXTAREA') {
+          node.childNodes.forEach(child => translateDOM(child, dict));
+          if (node.placeholder && dict[node.placeholder.trim()]) {
+            node.placeholder = dict[node.placeholder.trim()];
+          }
+          if (node.title && dict[node.title.trim()]) {
+            node.title = dict[node.title.trim()];
+          }
+        }
+      }
+    }
+
+    function applyTranslations() {
+      const lang = localStorage.getItem('spray_language') || 'pt';
+      if (lang === 'pt') return;
+      const dict = translationDict[lang];
+      if (dict) {
+        translateDOM(document.body, dict);
+      }
+    }
+
+    window.applyTranslations = applyTranslations;
+
+    function initLanguage() {
+      const lang = localStorage.getItem('spray_language') || 'pt';
+      const flagMap = { pt: '🇧🇷', es: '🇪🇸', en: '🇺🇸' };
+      const labelMap = { pt: 'PT', es: 'ES', en: 'EN' };
+      
+      const currentLangBtn = document.getElementById('currentLangBtn');
+      const currentLangBtnAuth = document.getElementById('currentLangBtnAuth');
+      
+      if (currentLangBtn) {
+        currentLangBtn.querySelector('.flag-icon').innerText = flagMap[lang];
+        currentLangBtn.querySelector('.lang-text').innerText = labelMap[lang];
+      }
+      if (currentLangBtnAuth) {
+        currentLangBtnAuth.querySelector('.flag-icon').innerText = flagMap[lang];
+        currentLangBtnAuth.querySelector('.lang-text').innerText = labelMap[lang];
+      }
+
+      applyTranslations();
+    }
+
+    window.addEventListener('click', () => {
+      const d1 = document.getElementById('langDropdownAuth');
+      const d2 = document.getElementById('langDropdown');
+      if (d1) d1.style.display = 'none';
+      if (d2) d2.style.display = 'none';
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initLanguage();
+    });
+  </script>
 </body>
 </html>

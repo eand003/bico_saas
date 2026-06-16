@@ -156,6 +156,7 @@ function showLoginScreen(options = {}) {
 function showAppContainer() {
   document.getElementById('app-login-screen').style.display = 'none';
   document.querySelector('.app-container').style.display = 'flex';
+  if (typeof window.applyTranslations === 'function') window.applyTranslations();
 }
 
 function handleOfflineBypass() {
@@ -785,6 +786,7 @@ function rebuildBulkGrid() {
 
     tbody.appendChild(tr);
   });
+  if (typeof window.applyTranslations === 'function') window.applyTranslations();
 }
 
 function updateNozzleData(index, volumeMl, duration, expectedFlow, tolerance) {
@@ -1051,6 +1053,7 @@ function generateReportAndRender() {
 
   // Acionar simulador financeiro interativo
   triggerFinancialLossSimulator();
+  if (typeof window.applyTranslations === 'function') window.applyTranslations();
 }
 
 // Simulador financeiro dinâmico
@@ -1494,6 +1497,7 @@ async function renderHistoryList() {
   } catch (error) {
     console.error("Erro ao listar histórico:", error);
   }
+  if (typeof window.applyTranslations === 'function') window.applyTranslations();
 }
 
 async function loadInspectionIntoApp(id) {

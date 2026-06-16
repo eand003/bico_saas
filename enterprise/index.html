@@ -1510,6 +1510,384 @@
     </div>
 
     <script>
+      // === MULTI-LANGUAGE SYSTEM ===
+      const translationDict = {
+        es: {
+          "Vazão Alvo": "Caudal Objetivo",
+          "Pressão V. Mín": "Presión V. Mín",
+          "Pressão V. Méd": "Presión V. Prom",
+          "Pressão V. Máx": "Presión V. Máx",
+          "Janela (km/h)": "Ventana (km/h)",
+          "Veredito": "Veredicto",
+          "ATENDE": "CUMPLE",
+          "PARCIAL": "PARCIAL",
+          "FORA": "FUERA",
+          "Bico ISO": "Boquilla ISO",
+          "Q@3bar (43.5 psi)": "Q@3bar (43.5 psi)",
+          "Vazão Alvo (L/ha)": "Caudal Objetivo (L/ha)",
+          "Identificação do Cliente & Equipamento": "Identificación del Cliente & Equipamiento",
+          "Produtor / Cliente:": "Productor / Cliente:",
+          "Fazenda:": "Hacienda:",
+          "Identificação da Máquina:": "Identificación de la Máquina:",
+          "Configuração do Pulverizador:": "Configuración del Pulverizador:",
+          "bicos": "boquillas",
+          "Barra:": "Barra:",
+          "Laudo Técnico de Pulverização": "Laudo Técnico de Pulverización",
+          "Data:": "Fecha:",
+          "Parâmetros da Simulação": "Parámetros de Simulación",
+          "Espaçamento:": "Espaciado:",
+          "Densidade da Calda:": "Densidad del Caldo:",
+          "Limites de Pressão:": "Límites de Presión:",
+          "Velocidades de Operação": "Velocidades de Operación",
+          "Mínima:": "Mínima:",
+          "Média (Calibração):": "Promedio (Calibración):",
+          "Máxima:": "Máxima:",
+          "Recomendação Principal": "Recomendación Principal",
+          "Nenhuma recomendação ideal encontrada": "Ninguna recomendación ideal encontrada",
+          "Tabela de Desempenho por Ponta": "Tabla de Rendimiento por Boquilla",
+          "Consultor Técnico": "Consultor Técnico",
+          "Sem cadastro": "Sin registro",
+          "Simulador de Bicos ISO": "Simulador de boquillas ISO",
+          "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Simulador técnico para la selección precisa de boquillas de pulverización, garantizando la máxima eficiencia y economía en la aplicación.",
+          "Cadastrar novo acesso": "Registrar nuevo acceso",
+          "Ao entrar, você concorda com os": "Al ingresar, usted acepta los",
+          "Termos de Uso": "Términos de Uso",
+          "Seu E-mail": "Su correo electrónico",
+          "Sua Senha": "Su contraseña",
+          "Seu Nome e Sobrenome": "Su nombre y apellido",
+          "Seu WhatsApp (apenas números)": "Su WhatsApp (solo números)",
+          "Sucesso!": "¡Éxito!",
+          "Erro ao entrar": "Error al entrar",
+          "Como Utilizar o Simulador": "Cómo utilizar el simulador",
+          "1. Cadastro de Clientes e Máquinas (CRM)": "1. Registro de clientes y máquinas (CRM)",
+          "2. Carregamento e Sessão Ativa": "2. Carga y sesión activa",
+          "3. Vazão de Calibração (Jaragem)": "3. Caudal de calibración (Jarreo)",
+          "4. Selos de Diagnóstico Interativos": "4. Sellos de diagnóstico interactivos",
+          "5. Densidade da Calda (Gravidade Específica)": "5. Densidad del caldo (Gravedad específica)",
+          "6. Gráfico de Janelas Seguras": "6. Gráfico de ventanas seguras",
+          "7. Laudo Técnico em PDF e Orçamento": "7. Laudo técnico en PDF y presupuesto",
+          "Simulador de Bicos ISO para Aplicação Agro": "Simulador de boquillas ISO para aplicación agrícola",
+          "Configurações Operacionais": "Configuraciones operacionales",
+          "Velocidade do Trator (km/h)": "Velocidad del tractor (km/h)",
+          "Vazão Alvo da Aplicação (L/ha)": "Tasa de aplicación objetivo (L/ha)",
+          "Espaçamento entre Bicos (cm)": "Espaciado entre boquillas (cm)",
+          "Pressão Mínima Desejada": "Presión mínima deseada",
+          "Pressão Máxima Desejada": "Pressão máxima deseada",
+          "Cadastrar novo Produtor": "Registrar nuevo productor",
+          "Clientes e Frotas (CRM)": "Clientes y flotas (CRM)",
+          "Configurações da Calda": "Configuraciones del caldo",
+          "Densidade da Calda (Gravidade Específica)": "Densidad del caldo (Gravedad específica)",
+          "Água Limpa (Padrão)": "Agua limpia (Estándar)",
+          "Calda Leve": "Caldo ligero",
+          "Calda Média / Adubação": "Caldo medio / Fertilizante",
+          "Calda Pesada": "Caldo pesado",
+          "Gráfico da Janela Operacional Segura": "Gráfico de la ventana operativa segura",
+          "Janela Operacional Recomendada": "Ventana operativa recomendada",
+          "Nenhum bico atende plenamente esta configuração": "Ninguna boquilla cumple plenamente con esta configuración",
+          "As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.": "Las opciones anteriores son las alternativas más cercanas, ordenadas por la menor distancia entre la presión mínima real y el límite mínimo configurado.",
+          "Histórico de Simulações": "Historial de simulaciones",
+          "Nenhuma calibração vinculada.": "Ninguna calibración vinculada.",
+          "Nenhuma máquina registrada para este produtor.": "Ninguna máquina registrada para este productor.",
+          "Sem Fazenda cadastrada": "Sin hacienda registrada",
+          "Máquinas registradas": "Máquinas registradas",
+          "Obs:": "Nota:",
+          "Larg. Barra:": "Ancho Barra:",
+          "Vazão Barra:": "Caudal Barra:",
+          "Vazão Bico:": "Caudal Boquilla:",
+          "Alvo:": "Objetivo:",
+          "Pressão Méd:": "Presión Prom:",
+          "Janela Ideal:": "Ventana Ideal:",
+          "Carregar no Simulador": "Cargar en el Simulador",
+          "Editar": "Editar",
+          "Excluir": "Eliminar",
+          "Salvar Configuração": "Guardar Configuración",
+          "Acesso ao Sistema": "Acceso al sistema",
+          "Digite seu e-mail cadastrado e senha para carregar seus dados na nuvem.": "Ingrese seu correo electrónico registrado y contraseña para cargar sus datos en la nube.",
+          "Entrar / Cadastrar": "Entrar / Registrar",
+          "Usar em Modo Local (Offline)": "Usar en local (Offline)",
+          "Aguarde...": "Espere...",
+          "Voltar": "Volver",
+          "Salvar Calibração": "Guardar calibración",
+          "Escolher Ponta por Tabela Completa": "Elegir boquilla por tabla completa",
+          "Gerar Laudo Técnico PDF": "Generar laudo técnico en PDF",
+          "Fator de Conversão de Calda": "Factor de conversión del caldo",
+          "Pressão Requerida": "Presión requerida",
+          "Estabilidade": "Estabilidad",
+          "Volume de Calda": "Volumen de caldo",
+          "Velocidade Ideal": "Velocidad ideal",
+          "Pressão Mínima": "Presión mínima",
+          "Pressão Máxima": "Presión máxima",
+          "Tamanho de Gota": "Tamaño de gota",
+          "Muito Fina": "Muy fina",
+          "Fina": "Fina",
+          "Média": "Media",
+          "Grossa": "Gruesa",
+          "Muito Grossa": "Muy gruesa",
+          "Extremadamente Grossa": "Extremadamente gruesa",
+          "Ultra Grossa": "Ultra gruesa",
+          "Parâmetros": "Parámetros",
+          "Espaçamento entre bicos (cm)": "Espaciado entre boquillas (cm)",
+          "Vazão desejada (L/ha)": "Caudal deseado (L/ha)",
+          "Densidade da Calda (kg/L)": "Densidad del caldo (kg/L)",
+          "Água (1.0)": "Agua (1.0)",
+          "Média (1.08)": "Media (1.08)",
+          "Pesada (1.20)": "Pesada (1.20)",
+          "Unidade de Pressão": "Unidad de presión",
+          "Limites de Pressão (Mín / Máx)": "Límites de presión (Mín / Máx)",
+          "Velocidades Reais (km/h)": "Velocidades reales (km/h)",
+          "Mínima": "Mínima",
+          "Média": "Media",
+          "Máxima": "Máxima",
+          "💾 Salvar Calibração": "💾 Guardar calibración",
+          "Top Recomendados": "Top recomendados",
+          "Buscando...": "Buscando...",
+          "Bicos que operam dentro da pressão ideal de forma segura para a faixa de velocidade.": "Boquillas que operan dentro de la presión ideal de forma segura para el rango de velocidad.",
+          "Desempenho por Bico (Pressão vs Velocidade)": "Rendimiento por boquilla (Presión vs Velocidad)",
+          "Tabela de Dados Técnicos": "Tabla de datos técnicos",
+          "Vazão de Calibração": "Caudal de calibración",
+          "Catálogo (Ref 3bar):": "Catálogo (Ref 3bar):",
+          "P. Média p/": "P. promedio para",
+          "Faixa Ideal (km/h)": "Rango ideal (km/h)",
+          "Toque para ver laudo": "Toque para ver laudo",
+          "Atende": "Cumple",
+          "Parcial": "Parcial",
+          "Não recomendado": "No recomendado",
+          "👥 Cadastro de Clientes & Máquinas": "👥 Registro de clientes y máquinas",
+          "Gerencie seus produtores e suas respectivas máquinas online e offline.": "Gestione sus productores y sus respectivas máquinas online y offline.",
+          "➕ Adicionar Cliente": "➕ Agregar cliente",
+          "Nenhum produtor cadastrado localmente.": "Ningún productor registrado localmente.",
+          "Nenhuma máquina registrada para este produtor.": "Ninguna máquina registrada para este productor.",
+          "Larg. Barra:": "Ancho Barra:",
+          "Vazão Barra:": "Caudal Barra:",
+          "Vazão Bico:": "Caudal Boquilla:",
+          "Alvo:": "Objetivo:",
+          "Pressão Méd:": "Presión Prom:",
+          "Janela Ideal:": "Ventana Ideal:",
+          "Nenhuma calibração vinculada.": "Ninguna calibración vinculada.",
+          "Bicos:": "Boquillas:",
+          "Espac:": "Espac:",
+          "Carregar no Simulador": "Cargar en el Simulador",
+          "Editar": "Editar",
+          "Por:": "Por:",
+          "Fazenda:": "Hacienda:",
+          "Sem Fazenda cadastrada": "Sin hacienda registrada",
+          "Editar Cliente": "Editar cliente",
+          "Excluir Cliente": "Eliminar cliente",
+          "Obs:": "Nota:",
+          "Máquinas registradas": "Máquinas registradas",
+          "Add Máquina": "Agregar máquina",
+          "Referência Catálogo": "Referencia Catálogo",
+          "Rec:": "Rec:",
+          "Sugestão:": "Sugerencia:",
+          "a": "a",
+          "Este bico opera <b>100% dentro da pressão segura</b> ({pMin} a {pMax} {unit}) em toda a janela de velocidade informada.": "Este bico opera <b>100% dentro de la presión segura</b> ({pMin} a {pMax} {unit}) en toda la ventana de velocidad informada.",
+          "Em baixa velocidade, a pressão cai para {pVmin} {unit} (abaixo do recomendado).": "En baja velocidad, la presión cae a {pVmin} {unit} (por debajo de lo recomendado).",
+          "Em alta velocidade, a pressão sobe para {pVmax} {unit} (acima do recomendado).": "En alta velocidad, la presión sube a {pVmax} {unit} (por encima de lo recomendado).",
+          "Operação com ressalvas:": "Operación con reservas:",
+          "O bico atende apenas parte da sua janela com segurança.": "La boquilla cumple solo parte de su ventana de forma segura.",
+          "Este bico está <b>totalmente fora dos limites</b> seguros para este volume de calda.": "Esta boquilla está <b>totalmente fuera de los límites</b> seguros para este volumen de caldo.",
+          "Tente usar um bico de tamanho diferente ou ajustar o volume de calda (L/ha).": "Intente usar una boquilla de diferente tamaño o ajustar el volumen de caldo (L/ha).",
+          "A pressão necessária ({pVmin} {unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.": "La presión necesaria ({pVmin} {unit}) es <b>excesiva</b> incluso a su velocidad mínima.",
+          "Sugestão:": "Sugerencia:",
+          "Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.": "Use una boquilla de mayor tamaño (ISO mayor) para aliviar la presión de la bomba.",
+          "A pressão gerada ({pVmax} {unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.": "La presión generada ({pVmax} {unit}) es <b>muy baja</b> incluso a su velocidad máxima.",
+          "Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.": "Use una boquilla de menor tamaño (ISO menor) para alcanzar la presión de trabajo ideal."
+        },
+        en: {
+          "Vazão Alvo": "Target Flow",
+          "Pressão V. Mín": "Min V. Pressure",
+          "Pressão V. Méd": "Avg V. Pressure",
+          "Pressão V. Máx": "Max V. Pressure",
+          "Janela (km/h)": "Window (km/h)",
+          "Veredito": "Verdict",
+          "ATENDE": "MEETS",
+          "PARCIAL": "PARTIAL",
+          "FORA": "OUT",
+          "Bico ISO": "ISO Nozzle",
+          "Q@3bar (43.5 psi)": "Q@3bar (43.5 psi)",
+          "Vazão Alvo (L/ha)": "Target Flow (L/ha)",
+          "Identificação do Cliente & Equipamento": "Client & Equipment Identification",
+          "Produtor / Cliente:": "Producer / Client:",
+          "Fazenda:": "Farm:",
+          "Identificação da Máquina:": "Machine Identification:",
+          "Configuração do Pulverizador:": "Sprayer Configuration:",
+          "bicos": "nozzles",
+          "Barra:": "Boom:",
+          "Laudo Técnico de Pulverização": "Technical Spraying Report",
+          "Data:": "Date:",
+          "Parâmetros da Simulação": "Simulation Parameters",
+          "Espaçamento:": "Spacing:",
+          "Densidade da Calda:": "Mix Density:",
+          "Limites de Pressão:": "Pressure Limits:",
+          "Velocidades de Operação": "Operating Speeds",
+          "Mínima:": "Minimum:",
+          "Média (Calibração):": "Average (Calibration):",
+          "Máxima:": "Maximum:",
+          "Recomendação Principal": "Main Recommendation",
+          "Nenhuma recomendação ideal encontrada": "No ideal recommendation found",
+          "Tabela de Desempenho por Ponta": "Performance Table by Nozzle",
+          "Consultor Técnico": "Technical Advisor",
+          "Sem cadastro": "Not registered",
+          "Simulador de Bicos ISO": "ISO Nozzle Simulator",
+          "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Technical simulator for precise spray nozzle selection, ensuring maximum efficiency and savings in application.",
+          "Cadastrar novo acesso": "Register new access",
+          "Ao entrar, você concorda com os": "By logging in, you agree to the",
+          "Termos de Uso": "Terms of Use",
+          "Seu E-mail": "Your Email",
+          "Sua Senha": "Your Password",
+          "Seu Nome e Sobrenome": "Your First & Last Name",
+          "Seu WhatsApp (apenas números)": "Your WhatsApp (numbers only)",
+          "Sucesso!": "Success!",
+          "Erro ao entrar": "Login error",
+          "Como Utilizar o Simulador": "How to Use the Simulator",
+          "1. Cadastro de Clientes e Máquinas (CRM)": "1. Client & Machine Registration (CRM)",
+          "2. Carregamento e Sessão Ativa": "2. Session Management",
+          "3. Vazão de Calibração (Jaragem)": "3. Calibration Flow Rate",
+          "4. Selos de Diagnóstico Interativos": "4. Interactive Diagnostic Stamps",
+          "5. Densidade da Calda (Gravidade Específica)": "5. Mix Density (Specific Gravity)",
+          "6. Gráfico de Janelas Seguras": "6. Safe Operating Window Chart",
+          "7. Laudo Técnico em PDF e Orçamento": "7. Technical PDF Report & Quotes",
+          "Simulador de Bicos ISO para Aplicação Agro": "ISO Nozzle Simulator for Agricultural Application",
+          "Configurações Operacionais": "Operational Configurations",
+          "Velocidade do Trator (km/h)": "Tractor Speed (km/h)",
+          "Vazão Alvo da Aplicação (L/ha)": "Target Application Rate (L/ha)",
+          "Espaçamento entre Bicos (cm)": "Nozzle Spacing (cm)",
+          "Pressão Mínima Desejada": "Desired Minimum Pressure",
+          "Pressão Máxima Desejada": "Desired Maximum Pressure",
+          "Cadastrar novo Produtor": "Register New Grower",
+          "Clientes e Frotas (CRM)": "Clients and Fleets (CRM)",
+          "Configurações da Calda": "Mix Configurations",
+          "Densidade da Calda (Gravidade Específica)": "Mix Density (Specific Gravity)",
+          "Água Limpa (Padrão)": "Clean Water (Standard)",
+          "Calda Leve": "Light Mix",
+          "Calda Média / Adubação": "Medium Mix / Fertilizer",
+          "Calda Pesada": "Heavy Mix",
+          "Gráfico da Janela Operacional Segura": "Safe Operating Window Chart",
+          "Janela Operacional Recomendada": "Recommended Operating Window",
+          "Nenhum bico atende plenamente esta configuração": "No nozzle fully meets this configuration",
+          "As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.": "The options above are the closest alternatives, sorted by the smallest distance between the actual minimum pressure and the configured minimum limit.",
+          "Histórico de Simulações": "Simulation History",
+          "Nenhuma calibração vinculada.": "No calibrations linked.",
+          "Nenhuma máquina registrada para este produtor.": "No machines registered for this grower.",
+          "Sem Fazenda cadastrada": "No farm registered",
+          "Máquinas registradas": "Registered machines",
+          "Obs:": "Notes:",
+          "Larg. Barra:": "Boom Width:",
+          "Vazão Barra:": "Boom Flow:",
+          "Vazão Bico:": "Nozzle Flow:",
+          "Alvo:": "Target:",
+          "Pressão Méd:": "Avg Pressure:",
+          "Janela Ideal:": "Ideal Window:",
+          "Carregar no Simulador": "Load in Simulator",
+          "Editar": "Edit",
+          "Excluir": "Delete",
+          "Salvar Configuração": "Save Configuration",
+          "Acesso ao Sistema": "System Login",
+          "Digite seu e-mail cadastrado e senha para carregar seus dados na nuvem.": "Enter your registered email and password to load your cloud data.",
+          "Entrar / Cadastrar": "Login / Sign Up",
+          "Usar em Modo Local (Offline)": "Use in Local Mode (Offline)",
+          "Aguarde...": "Please wait...",
+          "Voltar": "Back",
+          "Salvar Calibração": "Save Calibration",
+          "Escolher Ponta por Tabela Completa": "Choose Nozzle from Full Table",
+          "Gerar Laudo Técnico PDF": "Generate Technical PDF Report",
+          "Fator de Conversão de Calda": "Mix Conversion Factor",
+          "Pressão Requerida": "Required Pressure",
+          "Estabilidade": "Stability",
+          "Volume de Calda": "Spray Volume",
+          "Velocidade Ideal": "Ideal Speed",
+          "Pressão Mínima": "Minimum Pressure",
+          "Pressão Máxima": "Maximum Pressure",
+          "Tamanho de Gota": "Droplet Size",
+          "Muito Fina": "Very Fine",
+          "Fina": "Fine",
+          "Média": "Medium",
+          "Grossa": "Coarse",
+          "Muito Grossa": "Very Coarse",
+          "Extremadamente Grossa": "Extremely Coarse",
+          "Ultra Grossa": "Ultra Coarse",
+          "Parâmetros": "Parameters",
+          "Espaçamento entre bicos (cm)": "Nozzle spacing (cm)",
+          "Vazão desejada (L/ha)": "Desired flow (L/ha)",
+          "Densidade da Calda (kg/L)": "Mix density (kg/L)",
+          "Água (1.0)": "Water (1.0)",
+          "Média (1.08)": "Medium (1.08)",
+          "Pesada (1.20)": "Heavy (1.20)",
+          "Unidade de Pressão": "Pressure unit",
+          "Limites de Pressão (Mín / Máx)": "Pressure limits (Min / Max)",
+          "Velocidades Reais (km/h)": "Real speeds (km/h)",
+          "Mínima": "Minimum",
+          "Média": "Average",
+          "Máxima": "Maximum",
+          "💾 Salvar Calibração": "Save Calibration",
+          "Top Recomendados": "Top Recommended",
+          "Buscando...": "Searching...",
+          "Bicos que operam dentro da pressão ideal de forma segura para a faixa de velocidade.": "Nozzles operating safely within the ideal pressure range for the speed range.",
+          "Desempenho por Bico (Pressão vs Velocidade)": "Performance by Nozzle (Pressure vs Speed)",
+          "Tabela de Dados Técnicos": "Technical Data Table",
+          "Vazão de Calibração": "Calibration Flow",
+          "Catálogo (Ref 3bar):": "Catalog (Ref 3bar):",
+          "P. Média p/": "Avg. pressure for",
+          "Faixa Ideal (km/h)": "Ideal range (km/h)",
+          "Toque para ver laudo": "Tap to view report",
+          "Atende": "Meets",
+          "Parcial": "Partial",
+          "Não recomendado": "Not recommended",
+          "👥 Cadastro de Clientes & Máquinas": "Client & Machine Registration",
+          "Gerencie seus produtores e suas respectivas máquinas online e offline.": "Manage your growers and their respective machines online and offline.",
+          "➕ Adicionar Cliente": "Add Client",
+          "Nenhum produtor cadastrado localmente.": "No growers registered locally.",
+          "Nenhuma máquina registrada para este produtor.": "No machines registered for this grower.",
+          "Larg. Barra:": "Boom Width:",
+          "Vazão Barra:": "Boom Flow:",
+          "Vazão Bico:": "Nozzle Flow:",
+          "Alvo:": "Target:",
+          "Pressão Méd:": "Avg Pressure:",
+          "Janela Ideal:": "Ideal Window:",
+          "Nenhuma calibração vinculada.": "No calibrations linked.",
+          "Bicos:": "Nozzles:",
+          "Espac:": "Spacing:",
+          "Carregar no Simulador": "Load in Simulator",
+          "Editar": "Edit",
+          "Por:": "By:",
+          "Fazenda:": "Farm:",
+          "Sem Fazenda cadastrada": "No farm registered",
+          "Editar Cliente": "Edit Client",
+          "Excluir Cliente": "Delete Client",
+          "Obs:": "Notes:",
+          "Máquinas registradas": "Registered machines",
+          "Add Máquina": "Add Machine",
+          "Referência Catálogo": "Catalog Reference",
+          "Rec:": "Rec:",
+          "Sugestão:": "Suggestion:",
+          "a": "to",
+          "Este bico opera <b>100% dentro da pressão segura</b> ({pMin} a {pMax} {unit}) em toda a janela de velocidade informada.": "This nozzle operates <b>100% within the safe pressure</b> ({pMin} to {pMax} {unit}) in the entire speed window informed.",
+          "Em baixa velocidade, a pressão cai para {pVmin} {unit} (abaixo do recomendado).": "At low speed, pressure drops to {pVmin} {unit} (below recommended).",
+          "Em alta velocidade, a pressão sobe para {pVmax} {unit} (acima do recomendado).": "At high speed, pressure rises to {pVmax} {unit} (above recommended).",
+          "Operação com ressalvas:": "Operation with cautions:",
+          "O bico atende apenas parte da sua janela com segurança.": "The nozzle meets only part of your speed window safely.",
+          "Este bico está <b>totalmente fora dos limites</b> seguros para este volume de calda.": "This nozzle is <b>completely out of safe limits</b> for this target application rate.",
+          "Tente usar um bico de tamanho diferente ou ajustar o volume de calda (L/ha).": "Try using a different size nozzle or adjusting the target application rate (L/ha).",
+          "A pressão necessária ({pVmin} {unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.": "The required pressure ({pVmin} {unit}) is <b>excessive</b> even at your minimum speed.",
+          "Sugestão:": "Suggestion:",
+          "Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.": "Use a larger nozzle size (larger ISO) to relieve pump pressure.",
+          "A pressão gerada ({pVmax} {unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.": "The pressure generated ({pVmax} {unit}) is <b>too low</b> even at your maximum speed.",
+          "Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.": "Use a smaller nozzle size (smaller ISO) to reach the ideal working pressure."
+        }
+      };
+
+      function t(text) {
+        if (!text) return '';
+        const lang = localStorage.getItem('spray_language') || 'pt';
+        if (lang === 'pt') return text;
+        const dict = translationDict[lang];
+        if (dict && dict[text.trim()]) {
+          return dict[text.trim()];
+        }
+        return text;
+      }
+      window.t = t;
+
       // --- DATABASE BICOS ISO OFFLINE ---
       const NOZZLES = [
         { iso: "01", q3: 0.40, color: "#F28C28" },
@@ -1800,33 +2178,33 @@
         div.innerHTML = `
         <div class="noz-header" style="align-items: flex-start;">
             <div class="noz-iso">ISO ${r.nz.iso}</div>
-            <div class="noz-flow-badge" title="Vazão necessária (L/min) por bico no seu cenário real">
-              <span class="label">Vazão de Calibração</span>
+            <div class="noz-flow-badge" title="${t('Vazão necessária (L/min) por bico no seu cenário real')}">
+              <span class="label">${t('Vazão de Calibração')}</span>
               <span class="value" style="font-size: 16px; font-weight: 800;">${r.qVavg.toFixed(2)} L/min</span>
               <div style="font-size: 10px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 2px;">
-                Catálogo (Ref 3bar): ${r.nz.q3.toFixed(2)}
+                ${t('Catálogo (Ref 3bar):')} ${r.nz.q3.toFixed(2)}
               </div>
             </div>
         </div>
         <div class="noz-metrics">
             <div class="metric-row">
-                <span class="metric-label">P. Média p/ ${document.getElementById('numVAvg').value}km/h</span>
+                <span class="metric-label">${t('P. Média p/')} ${document.getElementById('numVAvg').value}km/h</span>
                 <span class="metric-val" style="color: ${statusClass !== 'bad' ? 'var(--text-main)' : 'var(--accent-error)'}">${avgStr} ${pUnit}</span>
             </div>
             <div class="metric-row">
-                <span class="metric-label">Faixa Ideal (km/h)</span>
+                <span class="metric-label">${t('Faixa Ideal (km/h)')}</span>
                 <span class="metric-val">${r.vAtPmin.toFixed(1)} - ${r.vAtPmax.toFixed(1)}</span>
             </div>
             <div class="metric-row">
-                <span class="metric-label">Vazão Alvo</span>
+                <span class="metric-label">${t('Vazão Alvo')}</span>
                 <span class="metric-val">${parseFloat(document.getElementById('numRate').value || 0).toFixed(1)} L/ha</span>
             </div>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px solid var(--control-border); padding-top: 12px;">
             <span class="status-badge ${statusClass}" onclick="explainStatus('${r.statusText}', ${r.pressures[0]}, ${r.pressures[2]})" style="cursor: pointer; position: relative;">
-               ${r.statusText} ⓘ
+               ${t(r.statusText)} ⓘ
             </span>
-            <span style="font-size: 11px; color: var(--text-muted); opacity: 0.7;">Toque para ver laudo</span>
+            <span style="font-size: 11px; color: var(--text-muted); opacity: 0.7;">${t('Toque para ver laudo')}</span>
         </div>
       `;
         return div;
@@ -1847,7 +2225,7 @@
         document.getElementById('rmQ3').innerText = r.qVavg.toFixed(2) + ' L/min';
         
         const pRefIso = PRESS_UNIT === 'bar' ? '3.0 bar' : '43.5 psi';
-        document.getElementById('rmQ3Iso').innerText = `Referência Catálogo: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
+        document.getElementById('rmQ3Iso').innerText = `${t('Referência Catálogo')}: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
         
         document.getElementById('rmQ3').style.color = 'var(--text-main)';
         document.getElementById('rmSpeed').innerText = r.vAtPmin.toFixed(1) + ' - ' + r.vAtPmax.toFixed(1) + ' km/h';
@@ -1872,10 +2250,10 @@
         }
 
         if (isFallback) {
-          rmStatusText.innerText = '⚠️ Rec: ' + r.statusText;
+          rmStatusText.innerText = '⚠️ ' + t('Rec:') + ' ' + t(r.statusText);
           rmStatusText.style.background = 'rgba(255,193,7,0.2)';
         } else {
-          rmStatusText.innerText = '🏆 Sugestão: ' + r.statusText;
+          rmStatusText.innerText = '🏆 ' + t('Sugestão:') + ' ' + t(r.statusText);
           rmStatusText.style.background = 'transparent';
         }
 
@@ -1895,36 +2273,50 @@
         const pMax = parseFloat(document.getElementById('numPMax').value);
         const unit = PRESS_UNIT.toUpperCase();
 
-        document.getElementById('smUserRange').innerText = `${pMin} a ${pMax} ${unit}`;
+        document.getElementById('smUserRange').innerText = `${pMin} ${t('a')} ${pMax} ${unit}`;
         document.getElementById('smPressMin').innerText = `${pVmin.toFixed(1)} ${unit}`;
         document.getElementById('smPressMax').innerText = `${pVmax.toFixed(1)} ${unit}`;
 
         document.getElementById('smPressMin').style.color = pVmin < pMin ? 'var(--accent-error)' : 'var(--accent-green)';
         document.getElementById('smPressMax').style.color = pVmax > pMax ? 'var(--accent-error)' : 'var(--accent-green)';
 
-        title.innerText = status;
+        title.innerText = t(status);
 
         if (status === 'Atende') {
           icon.innerText = '🏆';
-          desc.innerHTML = `Este bico opera <b>100% dentro da pressão segura</b> (${pMin} a ${pMax} ${unit}) em toda a janela de velocidade informada.`;
+          desc.innerHTML = t("Este bico opera <b>100% dentro da pressão segura</b> ({pMin} a {pMax} {unit}) em toda a janela de velocidade informada.")
+            .replace('{pMin}', pMin)
+            .replace('{pMax}', pMax)
+            .replace('{unit}', unit);
         } else if (status === 'Parcial') {
           icon.innerText = '⚠️';
           let reason = "";
-          if (pVmin < pMin) reason = `Em baixa velocidade, a pressão cai para ${pVmin.toFixed(1)} ${unit} (abaixo do recomendado).`;
-          else if (pVmax > pMax) reason = `Em alta velocidade, a pressão sobe para ${pVmax.toFixed(1)} ${unit} (acima do recomendado).`;
+          if (pVmin < pMin) {
+            reason = t("Em baixa velocidade, a pressão cai para {pVmin} {unit} (abaixo do recomendado).")
+              .replace('{pVmin}', pVmin.toFixed(1))
+              .replace('{unit}', unit);
+          } else if (pVmax > pMax) {
+            reason = t("Em alta velocidade, a pressão sobe para {pVmax} {unit} (acima do recomendado).")
+              .replace('{pVmax}', pVmax.toFixed(1))
+              .replace('{unit}', unit);
+          }
           
-          desc.innerHTML = `<b>Operação com ressalvas:</b> ${reason} O bico atende apenas parte da sua janela com segurança.`;
+          desc.innerHTML = `<b>${t("Operação com ressalvas:")}</b> ${reason} ${t("O bico atende apenas parte da sua janela com segurança.")}`;
         } else {
           icon.innerText = '🚫';
-          let reason = "Este bico está <b>totalmente fora dos limites</b> seguros para este volume de calda.";
-          let suggestion = "Tente usar um bico de tamanho diferente ou ajustar o volume de calda (L/ha).";
+          let reason = t("Este bico está <b>totalmente fora dos limites</b> seguros para este volume de calda.");
+          let suggestion = t("Tente usar um bico de tamanho diferente ou ajustar o volume de calda (L/ha).");
 
           if (pVmin > pMax) {
-              reason = `A pressão necessária (${pVmin.toFixed(1)} ${unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.`;
-              suggestion = "<b>Sugestão:</b> Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.";
+              reason = t("A pressão necessária ({pVmin} {unit}) é <b>excessiva</b> mesmo na sua velocidade mínima.")
+                .replace('{pVmin}', pVmin.toFixed(1))
+                .replace('{unit}', unit);
+              suggestion = `<b>${t("Sugestão:")}</b> ${t("Use um bico de tamanho maior (ISO maior) para aliviar a pressão da bomba.")}`;
           } else if (pVmax < pMin) {
-              reason = `A pressão gerada (${pVmax.toFixed(1)} ${unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.`;
-              suggestion = "<b>Sugestão:</b> Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.";
+              reason = t("A pressão gerada ({pVmax} {unit}) é <b>muito baixa</b> mesmo na sua velocidade máxima.")
+                .replace('{pVmax}', pVmax.toFixed(1))
+                .replace('{unit}', unit);
+              suggestion = `<b>${t("Sugestão:")}</b> ${t("Use um bico de tamanho menor (ISO menor) para atingir a pressão de trabalho ideal.")}`;
           }
           
           desc.innerHTML = `${reason}<br><br>${suggestion}`;
@@ -3083,30 +3475,30 @@
           // Renderizar lista de máquinas
           let machinesHtml = '';
           if (!c.machines || c.machines.length === 0) {
-            machinesHtml = '<p style="font-size:12px; color:var(--text-muted); font-style:italic;">Nenhuma máquina registrada para este produtor.</p>';
+            machinesHtml = `<p style="font-size:12px; color:var(--text-muted); font-style:italic;">${t('Nenhuma máquina registrada para este produtor.')}</p>`;
           } else {
             c.machines.forEach(m => {
               let simHtml = '';
               let recColor = 'var(--accent)';
               const boomWidth = m.boomSize ? m.boomSize.toFixed(1) : ((m.spacing / 100) * m.nozzleCount).toFixed(1);
-              let flowSpecsHtml = `<span>Larg. Barra: <b>${boomWidth} m</b></span>`;
+              let flowSpecsHtml = `<span>${t('Larg. Barra:')} <b>${boomWidth} m</b></span>`;
 
               if (m.lastSimulation && m.lastSimulation.recommendation) {
                 const sim = m.lastSimulation;
                 recColor = sim.recommendation.color;
                 
                 const totalFlow = (m.nozzleCount * sim.recommendation.qVavg).toFixed(1);
-                flowSpecsHtml += ` | <span>Vazão Barra: <b>${totalFlow} L/min</b></span>`;
+                flowSpecsHtml += ` | <span>${t('Vazão Barra:')} <b>${totalFlow} L/min</b></span>`;
 
                 simHtml = `
                   <div class="machine-sim-data">
-                    🏆 <b>ISO ${sim.recommendation.iso}</b> | Vazão Bico: <b>${sim.recommendation.qVavg.toFixed(2)} L/min</b><br>
-                    Alvo: <b>${sim.config.rate} L/ha</b> | Pressão Méd: <b>${sim.recommendation.pVavg.toFixed(1)} ${sim.config.unit.toUpperCase()}</b><br>
-                    Janela Ideal: <b>${sim.recommendation.vAtPmin.toFixed(1)} - ${sim.recommendation.vAtPmax.toFixed(1)} km/h</b> <span style="opacity: 0.6; font-size:10px;">(${sim.date})</span>
+                    🏆 <b>ISO ${sim.recommendation.iso}</b> | ${t('Vazão Bico:')} <b>${sim.recommendation.qVavg.toFixed(2)} L/min</b><br>
+                    ${t('Alvo:')} <b>${sim.config.rate} L/ha</b> | ${t('Pressão Méd:')} <b>${sim.recommendation.pVavg.toFixed(1)} ${sim.config.unit.toUpperCase()}</b><br>
+                    ${t('Janela Ideal:')} <b>${sim.recommendation.vAtPmin.toFixed(1)} - ${sim.recommendation.vAtPmax.toFixed(1)} km/h</b> <span style="opacity: 0.6; font-size:10px;">(${sim.date})</span>
                   </div>
                 `;
               } else {
-                simHtml = '<div style="font-size:11px; color:var(--text-muted); font-style:italic;">Nenhuma calibração vinculada.</div>';
+                simHtml = `<div style="font-size:11px; color:var(--text-muted); font-style:italic;">${t('Nenhuma calibração vinculada.')}</div>`;
               }
 
               machinesHtml += `
@@ -3114,8 +3506,8 @@
                   <div class="machine-item-header">
                     <span>🚜 ${m.name}</span>
                     <div class="machine-specs">
-                      <span>Bicos: <b>${m.nozzleCount}</b></span>
-                      <span>Espac: <b>${m.spacing} cm</b></span>
+                      <span>${t('Bicos:')} <b>${m.nozzleCount}</b></span>
+                      <span>${t('Espac:')} <b>${m.spacing} cm</b></span>
                     </div>
                   </div>
                   <div style="font-size: 11px; color: var(--text-muted); margin-top: -2px; margin-bottom: 4px; display: flex; gap: 8px;">
@@ -3125,9 +3517,9 @@
                   ${simHtml}
 
                   <div class="machine-action-row">
-                    ${m.lastSimulation ? `<button class="crm-btn primary" onclick="loadMachineConfig('${c.id}', '${m.id}')">📂 Carregar no Simulador</button>` : ''}
+                    ${m.lastSimulation ? `<button class="crm-btn primary" onclick="loadMachineConfig('${c.id}', '${m.id}')">📂 ${t('Carregar no Simulador')}</button>` : ''}
                     ${c.is_demo ? '' : `
-                    <button class="crm-btn secondary" onclick="openMachineModal('${c.id}', '${m.id}')">✏️ Editar</button>
+                    <button class="crm-btn secondary" onclick="openMachineModal('${c.id}', '${m.id}')">✏️ ${t('Editar')}</button>
                     <button class="crm-btn danger" onclick="deleteMachine('${c.id}', '${m.id}')">❌</button>
                     `}
                   </div>
@@ -3137,7 +3529,7 @@
           }
 
           const createdByHtml = (c.created_by_email && c.created_by_email !== window.currentUserEmail)
-            ? `<div style="font-size: 10px; color: var(--accent); margin-top: 2px; font-weight: 500; display: flex; align-items: center; gap: 4px;">👤 Por: ${c.created_by_email}</div>`
+            ? `<div style="font-size: 10px; color: var(--accent); margin-top: 2px; font-weight: 500; display: flex; align-items: center; gap: 4px;">👤 ${t('Por:')} ${c.created_by_email}</div>`
             : '';
 
           card.innerHTML = `
@@ -3147,23 +3539,23 @@
                   ${c.name}
                   ${c.is_demo ? `<span style="font-size:10px; background:rgba(0, 210, 255, 0.15); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:bold; border: 1px solid rgba(0, 210, 255, 0.3);">DEMO</span>` : ''}
                 </div>
-                <div class="history-sub">${c.farmName ? `🌾 Fazenda: ${c.farmName}` : 'Sem Fazenda cadastrada'}</div>
+                <div class="history-sub">${c.farmName ? `🌾 ${t('Fazenda:')} ${c.farmName}` : t('Sem Fazenda cadastrada')}</div>
                 ${createdByHtml}
               </div>
               <div class="flex-row" style="gap: 6px;">
                 ${c.is_demo ? '' : `
-                <button class="crm-btn secondary" style="padding: 6px 10px;" onclick="openClientModal('${c.id}')" title="Editar Cliente">✏️</button>
-                <button class="crm-btn danger" style="padding: 6px 10px;" onclick="deleteClient('${c.id}')" title="Excluir Cliente">❌</button>
+                <button class="crm-btn secondary" style="padding: 6px 10px;" onclick="openClientModal('${c.id}')" title="${t('Editar Cliente')}">✏️</button>
+                <button class="crm-btn danger" style="padding: 6px 10px;" onclick="deleteClient('${c.id}')" title="${t('Excluir Cliente')}">❌</button>
                 `}
               </div>
             </div>
 
-            ${c.notes ? `<div style="font-size:11px; font-style:italic; color:var(--text-muted); background:rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 8px; border:1px solid rgba(255,255,255,0.05);"><b>Obs:</b> ${c.notes}</div>` : ''}
+            ${c.notes ? `<div style="font-size:11px; font-style:italic; color:var(--text-muted); background:rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 8px; border:1px solid rgba(255,255,255,0.05);"><b>${t('Obs:')}</b> ${c.notes}</div>` : ''}
 
             <div class="machines-section">
               <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
-                <span>📋 Máquinas registradas</span>
-                ${c.is_demo ? '' : `<a href="javascript:void(0)" onclick="openMachineModal('${c.id}')" style="color: var(--accent); text-decoration:none; font-size:11px; white-space: nowrap;">➕ Add Máquina</a>`}
+                <span>📋 ${t('Máquinas registradas')}</span>
+                ${c.is_demo ? '' : `<a href="javascript:void(0)" onclick="openMachineModal('${c.id}')" style="color: var(--accent); text-decoration:none; font-size:11px; white-space: nowrap;">➕ ${t('Add Máquina')}</a>`}
               </div>
               ${machinesHtml}
             </div>
@@ -3565,7 +3957,7 @@
       `;
       document.head.appendChild(customStyles);
 
-      console.log(`✅ Sucesso: Branding do Parceiro "${name}" aplicado.`);
+      console.log(`✅ Sucesso: Branding do Parceiro "${name}" applied.`);
     }
 
     function showLogin() {
@@ -3591,237 +3983,7 @@
       setTimeout(initAuth, 100);
     }
 
-    // === MULTI-LANGUAGE SYSTEM ===
-    const translationDict = {
-      es: {
-        "Vazão Alvo": "Caudal Objetivo",
-        "Pressão V. Mín": "Presión V. Mín",
-        "Pressão V. Méd": "Presión V. Prom",
-        "Pressão V. Máx": "Presión V. Máx",
-        "Janela (km/h)": "Ventana (km/h)",
-        "Veredito": "Veredicto",
-        "ATENDE": "CUMPLE",
-        "PARCIAL": "PARCIAL",
-        "FORA": "FUERA",
-        "Bico ISO": "Boquilla ISO",
-        "Q@3bar (43.5 psi)": "Q@3bar (43.5 psi)",
-        "Vazão Alvo (L/ha)": "Caudal Objetivo (L/ha)",
-        "Identificação do Cliente & Equipamento": "Identificación del Cliente & Equipamiento",
-        "Produtor / Cliente:": "Productor / Cliente:",
-        "Fazenda:": "Hacienda:",
-        "Identificação da Máquina:": "Identificación de la Máquina:",
-        "Configuração do Pulverizador:": "Configuración del Pulverizador:",
-        "bicos": "boquillas",
-        "Barra:": "Barra:",
-        "Laudo Técnico de Pulverização": "Laudo Técnico de Pulverización",
-        "Data:": "Fecha:",
-        "Parâmetros da Simulação": "Parámetros de Simulación",
-        "Espaçamento:": "Espaciado:",
-        "Densidade da Calda:": "Densidad del Caldo:",
-        "Limites de Pressão:": "Límites de Presión:",
-        "Velocidades de Operação": "Velocidades de Operación",
-        "Mínima:": "Mínima:",
-        "Média (Calibração):": "Promedio (Calibración):",
-        "Máxima:": "Máxima:",
-        "Recomendação Principal": "Recomendación Principal",
-        "Nenhuma recomendação ideal encontrada": "Ninguna recomendación ideal encontrada",
-        "Tabela de Desempenho por Ponta": "Tabla de Rendimiento por Boquilla",
-        "Consultor Técnico": "Consultor Técnico",
-        "Sem cadastro": "Sin registro",
-        "Simulador de Bicos ISO": "Simulador de boquillas ISO",
-        "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Simulador técnico para la selección precisa de boquillas de pulverización, garantizando la máxima eficiencia y economía en la aplicación.",
-        "Cadastrar novo acesso": "Registrar nuevo acceso",
-        "Ao entrar, você concorda com os": "Al ingresar, usted acepta los",
-        "Termos de Uso": "Términos de Uso",
-        "Seu E-mail": "Su correo electrónico",
-        "Sua Senha": "Su contraseña",
-        "Seu Nome e Sobrenome": "Su nombre y apellido",
-        "Seu WhatsApp (apenas números)": "Su WhatsApp (solo números)",
-        "Sucesso!": "¡Éxito!",
-        "Erro ao entrar": "Error al entrar",
-        "Como Utilizar o Simulador": "Cómo utilizar el simulador",
-        "1. Cadastro de Clientes e Máquinas (CRM)": "1. Registro de clientes y máquinas (CRM)",
-        "2. Carregamento e Sessão Ativa": "2. Carga y sesión activa",
-        "3. Vazão de Calibração (Jaragem)": "3. Caudal de calibración (Jarreo)",
-        "4. Selos de Diagnóstico Interativos": "4. Sellos de diagnóstico interactivos",
-        "5. Densidade da Calda (Gravidade Específica)": "5. Densidad del caldo (Gravedad específica)",
-        "6. Gráfico de Janelas Seguras": "6. Gráfico de ventanas seguras",
-        "7. Laudo Técnico em PDF e Orçamento": "7. Laudo técnico en PDF y presupuesto",
-        "Simulador de Bicos ISO para Aplicação Agro": "Simulador de boquillas ISO para aplicación agrícola",
-        "Configurações Operacionais": "Configuraciones operacionales",
-        "Velocidade do Trator (km/h)": "Velocidad del tractor (km/h)",
-        "Vazão Alvo da Aplicação (L/ha)": "Tasa de aplicación objetivo (L/ha)",
-        "Espaçamento entre Bicos (cm)": "Espaciado entre boquillas (cm)",
-        "Pressão Mínima Desejada": "Presión mínima deseada",
-        "Pressão Máxima Desejada": "Presión máxima deseada",
-        "Cadastrar novo Produtor": "Registrar nuevo productor",
-        "Clientes e Frotas (CRM)": "Clientes y flotas (CRM)",
-        "Configurações da Calda": "Configuraciones del caldo",
-        "Densidade da Calda (Gravidade Específica)": "Densidad del caldo (Gravedad específica)",
-        "Água Limpa (Padrão)": "Agua limpia (Estándar)",
-        "Calda Leve": "Caldo ligero",
-        "Calda Média / Adubação": "Caldo medio / Fertilizante",
-        "Calda Pesada": "Caldo pesado",
-        "Gráfico da Janela Operacional Segura": "Gráfico de la ventana operativa segura",
-        "Janela Operacional Recomendada": "Ventana operativa recomendada",
-        "Nenhum bico atende plenamente esta configuração": "Ninguna boquilla cumple plenamente con esta configuración",
-        "As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.": "Las opciones anteriores son las alternativas más cercanas, ordenadas por la menor distancia entre la presión mínima real y el límite mínimo configurado.",
-        "Histórico de Simulações": "Historial de simulaciones",
-        "Nenhuma calibração vinculada.": "Ninguna calibración vinculada.",
-        "Nenhuma máquina registrada para este produtor.": "Ninguna máquina registrada para este productor.",
-        "Sem Fazenda cadastrada": "Sin hacienda registrada",
-        "Máquinas registradas": "Máquinas registradas",
-        "Obs:": "Nota:",
-        "Larg. Barra:": "Ancho Barra:",
-        "Vazão Barra:": "Caudal Barra:",
-        "Vazão Bico:": "Caudal Boquilla:",
-        "Alvo:": "Objetivo:",
-        "Pressão Méd:": "Presión Prom:",
-        "Janela Ideal:": "Ventana Ideal:",
-        "Carregar no Simulador": "Cargar en el Simulador",
-        "Editar": "Editar",
-        "Excluir": "Eliminar",
-        "Salvar Configuração": "Guardar Configuración",
-        "Acesso ao Sistema": "Acceso al sistema",
-        "Digite seu e-mail cadastrado e senha para carregar seus dados na nuvem.": "Ingrese seu correo electrónico registrado y contraseña para cargar sus datos en la nube.",
-        "Entrar / Cadastrar": "Entrar / Registrar",
-        "Usar em Modo Local (Offline)": "Usar en modo local (Offline)",
-        "Aguarde...": "Espere...",
-        "Voltar": "Volver",
-        "Salvar Calibração": "Guardar calibración",
-        "Escolher Ponta por Tabela Completa": "Elegir boquilla por tabla completa",
-        "Gerar Laudo Técnico PDF": "Generar laudo técnico en PDF",
-        "Fator de Conversão de Calda": "Factor de conversión del caldo",
-        "Pressão Requerida": "Presión requerida",
-        "Estabilidade": "Estabilidad",
-        "Volume de Calda": "Volumen de caldo",
-        "Velocidade Ideal": "Velocidad ideal",
-        "Pressão Mínima": "Presión mínima",
-        "Pressão Máxima": "Presión máxima",
-        "Tamanho de Gota": "Tamaño de gota",
-        "Muito Fina": "Muy fina",
-        "Fina": "Fina",
-        "Média": "Media",
-        "Grossa": "Gruesa",
-        "Muito Grossa": "Muy gruesa",
-        "Extremadamente Grossa": "Extremadamente gruesa",
-        "Ultra Grossa": "Ultra gruesa"
-      },
-      en: {
-        "Vazão Alvo": "Target Flow",
-        "Pressão V. Mín": "Min V. Pressure",
-        "Pressão V. Méd": "Avg V. Pressure",
-        "Pressão V. Máx": "Max V. Pressure",
-        "Janela (km/h)": "Window (km/h)",
-        "Veredito": "Verdict",
-        "ATENDE": "MEETS",
-        "PARCIAL": "PARTIAL",
-        "FORA": "OUT",
-        "Bico ISO": "ISO Nozzle",
-        "Q@3bar (43.5 psi)": "Q@3bar (43.5 psi)",
-        "Vazão Alvo (L/ha)": "Target Flow (L/ha)",
-        "Identificação do Cliente & Equipamento": "Client & Equipment Identification",
-        "Produtor / Cliente:": "Producer / Client:",
-        "Fazenda:": "Farm:",
-        "Identificação da Máquina:": "Machine Identification:",
-        "Configuração do Pulverizador:": "Sprayer Configuration:",
-        "bicos": "nozzles",
-        "Barra:": "Boom:",
-        "Laudo Técnico de Pulverização": "Technical Spraying Report",
-        "Data:": "Date:",
-        "Parâmetros da Simulação": "Simulation Parameters",
-        "Espaçamento:": "Spacing:",
-        "Densidade da Calda:": "Mix Density:",
-        "Limites de Pressão:": "Pressure Limits:",
-        "Velocidades de Operação": "Operating Speeds",
-        "Mínima:": "Minimum:",
-        "Média (Calibração):": "Average (Calibration):",
-        "Máxima:": "Maximum:",
-        "Recomendação Principal": "Main Recommendation",
-        "Nenhuma recomendação ideal encontrada": "No ideal recommendation found",
-        "Tabela de Desempenho por Ponta": "Performance Table by Nozzle",
-        "Consultor Técnico": "Technical Advisor",
-        "Sem cadastro": "Not registered",
-        "Simulador de Bicos ISO": "ISO Nozzle Simulator",
-        "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Technical simulator for precise spray nozzle selection, ensuring maximum efficiency and savings in application.",
-        "Cadastrar novo acesso": "Register new access",
-        "Ao entrar, você concorda com os": "By logging in, you agree to the",
-        "Termos de Uso": "Terms of Use",
-        "Seu E-mail": "Your Email",
-        "Sua Senha": "Your Password",
-        "Seu Nome e Sobrenome": "Your First & Last Name",
-        "Seu WhatsApp (apenas números)": "Your WhatsApp (numbers only)",
-        "Sucesso!": "Success!",
-        "Erro ao entrar": "Login error",
-        "Como Utilizar o Simulador": "How to Use the Simulator",
-        "1. Cadastro de Clientes e Máquinas (CRM)": "1. Client & Machine Registration (CRM)",
-        "2. Carregamento e Sessão Ativa": "2. Session Management",
-        "3. Vazão de Calibração (Jaragem)": "3. Calibration Flow Rate",
-        "4. Selos de Diagnóstico Interativos": "4. Interactive Diagnostic Stamps",
-        "5. Densidade da Calda (Gravidade Específica)": "5. Mix Density (Specific Gravity)",
-        "6. Gráfico de Janelas Seguras": "6. Safe Operating Window Chart",
-        "7. Laudo Técnico em PDF e Orçamento": "7. Technical PDF Report & Quotes",
-        "Simulador de Bicos ISO para Aplicação Agro": "ISO Nozzle Simulator for Agricultural Application",
-        "Configurações Operacionais": "Operational Configurations",
-        "Velocidade do Trator (km/h)": "Tractor Speed (km/h)",
-        "Vazão Alvo da Aplicação (L/ha)": "Target Application Rate (L/ha)",
-        "Espaçamento entre Bicos (cm)": "Nozzle Spacing (cm)",
-        "Pressão Mínima Desejada": "Desired Minimum Pressure",
-        "Pressão Máxima Desejada": "Desired Maximum Pressure",
-        "Cadastrar novo Produtor": "Register New Grower",
-        "Clientes e Frotas (CRM)": "Clients and Fleets (CRM)",
-        "Configurações da Calda": "Mix Configurations",
-        "Densidade da Calda (Gravidade Específica)": "Mix Density (Specific Gravity)",
-        "Água Limpa (Padrão)": "Clean Water (Standard)",
-        "Calda Leve": "Light Mix",
-        "Calda Média / Adubação": "Medium Mix / Fertilizer",
-        "Calda Pesada": "Heavy Mix",
-        "Gráfico da Janela Operacional Segura": "Safe Operating Window Chart",
-        "Janela Operacional Recomendada": "Recommended Operating Window",
-        "Nenhum bico atende plenamente esta configuração": "No nozzle fully meets this configuration",
-        "As opções acima são as alternativas mais próximas, ordenadas pela menor distância entre a pressão mínima real e o limite mínimo configurado.": "The options above are the closest alternatives, sorted by the smallest distance between the actual minimum pressure and the configured minimum limit.",
-        "Histórico de Simulações": "Simulation History",
-        "Nenhuma calibração vinculada.": "No calibrations linked.",
-        "Nenhuma máquina registrada para este produtor.": "No machines registered for this grower.",
-        "Sem Fazenda cadastrada": "No farm registered",
-        "Máquinas registradas": "Registered machines",
-        "Obs:": "Notes:",
-        "Larg. Barra:": "Boom Width:",
-        "Vazão Barra:": "Boom Flow:",
-        "Vazão Bico:": "Nozzle Flow:",
-        "Alvo:": "Target:",
-        "Pressão Méd:": "Avg Pressure:",
-        "Janela Ideal:": "Ideal Window:",
-        "Carregar no Simulador": "Load in Simulator",
-        "Editar": "Edit",
-        "Excluir": "Delete",
-        "Salvar Configuração": "Save Configuration",
-        "Acesso ao Sistema": "System Login",
-        "Digite seu e-mail cadastrado e senha para carregar seus dados na nuvem.": "Enter your registered email and password to load your cloud data.",
-        "Entrar / Cadastrar": "Login / Sign Up",
-        "Usar em Modo Local (Offline)": "Use in Local Mode (Offline)",
-        "Aguarde...": "Please wait...",
-        "Voltar": "Back",
-        "Salvar Calibração": "Save Calibration",
-        "Escolher Ponta por Tabela Completa": "Choose Nozzle from Full Table",
-        "Gerar Laudo Técnico PDF": "Generate Technical PDF Report",
-        "Fator de Conversão de Calda": "Mix Conversion Factor",
-        "Pressão Requerida": "Required Pressure",
-        "Estabilidade": "Stability",
-        "Volume de Calda": "Spray Volume",
-        "Velocidade Ideal": "Ideal Speed",
-        "Pressão Mínima": "Minimum Pressure",
-        "Pressão Máxima": "Maximum Pressure",
-        "Tamanho de Gota": "Droplet Size",
-        "Muito Fina": "Very Fine",
-        "Fina": "Fine",
-        "Média": "Medium",
-        "Grossa": "Coarse",
-        "Muito Grossa": "Very Coarse",
-        "Extremadamente Grossa": "Extremely Coarse",
-        "Ultra Grossa": "Ultra Coarse"
-      }
-    };
+    // === MULTI-LANGUAGE SYSTEM (Moved to the top of the main script block) ===
 
     function toggleLangDropdown(event) {
       if (event) event.stopPropagation();

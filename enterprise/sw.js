@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spray-pro-v16';
+const CACHE_NAME = 'spray-pro-v17';
 const urlsToCache = [
   './',
   './index.html',
@@ -33,11 +33,37 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Se achou no cache (offline), retorna. Senão, vai para a rede.
-        return response || fetch(event.request);
-      })
-  );
+  const isHtml = event.request.headers.get('accept')?.includes('text/html') || event.request.url.endsWith('.html') || event.request.url.endsWith('/');
+  if (isHtml) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          return response || fetch(event.request).then(netResponse => {
+            if (netResponse.status === 200) {
+              const responseClone = netResponse.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseClone);
+              });
+            }
+            return netResponse;
+          });
+        })
+    );
+  }
 });

@@ -974,8 +974,8 @@
     }
     .lang-btn {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #fff;
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
       padding: 8px 14px;
       border-radius: 999px;
       cursor: pointer;
@@ -997,12 +997,12 @@
       position: absolute;
       top: 110%;
       right: 0;
-      background: rgba(15, 20, 24, 0.96);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
       border-radius: 12px;
       padding: 6px;
       min-width: 150px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: var(--shadow);
       backdrop-filter: blur(20px);
       flex-direction: column;
       gap: 4px;
@@ -1014,7 +1014,7 @@
     .lang-dropdown button {
       background: none;
       border: none;
-      color: #94a3b8;
+      color: var(--text-muted);
       padding: 8px 12px;
       text-align: left;
       font-size: 13px;
@@ -1029,8 +1029,8 @@
       outline: none;
     }
     .lang-dropdown button:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
     }
   </style>
 </head>

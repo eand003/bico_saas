@@ -151,6 +151,7 @@ function showLoginScreen(options = {}) {
       skipBtn.style.display = 'none';
     }
   }
+  if (typeof window.applyTranslations === 'function') window.applyTranslations();
 }
 
 function showAppContainer() {

@@ -3307,6 +3307,7 @@
 
       btnSubmit.disabled = true;
       btnSubmit.innerText = 'Aguarde...';
+      if (typeof applyTranslations === 'function') applyTranslations();
       authError.style.display = 'none';
       authSuccess.style.display = 'none';
 
@@ -3367,6 +3368,7 @@
         authError.style.display = 'block';
         btnSubmit.disabled = false;
         btnSubmit.innerText = 'Entrar / Cadastrar';
+        if (typeof applyTranslations === 'function') applyTranslations();
       }
     }
 
@@ -3463,6 +3465,7 @@
         btnSubmit.disabled = false;
         btnSubmit.innerText = 'Entrar / Cadastrar';
       }
+      if (typeof applyTranslations === 'function') applyTranslations();
     }
 
     if (document.readyState === 'loading') {
@@ -3474,6 +3477,17 @@
     // === MULTI-LANGUAGE SYSTEM ===
     const translationDict = {
       es: {
+        "Simulador de Bicos ISO": "Simulador de boquillas ISO",
+        "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Simulador técnico para la selección precisa de boquillas de pulverización, garantizando la máxima eficiencia y economía en la aplicación.",
+        "Cadastrar novo acesso": "Registrar nuevo acceso",
+        "Ao entrar, você concorda com os": "Al ingresar, usted acepta los",
+        "Termos de Uso": "Términos de Uso",
+        "Seu E-mail": "Su correo electrónico",
+        "Sua Senha": "Su contraseña",
+        "Seu Nome e Sobrenome": "Su nombre y apellido",
+        "Seu WhatsApp (apenas números)": "Su WhatsApp (solo números)",
+        "Sucesso!": "¡Éxito!",
+        "Erro ao entrar": "Error al entrar",
         "Como Utilizar o Simulador": "Cómo utilizar el simulador",
         "1. Cadastro de Clientes e Máquinas (CRM)": "1. Registro de clientes y máquinas (CRM)",
         "2. Carregamento e Sessão Ativa": "2. Carga y sesión activa",
@@ -3543,6 +3557,17 @@
         "Ultra Grossa": "Ultra gruesa"
       },
       en: {
+        "Simulador de Bicos ISO": "ISO Nozzle Simulator",
+        "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Technical simulator for precise spray nozzle selection, ensuring maximum efficiency and savings in application.",
+        "Cadastrar novo acesso": "Register new access",
+        "Ao entrar, você concorda com os": "By logging in, you agree to the",
+        "Termos de Uso": "Terms of Use",
+        "Seu E-mail": "Your Email",
+        "Sua Senha": "Your Password",
+        "Seu Nome e Sobrenome": "Your First & Last Name",
+        "Seu WhatsApp (apenas números)": "Your WhatsApp (numbers only)",
+        "Sucesso!": "Success!",
+        "Erro ao entrar": "Login error",
         "Como Utilizar o Simulador": "How to Use the Simulator",
         "1. Cadastro de Clientes e Máquinas (CRM)": "1. Client & Machine Registration (CRM)",
         "2. Carregamento e Sessão Ativa": "2. Session Management",

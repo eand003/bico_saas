@@ -24,6 +24,17 @@ let timerInterval = null;
 let timerTimeLeft = 30; // segundos
 let timerDuration = 30;
 
+function formatCurrency(value) {
+  const lang = localStorage.getItem('spray_language') || 'pt';
+  if (lang === 'pt') {
+    return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  } else if (lang === 'es') {
+    return `$ ${value.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  } else {
+    return `$ ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+}
+
 function initApp() {
   setupNavigation();
   setupNozzleIsoCatalog();
@@ -43,7 +54,14 @@ function initApp() {
   
   // Registrar data atual na identificação
   const today = new Date().toLocaleDateString('pt-BR');
-  document.getElementById('input-notas-identificacao').placeholder = `Inspeção realizada em ${today}...`;
+  const lang = localStorage.getItem('spray_language') || 'pt';
+  let placeholderText = `Inspeção realizada em ${today}...`;
+  if (lang === 'es') {
+    placeholderText = `Inspección realizada el ${today}...`;
+  } else if (lang === 'en') {
+    placeholderText = `Inspection performed on ${today}...`;
+  }
+  document.getElementById('input-notas-identificacao').placeholder = placeholderText;
   
   // Iniciar escuta para auto-save de rascunhos em tempo real
   setupDraftAutoSave();
@@ -605,7 +623,8 @@ function updateProgressVisuals() {
   const percent = Math.round((evaluatedCount / totalNozzles) * 100);
   
   document.getElementById('guided-progress-fill').style.width = `${percent}%`;
-  document.getElementById('guided-progress-label').textContent = `Bico ${activeNozzleIndex + 1} de ${totalNozzles} (Coletado ${evaluatedCount} de ${totalNozzles} bicos - ${percent}% concluído)`;
+  const label = `${t("Bico")} ${activeNozzleIndex + 1} ${t("de")} ${totalNozzles} (${t("Coletado")} ${evaluatedCount} ${t("de")} ${totalNozzles} ${t("bicos")} - ${percent}% ${t("completo")})`;
+  document.getElementById('guided-progress-label').textContent = label;
 }
 
 // Feedback dinâmico enquanto o usuário digita
@@ -645,11 +664,11 @@ function updateRealtimeNozzleFeedback() {
   feedbackDiv.style.border = `1px solid var(--${statusClass === 'status-ok' ? 'accent-green-border' : (statusClass.includes('critico') ? 'accent-error-border' : 'accent-warning-border')})`;
   
   feedbackDiv.innerHTML = `
-    <div style="font-weight:bold; color:var(--text-main); margin-bottom:4px; font-family:'Outfit';">Bico ${activeNozzleIndex + 1}: ${statusText}</div>
+    <div style="font-weight:bold; color:var(--text-main); margin-bottom:4px; font-family:'Outfit';">${t("Bico")} ${activeNozzleIndex + 1}: ${t(statusText)}</div>
     <div style="font-size:12px; color:var(--text-muted); line-height:1.4;">
-      Vazão: **${measuredFlow.toFixed(2)} L/min** (Esperado: ${expectedFlow.toFixed(2)} L/min)<br>
-      Desvio Hidráulico: <strong style="color:var(--text-main);">${deviation > 0 ? '+' : ''}${deviation.toFixed(1)}%</strong><br>
-      *Ação:* ${rec.action}
+      ${t("Vazão")}: **${measuredFlow.toFixed(2)} L/min** (${t("Esperado")}: ${expectedFlow.toFixed(2)} L/min)<br>
+      ${t("Desvio Hidráulico")}: <strong style="color:var(--text-main);">${deviation > 0 ? '+' : ''}${deviation.toFixed(1)}%</strong><br>
+      *${t("Ação")}:* ${t(rec.action)}
     </div>
   `;
 }
@@ -675,7 +694,7 @@ function startChronometer() {
       
       // Ações ao concluir o cronômetro
       playBeep('timer_end');
-      speak(`Tempo esgotado para o bico ${activeNozzleIndex + 1}. Registre o volume.`);
+      speak(t("Tempo esgotado para o bico") + " " + (activeNozzleIndex + 1) + ". " + t("Registre o volume."));
       
       // Tentar focar no input de volume automaticamente (desativado em mobile)
       const isMobile = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
@@ -752,7 +771,7 @@ function rebuildBulkGrid() {
       <td style="padding:8px; font-weight:bold; font-family:'Outfit';">${String(m.nozzle_number).padStart(2, '0')}</td>
       <td style="padding:4px;">
         <input type="number" value="${m.collected_volume_ml > 0 ? m.collected_volume_ml : ''}" 
-               placeholder="Digitar volume" 
+               placeholder="${t("Digitar volume")}" 
                class="input-field" 
                style="max-width:140px; padding:6px 10px; font-size:14px;"
                data-index="${idx}">
@@ -760,7 +779,7 @@ function rebuildBulkGrid() {
       <td style="padding:8px;" id="bulk-flow-${idx}">${m.measured_flow_l_min > 0 ? m.measured_flow_l_min.toFixed(2) + ' L/min' : '--'}</td>
       <td style="padding:8px; font-weight:bold;" id="bulk-dev-${idx}">${m.deviation_percent !== 0 ? (m.deviation_percent > 0 ? '+' : '') + m.deviation_percent.toFixed(1) + '%' : '--'}</td>
       <td style="padding:8px;" id="bulk-status-${idx}">
-        <span class="badge status-${m.status}">${m.status.replace('_', ' ')}</span>
+        <span class="badge status-${m.status}">${t(m.status.replace('_', ' '))}</span>
       </td>
     `;
 
@@ -777,7 +796,7 @@ function rebuildBulkGrid() {
       
       const badgeSpan = document.getElementById(`bulk-status-${idx}`).querySelector('span');
       badgeSpan.className = `badge status-${updated.status}`;
-      badgeSpan.textContent = updated.status.replace('_', ' ');
+      badgeSpan.textContent = t(updated.status.replace('_', ' '));
       
       tr.style.backgroundColor = updated.status === 'ok' ? 'rgba(16, 185, 129, 0.04)' : '';
       
@@ -901,13 +920,16 @@ function recalculateAllMeasurements() {
 // 7. GERAÇÃO DE RELATÓRIO TÉCNICO (ETAPA 5)
 // ==========================================
 function generateReportAndRender() {
+  const lang = localStorage.getItem('spray_language') || 'pt';
   const cliente = document.getElementById('input-cliente').value;
-  const fazenda = document.getElementById('input-fazenda').value || 'Não informada';
+  const fazenda = document.getElementById('input-fazenda').value || t('Não informada');
   const local = `${document.getElementById('input-cidade').value} - ${document.getElementById('input-estado').value}`;
   const data = new Date().toLocaleDateString('pt-BR');
-  const maquina = `${document.getElementById('input-marca').value || 'Pulverizador'} ${document.getElementById('input-modelo').value || ''}`.trim();
-  const barra = `${document.getElementById('input-largura-barra').value} metros (${totalNozzles} bicos)`;
-  const ponta = `${document.getElementById('select-ponta-tipo').value.replace('_', ' ')} ${document.getElementById('input-ponta-modelo').value || ''}`.trim();
+  const maquina = `${document.getElementById('input-marca').value || t('Pulverizador')} ${document.getElementById('input-modelo').value || ''}`.trim();
+  const barra = `${document.getElementById('input-largura-barra').value} ${t("metros")} (${totalNozzles} ${t("bicos")})`;
+  const selectPontaTipo = document.getElementById('select-ponta-tipo');
+  const selectedPontaText = selectPontaTipo.options[selectPontaTipo.selectedIndex].text;
+  const ponta = `${t(selectedPontaText)} ${document.getElementById('input-ponta-modelo').value || ''}`.trim();
   const inspetor = document.getElementById('input-responsavel').value;
 
   // Atualizar Metadados no Relatório
@@ -937,7 +959,7 @@ function generateReportAndRender() {
   document.getElementById('rep-card-cv').textContent = `${summary.coefficientOfVariationPercent.toFixed(1)}%`;
   
   const veredito = document.getElementById('rep-card-veredito');
-  veredito.textContent = summary.generalClassification.toUpperCase().replace(/_/g, ' ');
+  veredito.textContent = t(summary.generalClassification.replace(/_/g, ' ')).toUpperCase();
   if (summary.generalClassification === 'aprovado') {
     veredito.style.color = 'var(--accent-green)';
   } else if (summary.generalClassification === 'aprovado_com_ressalvas') {
@@ -965,25 +987,62 @@ function generateReportAndRender() {
   const criticalCount = summary.criticalBelowCount + summary.criticalAboveCount;
   const cvVal = summary.coefficientOfVariationPercent;
 
-  if (summary.generalClassification === 'aprovado') {
-    textoConclusao = `✔️ **Equipamento APROVADO!** A barra de pulverização apresenta um Coeficiente de Variação excelente de **${cvVal.toFixed(1)}%** (dentro do limite recomendado de 10%). Dos bicos avaliados, **${summary.okCount} estão totalmente calibrados** e em conformidade com o alvo nominal. Equipamento liberado para pulverização uniforme e de alta eficiência em campo.`;
-  } else if (summary.generalClassification === 'aprovado_com_ressalvas') {
-    textoConclusao = `⚠️ **Atenção (Aprovado com Ressalvas):** A barra opera em faixa limítrofe. `;
-    if (cvVal > 10 && cvVal <= 15) {
-      textoConclusao += `O Coeficiente de Variação está em **${cvVal.toFixed(1)}%** (faixa de atenção entre 10% e 15%), indicando pequenas oscilações de fluxo. `;
+  if (lang === 'es') {
+    if (summary.generalClassification === 'aprovado') {
+      textoConclusao = `✔️ **¡Equipo APROBADO!** La barra de pulverización presenta un excelente Coeficiente de Variación de **${cvVal.toFixed(1)}%** (dentro del límite recomendado de 10%). De las boquillas evaluadas, **${summary.okCount} están totalmente calibradas** y en conformidad con el objetivo nominal. Equipo liberado para una pulverización uniforme y de alta eficiencia en el campo.`;
+    } else if (summary.generalClassification === 'aprovado_com_ressalvas') {
+      textoConclusao = `⚠️ **Atención (Aprobado con Advertencias):** La barra opera en rango límite. `;
+      if (cvVal > 10 && cvVal <= 15) {
+        textoConclusao += `El Coeficiente de Variación está en **${cvVal.toFixed(1)}%** (rango de atención entre 10% y 15%), indicando pequeñas oscilaciones de flujo. `;
+      } else {
+        textoConclusao += `La uniformidad de caudal relativo es aceptable (CV de **${cvVal.toFixed(1)}%**), pero `;
+      }
+      textoConclusao += `existen **${summary.belowCount + summary.aboveCount} boquillas con desviación leve** de caudal (desgaste u obstrucción leve). Se recomienda realizar la limpieza de las boquillas y de los filtros individuales señalados antes de la próxima aplicación.`;
     } else {
-      textoConclusao += `A uniformidade de vazão relativa está aceitável (CV de **${cvVal.toFixed(1)}%**), mas `;
+      textoConclusao = `❌ **¡Equipo REPROBADO!** `;
+      if (cvVal <= 10) {
+        textoConclusao += `A pesar de presentar un Coeficiente de Variación bajo y uniforme de **${cvVal.toFixed(1)}%** (lo que indica que las boquillas aplican volúmenes muy similares entre sí), la barra posee **${totalOffTarget} boquillas descalibradas en relación con el caudal nominal objetivo esperado** de **${expectedFlow.toFixed(2)} L/min** (siendo **${criticalCount} boquillas en estado crítico** de obstrucción o desgaste severo). Aplicar en estas condiciones causará una subdosificación o sobredosificación sistemática en el área, distanciando toda la aplicación del objetivo planificado de caldo. **Reemplace y limpie inmediatamente** las boquillas indicadas para reajustar la máquina a lo planificado.`;
+      } else {
+        textoConclusao += `La barra presenta una desuniformidad mecánica severa de caudal, registrando un Coeficiente de Variación inaceptable de **${cvVal.toFixed(1)}%** (límite máximo recomendado de 10%). La barra posee **${criticalCount} boquillas en estado crítico** de obstrucción o desgaste severo y **${summary.belowCount + summary.aboveCount} boquillas descalibradas**. Pulverizar en estas condiciones generará franjas con fallas severas de control (subdosificación) y franjas con desperdicio directo de agroquímicos y riesgo de fitotoxicidad (sobredosificación). **Realice el mantenimiento inmediato** de las boquillas indicadas.`;
+      }
     }
-    textoConclusao += `existem **${summary.belowCount + summary.aboveCount} bicos com desvio leve** de vazão (desgaste ou obstrução leve). Recomenda-se realizar a limpeza dos bicos e dos filtros individuais assinalados antes da próxima aplicação.`;
-  } else {
-    // REPROVADO cases
-    textoConclusao = `❌ **Equipamento REPROVADO!** `;
-    if (cvVal <= 10) {
-      // Caso clássico: CV baixo (bom), mas reprovado porque os bicos estão todos descalibrados em relação ao alvo (ou bicos críticos)
-      textoConclusao += `Apesar de apresentar um Coeficiente de Variação baixo e uniforme de **${cvVal.toFixed(1)}%** (indicando que as pontas aplicam volumes muito parecidos entre si), a barra possui **${totalOffTarget} bicos desregulados em relação à vazão nominal alvo esperada** de **${expectedFlow.toFixed(2)} L/min** (sendo **${criticalCount} bicos em estado crítico** de entupimento ou desgaste severo). Aplicar nessas condições causará uma subdosagem ou sobredosagem sistemática na área, distanciando toda a aplicação do alvo planejado de calda. **Substitua e limpe imediatamente** as pontas indicadas para reajustar a máquina ao planejado.`;
+  } else if (lang === 'en') {
+    if (summary.generalClassification === 'aprovado') {
+      textoConclusao = `✔️ **Equipment APPROVED!** The spray boom presents an excellent Coefficient of Variation of **${cvVal.toFixed(1)}%** (within the recommended limit of 10%). Of the evaluated nozzles, **${summary.okCount} are fully calibrated** and in conformity with the nominal target. Equipment cleared for uniform and high-efficiency spraying in the field.`;
+    } else if (summary.generalClassification === 'aprovado_com_ressalvas') {
+      textoConclusao = `⚠️ **Attention (Approved with Cautions):** The boom operates in a borderline range. `;
+      if (cvVal > 10 && cvVal <= 15) {
+        textoConclusao += `The Coefficient of Variation is at **${cvVal.toFixed(1)}%** (caution range between 10% and 15%), indicating minor flow fluctuations. `;
+      } else {
+        textoConclusao += `The relative flow uniformity is acceptable (CV of **${cvVal.toFixed(1)}%**), but `;
+      }
+      textoConclusao += `there are **${summary.belowCount + summary.aboveCount} nozzles with slight deviation** in flow (slight clogging or wear). It is recommended to clean the designated nozzles and individual nozzle filters before the next application.`;
     } else {
-      // CV ruim (desuniformidade severa)
-      textoConclusao += `A barra apresenta desuniformidade mecânica severa de fluxo, registrando um Coeficiente de Variação inaceitável de **${cvVal.toFixed(1)}%** (limite máximo recomendado de 10%). A barra possui **${criticalCount} bicos em estado crítico** de entupimento ou desgaste severo e **${summary.belowCount + summary.aboveCount} bicos desregulados**. Pulverizar nessas condições gerará faixas com falha severa de controle (subdosagem) e faixas com desperdício direto de defensivo e risco de fitotoxicidade (sobredosagem). **Realize a manutenção imediata** das pontas indicadas.`;
+      textoConclusao = `❌ **Equipment REJECTED!** `;
+      if (cvVal <= 10) {
+        textoConclusao += `Despite presenting a low and uniform Coefficient of Variation of **${cvVal.toFixed(1)}%** (indicating that the nozzles apply volumes very similar to each other), the boom has **${totalOffTarget} nozzles out of calibration relative to the expected target nominal flow** of **${expectedFlow.toFixed(2)} L/min** (with **${criticalCount} nozzles in a critical state** of severe clogging or severe wear). Spraying under these conditions will cause systematic underdosing or overdosing, steering the entire application away from the planned rate. **Immediately replace and clean** the indicated nozzles to readjust the machine to the planned rate.`;
+      } else {
+        textoConclusao += `The boom presents severe mechanical flow non-uniformity, registering an unacceptable Coefficient of Variation of **${cvVal.toFixed(1)}%** (maximum recommended limit of 10%). The boom has **${criticalCount} nozzles in a critical state** of severe clogging or severe wear and **${summary.belowCount + summary.aboveCount} out-of-calibration nozzles**. Spraying under these conditions will generate strips with severe control failure (underdosing) and strips with direct chemical waste and risk of phytotoxicity (overdosing). **Perform immediate maintenance** on the indicated nozzles.`;
+      }
+    }
+  } else {
+    if (summary.generalClassification === 'aprovado') {
+      textoConclusao = `✔️ **Equipamento APROVADO!** A barra de pulverização apresenta um Coeficiente de Variação excelente de **${cvVal.toFixed(1)}%** (dentro do limite recomendado de 10%). Dos bicos avaliados, **${summary.okCount} estão totalmente calibrados** e em conformidade com o alvo nominal. Equipamento liberado para pulverização uniforme e de alta eficiência em campo.`;
+    } else if (summary.generalClassification === 'aprovado_com_ressalvas') {
+      textoConclusao = `⚠️ **Atenção (Aprovado com Ressalvas):** A barra opera em faixa limítrofe. `;
+      if (cvVal > 10 && cvVal <= 15) {
+        textoConclusao += `O Coeficiente de Variação está em **${cvVal.toFixed(1)}%** (faixa de atenção entre 10% e 15%), indicando pequenas oscilações de fluxo. `;
+      } else {
+        textoConclusao += `A uniformidade de vazão relativa está aceitável (CV de **${cvVal.toFixed(1)}%**), mas `;
+      }
+      textoConclusao += `existem **${summary.belowCount + summary.aboveCount} bicos com desvio leve** de vazão (desgaste ou obstrução leve). Recomenda-se realizar a limpeza dos bicos e dos filtros individuais assinalados antes da próxima aplicação.`;
+    } else {
+      textoConclusao = `❌ **Equipamento REPROVADO!** `;
+      if (cvVal <= 10) {
+        textoConclusao += `Apesar de apresentar um Coeficiente de Variação baixo e uniforme de **${cvVal.toFixed(1)}%** (indicando que as pontas aplicam volumes muito parecidos entre si), a barra possui **${totalOffTarget} bicos desregulados em relação à vazão nominal alvo esperada** de **${expectedFlow.toFixed(2)} L/min** (sendo **${criticalCount} bicos em estado crítico** de entupimento ou desgaste severo). Aplicar nessas condições causará uma subdosagem ou sobredosagem sistemática na área, distanciando toda a aplicação do alvo planejado de calda. **Substitua e limpe imediatamente** as pontas indicadas para reajustar a máquina ao planejado.`;
+      } else {
+        textoConclusao += `A barra apresenta desuniformidade mecânica severa de fluxo, registrando um Coeficiente de Variação inaceitável de **${cvVal.toFixed(1)}%** (limite máximo recomendado de 10%). A barra possui **${criticalCount} bicos em estado crítico** de entupimento ou desgaste severo e **${summary.belowCount + summary.aboveCount} bicos desregulados**. Pulverizar nessas condições gerará faixas com falha severa de controle (subdosagem) e faixas com desperdício direto de defensivo e risco de fitotoxicidade (sobredosagem). **Realize a manutenção imediata** das pontas indicadas.`;
+      }
     }
   }
   document.getElementById('rep-texto-conclusao').innerHTML = textoConclusao;
@@ -1020,8 +1079,8 @@ function generateReportAndRender() {
         ${m.collected_volume_ml > 0 ? (m.deviation_percent > 0 ? '+' : '') + m.deviation_percent.toFixed(1) + '%' : '--'}
       </td>
       <td>${m.actual_rate_l_ha > 0 ? m.actual_rate_l_ha.toFixed(1) : '--'}</td>
-      <td><span class="badge ${badgeClass}">${m.status.replace('_', ' ')}</span></td>
-      <td style="font-size:12px; color:var(--text-muted);">${m.recommendation || 'Nenhuma ação necessária.'}</td>
+      <td><span class="badge ${badgeClass}">${t(m.status.replace('_', ' '))}</span></td>
+      <td style="font-size:12px; color:var(--text-muted);">${t(m.recommendation) || t('Nenhuma ação necessária.')}</td>
     `;
     tbody.appendChild(tr);
 
@@ -1040,16 +1099,16 @@ function generateReportAndRender() {
   listaAcao.innerHTML = '';
   
   if (planoAcaoSet.size === 0) {
-    listaAcao.innerHTML = '<li>✓ Todas as pontas estão dentro dos padrões normais de vazão. Apenas mantenha a higienização física rotineira ao final de cada aplicação.</li>';
+    listaAcao.innerHTML = `<li>✓ ${t('Todas as pontas estão dentro dos padrões normais de vazão. Apenas mantenha a higienização física rotineira ao final de cada aplicação.')}</li>`;
   } else {
     planoAcaoSet.forEach(item => {
       const li = document.createElement('li');
-      li.textContent = item;
+      li.textContent = t(item);
       listaAcao.appendChild(li);
     });
     // Itens padrão
-    listaAcao.innerHTML += '<li>Verificar no manômetro de cabine a estabilidade da pressão e aferir a bomba hidráulica do pulverizador.</li>';
-    listaAcao.innerHTML += '<li>Realizar uma nova inspeção espacial de aferição após a execução das trocas e limpezas físicas.</li>';
+    listaAcao.innerHTML += `<li>${t('Verificar no manômetro de cabine a estabilidade da pressão e aferir a bomba hidráulica do pulverizador.')}</li>`;
+    listaAcao.innerHTML += `<li>${t('Realizar uma nova inspeção espacial de aferição após a execução das trocas e limpezas físicas.')}</li>`;
   }
 
   // Acionar simulador financeiro interativo
@@ -1071,14 +1130,16 @@ function triggerFinancialLossSimulator() {
   const simResult = simulateFinancialLoss(measurements, expectedFlow, speed, spacing, custo, area, valorSafra, perdaPercent);
 
   // Injetar valores
-  document.getElementById('rep-sim-desperdicio').textContent = `R$ ${simResult.wastedCost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  document.getElementById('rep-sim-escape').textContent = `R$ ${simResult.efficiencyLossRiskCost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  document.getElementById('rep-sim-total').textContent = `R$ ${simResult.totalLoss.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  document.getElementById('rep-sim-desperdicio').textContent = formatCurrency(simResult.wastedCost);
+  document.getElementById('rep-sim-escape').textContent = formatCurrency(simResult.efficiencyLossRiskCost);
+  document.getElementById('rep-sim-total').textContent = formatCurrency(simResult.totalLoss);
 
   // Injetar parâmetros dinâmicos na memória de cálculo/legenda
-  document.getElementById('memo-area').textContent = area.toLocaleString('pt-BR');
-  document.getElementById('memo-custo').textContent = custo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  document.getElementById('memo-valor-safra').textContent = valorSafra.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const lang = localStorage.getItem('spray_language') || 'pt';
+  const locale = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-ES' : 'pt-BR');
+  document.getElementById('memo-area').textContent = area.toLocaleString(locale);
+  document.getElementById('memo-custo').textContent = custo.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('memo-valor-safra').textContent = valorSafra.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   document.getElementById('memo-perda-percent').textContent = perdaPercent;
 }
 
@@ -1429,6 +1490,8 @@ async function handleSaveInspectionWorkflow() {
 
 
 async function renderHistoryList() {
+  const lang = localStorage.getItem('spray_language') || 'pt';
+  const locale = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-ES' : 'pt-BR');
   const container = document.getElementById('history-items-container');
   const empty = document.getElementById('history-empty-state');
   
@@ -1471,19 +1534,19 @@ async function renderHistoryList() {
           ${item.is_demo ? `<span style="font-size:10px; background:var(--accent-glow); color:var(--accent); padding:2px 8px; border-radius:12px; font-weight:bold; border: 1px solid rgba(0, 102, 204, 0.12);">💡 DEMO</span>` : ''}
         </div>
         <div style="font-size:12px; color:var(--text-muted); margin-top:-6px;">
-          ${showProducerSub}🏡 ${item.farm_name || 'Fazenda S/N'} | 📍 ${item.city} - ${item.state}
+          ${showProducerSub}🏡 ${item.farm_name || t('Fazenda S/N')} | 📍 ${item.city} - ${item.state}
         </div>
         <div style="font-size:11px; background:#f1f5f9; padding:6px; border-radius:8px; display:flex; flex-direction:column; gap:2px; border:1px solid #cbd5e1;">
-          <div>🚜 Pulverizador: **${item.sprayer_brand || ''} ${item.sprayer_model || ''}**</div>
-          <div>🎨 Bico: **${item.nozzle_model || 'Não informado'}**</div>
-          <div>⏱️ CV da Barra: **${cvVal.toFixed(1)}%** (${item.summary?.evaluatedNozzles} bicos aferidos)</div>
+          <div>🚜 ${t('Pulverizador:')} **${item.sprayer_brand || ''} ${item.sprayer_model || ''}**</div>
+          <div>🎨 ${t('Bico:')} **${item.nozzle_model || t('Não informado')}**</div>
+          <div>⏱️ ${t('CV da Barra:')} **${cvVal.toFixed(1)}%** (${item.summary?.evaluatedNozzles} ${t('bicos aferidos')})</div>
         </div>
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-          <span style="font-size:10px; color:var(--text-light);">${new Date(item.created_at).toLocaleDateString('pt-BR')}</span>
+          <span style="font-size:10px; color:var(--text-light);">${new Date(item.created_at).toLocaleDateString(locale)}</span>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-secondary btn-open-ins" data-id="${item.id}" style="padding:6px 10px; min-height:30px; font-size:11px;">📂 Abrir</button>
-            <button class="btn btn-danger btn-delete-ins" data-id="${item.id}" style="padding:6px 10px; min-height:30px; font-size:11px;">🗑️ Excluir</button>
+            <button class="btn btn-secondary btn-open-ins" data-id="${item.id}" style="padding:6px 10px; min-height:30px; font-size:11px;">📂 ${t('Abrir')}</button>
+            <button class="btn btn-danger btn-delete-ins" data-id="${item.id}" style="padding:6px 10px; min-height:30px; font-size:11px;">🗑️ ${t('Excluir')}</button>
           </div>
         </div>
       `;
@@ -1618,7 +1681,7 @@ function setupVoiceAssistant() {
       document.getElementById('input-volume-ml').value = volumeMl;
       updateRealtimeNozzleFeedback();
       playBeep('success');
-      speak(`Bico ${activeNozzleIndex + 1}: ${volumeMl} mL anotado.`);
+      speak(`${t("Bico")} ${activeNozzleIndex + 1}: ${volumeMl} mL ${t("anotado.")}`);
     },
     onCommand: (cmd) => {
       if (cmd === 'next') {
@@ -1630,7 +1693,7 @@ function setupVoiceAssistant() {
       } else if (cmd === 'clear') {
         document.getElementById('input-volume-ml').value = '';
         updateRealtimeNozzleFeedback();
-        speak(`Valores apagados para o bico ${activeNozzleIndex + 1}.`);
+        speak(`${t("Valores apagados para o bico")} ${activeNozzleIndex + 1}.`);
       } else if (cmd === 'clogged') {
         markNozzleStatus('critico_abaixo');
       } else if (cmd === 'leaking') {
@@ -1640,10 +1703,10 @@ function setupVoiceAssistant() {
     onStatus: (status, err) => {
       if (status === 'escutando') {
         indicator.className = 'voice-indicator active';
-        indicator.textContent = '🎤 Assistente de Voz: Ouvindo...';
+        indicator.textContent = '🎤 ' + t("Assistente de Voz: Ouvindo...");
       } else {
         indicator.className = 'voice-indicator';
-        indicator.textContent = '🎤 Assistente de Voz: Desligado';
+        indicator.textContent = '🎤 ' + t("Assistente de Voz: Desligado");
       }
     }
   });
@@ -1652,10 +1715,10 @@ function setupVoiceAssistant() {
   indicator.addEventListener('click', () => {
     if (isCurrentlyListening()) {
       stopListening();
-      speak("Assistente de voz inativo.");
+      speak(t("Assistente de voz inativo."));
     } else {
       startListening();
-      speak("Assistente ativado. Diga o volume ou cronômetro.");
+      speak(t("Assistente ativado. Diga o volume ou cronômetro."));
     }
   });
 }
@@ -1678,7 +1741,7 @@ function saveAndNextNozzle() {
     updateGuidedNozzleFocus();
   } else {
     // Fim da barra
-    speak("Aferição espacial de bicos concluída. Gerando relatório.");
+    speak(t("Aferição espacial de bicos concluída. Gerando relatório."));
     switchTab('tab-relatorio');
   }
 }
@@ -1701,7 +1764,7 @@ function markNozzleStatus(status) {
   m.notes = rec.diagnostic;
 
   playBeep('error');
-  speak(`Bico ${activeNozzleIndex + 1} marcado como ${status.replace('_', ' ')}.`);
+  speak(`${t("Bico")} ${activeNozzleIndex + 1} ${t("marcado como")} ${t(status.replace('_', ' '))}.`);
   
   setTimeout(() => {
     saveAndNextNozzle();

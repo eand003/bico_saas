@@ -33,7 +33,8 @@ function initVoiceService() {
     recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = false;
-    recognition.lang = 'pt-BR';
+    const lang = localStorage.getItem('spray_language') || 'pt';
+    recognition.lang = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-419' : 'pt-BR');
 
     recognition.onstart = () => {
       isListening = true;
@@ -131,7 +132,8 @@ function speak(text, interrupt = true) {
   }
   
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'pt-BR';
+  const lang = localStorage.getItem('spray_language') || 'pt';
+  utterance.lang = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-419' : 'pt-BR');
   utterance.rate = 1.0; // Velocidade natural
   utterance.pitch = 1.0;
   

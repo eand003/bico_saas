@@ -973,8 +973,8 @@
       z-index: 1000;
     }
     .lang-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--glass-border);
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
       color: var(--text-main);
       padding: 8px 14px;
       border-radius: 999px;
@@ -989,8 +989,8 @@
       outline: none;
     }
     .lang-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--accent, #00d2ff);
+      background: var(--table-row-hover);
+      border-color: var(--accent);
     }
     .lang-dropdown {
       display: none;
@@ -1956,13 +1956,13 @@
         let html = `<thead>
           <tr>
             <th style="text-align:left">ISO</th>
-            <th title="Vazão de fábrica Padrão ISO">Q@3bar<br><span style="font-size:10px; font-weight:400;">(43.5 psi)</span></th>
-            <th>Vazão Alvo</th>
-            <th>Pressão V. Mín</th>
-            <th>Pressão V. Méd</th>
-            <th>Pressão V. Máx</th>
-            <th>Janela (km/h)</th>
-            <th style="width:100px;">Veredito</th>
+            <th title="${t('Vazão de fábrica Padrão ISO')}">Q@3bar<br><span style="font-size:10px; font-weight:400;">(43.5 psi)</span></th>
+            <th>${t('Vazão Alvo')}</th>
+            <th>${t('Pressão V. Mín')}</th>
+            <th>${t('Pressão V. Méd')}</th>
+            <th>${t('Pressão V. Máx')}</th>
+            <th>${t('Janela (km/h)')}</th>
+            <th style="width:100px;">${t('Veredito')}</th>
           </tr>
         </thead><tbody>`;
 
@@ -1970,7 +1970,7 @@
           const makeCell = (lbl, p) => {
             const isOk = (p >= sysPMin && p <= sysPMax && p > 0);
             const color = isOk ? 'var(--accent-green)' : 'var(--accent-error)';
-            return `<td data-label="${lbl}" style="color:${color}; font-family: Outfit; font-weight: 600;">${isNaN(p) || !isFinite(p) ? '--' : p.toFixed(1)} ${pUnit}</td>`;
+            return `<td data-label="${t(lbl)}" style="color:${color}; font-family: Outfit; font-weight: 600;">${isNaN(p) || !isFinite(p) ? '--' : p.toFixed(1)} ${pUnit}</td>`;
           };
 
           const greenCount = r.pressures.filter(p => p >= sysPMin && p <= sysPMax).length;
@@ -1991,15 +1991,15 @@
           const rowOkClass = (greenCount === 3) ? 'row-ok' : '';
 
           html += `<tr class="${rowOkClass}">
-            <td data-label="Bico ISO" style="text-align:left; font-weight:bold; color:${r.nz.color}">ISO ${r.nz.iso}</td>
-            <td data-label="Q@3bar (43.5 psi)" style="font-family: Outfit; color:var(--text-muted)">${r.nz.q3.toFixed(2)}</td>
-            <td data-label="Vazão Alvo (L/ha)" style="font-family: Outfit; color:${statusColor}; font-weight: 700;">${targetRate.toFixed(1)} L/ha</td>
+            <td data-label="${t('Bico ISO')}" style="text-align:left; font-weight:bold; color:${r.nz.color}">ISO ${r.nz.iso}</td>
+            <td data-label="${t('Q@3bar (43.5 psi)')}" style="font-family: Outfit; color:var(--text-muted)">${r.nz.q3.toFixed(2)}</td>
+            <td data-label="${t('Vazão Alvo (L/ha)')}" style="font-family: Outfit; color:${statusColor}; font-weight: 700;">${targetRate.toFixed(1)} L/ha</td>
             ${makeCell("Pressão V. Mín", r.pressures[0])}
             ${makeCell("Pressão V. Méd", r.pressures[1])}
             ${makeCell("Pressão V. Máx", r.pressures[2])}
-            <td data-label="Janela (km/h)"><span class="status-badge" style="background:var(--control-bg); color:var(--text-main); border:1px solid var(--control-border); padding: 4px 8px;">${r.vAtPmin.toFixed(1)} - ${r.vAtPmax.toFixed(1)} km/h</span></td>
-            <td data-label="Veredito">
-              <span class="status-badge ${statusClass}" style="padding: 4px 8px; border-color:${statusColor} !important; color:${statusColor} !important; font-weight:800; font-size:10px;">${statusText}</span>
+            <td data-label="${t('Janela (km/h)')}"><span class="status-badge" style="background:var(--control-bg); color:var(--text-main); border:1px solid var(--control-border); padding: 4px 8px;">${r.vAtPmin.toFixed(1)} - ${r.vAtPmax.toFixed(1)} km/h</span></td>
+            <td data-label="${t('Veredito')}">
+              <span class="status-badge ${statusClass}" style="padding: 4px 8px; border-color:${statusColor} !important; color:${statusColor} !important; font-weight:800; font-size:10px;">${t(statusText)}</span>
             </td>
           </tr>`;
         });
@@ -2036,7 +2036,10 @@
         
         const report = document.getElementById('printReport');
         const now = new Date();
-        const dateStr = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR');
+        const lang = localStorage.getItem('spray_language') || 'pt';
+        const locale = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-ES' : 'pt-BR');
+        const connector = lang === 'en' ? 'at' : (lang === 'es' ? 'a las' : 'às');
+        const dateStr = now.toLocaleDateString(locale) + ' ' + connector + ' ' + now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 
         const simulationData = {
           rate: document.getElementById('numRate').value,
@@ -2050,9 +2053,10 @@
           pMax: document.getElementById('numPMax').value
         };
 
+        const statusTextTranslated = window.topNozzle ? t(window.topNozzle.statusText) : '';
         const nozzleInfo = window.topNozzle ? 
-          `ISO ${window.topNozzle.nz.iso} (${window.topNozzle.statusText})` : 
-          'Nenhuma recomendação ideal encontrada';
+          `ISO ${window.topNozzle.nz.iso} (${statusTextTranslated})` : 
+          t('Nenhuma recomendação ideal encontrada');
 
         // Lógica de cabeçalho do produtor & equipamento vinculados
         let clientInfoHtml = '';
@@ -2065,17 +2069,38 @@
               const boomWidth = m.boomSize ? m.boomSize.toFixed(1) : ((m.spacing / 100) * m.nozzleCount).toFixed(1);
               clientInfoHtml = `
                 <div style="background: #f8fafc; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 30px; font-size: 13px;">
-                  <h3 style="margin-top: 0; color: #0f172a; font-family: 'Outfit'; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 10px;">Identificação do Cliente & Equipamento</h3>
+                  <h3 style="margin-top: 0; color: #0f172a; font-family: 'Outfit'; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 10px;">${t('Identificação do Cliente & Equipamento')}</h3>
                   <table style="width: 100%; border-collapse: collapse; color: #334155;">
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee; width: 40%;">Produtor / Cliente:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${c.name}</td></tr>
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Fazenda:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${c.farmName || 'Sem cadastro'}</td></tr>
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Identificação da Máquina:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${m.name}</td></tr>
-                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Configuração do Pulverizador:</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${m.nozzleCount} bicos @ ${m.spacing} cm | Barra: ${boomWidth} m</td></tr>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee; width: 40%;">${t('Produtor / Cliente:')}</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${c.name}</td></tr>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Fazenda:')}</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${c.farmName || t('Sem cadastro')}</td></tr>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Identificação da Máquina:')}</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${m.name}</td></tr>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Configuração do Pulverizador:')}</td><td style="text-align: right; font-weight: bold; color: #0f172a;">${m.nozzleCount} ${t('bicos')} @ ${m.spacing} cm | ${t('Barra:')} ${boomWidth} m</td></tr>
                   </table>
                 </div>
               `;
             }
           }
+        }
+
+        let scenarioDesc = "";
+        const qVavgVal = window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--';
+        const pVavgVal = window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--';
+        if (lang === 'es') {
+          scenarioDesc = `Para este escenario, la boquilla indicada debe entregar un caudal de <b>${qVavgVal} L/min</b> (Caudal para Calibración) operando con una presión promedio de <b>${pVavgVal} ${simulationData.unit}</b> a la velocidad nominal.`;
+        } else if (lang === 'en') {
+          scenarioDesc = `For this scenario, the indicated nozzle must deliver a flow rate of <b>${qVavgVal} L/min</b> (Flow for Calibration) operating with an average pressure of <b>${pVavgVal} ${simulationData.unit}</b> at the nominal speed.`;
+        } else {
+          scenarioDesc = `Para este cenário, o bico indicado deve entregar uma vazão de <b>${qVavgVal} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${pVavgVal} ${simulationData.unit}</b> na velocidade nominal.`;
+        }
+
+        let footerText = "";
+        const author = consultantEmail ? consultantEmail : t('Consultor Técnico');
+        if (lang === 'es') {
+          footerText = `Informe Técnico generado por <b>${author}</b> | Emitido vía <b>${pName}</b>.`;
+        } else if (lang === 'en') {
+          footerText = `Technical Report generated by <b>${author}</b> | Issued via <b>${pName}</b>.`;
+        } else {
+          footerText = `Laudo Técnico gerado por <b>${author}</b> | Emitido via <b>${pName}</b>.`;
         }
 
         report.innerHTML = `
@@ -2086,8 +2111,8 @@
                 <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end;">
                   <h1 style="margin:0; font-family: 'Outfit'; font-size: 28px; color: ${pColor};">${pName}</h1>
                   <div style="text-align: right;">
-                    <h2 style="margin:0; color: #1e293b; font-family: 'Outfit'; font-size: 18px;">Laudo Técnico de Pulverização</h2>
-                    <p style="margin:3px 0 0; font-size: 11px; color: #666;">Data: ${dateStr}</p>
+                    <h2 style="margin:0; color: #1e293b; font-family: 'Outfit'; font-size: 18px;">${t('Laudo Técnico de Pulverização')}</h2>
+                    <p style="margin:3px 0 0; font-size: 11px; color: #666;">${t('Data:')} ${dateStr}</p>
                   </div>
                 </div>
               </div>
@@ -2097,37 +2122,37 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
               <div>
-                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">Parâmetros da Simulação</h3>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Parâmetros da Simulação')}</h3>
                 <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Vazão Alvo:</td><td style="text-align: right; font-weight: bold;">${simulationData.rate} L/ha</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Espaçamento:</td><td style="text-align: right; font-weight: bold;">${simulationData.spacing} cm</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Densidade da Calda:</td><td style="text-align: right; font-weight: bold;">${simulationData.density} kg/L</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Limites de Pressão:</td><td style="text-align: right; font-weight: bold;">${simulationData.pMin} a ${simulationData.pMax} ${simulationData.unit}</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Vazão Alvo')}:</td><td style="text-align: right; font-weight: bold;">${simulationData.rate} L/ha</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Espaçamento:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.spacing} cm</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Densidade da Calda:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.density} kg/L</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Limites de Pressão:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.pMin} a ${simulationData.pMax} ${simulationData.unit}</td></tr>
                 </table>
               </div>
               <div>
-                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">Velocidades de Operação</h3>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Velocidades de Operação')}</h3>
                 <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Mínima:</td><td style="text-align: right; font-weight: bold;">${simulationData.vMin} km/h</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Média (Calibração):</td><td style="text-align: right; font-weight: bold;">${simulationData.vAvg} km/h</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">Máxima:</td><td style="text-align: right; font-weight: bold;">${simulationData.vMax} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Mínima:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.vMin} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Média (Calibração):')}</td><td style="text-align: right; font-weight: bold;">${simulationData.vAvg} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Máxima:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.vMax} km/h</td></tr>
                 </table>
               </div>
             </div>
 
             <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
-              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 Recomendação Principal</h3>
+              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 ${t('Recomendação Principal')}</h3>
               <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
               <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
-                Para este cenário, o bico indicado deve entregar uma vazão de <b>${window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--'} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--'} ${simulationData.unit}</b> na velocidade nominal.
+                ${scenarioDesc}
               </p>
             </div>
 
-            <h3 style="font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">📊 Tabela de Desempenho por Ponta</h3>
+            <h3 style="font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">📊 ${t('Tabela de Desempenho por Ponta')}</h3>
             <div id="reportTableContainer"></div>
 
             <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 11px;">
-              Laudo Técnico gerado por <b>${consultantEmail ? consultantEmail : 'Consultor Técnico'}</b> | Emitido via <b>${pName}</b>.
+              ${footerText}
             </div>
           </div>
         `;
@@ -3569,6 +3594,40 @@
     // === MULTI-LANGUAGE SYSTEM ===
     const translationDict = {
       es: {
+        "Vazão Alvo": "Caudal Objetivo",
+        "Pressão V. Mín": "Presión V. Mín",
+        "Pressão V. Méd": "Presión V. Prom",
+        "Pressão V. Máx": "Presión V. Máx",
+        "Janela (km/h)": "Ventana (km/h)",
+        "Veredito": "Veredicto",
+        "ATENDE": "CUMPLE",
+        "PARCIAL": "PARCIAL",
+        "FORA": "FUERA",
+        "Bico ISO": "Boquilla ISO",
+        "Q@3bar (43.5 psi)": "Q@3bar (43.5 psi)",
+        "Vazão Alvo (L/ha)": "Caudal Objetivo (L/ha)",
+        "Identificação do Cliente & Equipamento": "Identificación del Cliente & Equipamiento",
+        "Produtor / Cliente:": "Productor / Cliente:",
+        "Fazenda:": "Hacienda:",
+        "Identificação da Máquina:": "Identificación de la Máquina:",
+        "Configuração do Pulverizador:": "Configuración del Pulverizador:",
+        "bicos": "boquillas",
+        "Barra:": "Barra:",
+        "Laudo Técnico de Pulverização": "Laudo Técnico de Pulverización",
+        "Data:": "Fecha:",
+        "Parâmetros da Simulação": "Parámetros de Simulación",
+        "Espaçamento:": "Espaciado:",
+        "Densidade da Calda:": "Densidad del Caldo:",
+        "Limites de Pressão:": "Límites de Presión:",
+        "Velocidades de Operação": "Velocidades de Operación",
+        "Mínima:": "Mínima:",
+        "Média (Calibração):": "Promedio (Calibración):",
+        "Máxima:": "Máxima:",
+        "Recomendação Principal": "Recomendación Principal",
+        "Nenhuma recomendação ideal encontrada": "Ninguna recomendación ideal encontrada",
+        "Tabela de Desempenho por Ponta": "Tabla de Rendimiento por Boquilla",
+        "Consultor Técnico": "Consultor Técnico",
+        "Sem cadastro": "Sin registro",
         "Simulador de Bicos ISO": "Simulador de boquillas ISO",
         "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Simulador técnico para la selección precisa de boquillas de pulverización, garantizando la máxima eficiencia y economía en la aplicación.",
         "Cadastrar novo acesso": "Registrar nuevo acceso",
@@ -3649,6 +3708,40 @@
         "Ultra Grossa": "Ultra gruesa"
       },
       en: {
+        "Vazão Alvo": "Target Flow",
+        "Pressão V. Mín": "Min V. Pressure",
+        "Pressão V. Méd": "Avg V. Pressure",
+        "Pressão V. Máx": "Max V. Pressure",
+        "Janela (km/h)": "Window (km/h)",
+        "Veredito": "Verdict",
+        "ATENDE": "MEETS",
+        "PARCIAL": "PARTIAL",
+        "FORA": "OUT",
+        "Bico ISO": "ISO Nozzle",
+        "Q@3bar (43.5 psi)": "Q@3bar (43.5 psi)",
+        "Vazão Alvo (L/ha)": "Target Flow (L/ha)",
+        "Identificação do Cliente & Equipamento": "Client & Equipment Identification",
+        "Produtor / Cliente:": "Producer / Client:",
+        "Fazenda:": "Farm:",
+        "Identificação da Máquina:": "Machine Identification:",
+        "Configuração do Pulverizador:": "Sprayer Configuration:",
+        "bicos": "nozzles",
+        "Barra:": "Boom:",
+        "Laudo Técnico de Pulverização": "Technical Spraying Report",
+        "Data:": "Date:",
+        "Parâmetros da Simulação": "Simulation Parameters",
+        "Espaçamento:": "Spacing:",
+        "Densidade da Calda:": "Mix Density:",
+        "Limites de Pressão:": "Pressure Limits:",
+        "Velocidades de Operação": "Operating Speeds",
+        "Mínima:": "Minimum:",
+        "Média (Calibração):": "Average (Calibration):",
+        "Máxima:": "Maximum:",
+        "Recomendação Principal": "Main Recommendation",
+        "Nenhuma recomendação ideal encontrada": "No ideal recommendation found",
+        "Tabela de Desempenho por Ponta": "Performance Table by Nozzle",
+        "Consultor Técnico": "Technical Advisor",
+        "Sem cadastro": "Not registered",
         "Simulador de Bicos ISO": "ISO Nozzle Simulator",
         "Simulador técnico para seleção precisa de bicos de pulverização, garantindo máxima eficiência e economia na aplicação.": "Technical simulator for precise spray nozzle selection, ensuring maximum efficiency and savings in application.",
         "Cadastrar novo acesso": "Register new access",

@@ -496,7 +496,7 @@
     .user-email-cell {
       font-weight: 600;
       color: var(--text-main);
-      word-break: break-all;
+      word-break: break-word;
     }
 
     .role-select {
@@ -908,25 +908,25 @@
             <table class="admin-table" id="usersTable">
               <thead>
                 <tr>
-                  <th onclick="toggleUserSort('email')" style="user-select: none;">
+                  <th onclick="toggleUserSort('email')" style="min-width: 240px; user-select: none;">
                     E-mail <span id="sortIcon-email" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
-                  <th onclick="toggleUserSort('role')" style="user-select: none;">
+                  <th onclick="toggleUserSort('role')" style="min-width: 130px; user-select: none;">
                     Cargo (Role) <span id="sortIcon-role" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
-                  <th onclick="toggleUserSort('enterprise')" style="user-select: none;">
+                  <th onclick="toggleUserSort('enterprise')" style="min-width: 170px; user-select: none;">
                     Empresa / Enterprise <span id="sortIcon-enterprise" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
-                  <th onclick="toggleUserSort('created_at')" style="user-select: none;">
+                  <th onclick="toggleUserSort('created_at')" style="min-width: 110px; user-select: none;">
                     Criado Em <span id="sortIcon-created_at" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
-                  <th onclick="toggleUserSort('subscription')" style="user-select: none;">
+                  <th onclick="toggleUserSort('subscription')" style="min-width: 160px; user-select: none;">
                     Acesso / Assinatura <span id="sortIcon-subscription" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
-                  <th onclick="toggleUserSort('last_access')" style="user-select: none;">
+                  <th onclick="toggleUserSort('last_access')" style="min-width: 140px; user-select: none;">
                     Atividade <span id="sortIcon-last_access" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
-                  <th style="text-align: right; user-select: none;">Ações</th>
+                  <th style="min-width: 270px; text-align: right; user-select: none;">Ações</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody">

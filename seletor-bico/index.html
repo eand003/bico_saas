@@ -3454,6 +3454,29 @@
       if (!localToken) return;
 
       try {
+        // Validação de acesso e bloqueio ativo
+        const { data: { user }, error: userError } = await clienteSupabase.auth.getUser();
+        if (user) {
+          const metadata = user.user_metadata || {};
+          if (metadata.is_blocked === true) {
+            alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
+            await logout();
+            return;
+          }
+          if (metadata.subscription_end) {
+            const end = new Date(metadata.subscription_end);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            end.setHours(23,59,59,999);
+            if (end < today) {
+              const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+              alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+              await logout();
+              return;
+            }
+          }
+        }
+
         const { data, error } = await clienteSupabase
           .from('user_sessions')
           .select('session_token')
@@ -3496,6 +3519,26 @@
       try {
         const { data: { user }, error } = await clienteSupabase.auth.getUser();
         if (user) {
+          // Validação inicial de acesso e bloqueio
+          const metadata = user.user_metadata || {};
+          if (metadata.is_blocked === true) {
+            alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
+            await logout();
+            return;
+          }
+          if (metadata.subscription_end) {
+            const end = new Date(metadata.subscription_end);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            end.setHours(23,59,59,999);
+            if (end < today) {
+              const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+              alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+              await logout();
+              return;
+            }
+          }
+
           window.currentUserEmail = user.email;
           await registerActiveSession(user.id);
           if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
@@ -3553,6 +3596,8 @@
         "Seu WhatsApp (apenas números)": "Su WhatsApp (solo números)",
         "Sucesso!": "¡Éxito!",
         "Erro ao entrar": "Error al entrar",
+        "\u26a0\ufe0f Acesso interrompido: Esta conta foi bloqueada temporariamente!": "\u26a0\ufe0f Acceso interrompido: \u00a1Esta cuenta ha sido bloqueada temporalmente!",
+        "\u26a0\ufe0f Acesso interrompido: Seu período de assinatura expirou em ": "\u26a0\ufe0f Acceso interrompido: \u00a1Su período de suscripción expiró el ",
         "⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!": "⚠️ Acceso interrompido: ¡Esta cuenta se ha conectado en otro dispositivo!",
         "Como Utilizar o Simulador": "Cómo utilizar el simulador",
         "1. Cadastro de Clientes e Máquinas (CRM)": "1. Registro de clientes y máquinas (CRM)",
@@ -3635,6 +3680,9 @@
         "Sucesso!": "Success!",
         "Erro ao entrar": "Login error",
         "⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!": "⚠️ Interrupted access: This account has been connected on another device!",
+        "⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!": "⚠️ Interrupted access: This account has been temporarily blocked!",
+        "⚠️ Acesso interrompido: Seu período de acesso expirou em ": "⚠️ Interrupted access: Your subscription period expired on ",
+        "⚠️ Acesso interrompido: Seu período de assinatura expirou em ": "⚠️ Interrupted access: Your subscription period expired on ",
         "Como Utilizar o Simulador": "How to Use the Simulator",
         "1. Cadastro de Clientes e Máquinas (CRM)": "1. Client & Machine Registration (CRM)",
         "2. Carregamento e Sessão Ativa": "2. Session Management",

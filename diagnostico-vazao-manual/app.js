@@ -247,6 +247,29 @@ async function verifySessionIntegrity(userId) {
   if (!supabase) return;
 
   try {
+    // Validação de acesso e bloqueio ativo
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (user) {
+      const metadata = user.user_metadata || {};
+      if (metadata.is_blocked === true) {
+        alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
+        await forceUserLogout();
+        return;
+      }
+      if (metadata.subscription_end) {
+        const end = new Date(metadata.subscription_end);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        end.setHours(23,59,59,999);
+        if (end < today) {
+          const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+          await forceUserLogout();
+          return;
+        }
+      }
+    }
+
     const { data, error } = await supabase
       .from('user_sessions')
       .select('session_token')
@@ -277,6 +300,26 @@ async function verifySessionIntegrity(userId) {
 }
 
 async function handleUserLoggedIn(user) {
+  // Validação inicial de acesso e bloqueio
+  const metadata = user.user_metadata || {};
+  if (metadata.is_blocked === true) {
+    alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
+    await forceUserLogout();
+    return;
+  }
+  if (metadata.subscription_end) {
+    const end = new Date(metadata.subscription_end);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    end.setHours(23,59,59,999);
+    if (end < today) {
+      const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+      alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+      await forceUserLogout();
+      return;
+    }
+  }
+
   // Salvar pré-autorização offline bem sucedida no dispositivo
   setOfflinePreAuthorization(true);
   

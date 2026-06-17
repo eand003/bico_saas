@@ -1186,6 +1186,21 @@
     </div>
   </div>
 
+  <!-- Modal CRM: Clientes e Máquinas do Consultor -->
+  <div id="userCrmModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content" style="max-width: 650px; width: 90%;">
+      <button class="modal-close" onclick="document.getElementById('userCrmModal').style.display='none'">&times;</button>
+      <div class="modal-header" style="margin-bottom: 20px;">
+        <h3>📊 Clientes e Máquinas Registradas (CRM)</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:4px;" id="crmModalUserEmail">Consultor: ...</p>
+      </div>
+      
+      <div id="crmModalContent" style="max-height: 450px; overflow-y: auto; padding-right: 8px;">
+        <!-- Dynamic content here -->
+      </div>
+    </div>
+  </div>
+
   <!-- JS Logic -->
   <script>
     let supabasePublic = null;
@@ -1628,8 +1643,8 @@
         if (authError) throw authError;
         cachedUsers = users;
 
-        const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id');
-        const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id');
+        const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, name, farm_name, notes, created_by_email');
+        const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, client_id, name, nozzle_count, spacing');
         const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at, accessed_app');
 
         cachedClients = clients || [];
@@ -1896,6 +1911,7 @@
           <td data-label="Atividade">${badgeHtml}</td>
           <td data-label="Ações" style="text-align: right;">
             <div style="display:flex; justify-content:flex-end; gap:6px; width: 100%;">
+              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmModal('${user.id}', '${user.email}')" title="Ver CRM (Clientes e Máquinas)">📊 CRM</button>
               <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#4b5563; border-color:#4b5563; color:white;" onclick="openAccessModal('${user.id}', '${user.email}')" title="Gerenciar Acesso">🔑 Acesso</button>
               <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="openTransferModal('${user.id}', '${partnerId}', '${role}')" title="Transferir Empresa">🏢 Transferir</button>
               <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
@@ -2347,6 +2363,72 @@
         submitBtn.disabled = false;
         submitBtn.innerText = originalText;
       }
+    }
+
+    function openUserCrmModal(userId, email) {
+      document.getElementById('crmModalUserEmail').innerText = `Consultor: ${email}`;
+      const container = document.getElementById('crmModalContent');
+      container.innerHTML = '';
+
+      // Filtrar clientes pertencentes a este usuário
+      const userClients = cachedClients.filter(c => c.user_id === userId);
+
+      if (userClients.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 30px 10px; text-align: center;">
+            <p style="font-size: 14px; color: var(--text-muted);">Este consultor ainda não possui nenhum cliente cadastrado no CRM.</p>
+          </div>
+        `;
+        document.getElementById('userCrmModal').style.display = 'flex';
+        return;
+      }
+
+      userClients.forEach(client => {
+        // Filtrar máquinas pertencentes a este cliente
+        const clientMachines = cachedMachines.filter(m => m.client_id === client.id);
+
+        let machinesHtml = '';
+        if (clientMachines.length === 0) {
+          machinesHtml = `<p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-left: 16px; margin-top: 6px;">Nenhuma máquina registrada para este produtor.</p>`;
+        } else {
+          machinesHtml = clientMachines.map(m => `
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 14px; margin-top: 8px; margin-left: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: var(--accent); font-size: 13px;">🚜 ${m.name || 'Sem nome'}</strong>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Espaçamento: ${m.spacing || 0} cm</div>
+              </div>
+              <span style="font-size: 11px; background: rgba(0,210,255,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                ${m.nozzle_count || 0} bicos
+              </span>
+            </div>
+          `).join('');
+        }
+
+        const clientCard = `
+          <div class="glass-panel" style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+              <div>
+                <h4 style="font-size: 15px; font-weight: 700; color: #ffffff;">🌾 Produtor: ${client.name || 'Sem nome'}</h4>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Fazenda: ${client.farm_name || 'Não informada'}</p>
+              </div>
+            </div>
+            
+            ${client.notes ? `
+              <div style="font-size: 12px; color: var(--text-muted); background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px; margin-top: 10px; border-left: 2px solid var(--accent);">
+                <strong>Anotações:</strong> ${client.notes}
+              </div>
+            ` : ''}
+
+            <div style="margin-top: 12px;">
+              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Frotas / Pulverizadores:</span>
+              ${machinesHtml}
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', clientCard);
+      });
+
+      document.getElementById('userCrmModal').style.display = 'flex';
     }
   </script>
 </body>

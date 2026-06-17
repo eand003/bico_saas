@@ -838,6 +838,7 @@
       <button class="tab-btn active" id="tabUsersBtn" onclick="switchTab('users')">👥 Gestão de Usuários</button>
       <button class="tab-btn" id="tabCompaniesBtn" onclick="switchTab('companies')">🏢 Cadastro de Empresas (SaaS)</button>
       <button class="tab-btn" id="tabConfigsBtn" onclick="switchTab('configs')">📢 Configurações do Hub</button>
+      <button class="tab-btn" id="tabCrmBtn" onclick="switchTab('crm')">📊 CRM Geral</button>
     </div>
 
     <!-- Stats Dashboard -->
@@ -1018,6 +1019,34 @@
       </div>
     </div>
 
+    <!-- Tab 4 CONTENT: CRM Geral -->
+    <div id="tabCrmContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px;">
+        <div class="table-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin-bottom: 0;">📊 CRM Geral (Clientes e Frotas)</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Monitore todos os produtores e pulverizadores cadastrados pelos consultores das revendas.</p>
+          </div>
+          <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px; height: 32px;">🔄 Recarregar</button>
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: center; width: 100%; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
+          <input type="text" id="crmSearchInput" class="input-field" placeholder="🔍 Buscar por produtor, fazenda ou e-mail do consultor..." oninput="renderCrmTab()" style="max-width: 450px; width: 100%; padding: 8px 12px; font-size: 13px; margin: 0;">
+          
+          <div style="font-size: 12px; color: var(--text-muted);">
+            Exibindo: <strong id="crmStatsCount" style="color: var(--accent);">0</strong> produtores
+          </div>
+        </div>
+
+        <div class="crm-records-grid" id="crmRecordsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+          <!-- Dynamic cards -->
+          <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+            <p>Carregando registros do CRM...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Modal Connection Setup -->
@@ -1186,21 +1215,6 @@
     </div>
   </div>
 
-  <!-- Modal CRM: Clientes e Máquinas do Consultor -->
-  <div id="userCrmModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
-    <div class="modal-content" style="max-width: 650px; width: 90%;">
-      <button class="modal-close" onclick="document.getElementById('userCrmModal').style.display='none'">&times;</button>
-      <div class="modal-header" style="margin-bottom: 20px;">
-        <h3>📊 Clientes e Máquinas Registradas (CRM)</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-top:4px;" id="crmModalUserEmail">Consultor: ...</p>
-      </div>
-      
-      <div id="crmModalContent" style="max-height: 450px; overflow-y: auto; padding-right: 8px;">
-        <!-- Dynamic content here -->
-      </div>
-    </div>
-  </div>
-
   <!-- JS Logic -->
   <script>
     let supabasePublic = null;
@@ -1268,15 +1282,19 @@
       document.getElementById('tabUsersBtn').classList.toggle('active', tab === 'users');
       document.getElementById('tabCompaniesBtn').classList.toggle('active', tab === 'companies');
       document.getElementById('tabConfigsBtn').classList.toggle('active', tab === 'configs');
+      document.getElementById('tabCrmBtn').classList.toggle('active', tab === 'crm');
       
       document.getElementById('tabUsersContent').style.display = tab === 'users' ? 'grid' : 'none';
       document.getElementById('tabCompaniesContent').style.display = tab === 'companies' ? 'block' : 'none';
       document.getElementById('tabConfigsContent').style.display = tab === 'configs' ? 'block' : 'none';
+      document.getElementById('tabCrmContent').style.display = tab === 'crm' ? 'block' : 'none';
       
       if (tab === 'companies') {
         renderCompaniesGrid();
       } else if (tab === 'configs') {
         loadGlobalConfigs();
+      } else if (tab === 'crm') {
+        renderCrmTab();
       }
     }
 
@@ -1911,7 +1929,7 @@
           <td data-label="Atividade">${badgeHtml}</td>
           <td data-label="Ações" style="text-align: right;">
             <div style="display:flex; justify-content:flex-end; gap:6px; width: 100%;">
-              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmModal('${user.id}', '${user.email}')" title="Ver CRM (Clientes e Máquinas)">📊 CRM</button>
+              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmTab('${user.email}')" title="Ver CRM Geral deste Consultor">📊 CRM</button>
               <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#4b5563; border-color:#4b5563; color:white;" onclick="openAccessModal('${user.id}', '${user.email}')" title="Gerenciar Acesso">🔑 Acesso</button>
               <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="openTransferModal('${user.id}', '${partnerId}', '${role}')" title="Transferir Empresa">🏢 Transferir</button>
               <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
@@ -2365,36 +2383,64 @@
       }
     }
 
-    function openUserCrmModal(userId, email) {
-      document.getElementById('crmModalUserEmail').innerText = `Consultor: ${email}`;
-      const container = document.getElementById('crmModalContent');
-      container.innerHTML = '';
 
-      // Filtrar clientes pertencentes a este usuário
-      const userClients = cachedClients.filter(c => c.user_id === userId);
+    function openUserCrmTab(email) {
+      const searchInput = document.getElementById('crmSearchInput');
+      if (searchInput) {
+        searchInput.value = email;
+      }
+      switchTab('crm');
+    }
 
-      if (userClients.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state" style="padding: 30px 10px; text-align: center;">
-            <p style="font-size: 14px; color: var(--text-muted);">Este consultor ainda não possui nenhum cliente cadastrado no CRM.</p>
+    function renderCrmTab() {
+      const grid = document.getElementById('crmRecordsGrid');
+      grid.innerHTML = '';
+
+      const searchInput = document.getElementById('crmSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+      let filteredClients = cachedClients;
+
+      if (query) {
+        filteredClients = filteredClients.filter(c => {
+          const clientName = (c.name || '').toLowerCase();
+          const farmName = (c.farm_name || '').toLowerCase();
+          const email = (c.created_by_email || '').toLowerCase();
+          
+          const u = cachedUsers.find(user => user.id === c.user_id) || {};
+          const uEmail = (u.email || '').toLowerCase();
+
+          return clientName.includes(query) || farmName.includes(query) || email.includes(query) || uEmail.includes(query);
+        });
+      }
+
+      document.getElementById('crmStatsCount').innerText = filteredClients.length;
+
+      if (filteredClients.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+            <p>Nenhum registro de produtor encontrado.</p>
           </div>
         `;
-        document.getElementById('userCrmModal').style.display = 'flex';
         return;
       }
 
-      userClients.forEach(client => {
-        // Filtrar máquinas pertencentes a este cliente
+      filteredClients.forEach(client => {
+        const consultant = cachedUsers.find(u => u.id === client.user_id) || {};
+        const consultantEmail = client.created_by_email || consultant.email || 'Consultor desconhecido';
+        const partnerName = (consultant.user_metadata && consultant.user_metadata.partner_name) || 'Sem Revenda / Autônomo';
+        const partnerColor = (consultant.user_metadata && consultant.user_metadata.partner_color) || '#94a3b8';
+
         const clientMachines = cachedMachines.filter(m => m.client_id === client.id);
 
         let machinesHtml = '';
         if (clientMachines.length === 0) {
-          machinesHtml = `<p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-left: 16px; margin-top: 6px;">Nenhuma máquina registrada para este produtor.</p>`;
+          machinesHtml = `<p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 6px;">Nenhum pulverizador registrado.</p>`;
         } else {
           machinesHtml = clientMachines.map(m => `
-            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 14px; margin-top: 8px; margin-left: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 14px; margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
               <div>
-                <strong style="color: var(--accent); font-size: 13px;">🚜 ${m.name || 'Sem nome'}</strong>
+                <strong style="color: var(--accent); font-size: 13px;">🚜 ${m.name || 'Sem Nome'}</strong>
                 <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Espaçamento: ${m.spacing || 0} cm</div>
               </div>
               <span style="font-size: 11px; background: rgba(0,210,255,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 600;">
@@ -2404,31 +2450,38 @@
           `).join('');
         }
 
-        const clientCard = `
-          <div class="glass-panel" style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
-              <div>
-                <h4 style="font-size: 15px; font-weight: 700; color: #ffffff;">🌾 Produtor: ${client.name || 'Sem nome'}</h4>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Fazenda: ${client.farm_name || 'Não informada'}</p>
+        const clientCard = document.createElement('div');
+        clientCard.className = 'glass-panel';
+        clientCard.style.cssText = `padding: 20px; display: flex; flex-direction: column; justify-content: space-between; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 18px; text-align: left;`;
+        clientCard.innerHTML = `
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Criado Por:</span>
+                <span style="font-size: 13px; font-weight: 600; color: #ffffff;">✉️ ${consultantEmail}</span>
               </div>
+              <span style="font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); color: ${partnerColor}; border: 1px solid ${partnerColor}40; padding: 2px 8px; border-radius: 100px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${partnerName}
+              </span>
             </div>
+
+            <h4 style="font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">🌾 ${client.name || 'Sem nome'}</h4>
+            <p style="font-size: 12px; color: #ffffff; margin-bottom: 8px;">🏢 Fazenda: <strong>${client.farm_name || 'Não informada'}</strong></p>
             
             ${client.notes ? `
-              <div style="font-size: 12px; color: var(--text-muted); background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px; margin-top: 10px; border-left: 2px solid var(--accent);">
-                <strong>Anotações:</strong> ${client.notes}
+              <div style="font-size: 11px; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; margin-bottom: 12px; border-left: 2px solid var(--accent); line-height: 1.4;">
+                ${client.notes}
               </div>
             ` : ''}
+          </div>
 
-            <div style="margin-top: 12px;">
-              <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Frotas / Pulverizadores:</span>
-              ${machinesHtml}
-            </div>
+          <div style="margin-top: 10px; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Frotas / Pulverizadores:</span>
+            ${machinesHtml}
           </div>
         `;
-        container.insertAdjacentHTML('beforeend', clientCard);
+        grid.appendChild(clientCard);
       });
-
-      document.getElementById('userCrmModal').style.display = 'flex';
     }
   </script>
 </body>

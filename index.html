@@ -779,6 +779,27 @@
       }
     }
 
+    // ==== PAGE VIEW TRACKING (Hub) ====
+    // Ensure a Supabase client instance is available as `supabase`.
+    // This will record each unique session view of the Hub page.
+    // Table `page_views` (id SERIAL PRIMARY KEY, page TEXT, viewed_at TIMESTAMP, user_id UUID NULL) should exist.
+    function recordHubView() {
+      if (typeof supabase === 'undefined' || !supabase) return;
+      const sessionKey = 'hub_view_recorded';
+      if (sessionStorage.getItem(sessionKey)) return; // avoid duplicate in same session
+      supabase.from('page_views').insert({
+        page: 'hub',
+        viewed_at: new Date().toISOString()
+      }).then(({ error }) => {
+        if (error) console.error('Erro ao registrar visualização da página:', error);
+      });
+      sessionStorage.setItem(sessionKey, '1');
+    }
+    // Record view on load
+    window.addEventListener('load', () => {
+      recordHubView();
+    });
+
     // Check localStorage on load
     window.addEventListener('load', () => {
       if (localStorage.getItem('hide-enterprise-cta') !== 'true') {

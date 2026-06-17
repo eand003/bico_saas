@@ -786,6 +786,8 @@
       }
     }
   </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
 
@@ -830,6 +832,8 @@
         <button class="btn btn-accent" onclick="openCreateCompanyModal()">🏢 Nova Empresa</button>
         <button class="btn btn-accent" id="createUserBtn" onclick="openCreateUserModal()">➕ Novo Usuário</button>
         <button class="btn btn-danger" onclick="handleLogout()">🚪 Sair</button>
+<button class="btn btn-accent" id="open-dashboard" onclick="openHubDashboard()">📊 Dashboard Hub</button>
+<button class="btn btn-accent" id="open-dashboard" onclick="openHubDashboard()">📊 Dashboard Hub</button>
       </div>
     </header>
 
@@ -2537,5 +2541,70 @@
       });
     }
   </script>
+<script>
+// Dashboard Functions
+function openHubDashboard() {
+  document.getElementById('hubDashboardModal').style.display = 'flex';
+  loadHubStats();
+}
+function closeHubDashboard() {
+  document.getElementById('hubDashboardModal').style.display = 'none';
+}
+async function loadHubStats() {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const rangeDays = parseInt(document.getElementById('rangeSelect').value, 10);
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - rangeDays);
+  const { data, error, count } = await supabase
+    .from('page_views')
+    .select('viewed_at', { count: 'exact', head: false })
+    .gte('viewed_at', fromDate.toISOString());
+  if (error) { console.error(error); return; }
+  document.getElementById('total-views').textContent = count || data.length;
+  const daily = {};
+  data.forEach(row => {
+    const d = new Date(row.viewed_at).toISOString().slice(0,10);
+    daily[d] = (daily[d]||0) + 1;
+  });
+  const labels = Object.keys(daily).sort();
+  const values = labels.map(l => daily[l]);
+  const ctx = document.getElementById('viewsChart').getContext('2d');
+  if (window.hubChart) window.hubChart.destroy();
+  window.hubChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Visualizações por dia',
+        data: values,
+        borderColor: '#4A90E2',
+        backgroundColor: 'rgba(74,144,226,0.1)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+</script>
+<!-- Hub Traffic Dashboard Modal -->
+<div class="modal-overlay" id="hubDashboardModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeHubDashboard()">&times;</button>
+    <h3>Hub Traffic Dashboard</h3>
+    <div style="margin-bottom: 12px;">
+      <label for="rangeSelect" style="color: var(--text-muted); margin-right: 8px;">Período:</label>
+      <select id="rangeSelect" class="input-field" style="width: auto; display: inline-block;">
+        <option value="3">Últimos 3 dias</option>
+        <option value="7">Última semana</option>
+        <option value="30" selected>Último mês</option>
+        <option value="90">Últimos 3 meses</option>
+      </select>
+      <button class="btn btn-accent" style="margin-left: 8px;" onclick="loadHubStats()">Atualizar</button>
+    </div>
+    <p>Total de visualizações: <span id="total-views">0</span></p>
+    <canvas id="viewsChart" width="400" height="200"></canvas>
+  </div>
+</div>
 </body>
 </html>

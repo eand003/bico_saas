@@ -863,6 +863,10 @@
         <span class="stat-label">Pulverizadores Registrados</span>
         <span class="stat-value" id="statsMachines">0</span>
       </div>
+      <div class="stat-card" style="--accent: #a78bfa;">
+        <span class="stat-label">Visitas ao Hub (3 dias)</span>
+        <span class="stat-value" id="statsHubViews3d">—</span>
+      </div>
     </div>
 
     <!-- Tab 1 CONTENT: Users Management -->
@@ -1740,6 +1744,7 @@
       document.getElementById('statsClients').innerText = cachedClients.length;
       document.getElementById('statsMachines').innerText = cachedMachines.length;
       document.getElementById('statsEnterprises').innerText = cachedEmpresas.length;
+      loadHubViews3d(); // auto-populate Hub 3-day traffic card
     }
 
     function renderEnterpriseList() {
@@ -2550,17 +2555,20 @@ function openHubDashboard() {
 function closeHubDashboard() {
   document.getElementById('hubDashboardModal').style.display = 'none';
 }
+
 async function loadHubStats() {
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (!supabasePublic) return;
   const rangeDays = parseInt(document.getElementById('rangeSelect').value, 10);
   const fromDate = new Date();
   fromDate.setDate(fromDate.getDate() - rangeDays);
-  const { data, error, count } = await supabase
+  const { data, error } = await supabasePublic
     .from('page_views')
-    .select('viewed_at', { count: 'exact', head: false })
+    .select('viewed_at')
     .gte('viewed_at', fromDate.toISOString());
-  if (error) { console.error(error); return; }
-  document.getElementById('total-views').textContent = count || data.length;
+  if (error) { console.error('loadHubStats error:', error); return; }
+  // Update total count label in modal
+  document.getElementById('total-views').textContent = data.length;
+  // Aggregate per day
   const daily = {};
   data.forEach(row => {
     const d = new Date(row.viewed_at).toISOString().slice(0,10);
@@ -2577,14 +2585,36 @@ async function loadHubStats() {
       datasets: [{
         label: 'Visualizações por dia',
         data: values,
-        borderColor: '#4A90E2',
-        backgroundColor: 'rgba(74,144,226,0.1)',
+        borderColor: '#a78bfa',
+        backgroundColor: 'rgba(167,139,250,0.12)',
         fill: true,
-        tension: 0.3
+        tension: 0.4,
+        pointBackgroundColor: '#a78bfa'
       }]
     },
-    options: { responsive: true, maintainAspectRatio: false }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#94a3b8' } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#94a3b8', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
   });
+}
+
+// Load the 3-day count into the stats card on the main page
+async function loadHubViews3d() {
+  if (!supabasePublic) return;
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - 3);
+  const { data, error } = await supabasePublic
+    .from('page_views')
+    .select('id')
+    .gte('viewed_at', fromDate.toISOString());
+  const el = document.getElementById('statsHubViews3d');
+  if (el) el.textContent = error ? '?' : (data ? data.length : 0);
 }
 </script>
 <!-- Hub Traffic Dashboard Modal -->

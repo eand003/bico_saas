@@ -837,6 +837,7 @@
     <div class="tabs-container">
       <button class="tab-btn active" id="tabUsersBtn" onclick="switchTab('users')">👥 Gestão de Usuários</button>
       <button class="tab-btn" id="tabCompaniesBtn" onclick="switchTab('companies')">🏢 Cadastro de Empresas (SaaS)</button>
+      <button class="tab-btn" id="tabConfigsBtn" onclick="switchTab('configs')">📢 Configurações do Hub</button>
     </div>
 
     <!-- Stats Dashboard -->
@@ -961,6 +962,59 @@
             <p>Carregando lista de empresas contratantes...</p>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Tab 3 CONTENT: Global Configs / Hub Promotion -->
+    <div id="tabConfigsContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px; max-width: 800px; margin: 0 auto;">
+        <div class="table-header" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 0;">📢 Pop-up Promocional do Hub</h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Gerencie o pop-up que aparece para visitantes no portal Spray Precision.</p>
+        </div>
+
+        <form id="promoConfigForm" onsubmit="savePromoConfig(event)">
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- Ativo e ID da Promoção -->
+            <div class="form-group" style="flex: 1; min-width: 200px; display: flex; align-items: center; margin-bottom: 20px;">
+              <label class="checkbox-container" style="display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-main); font-weight: 600; font-size: 14px;">
+                <input type="checkbox" id="promoEnabled" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
+                Ativar Pop-up Promocional
+              </label>
+            </div>
+            
+            <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">ID único da Campanha (Reinicia a visualização para todos)</label>
+              <input type="text" id="promoId" class="input-field" placeholder="ex: promo_junho_2026" required style="margin: 0;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Título do Pop-up</label>
+            <input type="text" id="promoTitle" class="input-field" placeholder="ex: Oferta Especial!" required style="margin: 0;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Mensagem (Suporta quebras de linha)</label>
+            <textarea id="promoMessage" class="input-field" rows="5" placeholder="Digite a mensagem promocional aqui..." required style="margin: 0; min-height: 120px; font-family: inherit; resize: vertical; padding: 12px;"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 220px; margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Texto do Botão de Ação (CTA)</label>
+              <input type="text" id="promoCtaText" class="input-field" placeholder="ex: Aproveitar Desconto ➔" required style="margin: 0;">
+            </div>
+
+            <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Link do Botão de Ação (Deixe em branco para ocultar o botão)</label>
+              <input type="url" id="promoCtaUrl" class="input-field" placeholder="ex: https://wa.me/5565999106415?text=..." style="margin: 0;">
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <button type="submit" class="btn btn-accent" style="padding: 12px 28px; font-weight: 600;">💾 Salvar Configurações</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -1198,12 +1252,16 @@
       currentTab = tab;
       document.getElementById('tabUsersBtn').classList.toggle('active', tab === 'users');
       document.getElementById('tabCompaniesBtn').classList.toggle('active', tab === 'companies');
+      document.getElementById('tabConfigsBtn').classList.toggle('active', tab === 'configs');
       
       document.getElementById('tabUsersContent').style.display = tab === 'users' ? 'grid' : 'none';
       document.getElementById('tabCompaniesContent').style.display = tab === 'companies' ? 'block' : 'none';
+      document.getElementById('tabConfigsContent').style.display = tab === 'configs' ? 'block' : 'none';
       
       if (tab === 'companies') {
         renderCompaniesGrid();
+      } else if (tab === 'configs') {
+        loadGlobalConfigs();
       }
     }
 
@@ -1583,8 +1641,10 @@
         
         if (currentTab === 'users') {
           renderUsersTable();
-        } else {
+        } else if (currentTab === 'companies') {
           renderCompaniesGrid();
+        } else if (currentTab === 'configs') {
+          loadGlobalConfigs();
         }
 
       } catch (err) {
@@ -2204,6 +2264,88 @@
         fetchDatabaseData();
       } catch (err) {
         alert('Erro ao deletar usuário: ' + err.message);
+      }
+    }
+
+    async function loadGlobalConfigs() {
+      if (!supabaseAdmin) return;
+      
+      try {
+        const { data, error } = await supabaseAdmin
+          .from('global_configs')
+          .select('value')
+          .eq('key', 'promo_popup')
+          .maybeSingle();
+          
+        if (error) throw error;
+        
+        if (data && data.value) {
+          const config = data.value;
+          document.getElementById('promoEnabled').checked = !!config.enabled;
+          document.getElementById('promoId').value = config.promo_id || '';
+          document.getElementById('promoTitle').value = config.title || '';
+          document.getElementById('promoMessage').value = config.message || '';
+          document.getElementById('promoCtaText').value = config.cta_text || '';
+          document.getElementById('promoCtaUrl').value = config.cta_url || '';
+        } else {
+          // Default values if no config row exists yet
+          document.getElementById('promoEnabled').checked = false;
+          document.getElementById('promoId').value = 'promo_junho_2026';
+          document.getElementById('promoTitle').value = 'Desconto na Assinatura!';
+          document.getElementById('promoMessage').value = 'Até final do mês de junho desconto na assinatura. de 99,99 por R$ 69,90 a mensalidade.';
+          document.getElementById('promoCtaText').value = 'Aproveitar Desconto ➔';
+          document.getElementById('promoCtaUrl').value = '';
+        }
+      } catch (err) {
+        console.error('Erro ao carregar configurações globais:', err);
+        alert('Erro ao carregar configurações globais: ' + err.message);
+      }
+    }
+
+    async function savePromoConfig(e) {
+      e.preventDefault();
+      
+      if (!supabaseAdmin) {
+        alert('Por favor, faça o login administrativo primeiro!');
+        return;
+      }
+      
+      const enabled = document.getElementById('promoEnabled').checked;
+      const promoId = document.getElementById('promoId').value.trim();
+      const title = document.getElementById('promoTitle').value.trim();
+      const message = document.getElementById('promoMessage').value.trim();
+      const ctaText = document.getElementById('promoCtaText').value.trim();
+      const ctaUrl = document.getElementById('promoCtaUrl').value.trim();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Salvando...';
+      
+      try {
+        const { error } = await supabaseAdmin
+          .from('global_configs')
+          .upsert({
+            key: 'promo_popup',
+            value: {
+              enabled: enabled,
+              promo_id: promoId,
+              title: title,
+              message: message,
+              cta_text: ctaText,
+              cta_url: ctaUrl
+            },
+            updated_at: new Date().toISOString()
+          });
+          
+        if (error) throw error;
+        
+        alert('Configurações do pop-up promocional salvas com sucesso!');
+      } catch (err) {
+        alert('Erro ao salvar configurações promocionais: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
       }
     }
   </script>

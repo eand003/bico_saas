@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
     :root {
@@ -550,6 +551,119 @@
       background: rgba(255, 255, 255, 0.05);
       color: #fff;
     }
+
+    /* Modal Promocional */
+    .promo-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(5, 8, 10, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .promo-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .promo-content {
+      background: rgba(15, 20, 24, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 40px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 210, 255, 0.15);
+      text-align: center;
+      transform: translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .promo-overlay.show .promo-content {
+      transform: translateY(0);
+    }
+    .promo-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .promo-close:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(90deg);
+    }
+    .promo-icon-badge {
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.25);
+      color: var(--accent);
+      border-radius: 20px;
+      font-size: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px auto;
+      box-shadow: 0 8px 25px rgba(0, 210, 255, 0.2);
+    }
+    .promo-title-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .promo-message-text {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 30px;
+      white-space: pre-line;
+    }
+    .promo-btn {
+      background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%);
+      color: #ffffff;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .promo-btn:hover {
+      box-shadow: 0 12px 28px rgba(0, 210, 255, 0.5);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
@@ -758,11 +872,86 @@
       if (dropdown) dropdown.classList.remove('show');
     });
 
-    // Run lang initialization
+    // --- LÓGICA DO POP-UP PROMOCIONAL DINÂMICO ---
+    let activePromoId = '';
+
+    function closePromoModal() {
+      const modal = document.getElementById('modal-promo');
+      if (modal) modal.classList.remove('show');
+      if (activePromoId) {
+        localStorage.setItem('dismissed_promo_' + activePromoId, 'true');
+      }
+    }
+
+    async function checkPromoPopup() {
+      const url = localStorage.getItem('spray_supabase_url') || 'https://mjouahzglomvvcfpxtuq.supabase.co';
+      const key = localStorage.getItem('spray_supabase_key') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
+      
+      if (typeof window.supabase === 'undefined') return;
+
+      try {
+        const supabase = window.supabase.createClient(url, key);
+        const { data, error } = await supabase
+          .from('global_configs')
+          .select('value')
+          .eq('key', 'promo_popup')
+          .maybeSingle();
+
+        if (error || !data || !data.value) return;
+
+        const config = data.value;
+        if (!config.enabled) return;
+
+        activePromoId = config.promo_id || 'default_promo';
+
+        // Verificar se o usuário já dispensou esta promoção específica
+        if (localStorage.getItem('dismissed_promo_' + activePromoId) === 'true') {
+          return;
+        }
+
+        // Popular modal
+        document.getElementById('promo-title').innerText = config.title || 'Oferta Especial';
+        document.getElementById('promo-message').innerText = config.message || '';
+        
+        const ctaBtn = document.getElementById('promo-cta-btn');
+        if (ctaBtn) {
+          ctaBtn.innerText = config.cta_text || 'Aproveitar Desconto ➔';
+          ctaBtn.href = config.cta_url || '#';
+          if (!config.cta_url) {
+            ctaBtn.style.display = 'none';
+          } else {
+            ctaBtn.style.display = 'inline-flex';
+          }
+        }
+
+        // Exibir modal com delay para melhorar UX
+        setTimeout(() => {
+          const modal = document.getElementById('modal-promo');
+          if (modal) modal.classList.add('show');
+        }, 1500);
+
+      } catch (err) {
+        console.warn("Falha ao inicializar ou checar pop-up promocional:", err);
+      }
+    }
+
+    // Run initializations
     window.addEventListener('DOMContentLoaded', () => {
       initLanguage();
+      checkPromoPopup();
     });
   </script>
+
+  <!-- MODAL PROMOCIONAL DINÂMICO -->
+  <div id="modal-promo" class="promo-overlay" onclick="if(event.target === this) closePromoModal()">
+    <div class="promo-content">
+      <button class="promo-close" onclick="closePromoModal()">&times;</button>
+      <div class="promo-icon-badge">📢</div>
+      <h2 id="promo-title" class="promo-title-text">Oferta Especial</h2>
+      <p id="promo-message" class="promo-message-text">Carregando promoção...</p>
+      <a id="promo-cta-btn" href="#" class="promo-btn" target="_blank">Aproveitar Desconto ➔</a>
+    </div>
+  </div>
 
 </body>
 </html>

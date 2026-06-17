@@ -1135,12 +1135,22 @@
         <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Selecione a empresa contratante. O usuário herdará o estilo visual dela automaticamente.</p>
       </div>
       <form onsubmit="createUser(event)">
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <div class="form-group" style="flex: 1; min-width: 200px;">
+            <label>Nome Completo <span style="color:var(--accent)">*</span></label>
+            <input type="text" id="userFullName" class="input-field" placeholder="ex: João Silva" required style="margin:0;">
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 180px;">
+            <label>Telefone / WhatsApp</label>
+            <input type="tel" id="userPhone" class="input-field" placeholder="ex: 5565999991234" style="margin:0;">
+          </div>
+        </div>
         <div class="form-group">
-          <label>E-mail do Usuário</label>
+          <label>E-mail do Usuário <span style="color:var(--accent)">*</span></label>
           <input type="email" id="userEmail" class="input-field" placeholder="ex: consultor@empresa.com" required>
         </div>
         <div class="form-group">
-          <label>Senha Provisória</label>
+          <label>Senha Provisória <span style="color:var(--accent)">*</span></label>
           <input type="password" id="userPassword" class="input-field" placeholder="Mínimo 6 caracteres" required minlength="6">
         </div>
         <div class="form-group">
@@ -1193,6 +1203,17 @@
       </div>
       <form onsubmit="saveAccessControl(event)">
         <input type="hidden" id="accessUserId">
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 4px;">
+          <div class="form-group" style="flex: 1; min-width: 180px;">
+            <label for="accessFullName">Nome Completo</label>
+            <input type="text" id="accessFullName" class="input-field" placeholder="ex: João Silva" style="margin:0;">
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 160px;">
+            <label for="accessPhone">Telefone / WhatsApp</label>
+            <input type="tel" id="accessPhone" class="input-field" placeholder="ex: 5565999991234" style="margin:0;">
+          </div>
+        </div>
         
         <div class="form-group">
           <label for="accessSubStart">Início do Acesso (Assinatura)</label>
@@ -1210,7 +1231,7 @@
           <label for="accessIsBlocked" style="margin: 0; cursor: pointer; font-weight: 700; color: #ef4444;">🚫 Bloquear Acesso Temporariamente</label>
         </div>
         
-        <button type="submit" id="accessSubmitBtn" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Salvar Regras de Acesso</button>
+        <button type="submit" id="accessSubmitBtn" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Salvar Alterações</button>
       </form>
     </div>
   </div>
@@ -1481,6 +1502,10 @@
       
       document.getElementById('accessUserId').value = userId;
       document.getElementById('accessModalUserEmail').innerText = `Usuário: ${email}`;
+
+      // Load name and phone
+      document.getElementById('accessFullName').value = metadata.full_name || '';
+      document.getElementById('accessPhone').value = metadata.phone || '';
       
       // Load start and end date from metadata
       document.getElementById('accessSubStart').value = metadata.subscription_start || '';
@@ -1804,7 +1829,9 @@
           const email = (u.email || '').toLowerCase();
           const role = ((u.user_metadata && u.user_metadata.role) || 'consultor').toLowerCase();
           const partnerName = ((u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
-          return email.includes(query) || role.includes(query) || partnerName.includes(query);
+          const fullName = ((u.user_metadata && u.user_metadata.full_name) || '').toLowerCase();
+          const phone = ((u.user_metadata && u.user_metadata.phone) || '').toLowerCase();
+          return email.includes(query) || role.includes(query) || partnerName.includes(query) || fullName.includes(query) || phone.includes(query);
         });
       }
 
@@ -1884,9 +1911,12 @@
         const partnerId = metadata.partner_id || '-';
         const createdDate = new Date(user.created_at).toLocaleDateString('pt-BR');
         const badgeHtml = getStatusBadge(user.id);
+        const fullName = metadata.full_name || '';
+        const phone = metadata.phone || '';
 
         // Assinatura & Acesso status
         let accessHtml = '';
+        let renewalBtnHtml = '';
         if (metadata.is_blocked === true) {
           accessHtml = `<span style="background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🚫 Bloqueado</span>`;
         } else if (metadata.subscription_end) {
@@ -1894,13 +1924,17 @@
           const today = new Date();
           today.setHours(0,0,0,0);
           end.setHours(23,59,59,999);
-          
           const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-          
           if (end < today) {
             accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
           } else {
             accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+          }
+          // Botão de renovação via WhatsApp (só quando tem subscription_end)
+          if (phone) {
+            const firstName = fullName ? fullName.split(' ')[0] : user.email.split('@')[0];
+            const renewMsg = encodeURIComponent(`Oi ${firstName}! Seu acesso ao Spray Precision PRO vence em ${formattedEnd}. Para continuar usando o Seletor de Bicos + Diagnóstico de Vazão ilimitado, é só fazer o PIX de R$ 60 e eu renovo por mais 30 dias na hora! 🚀`);
+            renewalBtnHtml = `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${renewMsg}" target="_blank" class="btn" style="padding: 6px 10px; font-size: 11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center;" title="Enviar mensagem de renovação no WhatsApp">📲 Renovar</a>`;
           }
         } else {
           accessHtml = `<span style="background:#4b5563; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🌾 Livre</span>`;
@@ -1908,8 +1942,12 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="user-email-cell" data-label="E-mail">
-            <span>✉️ ${user.email}</span>
+          <td class="user-email-cell" data-label="Usuário">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              ${fullName ? `<span style="font-weight:700; color:var(--text-main); font-size:13px;">👤 ${fullName}</span>` : ''}
+              <span style="font-size:${fullName ? '11px' : '13px'}; color:${fullName ? 'var(--text-muted)' : 'var(--text-main)'}">✉️ ${user.email}</span>
+              ${phone ? `<span style="font-size:10px; color:var(--accent);">📱 ${phone}</span>` : ''}
+            </div>
           </td>
           <td data-label="Cargo">
             <select class="role-select ${role === 'gerente' ? 'gerente' : (role === 'master' ? 'master' : '')}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
@@ -1925,11 +1963,16 @@
             </div>
           </td>
           <td data-label="Criado em">📅 ${createdDate}</td>
-          <td data-label="Assinatura">${accessHtml}</td>
+          <td data-label="Assinatura">
+            <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+              ${accessHtml}
+              ${renewalBtnHtml}
+            </div>
+          </td>
           <td data-label="Atividade">${badgeHtml}</td>
           <td data-label="Ações" style="text-align: right;">
-            <div style="display:flex; justify-content:flex-end; gap:6px; width: 100%;">
-              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmTab('${user.email}')" title="Ver CRM Geral deste Consultor">📊 CRM</button>
+            <div style="display:flex; justify-content:flex-end; gap:6px; width: 100%; flex-wrap: wrap;">
+              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmTab('${user.email}')" title="Ver CRM deste Consultor">📊 CRM</button>
               <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#4b5563; border-color:#4b5563; color:white;" onclick="openAccessModal('${user.id}', '${user.email}')" title="Gerenciar Acesso">🔑 Acesso</button>
               <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="openTransferModal('${user.id}', '${partnerId}', '${role}')" title="Transferir Empresa">🏢 Transferir</button>
               <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
@@ -2106,6 +2149,8 @@
     async function createUser(e) {
       e.preventDefault();
       
+      const fullName = document.getElementById('userFullName').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
       const email = document.getElementById('userEmail').value.trim();
       const password = document.getElementById('userPassword').value.trim();
       const selectedPartnerId = document.getElementById('userPartnerSelect').value;
@@ -2136,6 +2181,8 @@
           password: password,
           email_confirm: true,
           user_metadata: {
+            full_name: fullName,
+            phone: phone,
             role: role,
             partner_id: selectedPartnerId,
             partner_name: partnerName,
@@ -2148,9 +2195,11 @@
 
         if (error) throw error;
 
-        alert(`Usuário ${email} criado com sucesso como ${isEnterprise ? 'membro da empresa ' + partnerName : 'Usuário Autônomo'}!`);
+        alert(`Usuário ${fullName || email} criado com sucesso!`);
         document.getElementById('createUserModal').style.display = 'none';
         
+        document.getElementById('userFullName').value = '';
+        document.getElementById('userPhone').value = '';
         document.getElementById('userEmail').value = '';
         document.getElementById('userPassword').value = '';
         
@@ -2248,6 +2297,8 @@
       e.preventDefault();
       
       const userId = document.getElementById('accessUserId').value;
+      const fullName = document.getElementById('accessFullName').value.trim();
+      const phone = document.getElementById('accessPhone').value.trim();
       const subStart = document.getElementById('accessSubStart').value;
       const subEnd = document.getElementById('accessSubEnd').value;
       const isBlocked = document.getElementById('accessIsBlocked').checked;
@@ -2267,6 +2318,8 @@
         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: {
             ...currentMetadata,
+            full_name: fullName || currentMetadata.full_name || null,
+            phone: phone || currentMetadata.phone || null,
             subscription_start: subStart ? subStart : null,
             subscription_end: subEnd ? subEnd : null,
             is_blocked: isBlocked
@@ -2275,14 +2328,14 @@
 
         if (error) throw error;
 
-        alert('Parâmetros de acesso e assinatura atualizados com sucesso!');
+        alert('Alterações salvas com sucesso!');
         document.getElementById('accessModal').style.display = 'none';
         fetchDatabaseData();
       } catch (err) {
-        alert('Erro ao salvar controle de acesso: ' + err.message);
+        alert('Erro ao salvar: ' + err.message);
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Salvar Regras de Acesso';
+        submitBtn.innerText = 'Salvar Alterações';
       }
     }
 

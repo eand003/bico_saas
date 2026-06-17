@@ -402,28 +402,44 @@ async function getInspectionById(id) {
   await delay(150);
 
   if (USE_SUPABASE) {
-    const supabase = window.supabaseClient;
-    if (!supabase) throw new Error("Cliente Supabase não inicializado!");
+    try {
+      const supabase = window.supabaseClient;
+      if (!supabase) throw new Error("Cliente Supabase não inicializado!");
 
-    // 1. Buscar cabeçalho
-    const { data: inspection, error: insError } = await supabase
-      .from('flow_inspections')
-      .select('*')
-      .eq('id', id)
-      .single();
+      // 1. Buscar cabeçalho
+      const { data: inspection, error: insError } = await supabase
+        .from('flow_inspections')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    if (insError) throw insError;
+      if (insError) throw insError;
 
-    // 2. Buscar medições dos bicos
-    const { data: measurements, error: measError } = await supabase
-      .from('flow_measurements')
-      .select('*')
-      .eq('inspection_id', id)
-      .order('nozzle_number', { ascending: true });
+      // 2. Buscar medições dos bicos
+      const { data: measurements, error: measError } = await supabase
+        .from('flow_measurements')
+        .select('*')
+        .eq('inspection_id', id)
+        .order('nozzle_number', { ascending: true });
 
-    if (measError) throw measError;
+      if (measError) throw measError;
 
-    return { inspection, measurements };
+      return { inspection, measurements };
+    } catch (err) {
+      console.warn("Falha ao buscar laudo do Supabase, recorrendo ao local:", err);
+      // ---- FALLBACK OFFLINE ----
+      const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+      const allMeasurements = getLocalStorageItem(KEYS.MEASUREMENTS, []);
+
+      const inspection = inspections.find(i => i.id === id);
+      if (!inspection) return null;
+
+      const measurements = allMeasurements
+        .filter(m => m.inspection_id === id)
+        .sort((a, b) => a.nozzle_number - b.nozzle_number);
+
+      return { inspection, measurements };
+    }
   } else {
     // ---- FLUXO OFFLINE ----
     const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
@@ -447,17 +463,31 @@ async function deleteInspection(id) {
   await delay(200);
 
   if (USE_SUPABASE) {
-    const supabase = window.supabaseClient;
-    if (!supabase) throw new Error("Cliente Supabase não inicializado!");
+    try {
+      const supabase = window.supabaseClient;
+      if (!supabase) throw new Error("Cliente Supabase não inicializado!");
 
-    // Graças ao "on delete cascade" nas FKs do banco, ao deletar a inspeção principal
-    // as medições correspondentes serão excluídas automaticamente
-    const { error } = await supabase
-      .from('flow_inspections')
-      .delete()
-      .eq('id', id);
+      // Graças ao "on delete cascade" nas FKs do banco, ao deletar a inspeção principal
+      // as medições correspondentes serão excluídas automaticamente
+      const { error } = await supabase
+        .from('flow_inspections')
+        .delete()
+        .eq('id', id);
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (e) {
+      console.warn("Falha ao deletar do Supabase, tentando deletar localmente:", e);
+    }
+    // Deletar também localmente por segurança (limpa se for local ou cache)
+    const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+    const allMeasurements = getLocalStorageItem(KEYS.MEASUREMENTS, []);
+
+    const filteredInspections = inspections.filter(i => i.id !== id);
+    const filteredMeasurements = allMeasurements.filter(m => m.inspection_id !== id);
+
+    setLocalStorageItem(KEYS.INSPECTIONS, filteredInspections);
+    setLocalStorageItem(KEYS.MEASUREMENTS, filteredMeasurements);
+
     return true;
   } else {
     // ---- FLUXO OFFLINE ----

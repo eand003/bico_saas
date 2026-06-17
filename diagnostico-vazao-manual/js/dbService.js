@@ -368,16 +368,35 @@ async function getInspections() {
         console.warn("Falha ao sincronizar inspeções offline pendentes:", syncErr);
       }
 
-      const { data, error } = await supabase
-        .from('flow_inspections')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Buscar laudos remotos da nuvem
+      let cloudData = [];
+      try {
+        const { data, error } = await supabase
+          .from('flow_inspections')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return [...demoHeaders, ...(data || [])];
+        if (error) throw error;
+        cloudData = data || [];
+      } catch (errCloud) {
+        console.warn("Falha ao buscar laudos do Supabase, usando local:", errCloud);
+      }
+
+      // Obter laudos locais pendentes (que ainda não foram sincronizados com a nuvem)
+      const localInspections = getLocalStorageItem(KEYS.INSPECTIONS, [])
+        .filter(i => i.id && !i.id.startsWith('demo-'));
+
+      // Evitar duplicidade de laudos locais que já foram salvos no Supabase
+      const cloudIds = new Set(cloudData.map(i => i.id));
+      const unsyncedLocals = localInspections.filter(i => !cloudIds.has(i.id));
+
+      // Ordenar locais por data decrescente
+      const sortedUnsynced = unsyncedLocals.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      return [...demoHeaders, ...cloudData, ...sortedUnsynced];
     } catch (err) {
-      console.warn("Falha ao buscar do Supabase (offline ou sem autenticação), recorrendo ao local:", err);
-      // ---- FALLBACK OFFLINE SE O SUPABASE FALHAR OU ESTIVER SEM CONEXÃO ----
+      console.warn("Falha na lógica principal do Supabase, recorrendo apenas ao local:", err);
+      // ---- FALLBACK COMPLETAMENTE OFFLINE ----
       const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
       const sorted = inspections.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       return [...demoHeaders, ...sorted];

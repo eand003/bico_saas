@@ -1583,23 +1583,39 @@ async function renderHistoryList() {
     list.forEach(item => {
       const card = document.createElement('div');
       
+      let summaryObj = item.summary;
+      if (typeof summaryObj === 'string') {
+        try {
+          summaryObj = JSON.parse(summaryObj);
+        } catch (e) {
+          console.error("Erro ao fazer parse do summary:", e);
+          summaryObj = null;
+        }
+      }
+
       let badgeClass = 'rejected';
       let classificationText = 'Reprovado';
-      const cvVal = item.summary ? item.summary.coefficientOfVariationPercent : 0;
-      const okPercent = item.summary ? (item.summary.okCount / item.summary.evaluatedNozzles) * 100 : 0;
+      const cvVal = (summaryObj && typeof summaryObj.coefficientOfVariationPercent === 'number') 
+        ? summaryObj.coefficientOfVariationPercent 
+        : 0;
+      const okPercent = (summaryObj && typeof summaryObj.okCount === 'number' && typeof summaryObj.evaluatedNozzles === 'number' && summaryObj.evaluatedNozzles > 0)
+        ? (summaryObj.okCount / summaryObj.evaluatedNozzles) * 100
+        : 0;
 
-      if (item.summary?.generalClassification === 'aprovado') {
+      if (summaryObj?.generalClassification === 'aprovado') {
         badgeClass = 'approved';
         classificationText = 'Aprovado';
-      } else if (item.summary?.generalClassification === 'aprovado_com_ressalvas') {
+      } else if (summaryObj?.generalClassification === 'aprovado_com_ressalvas') {
         badgeClass = 'warning';
         classificationText = 'Aprovado com Ressalvas';
       }
 
       card.className = `history-item-card ${badgeClass}`;
       
-      const displayName = item.summary?.custom_save_name || item.client_name;
-      const showProducerSub = item.summary?.custom_save_name ? `👤 ${item.client_name} | ` : '';
+      const displayName = summaryObj?.custom_save_name || item.client_name;
+      const showProducerSub = summaryObj?.custom_save_name ? `👤 ${item.client_name} | ` : '';
+      const evaluatedNozzlesVal = summaryObj?.evaluatedNozzles || 0;
+      const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(locale) : '';
 
       card.innerHTML = `
         <div style="font-weight:bold; font-size:16px; color:var(--text-main); font-family:'Outfit'; display:flex; align-items:center; justify-content:space-between;">
@@ -1612,11 +1628,11 @@ async function renderHistoryList() {
         <div style="font-size:11px; background:#f1f5f9; padding:6px; border-radius:8px; display:flex; flex-direction:column; gap:2px; border:1px solid #cbd5e1;">
           <div>🚜 ${t('Pulverizador:')} **${item.sprayer_brand || ''} ${item.sprayer_model || ''}**</div>
           <div>🎨 ${t('Bico:')} **${item.nozzle_model || t('Não informado')}**</div>
-          <div>⏱️ ${t('CV da Barra:')} **${cvVal.toFixed(1)}%** (${item.summary?.evaluatedNozzles} ${t('bicos aferidos')})</div>
+          <div>⏱️ ${t('CV da Barra:')} **${cvVal.toFixed(1)}%** (${evaluatedNozzlesVal} ${t('bicos aferidos')})</div>
         </div>
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-          <span style="font-size:10px; color:var(--text-light);">${new Date(item.created_at).toLocaleDateString(locale)}</span>
+          <span style="font-size:10px; color:var(--text-light);">${dateStr}</span>
           <div style="display:flex; gap:6px;">
             <button class="btn btn-secondary btn-open-ins" data-id="${item.id}" style="padding:6px 10px; min-height:30px; font-size:11px;">📂 ${t('Abrir')}</button>
             <button class="btn btn-danger btn-delete-ins" data-id="${item.id}" style="padding:6px 10px; min-height:30px; font-size:11px;">🗑️ ${t('Excluir')}</button>

@@ -357,16 +357,31 @@ async function getInspections() {
   ];
 
   if (USE_SUPABASE) {
-    const supabase = window.supabaseClient;
-    if (!supabase) throw new Error("Cliente Supabase não inicializado!");
+    try {
+      const supabase = window.supabaseClient;
+      if (!supabase) throw new Error("Cliente Supabase não inicializado!");
 
-    const { data, error } = await supabase
-      .from('flow_inspections')
-      .select('*')
-      .order('created_at', { ascending: false });
+      // Tentar sincronizar inspeções offline pendentes de forma transparente
+      try {
+        await syncOfflineInspections();
+      } catch (syncErr) {
+        console.warn("Falha ao sincronizar inspeções offline pendentes:", syncErr);
+      }
 
-    if (error) throw error;
-    return [...demoHeaders, ...(data || [])];
+      const { data, error } = await supabase
+        .from('flow_inspections')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return [...demoHeaders, ...(data || [])];
+    } catch (err) {
+      console.warn("Falha ao buscar do Supabase (offline ou sem autenticação), recorrendo ao local:", err);
+      // ---- FALLBACK OFFLINE SE O SUPABASE FALHAR OU ESTIVER SEM CONEXÃO ----
+      const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+      const sorted = inspections.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return [...demoHeaders, ...sorted];
+    }
   } else {
     // ---- FLUXO OFFLINE ----
     const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
@@ -511,3 +526,99 @@ function generateUUID() {
     return v.toString(16);
   });
 }
+
+/**
+ * Sincroniza laudos de calibração salvos offline (localStorage) com o banco de dados do Supabase
+ */
+async function syncOfflineInspections() {
+  const supabase = window.supabaseClient;
+  if (!supabase) return;
+
+  // Verificar se há usuário logado e autenticado no Supabase
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
+    return; // Sem usuário online autenticado, não inicia sincronização
+  }
+
+  const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+  if (inspections.length === 0) return;
+
+  // Filtrar apenas laudos que não sejam demonstração estática
+  const offlineInspections = inspections.filter(i => i.id && !i.id.startsWith('demo-'));
+  if (offlineInspections.length === 0) return;
+
+  console.log(`[Sync] Detectado(s) ${offlineInspections.length} laudo(s) offline pendente(s). Sincronizando...`);
+
+  const allMeasurements = getLocalStorageItem(KEYS.MEASUREMENTS, []);
+  const remainingInspections = [...inspections];
+  let remainingMeasurements = [...allMeasurements];
+
+  let syncedCount = 0;
+
+  for (const inspection of offlineInspections) {
+    try {
+      const measurements = allMeasurements.filter(m => m.inspection_id === inspection.id);
+
+      // Vincular o laudo ao usuário logado atual
+      const inspectionToUpload = {
+        ...inspection,
+        owner_id: user.id,
+        updated_at: new Date().toISOString()
+      };
+
+      // 1. Enviar cabeçalho (flow_inspections)
+      const { data: insData, error: insError } = await supabase
+        .from('flow_inspections')
+        .upsert(inspectionToUpload)
+        .select()
+        .single();
+
+      if (insError) throw insError;
+      const inspectionId = insData.id;
+
+      // 2. Enviar medições dos bicos (flow_measurements)
+      const formattedMeasurements = measurements.map(m => ({
+        ...m,
+        inspection_id: inspectionId
+      }));
+
+      // Limpar medições anteriores localmente para evitar duplicidades
+      await supabase
+        .from('flow_measurements')
+        .delete()
+        .eq('inspection_id', inspectionId);
+
+      if (formattedMeasurements.length > 0) {
+        const { error: measError } = await supabase
+          .from('flow_measurements')
+          .insert(formattedMeasurements);
+
+        if (measError) throw measError;
+      }
+
+      // Sucesso na sincronização deste laudo! Remover do array local
+      const idx = remainingInspections.findIndex(i => i.id === inspection.id);
+      if (idx >= 0) remainingInspections.splice(idx, 1);
+
+      remainingMeasurements = remainingMeasurements.filter(m => m.inspection_id !== inspection.id);
+      syncedCount++;
+
+      console.log(`[Sync] Laudo offline com ID ${inspectionId} sincronizado com a nuvem com sucesso.`);
+    } catch (err) {
+      console.error(`[Sync] Falha ao sincronizar laudo ${inspection.id}:`, err);
+    }
+  }
+
+  // Gravar estados limpos no localStorage (restará apenas as demos e os que eventualmente falharam)
+  setLocalStorageItem(KEYS.INSPECTIONS, remainingInspections);
+  setLocalStorageItem(KEYS.MEASUREMENTS, remainingMeasurements);
+
+  if (syncedCount > 0) {
+    const msg = typeof window.t === 'function'
+      ? window.t("Oba! Sincronização concluída: seus diagnósticos salvos offline foram enviados para a nuvem!")
+      : "Oba! Sincronização concluída: seus diagnósticos salvos offline foram enviados para a nuvem!";
+    alert(msg);
+  }
+}
+
+window.syncOfflineInspections = syncOfflineInspections;

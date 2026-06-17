@@ -2852,6 +2852,66 @@
         return Object.values(clientsMap);
       }
 
+      
+      function getCrmStorageKey() {
+        const email = window.currentUserEmail || '';
+        if (email) {
+          const cleanEmail = email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          return `spray_crm_clients_${cleanEmail}`;
+        }
+        return getCrmStorageKey();
+      }
+
+      function migrateCrmStorage(userEmail) {
+        if (!userEmail) return;
+        const cleanEmail = userEmail.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const scopedKey = `spray_crm_clients_${cleanEmail}`;
+        const legacyKey = 'spray_crm_' + 'clients';
+        
+        const globalData = JSON.parse(localStorage.getItem(legacyKey) || '[]');
+        if (globalData.length === 0) return;
+        
+        const scopedData = JSON.parse(localStorage.getItem(scopedKey) || '[]');
+        const scopedIds = new Set(scopedData.map(c => c.id));
+        
+        let migratedAny = false;
+        
+        globalData.forEach(c => {
+          if (!scopedIds.has(c.id)) {
+            if (!c.created_by_email || c.created_by_email.toLowerCase() === userEmail.toLowerCase()) {
+              c.created_by_email = userEmail;
+              scopedData.push(c);
+              migratedAny = true;
+            } else {
+              const otherCleanEmail = c.created_by_email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+              const otherKey = `spray_crm_clients_${otherCleanEmail}`;
+              const otherData = JSON.parse(localStorage.getItem(otherKey) || '[]');
+              if (!otherData.some(item => item.id === c.id)) {
+                otherData.push(c);
+                localStorage.setItem(otherKey, JSON.stringify(otherData));
+              }
+            }
+          }
+        });
+        
+        if (migratedAny) {
+          localStorage.setItem(scopedKey, JSON.stringify(scopedData));
+        }
+        
+        const remainingGlobal = globalData.filter(c => {
+          if (!c.created_by_email || c.created_by_email.toLowerCase() === userEmail.toLowerCase()) {
+            return false;
+          }
+          return true;
+        });
+        
+        if (remainingGlobal.length === 0) {
+          localStorage.removeItem(legacyKey);
+        } else {
+          localStorage.setItem(legacyKey, JSON.stringify(remainingGlobal));
+        }
+      }
+
       function updateSyncStatus(status) {
         const el = document.getElementById('crmSyncStatus');
         if (!el) return;
@@ -2890,13 +2950,13 @@
         const user = session.user;
 
         try {
-          const localData = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+          const localData = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
           const { clients: localClients, machines: localMachines } = flattenCRMData(localData);
 
-          const { data: dbClients, error: cErr } = await clienteSupabase.from('clientes').select('*');
+          const { data: dbClients, error: cErr } = await clienteSupabase.from('clientes').select('*').eq('user_id', user.id);
           if (cErr) throw cErr;
 
-          const { data: dbMachines, error: mErr } = await clienteSupabase.from('maquinas').select('*');
+          const { data: dbMachines, error: mErr } = await clienteSupabase.from('maquinas').select('*').eq('user_id', user.id);
           if (mErr) throw mErr;
 
           const mergedClients = {};
@@ -2975,7 +3035,7 @@
           const activeMachines = Object.values(mergedMachines).filter(m => !m.is_deleted);
 
           const nestedData = nestCRMData(activeClients, activeMachines);
-          localStorage.setItem('spray_crm_clients', JSON.stringify(nestedData));
+          localStorage.setItem(getCrmStorageKey(), JSON.stringify(nestedData));
 
           updateSyncStatus('synced');
           renderHistory();
@@ -2990,7 +3050,7 @@
 
       // --- DADOS DEMO E REGISTROS DE EXEMPLO DO CRM ---
       function getCRMClients() {
-        const stored = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        const stored = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const activeStored = stored.filter(c => !c.is_deleted).map(c => {
           if (c.machines) {
             c.machines = c.machines.filter(m => !m.is_deleted);
@@ -3138,7 +3198,7 @@
         
         if (clientId) {
           title.innerText = "✏️ Editar Cliente";
-          const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+          const clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
           const c = clients.find(item => item.id === clientId);
           if (c) {
             document.getElementById('clientEditId').value = c.id;
@@ -3162,7 +3222,7 @@
         const farmName = document.getElementById('clientFarm').value;
         const notes = document.getElementById('clientNotes').value;
 
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const now = new Date().toISOString();
 
         if (id) {
@@ -3191,7 +3251,7 @@
           alert("✅ Cliente adicionado com sucesso!");
         }
 
-        localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
+        localStorage.setItem(getCrmStorageKey(), JSON.stringify(clients));
         document.getElementById('clientModal').style.display = 'none';
         updateSessionBanner(); // Sincroniza o banner ativo
         syncCRM();
@@ -3207,7 +3267,7 @@
 
         if (!confirm("Tem certeza que deseja excluir este produtor? Todas as máquinas vinculadas serão perdidas permanentemente.")) return;
         
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const now = new Date().toISOString();
         
         clients = clients.map(c => {
@@ -3217,7 +3277,7 @@
           }
           return c;
         });
-        localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
+        localStorage.setItem(getCrmStorageKey(), JSON.stringify(clients));
         
         if (window.activeClientId === clientId) {
           clearActiveSession();
@@ -3244,7 +3304,7 @@
           title.innerText = "✏️ Editar Máquina";
           document.getElementById('machineEditId').value = machineId;
           
-          const clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+          const clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
           const c = clients.find(item => item.id === clientId);
           if (c) {
             const m = c.machines.find(item => item.id === machineId);
@@ -3274,7 +3334,7 @@
         const boomSize = parseFloat(document.getElementById('machineBoomSize').value); // Lê o tamanho da barra manual
         const now = new Date().toISOString();
 
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
 
         if (cIndex !== -1) {
@@ -3308,7 +3368,7 @@
 
           clients[cIndex].machines = machines;
           clients[cIndex].updated_at = now;
-          localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
+          localStorage.setItem(getCrmStorageKey(), JSON.stringify(clients));
         }
 
         document.getElementById('machineModal').style.display = 'none';
@@ -3326,7 +3386,7 @@
 
         if (!confirm("Tem certeza que deseja excluir esta máquina?")) return;
 
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
         const now = new Date().toISOString();
 
@@ -3338,7 +3398,7 @@
             return m;
           });
           clients[cIndex].updated_at = now;
-          localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
+          localStorage.setItem(getCrmStorageKey(), JSON.stringify(clients));
         }
 
         if (window.activeMachineId === machineId) {
@@ -3455,7 +3515,7 @@
           statusText: window.topNozzle.statusText
         } : null;
 
-        let clients = JSON.parse(localStorage.getItem('spray_crm_clients') || '[]');
+        let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
         const now = new Date().toISOString();
 
@@ -3476,7 +3536,7 @@
             return m;
           });
           clients[cIndex].updated_at = now;
-          localStorage.setItem('spray_crm_clients', JSON.stringify(clients));
+          localStorage.setItem(getCrmStorageKey(), JSON.stringify(clients));
           alert("✅ Calibração vinculada à máquina do produtor com sucesso!");
           document.getElementById('saveModal').style.display = 'none';
           
@@ -3988,6 +4048,7 @@
           }
 
           window.currentUserEmail = user.email;
+          migrateCrmStorage(user.email);
           
           // Registrar nova sessão ativa
           await registerActiveSession(user.id);

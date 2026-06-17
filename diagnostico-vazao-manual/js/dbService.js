@@ -204,6 +204,9 @@ async function saveInspection(inspection, measurements) {
   await delay(200);
 
   if (USE_SUPABASE) {
+    if (!navigator.onLine) {
+      throw new Error("Dispositivo offline");
+    }
     const supabase = window.supabaseClient;
     if (!supabase) throw new Error("Cliente Supabase não inicializado!");
     
@@ -357,6 +360,12 @@ async function getInspections() {
   ];
 
   if (USE_SUPABASE) {
+    if (!navigator.onLine) {
+      console.log("[dbService] Carregando histórico local devido a navigator.onLine === false");
+      const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+      const sorted = inspections.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return [...demoHeaders, ...sorted];
+    }
     try {
       const supabase = window.supabaseClient;
       if (!supabase) throw new Error("Cliente Supabase não inicializado!");
@@ -421,6 +430,20 @@ async function getInspectionById(id) {
   await delay(150);
 
   if (USE_SUPABASE) {
+    if (!navigator.onLine) {
+      console.log("[dbService] Carregando laudo local devido a navigator.onLine === false");
+      const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+      const allMeasurements = getLocalStorageItem(KEYS.MEASUREMENTS, []);
+
+      const inspection = inspections.find(i => i.id === id);
+      if (!inspection) return null;
+
+      const measurements = allMeasurements
+        .filter(m => m.inspection_id === id)
+        .sort((a, b) => a.nozzle_number - b.nozzle_number);
+
+      return { inspection, measurements };
+    }
     try {
       const supabase = window.supabaseClient;
       if (!supabase) throw new Error("Cliente Supabase não inicializado!");
@@ -482,6 +505,19 @@ async function deleteInspection(id) {
   await delay(200);
 
   if (USE_SUPABASE) {
+    if (!navigator.onLine) {
+      console.log("[dbService] Deletando laudo local devido a navigator.onLine === false");
+      const inspections = getLocalStorageItem(KEYS.INSPECTIONS, []);
+      const allMeasurements = getLocalStorageItem(KEYS.MEASUREMENTS, []);
+
+      const filteredInspections = inspections.filter(i => i.id !== id);
+      const filteredMeasurements = allMeasurements.filter(m => m.inspection_id !== id);
+
+      setLocalStorageItem(KEYS.INSPECTIONS, filteredInspections);
+      setLocalStorageItem(KEYS.MEASUREMENTS, filteredMeasurements);
+
+      return true;
+    }
     try {
       const supabase = window.supabaseClient;
       if (!supabase) throw new Error("Cliente Supabase não inicializado!");

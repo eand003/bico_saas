@@ -2957,12 +2957,18 @@
 
           if (clientsToUpsert.length > 0) {
             const { error: upsertErr } = await clienteSupabase.from('clientes').upsert(clientsToUpsert);
-            if (upsertErr) console.error("Error upserting clients:", upsertErr);
+            if (upsertErr) {
+              console.error("Error upserting clients:", upsertErr);
+              throw upsertErr;
+            }
           }
 
           if (machinesToUpsert.length > 0) {
             const { error: upsertErr } = await clienteSupabase.from('maquinas').upsert(machinesToUpsert);
-            if (upsertErr) console.error("Error upserting machines:", upsertErr);
+            if (upsertErr) {
+              console.error("Error upserting machines:", upsertErr);
+              throw upsertErr;
+            }
           }
 
           const activeClients = Object.values(mergedClients).filter(c => !c.is_deleted);

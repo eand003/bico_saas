@@ -1628,8 +1628,8 @@
         if (authError) throw authError;
         cachedUsers = users;
 
-        const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, partner_id');
-        const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, partner_id');
+        const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id');
+        const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id');
         const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at, accessed_app');
 
         cachedClients = clients || [];

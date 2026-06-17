@@ -582,10 +582,27 @@
       width: 90%;
       max-width: 500px;
       position: relative;
+      overflow: hidden;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 210, 255, 0.15);
       text-align: center;
       transform: translateY(20px);
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .promo-ribbon {
+      position: absolute;
+      top: 22px;
+      left: -32px;
+      background: linear-gradient(135deg, #ffe600 0%, #ffb300 100%);
+      color: #05080a;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 6px 36px;
+      transform: rotate(-45deg);
+      box-shadow: 0 4px 12px rgba(255, 179, 0, 0.3);
+      letter-spacing: 0.12em;
+      z-index: 10;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
     }
     .promo-overlay.show .promo-content {
       transform: translateY(0);
@@ -945,6 +962,7 @@
   <!-- MODAL PROMOCIONAL DINÂMICO -->
   <div id="modal-promo" class="promo-overlay" onclick="if(event.target === this) closePromoModal()">
     <div class="promo-content">
+      <div class="promo-ribbon">Oferta</div>
       <button class="promo-close" onclick="closePromoModal()">&times;</button>
       <div class="promo-icon-badge">📢</div>
       <h2 id="promo-title" class="promo-title-text">Oferta Especial</h2>

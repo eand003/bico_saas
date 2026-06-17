@@ -191,14 +191,18 @@ function handleOfflineBypass() {
   renderHistoryList();
 }
 
-// Registra a sessão ativa do usuário no Supabase e localStorage
+// Registra a sessão ativa do usuário no Supabase e localStorage usando o session_id nativo do Supabase
 async function registerActiveSession(userId) {
   const supabase = window.supabaseClient;
   if (!supabase) return;
   
   try {
-    const sessionToken = 'sess_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    localStorage.setItem('spray_active_session_token', sessionToken);
+    // Obtém o ID de sessão nativo do Supabase – este persiste corretamente no Safari/iOS
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return; // sem sessão ativa, nada a registrar
+
+    const sessionId = session.access_token.slice(-32); // últimos 32 chars do JWT como fingerprint
+    localStorage.setItem('spray_active_session_token', sessionId);
     
     // Buscar registro de sessão atual para preservar outras aplicações abertas
     const { data: currentData } = await supabase
@@ -211,16 +215,14 @@ async function registerActiveSession(userId) {
     if (currentData && currentData.session_token) {
       try {
         tokenMap = JSON.parse(currentData.session_token);
-        if (typeof tokenMap !== 'object' || tokenMap === null) {
-          tokenMap = { legacy: currentData.session_token };
-        }
+        if (typeof tokenMap !== 'object' || tokenMap === null) tokenMap = {};
       } catch (e) {
-        tokenMap = { legacy: currentData.session_token };
+        tokenMap = {};
       }
     }
 
     // Atualiza token para o módulo de diagnóstico
-    tokenMap.diagnostico = sessionToken;
+    tokenMap.diagnostico = sessionId;
     const serializedToken = JSON.stringify(tokenMap);
     
     const { error } = await supabase
@@ -239,16 +241,15 @@ async function registerActiveSession(userId) {
 }
 
 // Verifica a integridade da sessão do usuário
+// IMPORTANTE: usa o session_id nativo do Supabase como referência,
+// e tolera ausência temporária do localStorage (comum no Safari/iOS em segundo plano)
 async function verifySessionIntegrity(userId) {
-  const localToken = localStorage.getItem('spray_active_session_token');
-  if (!localToken) return;
-
   const supabase = window.supabaseClient;
   if (!supabase) return;
 
   try {
     // Validação de acesso e bloqueio ativo
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const metadata = user.user_metadata || {};
       if (metadata.is_blocked === true) {
@@ -270,6 +271,23 @@ async function verifySessionIntegrity(userId) {
       }
     }
 
+    // Lê o token local — no Safari/iOS o localStorage pode ser limpo pelo OS
+    // Se o token local está ausente, tenta recuperar da sessão Supabase atual
+    let localToken = localStorage.getItem('spray_active_session_token');
+    if (!localToken) {
+      // Tenta restaurar a partir da sessão Supabase ativa (sem expulsar)
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const recovered = session.access_token.slice(-32);
+        localStorage.setItem('spray_active_session_token', recovered);
+        localToken = recovered;
+        // Re-registra no banco para evitar desconexão na próxima verificação
+        await registerActiveSession(userId);
+      } else {
+        return; // sem sessão ativa, ignora
+      }
+    }
+
     const { data, error } = await supabase
       .from('user_sessions')
       .select('session_token')
@@ -282,7 +300,7 @@ async function verifySessionIntegrity(userId) {
     try {
       const tokenMap = JSON.parse(data.session_token);
       if (tokenMap && typeof tokenMap === 'object') {
-        dbToken = tokenMap.diagnostico || tokenMap.legacy;
+        dbToken = tokenMap.diagnostico ?? tokenMap.legacy ?? null;
       } else {
         dbToken = data.session_token;
       }
@@ -290,12 +308,15 @@ async function verifySessionIntegrity(userId) {
       dbToken = data.session_token;
     }
 
-    if (dbToken && dbToken !== localToken) {
+    // Só expulsa se o token do banco for claramente diferente do local
+    // (ignora casos onde dbToken está nulo/vazio — indicativo de dado corrompido)
+    if (dbToken && localToken && dbToken !== localToken) {
       alert(t("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!"));
       await forceUserLogout();
     }
   } catch (err) {
-    console.log("Falha ao checar integridade da sessão (possivelmente offline):", err);
+    // Em caso de falha de rede, NÃO expulsa o usuário — falha silenciosa
+    console.log("Falha ao checar integridade da sessão (ignorando):", err);
   }
 }
 

@@ -1034,7 +1034,10 @@
             <h3 style="margin-bottom: 0;">📊 CRM Geral (Clientes e Frotas)</h3>
             <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Monitore todos os produtores e pulverizadores cadastrados pelos consultores das revendas.</p>
           </div>
-          <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px; height: 32px;">🔄 Recarregar</button>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-danger" onclick="cleanOrphanedData()" style="padding: 6px 12px; font-size: 12px; height: 32px; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.35); color: #f87171;" title="Limpar dados de consultores que foram excluídos">🧹 Limpar Órfãos</button>
+            <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px; height: 32px;">🔄 Recarregar</button>
+          </div>
         </div>
 
         <div style="display: flex; gap: 12px; align-items: center; width: 100%; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
@@ -2348,19 +2351,160 @@
     }
 
     async function deleteUser(userId, email) {
-      const confirmDelete = confirm(`⚠️ TEM CERTEZA que deseja deletar o usuário "${email}"?\n\nEsta ação é irreversível.`);
+      const confirmDelete = confirm(`⚠️ TEM CERTEZA que deseja deletar o usuário "${email}"?\n\nEsta ação irá remover permanentemente a conta de acesso E todos os seus dados cadastrados (clientes, pulverizadores, calibrações e histórico).`);
       if (!confirmDelete) return;
 
       try {
+        showLoading(true);
+
+        // 1. Obter IDs das inspeções do usuário para limpar medições
+        const { data: userInspections } = await supabaseAdmin
+          .from('flow_inspections')
+          .select('id')
+          .eq('owner_id', userId);
+          
+        if (userInspections && userInspections.length > 0) {
+          const insIds = userInspections.map(i => i.id);
+          const { error: errMeas } = await supabaseAdmin
+            .from('flow_measurements')
+            .delete()
+            .in('inspection_id', insIds);
+          if (errMeas) console.warn("Erro ao deletar medições:", errMeas);
+        }
+
+        // 2. Deletar inspeções
+        const { error: errInspections } = await supabaseAdmin
+          .from('flow_inspections')
+          .delete()
+          .eq('owner_id', userId);
+        if (errInspections) console.warn("Erro ao deletar inspeções:", errInspections);
+
+        // 3. Deletar pulverizadores
+        const { error: errMachines } = await supabaseAdmin
+          .from('maquinas')
+          .delete()
+          .eq('user_id', userId);
+        if (errMachines) console.warn("Erro ao deletar máquinas:", errMachines);
+
+        // 4. Deletar clientes
+        const { error: errClients } = await supabaseAdmin
+          .from('clientes')
+          .delete()
+          .eq('user_id', userId);
+        if (errClients) console.warn("Erro ao deletar clientes:", errClients);
+
+        // 5. Deletar sessões de usuário
+        const { error: errSessions } = await supabaseAdmin
+          .from('user_sessions')
+          .delete()
+          .eq('user_id', userId);
+        if (errSessions) console.warn("Erro ao deletar sessões:", errSessions);
+
+        // 6. Deletar a conta de autenticação no Supabase Auth
         const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
         if (error) throw error;
 
-        alert('Usuário deletado com sucesso!');
+        alert('Usuário e todos os seus dados associados foram deletados com sucesso!');
         fetchDatabaseData();
       } catch (err) {
         alert('Erro ao deletar usuário: ' + err.message);
+        fetchDatabaseData();
+      } finally {
+        showLoading(false);
       }
     }
+
+    async function cleanOrphanedData() {
+      if (!confirm("⚠️ Tem certeza que deseja limpar TODOS os dados órfãos?\n\nIsso removerá permanentemente todos os produtores, pulverizadores, calibrações e sessões de usuários que já foram excluídos do sistema.")) {
+        return;
+      }
+      
+      try {
+        showLoading(true);
+        
+        // Identificar IDs de usuários existentes
+        const activeUserIds = new Set(cachedUsers.map(u => u.id));
+        
+        // Buscar todos os registros do banco de dados para filtrar órfãos
+        const { data: allClients, error: errClientsFetch } = await supabaseAdmin
+          .from('clientes')
+          .select('id, user_id');
+          
+        if (errClientsFetch) throw errClientsFetch;
+        
+        // Filtra os IDs de usuário que não existem mais na lista de usuários ativos do Supabase Auth
+        const orphanedUserIds = [...new Set(
+          allClients
+            .map(c => c.user_id)
+            .filter(uid => uid && !activeUserIds.has(uid))
+        )];
+        
+        if (orphanedUserIds.length === 0) {
+          alert("Nenhum dado órfão detectado!");
+          return;
+        }
+        
+        let deletedInspectionsCount = 0;
+        let deletedMachinesCount = 0;
+        let deletedClientsCount = 0;
+        
+        for (const orphanUserId of orphanedUserIds) {
+          // 1. Obter IDs das inspeções para limpar medições
+          const { data: inspections } = await supabaseAdmin
+            .from('flow_inspections')
+            .select('id')
+            .eq('owner_id', orphanUserId);
+            
+          if (inspections && inspections.length > 0) {
+            const insIds = inspections.map(i => i.id);
+            await supabaseAdmin
+              .from('flow_measurements')
+              .delete()
+              .in('inspection_id', insIds);
+              
+            // Deleta inspeções
+            const { data: delIns } = await supabaseAdmin
+              .from('flow_inspections')
+              .delete()
+              .eq('owner_id', orphanUserId)
+              .select('id');
+            if (delIns) deletedInspectionsCount += delIns.length;
+          }
+            
+          // Deleta máquinas
+          const { data: delMac } = await supabaseAdmin
+            .from('maquinas')
+            .delete()
+            .eq('user_id', orphanUserId)
+            .select('id');
+          if (delMac) deletedMachinesCount += delMac.length;
+            
+          // Deleta clientes
+          const { data: delCli } = await supabaseAdmin
+            .from('clientes')
+            .delete()
+            .eq('user_id', orphanUserId)
+            .select('id');
+          if (delCli) deletedClientsCount += delCli.length;
+            
+          // Deleta sessões
+          await supabaseAdmin
+            .from('user_sessions')
+            .delete()
+            .eq('user_id', orphanUserId);
+        }
+        
+        alert(`Limpeza concluída com sucesso!\n\nForam removidos do banco de dados:\n- ${deletedClientsCount} Produtor(es) órfão(s)\n- ${deletedMachinesCount} Pulverizador(es) órfão(s)\n- ${deletedInspectionsCount} Inspeção(ões) órfã(s)`);
+        fetchDatabaseData();
+      } catch (err) {
+        alert("Erro ao limpar dados órfãos: " + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    window.cleanOrphanedData = cleanOrphanedData;
+    window.deleteUser = deleteUser;
 
     async function loadGlobalConfigs() {
       if (!supabaseAdmin) return;

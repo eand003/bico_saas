@@ -725,8 +725,33 @@
       .enterprise-list {
         max-height: 180px;
       }
+    }
 
-      /* OVERHAULS THE TABLE INTO BEAUTIFUL VERTICAL GLASS CARDS FOR MOBILE SCREENSIZES */
+    /* Sticky E-mail Column - active whenever the table is rendered as a table */
+    @media screen and (min-width: 769px), screen and (max-width: 768px) and (orientation: landscape) {
+      .table-responsive {
+        position: relative;
+        overflow-x: auto;
+      }
+      .admin-table th:first-child,
+      .admin-table td.user-email-cell {
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        background: #0f1418; /* Solid background to prevent horizontal scroll bleed */
+        border-right: 1px solid var(--glass-border);
+      }
+      .admin-table th:first-child {
+        background: #191f26; /* Slightly lighter/darker header background */
+        z-index: 11;
+      }
+      .admin-table tbody tr:hover td.user-email-cell {
+        background: #181d22; /* Slightly lighter for hover effect matching row hover */
+      }
+    }
+
+    /* OVERHAULS THE TABLE INTO BEAUTIFUL VERTICAL GLASS CARDS FOR MOBILE SCREENSIZES ONLY IN PORTRAIT */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
       .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
         display: block;
         width: 100%;

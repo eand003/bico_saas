@@ -2357,6 +2357,17 @@
       try {
         showLoading(true);
 
+        // Obter os clientes deste usuário (tanto por user_id quanto por email)
+        const { data: userClients } = await supabaseAdmin
+          .from('clientes')
+          .select('id')
+          .or(`user_id.eq.${userId},created_by_email.eq.${email}`);
+
+        let clientIds = [];
+        if (userClients && userClients.length > 0) {
+          clientIds = userClients.map(c => c.id);
+        }
+
         // 1. Obter IDs das inspeções do usuário para limpar medições
         const { data: userInspections } = await supabaseAdmin
           .from('flow_inspections')
@@ -2379,18 +2390,26 @@
           .eq('owner_id', userId);
         if (errInspections) console.warn("Erro ao deletar inspeções:", errInspections);
 
-        // 3. Deletar pulverizadores
-        const { error: errMachines } = await supabaseAdmin
+        // 3. Deletar pulverizadores (por user_id ou client_id)
+        const { error: errMachines1 } = await supabaseAdmin
           .from('maquinas')
           .delete()
           .eq('user_id', userId);
-        if (errMachines) console.warn("Erro ao deletar máquinas:", errMachines);
+        if (errMachines1) console.warn("Erro ao deletar máquinas por user_id:", errMachines1);
 
-        // 4. Deletar clientes
+        if (clientIds.length > 0) {
+          const { error: errMachines2 } = await supabaseAdmin
+            .from('maquinas')
+            .delete()
+            .in('client_id', clientIds);
+          if (errMachines2) console.warn("Erro ao deletar máquinas por client_id:", errMachines2);
+        }
+
+        // 4. Deletar clientes (tanto por user_id quanto por email)
         const { error: errClients } = await supabaseAdmin
           .from('clientes')
           .delete()
-          .eq('user_id', userId);
+          .or(`user_id.eq.${userId},created_by_email.eq.${email}`);
         if (errClients) console.warn("Erro ao deletar clientes:", errClients);
 
         // 5. Deletar sessões de usuário
@@ -2422,24 +2441,66 @@
       try {
         showLoading(true);
         
-        // Identificar IDs de usuários existentes
+        // 1. Identificar emails e IDs de usuários ativos
         const activeUserIds = new Set(cachedUsers.map(u => u.id));
+        const activeUserEmails = new Set(cachedUsers.map(u => (u.email || '').toLowerCase().trim()));
         
-        // Buscar todos os registros do banco de dados para filtrar órfãos
+        // 2. Buscar TODOS os clientes, máquinas e inspeções do banco para fazer a varredura
         const { data: allClients, error: errClientsFetch } = await supabaseAdmin
           .from('clientes')
-          .select('id, user_id');
+          .select('id, user_id, created_by_email, name');
           
         if (errClientsFetch) throw errClientsFetch;
         
-        // Filtra os IDs de usuário que não existem mais na lista de usuários ativos do Supabase Auth
-        const orphanedUserIds = [...new Set(
-          allClients
-            .map(c => c.user_id)
-            .filter(uid => uid && !activeUserIds.has(uid))
-        )];
+        const { data: allMachines, error: errMachinesFetch } = await supabaseAdmin
+          .from('maquinas')
+          .select('id, user_id, client_id, name');
+          
+        if (errMachinesFetch) throw errMachinesFetch;
         
-        if (orphanedUserIds.length === 0) {
+        const { data: allInspections, error: errInspectionsFetch } = await supabaseAdmin
+          .from('flow_inspections')
+          .select('id, owner_id, client_name');
+          
+        if (errInspectionsFetch) throw errInspectionsFetch;
+        
+        // 3. Filtrar produtores órfãos (se o user_id for órfão ou se o created_by_email for órfão)
+        const orphanedClients = allClients.filter(c => {
+          const hasNoUserId = !c.user_id;
+          const isUserIdOrphan = c.user_id && !activeUserIds.has(c.user_id);
+          const emailLower = (c.created_by_email || '').toLowerCase().trim();
+          const isEmailOrphan = emailLower && !activeUserEmails.has(emailLower);
+          
+          return hasNoUserId || isUserIdOrphan || isEmailOrphan;
+        });
+        
+        const orphanedClientIds = orphanedClients.map(c => c.id);
+        const orphanedClientUserIds = [...new Set(orphanedClients.map(c => c.user_id).filter(Boolean))];
+        
+        // 4. Filtrar máquinas órfãs (do usuário órfão ou associadas a clientes órfãos)
+        const orphanedMachines = allMachines.filter(m => {
+          const hasNoUserId = !m.user_id;
+          const isUserIdOrphan = m.user_id && !activeUserIds.has(m.user_id);
+          const isClientOrphan = m.client_id && orphanedClientIds.includes(m.client_id);
+          
+          return hasNoUserId || isUserIdOrphan || isClientOrphan;
+        });
+        
+        const orphanedMachineIds = orphanedMachines.map(m => m.id);
+        
+        // 5. Filtrar inspeções órfãs
+        const orphanedInspections = allInspections.filter(i => {
+          const hasNoOwnerId = !i.owner_id;
+          const isOwnerIdOrphan = i.owner_id && !activeUserIds.has(i.owner_id);
+          
+          return hasNoOwnerId || isOwnerIdOrphan;
+        });
+        
+        const orphanedInspectionIds = orphanedInspections.map(i => i.id);
+        
+        const totalOrphans = orphanedClients.length + orphanedMachines.length + orphanedInspections.length;
+        
+        if (totalOrphans === 0) {
           alert("Nenhum dado órfão detectado!");
           return;
         }
@@ -2448,50 +2509,57 @@
         let deletedMachinesCount = 0;
         let deletedClientsCount = 0;
         
-        for (const orphanUserId of orphanedUserIds) {
-          // 1. Obter IDs das inspeções para limpar medições
-          const { data: inspections } = await supabaseAdmin
+        // 6. Executar as exclusões no banco de dados
+        
+        // Excluir medições de inspeções órfãs
+        if (orphanedInspectionIds.length > 0) {
+          await supabaseAdmin
+            .from('flow_measurements')
+            .delete()
+            .in('inspection_id', orphanedInspectionIds);
+            
+          const { data: delIns } = await supabaseAdmin
             .from('flow_inspections')
-            .select('id')
-            .eq('owner_id', orphanUserId);
+            .delete()
+            .in('id', orphanedInspectionIds)
+            .select('id');
             
-          if (inspections && inspections.length > 0) {
-            const insIds = inspections.map(i => i.id);
-            await supabaseAdmin
-              .from('flow_measurements')
-              .delete()
-              .in('inspection_id', insIds);
-              
-            // Deleta inspeções
-            const { data: delIns } = await supabaseAdmin
-              .from('flow_inspections')
-              .delete()
-              .eq('owner_id', orphanUserId)
-              .select('id');
-            if (delIns) deletedInspectionsCount += delIns.length;
-          }
-            
-          // Deleta máquinas
+          if (delIns) deletedInspectionsCount = delIns.length;
+        }
+        
+        // Excluir máquinas órfãs
+        if (orphanedMachineIds.length > 0) {
           const { data: delMac } = await supabaseAdmin
             .from('maquinas')
             .delete()
-            .eq('user_id', orphanUserId)
+            .in('id', orphanedMachineIds)
             .select('id');
-          if (delMac) deletedMachinesCount += delMac.length;
             
-          // Deleta clientes
+          if (delMac) deletedMachinesCount = delMac.length;
+        }
+        
+        // Excluir clientes órfãos
+        if (orphanedClientIds.length > 0) {
           const { data: delCli } = await supabaseAdmin
             .from('clientes')
             .delete()
-            .eq('user_id', orphanUserId)
+            .in('id', orphanedClientIds)
             .select('id');
-          if (delCli) deletedClientsCount += delCli.length;
             
-          // Deleta sessões
+          if (delCli) deletedClientsCount = delCli.length;
+        }
+        
+        // Excluir sessões de usuários órfãos
+        const allOrphanUserIds = [...new Set([
+          ...orphanedClientUserIds,
+          ...orphanedInspections.map(i => i.owner_id).filter(Boolean)
+        ])];
+        
+        if (allOrphanUserIds.length > 0) {
           await supabaseAdmin
             .from('user_sessions')
             .delete()
-            .eq('user_id', orphanUserId);
+            .in('user_id', allOrphanUserIds);
         }
         
         alert(`Limpeza concluída com sucesso!\n\nForam removidos do banco de dados:\n- ${deletedClientsCount} Produtor(es) órfão(s)\n- ${deletedMachinesCount} Pulverizador(es) órfão(s)\n- ${deletedInspectionsCount} Inspeção(ões) órfã(s)`);

@@ -1,0 +1,2699 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Smart Nozzle Selector — Spray Precision PRO</title>
+  <script>
+    window.onerror = function (msg, url, line, col, error) {
+      alert("ERRO INVISÍVEL:\n" + msg + "\nLinha: " + line);
+    };
+  </script>
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./logo.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #05080a;
+      --glass-bg: rgba(15, 20, 24, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.4);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.2);
+      --accent-error: #ff4b4b;
+      --accent-warn: #fbbf24;
+      --text-main: #ffffff;
+      --text-muted: #cbd5e1;
+      --card-radius: 20px;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      --bg-img: url('bg_premium.png');
+      --overlay-bg: rgba(0, 0, 0, 0.82);
+
+      --title-grad-1: #ffffff;
+      --title-grad-2: #b0c4de;
+      --control-bg: rgba(255, 255, 255, 0.05);
+      --control-border: rgba(255, 255, 255, 0.15);
+      --table-row-hover: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="light"] {
+      --bg-dark: #e2e8f0;
+      --glass-bg: rgba(248, 250, 252, 0.9);
+      --glass-border: rgba(0, 0, 0, 0.12);
+      --accent: #0066cc;
+      --accent-glow: rgba(0, 102, 204, 0.3);
+      --accent-green: #059669;
+      --accent-green-glow: rgba(5, 150, 105, 0.15);
+      --accent-error: #dc2626;
+      --accent-warn: #d97706;
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      --bg-img: none;
+      --overlay-bg: rgba(255, 255, 255, 0.7);
+
+      --title-grad-1: #0f172a;
+      --title-grad-2: #334155;
+      --control-bg: rgba(255, 255, 255, 0.8);
+      --control-border: rgba(0, 0, 0, 0.2);
+      --table-row-hover: rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark) var(--bg-img) no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, transparent 100%);
+      opacity: 0.95;
+      z-index: -1;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1280px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 900px) {
+      .container {
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Header */
+    .header {
+      width: 100%;
+      max-width: 1280px;
+      text-align: left;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: transparent;
+      object-fit: cover;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-title-block {
+      flex: 1;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, var(--title-grad-1), var(--title-grad-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .info-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-btn:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Controls Panel */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .val-display {
+      color: var(--accent);
+      font-weight: 700;
+      font-family: 'Outfit';
+      font-size: 14px;
+    }
+
+    /* Mode Switcher Tabs */
+    .mode-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 5px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .mode-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      text-align: left;
+      font-family: 'Outfit';
+    }
+
+    .mode-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .mode-tab.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Custom Sliders */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: transparent;
+      height: 24px;
+    }
+
+    input[type=range]:focus {
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -7px;
+      box-shadow: 0 0 10px var(--accent-glow);
+      transition: 0.2s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .unit-toggle {
+      display: flex;
+      background: var(--control-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--control-border);
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .unit-toggle button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter';
+      transition: 0.3s;
+    }
+
+    .unit-toggle button.active {
+      background: var(--text-main);
+      color: var(--bg-dark);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .preset-btn {
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Inter';
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .preset-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .preset-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .flex-row>div {
+      flex: 1;
+    }
+
+    /* Inputs */
+    input[type=number], select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      color: var(--text-main);
+      font-family: 'Outfit';
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    input[type=number]:focus, select:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    select {
+      text-align: left;
+      cursor: pointer;
+    }
+    select option {
+      background: #101622;
+      color: #fff;
+    }
+
+    /* Conditional panels styling */
+    .conditional-panel {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .panel-pwm {
+      background: rgba(168, 85, 247, 0.08);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .panel-dual {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+    }
+    .panel-header-title {
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title-row h2 {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .count-badge {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Inter';
+    }
+
+    .recommended-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    @media (min-width: 1024px) {
+      .recommended-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .nozzle-card {
+      background: var(--control-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+
+    .nozzle-card:hover {
+      transform: translateY(-4px);
+      background: var(--table-row-hover);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .nozzle-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: var(--nz-color);
+    }
+
+    .noz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .noz-iso {
+      font-family: 'Outfit';
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--text-main);
+    }
+
+    .noz-flow-badge {
+      text-align: right;
+    }
+    .noz-flow-badge .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: block;
+    }
+    .noz-flow-badge .value {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Outfit';
+    }
+
+    .noz-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+    }
+
+    .metric-val {
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: 'Outfit';
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    .status-badge.ok {
+      background: rgba(56, 239, 125, 0.15);
+      color: var(--accent-green) !important;
+      border: 1px solid rgba(56, 239, 125, 0.3) !important;
+    }
+
+    .status-badge.bad {
+      background: rgba(255, 75, 75, 0.15);
+      color: var(--accent-error) !important;
+      border: 1px solid rgba(255, 75, 75, 0.3) !important;
+    }
+
+    .status-badge.warning {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-warn) !important;
+      border: 1px solid rgba(251, 191, 36, 0.3) !important;
+    }
+
+    /* Progress bar for PWM */
+    .duty-bar-container {
+      margin-top: 6px;
+    }
+    .duty-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .duty-bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .duty-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      position: absolute;
+    }
+
+    /* Staged bars for Bico Duplo */
+    .stages-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 8px;
+    }
+    .stage-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .stage-marker {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .stage-title {
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 90px;
+    }
+    .stage-val-range {
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: 'Outfit';
+    }
+
+    /* Charts */
+    .chart-container {
+      position: relative;
+      height: 380px;
+      width: 100%;
+      background: var(--control-bg);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--glass-border);
+    }
+
+    /* Table responsive container */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      margin-top: 8px;
+    }
+
+    .premium-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    .premium-table th,
+    .premium-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 13px;
+    }
+
+    .premium-table th {
+      background: var(--control-bg);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      border-bottom: 2px solid var(--glass-border);
+    }
+
+    .premium-table tbody tr {
+      transition: background 0.2s;
+    }
+
+    .premium-table tbody tr:hover {
+      background: var(--table-row-hover);
+    }
+
+    .premium-table tbody tr.row-ok {
+      background: rgba(56, 239, 125, 0.05);
+    }
+
+    .premium-table tbody tr.row-ok:hover {
+      background: rgba(56, 239, 125, 0.1);
+    }
+
+    .premium-table tbody tr.row-selected {
+      background: rgba(0, 210, 255, 0.15) !important;
+    }
+
+    /* Responsividade p/ Tabela em modo retrato (mobile) */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .premium-table {
+        min-width: 100%;
+      }
+
+      .premium-table thead {
+        display: none;
+      }
+
+      .premium-table,
+      .premium-table tbody,
+      .premium-table tr,
+      .premium-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .premium-table tr {
+        margin-bottom: 16px;
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 4px;
+        background: var(--control-bg);
+      }
+
+      .premium-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .premium-table td:last-child {
+        border-bottom: 0;
+      }
+
+      .premium-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 11px;
+        text-align: left;
+      }
+    }
+
+    /* Advanced Custom Flow */
+    .advanced-trigger {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .advanced-trigger:hover {
+      color: var(--text-main);
+    }
+    .advanced-container {
+      display: none;
+      margin-top: 10px;
+    }
+    .advanced-container.active {
+      display: block;
+    }
+
+    /* Comparative card */
+    .comparative-section {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.04), rgba(168, 85, 247, 0.04), rgba(249, 115, 22, 0.04));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+    }
+    .comparative-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .comp-card {
+      background: var(--control-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+    .comp-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .comp-val {
+      font-family: 'Outfit';
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .comp-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Technical Alerts */
+    .alerts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .alert-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .alert-card.ok {
+      background: rgba(56, 239, 125, 0.08);
+      border: 1px solid rgba(56, 239, 125, 0.2);
+    }
+    .alert-card.warn {
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    .alert-card.info {
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+    }
+    .alert-card.danger {
+      background: rgba(255, 75, 75, 0.08);
+      border: 1px solid rgba(255, 75, 75, 0.2);
+    }
+    .alert-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Help Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--overlay-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 0 40px rgba(0, 210, 255, 0.15);
+      position: relative;
+      max-height: 88vh;
+      overflow-y: auto;
+      color: var(--text-main);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 32px;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: var(--text-main);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-size: 26px;
+    }
+
+    .modal-content h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border-bottom: 1px solid var(--control-border);
+      padding-bottom: 6px;
+    }
+
+    .modal-content p, .modal-content li {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .modal-content ul {
+      padding-left: 18px;
+    }
+
+    .disclaimer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.7;
+      line-height: 1.5;
+      margin-top: 8px;
+      padding: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="header">
+    <img class="header-icon" src="./logo.png" alt="Spray Precision PRO Logo" onerror="this.style.display='none'">
+    <div class="header-title-block">
+      <h1>Spray Precision <span style="font-weight:300;">PRO</span></h1>
+      <p>Smart Nozzle Selector — Convencional · PWM · Bico Duplo</p>
+    </div>
+    <div class="header-actions">
+      <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro">🌓</button>
+      <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'" title="Como Usar o Simulador">?</button>
+    </div>
+  </header>
+
+  <!-- ═══════════ MAIN CONTAINER ═══════════ -->
+  <main class="container">
+
+    <!-- ────── CONTROLES (PAINEL ESQUERDO) ────── -->
+    <aside class="glass-panel controls">
+      
+      <!-- Seletor de Tecnologia / Modo -->
+      <div class="control-group">
+        <label>Tecnologia do Sistema</label>
+        <div class="mode-selector">
+          <button class="mode-tab active" id="tab-conventional" onclick="setMode('conventional')">
+            <span>💧</span> Convencional (Hidráulico)
+          </button>
+          <button class="mode-tab" id="tab-pwm" onclick="setMode('pwm')">
+            <span>⚡</span> PWM / Pulsado
+          </button>
+          <button class="mode-tab" id="tab-dual" onclick="setMode('dual')">
+            <span>🔀</span> Bico Duplo (Estágios)
+          </button>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 14px;">
+        <h3 style="font-size:13px; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px; letter-spacing:0.5px;">Parâmetros Comuns</h3>
+      </div>
+
+      <!-- Espaçamento -->
+      <div class="control-group">
+        <label>Espaçamento entre bicos (cm) <span class="val-display" id="valSpacing">50</span></label>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+          <button type="button" class="preset-btn active" id="sp35" onclick="setSpacing(35)">35 cm</button>
+          <button type="button" class="preset-btn" id="sp50" onclick="setSpacing(50)">50 cm</button>
+          <button type="button" class="preset-btn" id="sp70" onclick="setSpacing(70)">70 cm</button>
+        </div>
+        <div class="flex-row" style="align-items: center; gap: 8px;">
+          <input type="range" id="rngSpacing" min="20" max="100" step="1" value="50" style="flex:2;" oninput="syncInput(this, 'numSpacing', 'valSpacing')">
+          <input type="number" id="numSpacing" value="50" min="20" max="100" style="flex:1;" oninput="syncRange(this, 'rngSpacing', 'valSpacing')">
+        </div>
+      </div>
+
+      <!-- Vazão Alvo -->
+      <div class="control-group">
+        <label>Vazão Alvo (L/ha) <span class="val-display" id="valRate">60</span></label>
+        <div class="flex-row" style="align-items: center; gap: 8px;">
+          <input type="range" id="rngRate" min="15" max="300" step="1" value="60" style="flex:2;" oninput="syncInput(this, 'numRate', 'valRate')">
+          <input type="number" id="numRate" value="60" min="5" max="500" style="flex:1;" oninput="syncRange(this, 'rngRate', 'valRate')">
+        </div>
+      </div>
+
+      <!-- Densidade -->
+      <div class="control-group">
+        <label>Densidade da Calda (kg/L)</label>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+          <button type="button" class="preset-btn active" id="dn100" onclick="setDensity(1.00)">Água (1.00)</button>
+          <button type="button" class="preset-btn" id="dn108" onclick="setDensity(1.08)">Média (1.08)</button>
+          <button type="button" class="preset-btn" id="dn120" onclick="setDensity(1.20)">Pesada (1.20)</button>
+        </div>
+        <input type="number" id="numDensity" value="1.00" step="0.01" min="0.80" max="1.50" oninput="updatePresetButtons(); onManualInput();">
+      </div>
+
+      <!-- Unidade de Pressão -->
+      <div class="control-group">
+        <label>Unidade de Pressão</label>
+        <div class="unit-toggle">
+          <button type="button" class="active" id="btnBar" onclick="setUnit('bar')">BAR</button>
+          <button type="button" id="btnPsi" onclick="setUnit('psi')">PSI</button>
+        </div>
+      </div>
+
+      <!-- Limites de Pressão -->
+      <div class="control-group">
+        <label>Limites de Pressão Segura</label>
+        <div class="flex-row">
+          <div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 3px; text-align:center;">MÍNIMA</div>
+            <input type="number" id="numPMin" value="2.0" step="0.1" oninput="onManualInput()">
+          </div>
+          <div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 3px; text-align:center;">MÁXIMA</div>
+            <input type="number" id="numPMax" value="5.0" step="0.1" oninput="onManualInput()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Velocidades -->
+      <div class="control-group">
+        <label>Velocidade de Trabalho (km/h)</label>
+        <div class="flex-row" style="gap:6px;">
+          <div>
+            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 3px; text-align:center;">MÍNIMA</div>
+            <input type="number" id="numVMin" value="14.0" step="0.5" oninput="onManualInput()">
+          </div>
+          <div>
+            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 3px; text-align:center;">MÉDIA</div>
+            <input type="number" id="numVAvg" value="17.0" step="0.5" oninput="onManualInput()">
+          </div>
+          <div>
+            <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 3px; text-align:center;">MÁXIMA</div>
+            <input type="number" id="numVMax" value="20.0" step="0.5" oninput="onManualInput()">
+          </div>
+        </div>
+      </div>
+
+      <!-- ────── SEÇÃO CONDICIONAL: PWM ────── -->
+      <div class="conditional-panel panel-pwm" id="panelPwm" style="display: none;">
+        <div class="panel-header-title">⚡ Parâmetros do PWM</div>
+        
+        <div class="control-group">
+          <label>Sistema de Pulsos</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="preset-btn" onclick="applyPWMPreset('jd', this)">ExactApply</button>
+            <button class="preset-btn" onclick="applyPWMPreset('raven', this)">Hawkeye</button>
+            <button class="preset-btn" onclick="applyPWMPreset('teejet', this)">DynaJet</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>Pressão Alvo e Duty Ideal</label>
+          <div class="flex-row">
+            <div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">P. ALVO (<span id="pwmPressUnit">bar</span>)</div>
+              <input type="number" id="numPwmPressure" value="3.0" step="0.1" oninput="onManualInput()">
+            </div>
+            <div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">DUTY IDEAL</div>
+              <input type="number" id="numDutyIdeal" value="70" min="30" max="90" oninput="onManualInput()">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>Faixa de Duty Aceitável (%)</label>
+          <div class="flex-row">
+            <div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">MÍNIMO</div>
+              <input type="number" id="numDutyMin" value="30" min="5" max="60" oninput="onManualInput()">
+            </div>
+            <div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">MÁXIMO</div>
+              <input type="number" id="numDutyMax" value="90" min="70" max="100" oninput="onManualInput()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ────── SEÇÃO CONDICIONAL: BICO DUPLO ────── -->
+      <div class="conditional-panel panel-dual" id="panelDual" style="display: none;">
+        <div class="panel-header-title">🔀 Parâmetros de Bico Duplo</div>
+
+        <div class="control-group">
+          <label>Preset por Fabricante</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="preset-btn" onclick="applyMachinePreset('horsch', this)">Horsch LS</button>
+            <button class="preset-btn" onclick="applyMachinePreset('stara', this)">Stara</button>
+            <button class="preset-btn" onclick="applyMachinePreset('jacto', this)">Jacto</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>Estratégia de Seleção</label>
+          <div class="unit-toggle">
+            <button type="button" class="active" id="btnAutoStrategy" onclick="setDualStrategy('auto')">Auto</button>
+            <button type="button" id="btnManualStrategy" onclick="setDualStrategy('manual')">Manual</button>
+          </div>
+        </div>
+
+        <!-- Seleção Manual de Bicos -->
+        <div id="manualNozzleSelection" style="display: none; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
+          <div class="flex-row">
+            <div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">BICO A (Menor)</div>
+              <select id="selNozzleA" onchange="onManualInput()"></select>
+            </div>
+            <div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">BICO B (Maior)</div>
+              <select id="selNozzleB" onchange="onManualInput()"></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layman Explainer Box -->
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px; font-size: 11px; line-height: 1.5;">
+          <strong style="color: var(--accent); display: block; margin-bottom: 4px;">💡 Como funciona o Bico Duplo:</strong>
+          <ul style="padding-left: 14px; display: flex; flex-direction: column; gap: 3px;">
+            <li><strong>Estágio A:</strong> Apenas o bico A (menor) abre. Usado em baixas velocidades.</li>
+            <li><strong>Estágio B:</strong> O bico A fecha e o B (maior) abre. Para velocidades médias.</li>
+            <li><strong>Estágio A+B:</strong> Ambos os bicos abrem juntos. Para altas velocidades.</li>
+            <li><strong>Sobreposição:</strong> Faixa segura de transição onde a pressão permanece ideal em ambos.</li>
+            <li><strong>Lacuna (Gap):</strong> Velocidades críticas onde a pressão fica fora dos limites. <b>Evite rodar nesses trechos.</b></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Advanced Custom Q3 -->
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 12px;">
+        <button class="advanced-trigger" onclick="toggleAdvanced()">
+          <span id="advArrow">▶</span> Bico não listado (Q3 manual)
+        </button>
+        <div class="advanced-container" id="advancedContainer">
+          <div class="control-group" style="margin-top: 4px;">
+            <label>Vazão do bico personalizado (L/min @ 3 bar)</label>
+            <input type="number" id="numCustomQ3" value="" placeholder="Ex: 1.15" step="0.01" oninput="onManualInput()">
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px; line-height: 1.4;">
+              Útil para bicos TeeJet, Albuz, Greenleaf ou outros não listados. Deixe em branco para ignorar.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ────── DASHBOARD (PAINEL DIREITO) ────── -->
+    <section class="dashboard">
+
+      <!-- CARDS RECOMENDADOS -->
+      <div class="glass-panel">
+        <div class="section-title-row">
+          <h2 id="dashboardTitle">🎯 Nozzles Recomendados</h2>
+          <span class="count-badge" id="matchCount">Calculando...</span>
+        </div>
+        <div class="recommended-grid" id="topCards">
+          <!-- Injetado dinamicamente -->
+        </div>
+      </div>
+
+      <!-- ALERTA TÉCNICO CONTEXTUAL -->
+      <div class="glass-panel" id="alertsSection" style="display: none;">
+        <div class="section-title-row" style="margin-bottom: 12px;">
+          <h2>⚠️ Diagnóstico Técnico</h2>
+        </div>
+        <div class="alerts-container" id="alertsContainer">
+          <!-- Injetado dinamicamente -->
+        </div>
+      </div>
+
+      <!-- GRÁFICOS DINÂMICOS -->
+      <div class="glass-panel">
+        <div class="section-title-row">
+          <h2 id="chartTitle">📊 Janela Operacional de Desempenho</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="mainChart"></canvas>
+        </div>
+      </div>
+
+      <!-- TABELA DETALHADA -->
+      <div class="glass-panel">
+        <div class="section-title-row">
+          <h2 id="tableTitle">📋 Tabela Analítica de Dados</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="premium-table" id="dataTable">
+            <!-- Injetado dinamicamente -->
+          </table>
+        </div>
+      </div>
+
+      <!-- COMPARADOR DE SISTEMAS -->
+      <div class="comparative-section" id="comparativeSection">
+        <div class="section-title-row" style="margin-bottom: 4px;">
+          <h2>🔬 Comparativo de Tecnologias (Mesmo Cenário)</h2>
+          <button class="preset-btn active" onclick="runComparativo()" style="cursor: pointer; font-size:12px;">Calcular Comparativo</button>
+        </div>
+        <div class="comparative-grid" id="comparativeGrid">
+          <div class="comp-card">
+            <div class="comp-label" style="color: var(--accent);">💧 Convencional</div>
+            <div class="comp-val" id="cmpConvISO">—</div>
+            <div class="comp-desc" id="cmpConvDesc">Clique em Calcular</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-label" style="color: #a855f7;">⚡ PWM / Pulsado</div>
+            <div class="comp-val" id="cmpPwmISO">—</div>
+            <div class="comp-desc" id="cmpPwmDesc">Clique em Calcular</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-label" style="color: #f97316;">🔀 Bico Duplo</div>
+            <div class="comp-val" id="cmpDualISO">—</div>
+            <div class="comp-desc" id="cmpDualDesc">Clique em Calcular</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCLAIMER -->
+      <div class="disclaimer glass-panel">
+        As recomendações são baseadas em simulação matemática e nos parâmetros informados. A calibração real em campo deve ser conferida por medição de vazão física, inspeção visual do leque de pulverização e monitoramento das condições meteorológicas. Spray Precision PRO — Smart Nozzle Simulator.
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ═══════════ HELP MODAL ═══════════ -->
+  <div id="helpModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal-content">
+      <button class="close-btn" onclick="document.getElementById('helpModal').style.display='none'">&times;</button>
+      <h2>📖 Guia de Operação — Smart Nozzle</h2>
+      <p>Este simulador calcula as pressões e vazões ideais comparando três tecnologias de aplicação:</p>
+
+      <h3>💧 Modo Convencional</h3>
+      <p>
+        Operação hidráulica clássica. A pressão oscila conforme a velocidade do pulverizador. O sistema avalia se as pressões necessárias para manter o L/ha alvo nas velocidades mínima e máxima estão dentro da faixa segura selecionada.
+      </p>
+
+      <h3>⚡ Modo PWM / Pulsado</h3>
+      <p>
+        No PWM, a pressão da bomba é mantida estável no manifold e a vazão é controlada pela pulsação eletrônica dos bicos (Duty Cycle de 0 a 100%).
+        As pontas no PWM geralmente precisam ser <b>maiores</b> do que no sistema convencional para fornecer margem de manobra (headroom).
+        O duty ideal deve rodar entre 60–75% na velocidade média de trabalho.
+      </p>
+
+      <h3>🔀 Modo Bico Duplo</h3>
+      <p>
+        O pulverizador ativa sequencialmente os bicos para estender a faixa operacional de velocidades mantendo a pressão uniforme.
+      </p>
+      <ul>
+        <li><b>Estágio A:</b> Utiliza apenas o bico A (menor) para baixas velocidades.</li>
+        <li><b>Estágio B:</b> Desativa o bico A e ativa o bico B (maior) para velocidades intermediárias.</li>
+        <li><b>Estágio A+B:</b> Abre ambos os bicos juntos para velocidades altas.</li>
+        <li><b>Sobreposição (Overlap):</b> Faixa de velocidades em que dois estágios cobrem as especificações da pressão segura. Essencial para transições automáticas sem quedas ou saltos de pressão.</li>
+        <li><b>Lacuna (Gap):</b> Buraco de velocidades onde nenhum estágio atende a vazão e pressão segura ao mesmo tempo. Exige atenção do piloto!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════ JAVASCRIPT ═══════════ -->
+  <script>
+    "use strict";
+
+    // --- DATABASE BICOS ISO OFFLINE ---
+    // q3 representa a vazão nominal do bico em L/min a 3 bar (simplificado conforme a tabela de produção bico_saas)
+    const NOZZLES = [
+      { iso: "01", q3: 0.40, color: "#F28C28" },
+      { iso: "0134", q3: 0.50, color: "#795548" },
+      { iso: "015", q3: 0.60, color: "#4CAF50" },
+      { iso: "0175", q3: 0.70, color: "#9E9E9E" },
+      { iso: "02", q3: 0.80, color: "#FFEB3B" },
+      { iso: "025", q3: 1.00, color: "#9C27B0" },
+      { iso: "03", q3: 1.20, color: "#2196F3" },
+      { iso: "04", q3: 1.60, color: "#F44336" },
+      { iso: "05", q3: 2.00, color: "#A1887F" },
+      { iso: "06", q3: 2.40, color: "#BDBDBD" },
+      { iso: "08", q3: 3.20, color: "#FFFFFF" }
+    ];
+
+    const BAR_TO_PSI = 14.5038;
+    const P_REF_BAR = 3.0;
+
+    const PWM_PRESETS = {
+      jd: { dutyMin: 30, dutyIdeal: 67, dutyMax: 90, targetPressure: 2.5 },
+      raven: { dutyMin: 25, dutyIdeal: 70, dutyMax: 95, targetPressure: 3.0 },
+      teejet: { dutyMin: 30, dutyIdeal: 70, dutyMax: 90, targetPressure: 2.8 }
+    };
+
+    const MACHINE_PRESETS = {
+      horsch: { vMin: 16.0, vAvg: 22.0, vMax: 28.0, pMin: 2.0, pMax: 5.0, rate: 80 },
+      stara: { vMin: 14.0, vAvg: 19.0, vMax: 24.0, pMin: 1.5, pMax: 5.0, rate: 60 },
+      jacto: { vMin: 12.0, vAvg: 16.0, vMax: 22.0, pMin: 1.5, pMax: 4.5, rate: 60 }
+    };
+
+    // --- ESTADO ---
+    let PRESS_UNIT = 'bar';
+    let MACHINE_MODE = 'conventional'; // conventional, pwm, dual
+    let DUAL_STRATEGY = 'auto'; // auto, manual
+    let myChart = null;
+    let CURRENT_DUAL_COMBOS = [];
+    let SELECTED_DUAL_INDEX = 0;
+
+    // --- FORMULAS MATEMÁTICAS ---
+    function qRequired(rate, vel, spacingM) {
+      return (rate * vel * spacingM) / 600.0;
+    }
+
+    function velForFlow(rate, spacingM, q) {
+      return (q * 600.0) / (rate * spacingM);
+    }
+
+    function pressureRequired(qMix, q3, density) {
+      const qWaterEq = qMix * Math.sqrt(density);
+      return P_REF_BAR * Math.pow(qWaterEq / q3, 2);
+    }
+
+    function velRangeForQ3(rate, spacingM, q3, density, pMinBar, pMaxBar) {
+      const qAtPmin = q3 * Math.sqrt(pMinBar / P_REF_BAR) / Math.sqrt(density);
+      const qAtPmax = q3 * Math.sqrt(pMaxBar / P_REF_BAR) / Math.sqrt(density);
+      return {
+        vMin: velForFlow(rate, spacingM, qAtPmin),
+        vMax: velForFlow(rate, spacingM, qAtPmax)
+      };
+    }
+
+    // Converter para bar internamente
+    function toBar(p) {
+      return PRESS_UNIT === 'bar' ? p : p / BAR_TO_PSI;
+    }
+
+    function fromBar(p) {
+      return PRESS_UNIT === 'bar' ? p : p * BAR_TO_PSI;
+    }
+
+    // --- EXECUÇÃO DE CALCULO ---
+    function readInputs() {
+      const spacingM = parseFloat(document.getElementById('numSpacing').value) / 100.0;
+      const rate = parseFloat(document.getElementById('numRate').value) || 60;
+      const density = parseFloat(document.getElementById('numDensity').value) || 1.0;
+      const pMinBar = toBar(parseFloat(document.getElementById('numPMin').value) || 0.1);
+      const pMaxBar = toBar(parseFloat(document.getElementById('numPMax').value) || 10.0);
+      const vMin = parseFloat(document.getElementById('numVMin').value) || 0;
+      const vAvg = parseFloat(document.getElementById('numVAvg').value) || 0;
+      const vMax = parseFloat(document.getElementById('numVMax').value) || 0;
+      const customQ3 = parseFloat(document.getElementById('numCustomQ3').value) || 0;
+
+      const pwm = {
+        dutyMin: parseFloat(document.getElementById('numDutyMin').value) || 30,
+        dutyIdeal: parseFloat(document.getElementById('numDutyIdeal').value) || 70,
+        dutyMax: parseFloat(document.getElementById('numDutyMax').value) || 90,
+        targetPressureBar: toBar(parseFloat(document.getElementById('numPwmPressure')) || 3.0)
+      };
+      // Correção de id de leitura do pwm pressure
+      const pEl = document.getElementById('numPwmPressure');
+      if (pEl) pwm.targetPressureBar = toBar(parseFloat(pEl.value) || 3.0);
+
+      const dual = {
+        strategy: DUAL_STRATEGY,
+        nozzleA: document.getElementById('selNozzleA').value,
+        nozzleB: document.getElementById('selNozzleB').value
+      };
+
+      return { spacingM, rate, density, pMinBar, pMaxBar, vMin, vAvg, vMax, customQ3, pwm, dual };
+    }
+
+    function calculateConventional(inp) {
+      const { rate, spacingM, density, pMinBar, pMaxBar, vMin, vAvg, vMax, customQ3 } = inp;
+      const nozzles = [...NOZZLES];
+      if (customQ3 > 0) {
+        nozzles.push({ iso: "Custom", q3: customQ3, color: "var(--accent)" });
+      }
+
+      const qVavg = qRequired(rate, vAvg, spacingM);
+
+      const rows = nozzles.map(nz => {
+        const pVmin = pressureRequired(qRequired(rate, vMin, spacingM), nz.q3, density);
+        const pVavg = pressureRequired(qVavg, nz.q3, density);
+        const pVmax = pressureRequired(qRequired(rate, vMax, spacingM), nz.q3, density);
+
+        const range = velRangeForQ3(rate, spacingM, nz.q3, density, pMinBar, pMaxBar);
+        const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
+        const vAt3Bar = velForFlow(rate, spacingM, qAt3Bar_mix);
+
+        const greenCount = [pVmin, pVavg, pVmax].filter(p => p >= pMinBar && p <= pMaxBar).length;
+        const ok = (pVmin >= pMinBar && pVmax <= pMaxBar);
+
+        let statusText = 'FORA';
+        if (ok) statusText = 'ATENDE';
+        else if (greenCount > 0) statusText = 'PARCIAL';
+
+        const deviation = Math.abs(pVavg - P_REF_BAR);
+        const violation = Math.max(0, pMinBar - pVmin) + Math.max(0, pVmax - pMaxBar);
+
+        return { nz, pressures: [pVmin, pVavg, pVmax], pVavg, qVavg, range, vAt3Bar, ok, statusText, greenCount, deviation, violation };
+      });
+
+      return rows.sort((a, b) => {
+        if (a.ok !== b.ok) return a.ok ? -1 : 1;
+        return a.ok ? (a.deviation - b.deviation) : (a.violation - b.violation);
+      });
+    }
+
+    function classifyPWM(dMin, dAvg, dMax, pwm) {
+      if (dMax > 100) return 'Não Recomendado';
+      if (dMax > pwm.dutyMax) return 'Saturando';
+      if (dMin < pwm.dutyMin) return 'Duty Baixo';
+      if (dAvg >= 55 && dAvg <= 78 && dMax <= pwm.dutyMax) return 'Ideal PWM';
+      return 'Aceitável';
+    }
+
+    function calculatePWM(inp) {
+      const { rate, spacingM, density, vMin, vAvg, vMax, customQ3, pwm } = inp;
+      const nozzles = [...NOZZLES];
+      if (customQ3 > 0) {
+        nozzles.push({ iso: "Custom", q3: customQ3, color: "var(--accent)" });
+      }
+
+      const results = nozzles.map(nz => {
+        const qNozzle = nz.q3 * Math.sqrt(pwm.targetPressureBar / P_REF_BAR) / Math.sqrt(density);
+        const qVmin = qRequired(rate, vMin, spacingM);
+        const qVavg = qRequired(rate, vAvg, spacingM);
+        const qVmax = qRequired(rate, vMax, spacingM);
+
+        const dMin = (qVmin / qNozzle) * 100;
+        const dAvg = (qVavg / qNozzle) * 100;
+        const dMax = (qVmax / qNozzle) * 100;
+
+        const qAtDMin = qNozzle * (pwm.dutyMin / 100);
+        const qAtDMax = qNozzle * (pwm.dutyMax / 100);
+        const vAtDMin = velForFlow(rate, spacingM, qAtDMin);
+        const vAtDMax = velForFlow(rate, spacingM, qAtDMax);
+
+        const status = classifyPWM(dMin, dAvg, dMax, pwm);
+        const deviation = Math.abs(dAvg - pwm.dutyIdeal);
+
+        return { nz, dMin, dAvg, dMax, qNozzle, vAtDMin, vAtDMax, status, deviation };
+      });
+
+      const statusOrder = { 'Ideal PWM': 0, 'Aceitável': 1, 'Duty Baixo': 2, 'Saturando': 3, 'Não Recomendado': 4 };
+      return results.sort((a, b) => {
+        const sa = statusOrder[a.status] ?? 5;
+        const sb = statusOrder[b.status] ?? 5;
+        if (sa !== sb) return sa - sb;
+        return a.deviation - b.deviation;
+      });
+    }
+
+    function isValidDual(nzA, nzB) {
+      if (nzA.iso === nzB.iso) return false;
+      if (nzA.q3 >= nzB.q3) return false; // A deve ser menor que B
+      if (nzB.q3 / nzA.q3 > 3.5) return false; // Proporção máxima razoável
+      return true;
+    }
+
+    function getStageInfoForSpeed(v, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density) {
+      const fitsA = v >= rangeA.vMin && v <= rangeA.vMax;
+      const fitsB = v >= rangeB.vMin && v <= rangeB.vMax;
+      const fitsAB = v >= rangeAB.vMin && v <= rangeAB.vMax;
+
+      let activeStage = '';
+      let pBar = 0;
+      let overlap = false;
+      let gap = false;
+
+      const q = qRequired(rate, v, spacingM);
+
+      if (fitsA && fitsB && fitsAB) {
+        const pA = pressureRequired(q, nzA.q3, density);
+        const pB = pressureRequired(q, nzB.q3, density);
+        const pAB = pressureRequired(q, nzA.q3 + nzB.q3, density);
+        const dA = Math.abs(pA - P_REF_BAR);
+        const dB = Math.abs(pB - P_REF_BAR);
+        const dAB = Math.abs(pAB - P_REF_BAR);
+        const minD = Math.min(dA, dB, dAB);
+        if (minD === dA) { activeStage = 'A'; pBar = pA; }
+        else if (minD === dB) { activeStage = 'B'; pBar = pB; }
+        else { activeStage = 'A+B'; pBar = pAB; }
+        overlap = true;
+      } else if (fitsA && fitsB) {
+        const pA = pressureRequired(q, nzA.q3, density);
+        const pB = pressureRequired(q, nzB.q3, density);
+        if (Math.abs(pA - P_REF_BAR) <= Math.abs(pB - P_REF_BAR)) { activeStage = 'A'; pBar = pA; }
+        else { activeStage = 'B'; pBar = pB; }
+        overlap = true;
+      } else if (fitsB && fitsAB) {
+        const pB = pressureRequired(q, nzB.q3, density);
+        const pAB = pressureRequired(q, nzA.q3 + nzB.q3, density);
+        if (Math.abs(pB - P_REF_BAR) <= Math.abs(pAB - P_REF_BAR)) { activeStage = 'B'; pBar = pB; }
+        else { activeStage = 'A+B'; pBar = pAB; }
+        overlap = true;
+      } else if (fitsA) {
+        activeStage = 'A'; pBar = pressureRequired(q, nzA.q3, density);
+      } else if (fitsB) {
+        activeStage = 'B'; pBar = pressureRequired(q, nzB.q3, density);
+      } else if (fitsAB) {
+        activeStage = 'A+B'; pBar = pressureRequired(q, nzA.q3 + nzB.q3, density);
+      } else {
+        gap = true;
+        // Se estiver fora, descobre qual está mais perto
+        const distA = v < rangeA.vMin ? rangeA.vMin - v : (v > rangeA.vMax ? v - rangeA.vMax : 0);
+        const distB = v < rangeB.vMin ? rangeB.vMin - v : (v > rangeB.vMax ? v - rangeB.vMax : 0);
+        const distAB = v < rangeAB.vMin ? rangeAB.vMin - v : (v > rangeAB.vMax ? v - rangeAB.vMax : 0);
+        const minDist = Math.min(distA, distB, distAB);
+        if (minDist === distA) { activeStage = 'A'; pBar = pressureRequired(q, nzA.q3, density); }
+        else if (minDist === distB) { activeStage = 'B'; pBar = pressureRequired(q, nzB.q3, density); }
+        else { activeStage = 'A+B'; pBar = pressureRequired(q, nzA.q3 + nzB.q3, density); }
+      }
+
+      return { activeStage, pressure: pBar, overlap, gap };
+    }
+
+    function calculateVelocityCoverage(stages, vMin, vMax) {
+      const totalRange = vMax - vMin;
+      if (totalRange <= 0) return { coveragePct: 0, gaps: [], overlaps: [] };
+
+      // Limita os ranges ao intervalo operacional do trator
+      const segs = stages.map(s => ({
+        min: Math.max(s.vMin, vMin),
+        max: Math.min(s.vMax, vMax),
+        label: s.label
+      })).filter(s => s.max > s.min + 0.1);
+
+      segs.sort((a, b) => a.min - b.min);
+
+      // Calcula cobertura unida
+      const merged = [];
+      for (const seg of segs) {
+        if (!merged.length || seg.min > merged[merged.length - 1].max + 0.1) {
+          merged.push({ min: seg.min, max: seg.max });
+        } else {
+          merged[merged.length - 1].max = Math.max(merged[merged.length - 1].max, seg.max);
+        }
+      }
+
+      let totalCovered = 0;
+      merged.forEach(m => totalCovered += (m.max - m.min));
+      const coveragePct = Math.min(100, (totalCovered / totalRange) * 100);
+
+      // Identifica lacunas (gaps)
+      const gaps = [];
+      if (merged.length === 0) {
+        gaps.push({ from: vMin, to: vMax });
+      } else {
+        if (merged[0].min > vMin + 0.2) gaps.push({ from: vMin, to: merged[0].min });
+        for (let i = 0; i < merged.length - 1; i++) {
+          if (merged[i + 1].min > merged[i].max + 0.2) {
+            gaps.push({ from: merged[i].max, to: merged[i + 1].min });
+          }
+        }
+        if (merged[merged.length - 1].max < vMax - 0.2) {
+          gaps.push({ from: merged[merged.length - 1].max, to: vMax });
+        }
+      }
+
+      // Identifica sobreposições de transição (overlaps)
+      const overlaps = [];
+      const sA = stages[0], sB = stages[1], sAB = stages[2];
+      const getOverlap = (r1, r2) => {
+        const min = Math.max(r1.vMin, r2.vMin);
+        const max = Math.min(r1.vMax, r2.vMax);
+        return max > min + 0.1 ? { from: min, to: max } : null;
+      };
+
+      const ovAB = getOverlap(sA, sB);
+      const ovB_AB = getOverlap(sB, sAB);
+
+      if (ovAB) overlaps.push({ label: `${sA.label} ➔ ${sB.label}`, ...ovAB });
+      if (ovB_AB) overlaps.push({ label: `${sB.label} ➔ ${sAB.label}`, ...ovB_AB });
+
+      return { coveragePct, gaps, overlaps };
+    }
+
+    function calculateDualCombo(nzA, nzB, inp) {
+      const { rate, spacingM, density, pMinBar, pMaxBar, vMin, vAvg, vMax } = inp;
+      const rangeA = velRangeForQ3(rate, spacingM, nzA.q3, density, pMinBar, pMaxBar);
+      const rangeB = velRangeForQ3(rate, spacingM, nzB.q3, density, pMinBar, pMaxBar);
+      const rangeAB = velRangeForQ3(rate, spacingM, nzA.q3 + nzB.q3, density, pMinBar, pMaxBar);
+
+      const stages = [
+        { label: `ISO ${nzA.iso}`, color: nzA.color, vMin: rangeA.vMin, vMax: rangeA.vMax },
+        { label: `ISO ${nzB.iso}`, color: nzB.color, vMin: rangeB.vMin, vMax: rangeB.vMax },
+        { label: `ISO ${nzA.iso}+${nzB.iso}`, color: "var(--accent)", vMin: rangeAB.vMin, vMax: rangeAB.vMax }
+      ];
+
+      const { coveragePct, gaps, overlaps } = calculateVelocityCoverage(stages, vMin, vMax);
+
+      // Calcula a pressão real nas velocidades selecionadas do pulverizador
+      const infoMin = getStageInfoForSpeed(vMin, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density);
+      const infoAvg = getStageInfoForSpeed(vAvg, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density);
+      const infoMax = getStageInfoForSpeed(vMax, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density);
+
+      let status = 'Não Recomendado';
+      if (coveragePct >= 98 && gaps.length === 0) status = 'Cobertura Total';
+      else if (coveragePct >= 80 && gaps.length <= 1) status = 'Cobertura Parcial';
+      else if (coveragePct > 50) status = 'Troca Crítica';
+
+      return { nzA, nzB, stages, coveragePct, gaps, overlaps, infoMin, infoAvg, infoMax, status };
+    }
+
+    function calculateDualNozzle(inp) {
+      const { dual } = inp;
+      const combos = [];
+
+      if (dual.strategy === 'manual' && dual.nozzleA && dual.nozzleB) {
+        let nzA = NOZZLES.find(n => n.iso === dual.nozzleA);
+        let nzB = NOZZLES.find(n => n.iso === dual.nozzleB);
+        if (nzA && nzB) {
+          if (nzA.q3 > nzB.q3) {
+            const temp = nzA;
+            nzA = nzB;
+            nzB = temp;
+          }
+          combos.push(calculateDualCombo(nzA, nzB, inp));
+        }
+        return combos;
+      }
+
+      // Modo Automático: varre todas as combinações válidas
+      for (let i = 0; i < NOZZLES.length; i++) {
+        for (let j = i + 1; j < NOZZLES.length; j++) {
+          if (!isValidDual(NOZZLES[i], NOZZLES[j])) continue;
+          combos.push(calculateDualCombo(NOZZLES[i], NOZZLES[j], inp));
+        }
+      }
+
+      const statusOrder = { 'Cobertura Total': 0, 'Cobertura Parcial': 1, 'Troca Crítica': 2, 'Não Recomendado': 3 };
+      return combos.sort((a, b) => {
+        const sa = statusOrder[a.status] ?? 4;
+        const sb = statusOrder[b.status] ?? 4;
+        if (sa !== sb) return sa - sb;
+        return b.coveragePct - a.coveragePct;
+      });
+    }
+
+    // --- ATUALIZAÇÕES GERAIS DO APP ---
+    function update() {
+      const inp = readInputs();
+      if (!inp || inp.spacingM <= 0 || inp.rate <= 0 || inp.vMax <= inp.vMin) return;
+
+      const pUnit = PRESS_UNIT.toUpperCase();
+
+      if (MACHINE_MODE === 'conventional') {
+        const rows = calculateConventional(inp);
+        renderConventional(rows, inp);
+      } else if (MACHINE_MODE === 'pwm') {
+        const rows = calculatePWM(inp);
+        renderPWM(rows, inp);
+      } else {
+        const combos = calculateDualNozzle(inp);
+        renderDual(combos, inp);
+      }
+    }
+
+    // --- RENDERIZADORES ---
+
+    // 💧 CONVENCIONAL
+    function renderConventional(rows, inp) {
+      let tops = rows.filter(r => r.ok);
+      const isFallback = (tops.length === 0);
+      if (isFallback && rows.length > 0) {
+        tops = rows.slice(0, 2);
+      }
+
+      document.getElementById('matchCount').innerText = isFallback
+        ? "Nenhum bico ideal. Sugestões mais próximas:"
+        : `${tops.length} bicos encontrados`;
+
+      const grid = document.getElementById('topCards');
+      grid.innerHTML = '';
+
+      tops.slice(0, 4).forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'nozzle-card';
+        card.style.setProperty('--nz-color', r.nz.color);
+
+        const badgeClass = r.ok ? 'ok' : (r.statusText === 'PARCIAL' ? 'warning' : 'bad');
+        const pUnit = PRESS_UNIT.toUpperCase();
+
+        card.innerHTML = `
+          <div class="noz-header">
+            <div class="noz-iso">ISO ${r.nz.iso}</div>
+            <div class="noz-flow-badge">
+              <span class="label">Vazão de Calibração</span>
+              <span class="value">${r.qVavg.toFixed(2)} L/min</span>
+            </div>
+          </div>
+          <div class="noz-metrics">
+            <div class="metric-row">
+              <span class="metric-label">P. Média (${inp.vAvg} km/h)</span>
+              <span class="metric-val" style="color: ${r.ok ? 'var(--text-main)' : 'var(--accent-error)'}">${fromBar(r.pVavg).toFixed(1)} ${pUnit}</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Velocidades Seguras</span>
+              <span class="metric-val">${r.range.vMin.toFixed(1)} a ${r.range.vMax.toFixed(1)} km/h</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Velocidade @3bar</span>
+              <span class="metric-val">${r.vAt3Bar.toFixed(1)} km/h</span>
+            </div>
+          </div>
+          <span class="status-badge ${badgeClass}">${r.statusText}</span>
+        `;
+        grid.appendChild(card);
+      });
+
+      buildConventionalAlerts(rows, inp);
+      updateChart_Conventional(rows, inp);
+      renderTable_Conventional(rows, inp);
+    }
+
+    function buildConventionalAlerts(rows, inp) {
+      const alerts = [];
+      const okRows = rows.filter(r => r.ok);
+      const pUnit = PRESS_UNIT.toUpperCase();
+
+      if (okRows.length === 0) {
+        alerts.push({ type: 'danger', icon: '❌', text: 'Nenhum bico atende plenamente aos limites informados. Tente ajustar os limites de pressão ou a velocidade de trabalho.' });
+      } else {
+        alerts.push({ type: 'ok', icon: '✅', text: `Temos ${okRows.length} bicos que atendem 100% da sua janela operacional. O recomendado no topo opera mais próximo da pressão nominal de 3 bar.` });
+      }
+
+      if (parseFloat(document.getElementById('numPMax').value) > fromBar(5.5)) {
+        alerts.push({ type: 'warn', icon: '⚠️', text: `A pressão máxima configurada está muito alta. Pressões elevadas causam gotas finas e aumentam o risco de deriva severa.` });
+      }
+
+      if (parseFloat(document.getElementById('numPMin').value) < fromBar(1.5)) {
+        alerts.push({ type: 'warn', icon: '⚠️', text: `A pressão mínima está muito baixa. Pressões abaixo de 1.5 bar podem deformar o leque de aplicação e gerar falhas de cobertura.` });
+      }
+
+      renderAlerts(alerts);
+    }
+
+    // ⚡ PWM
+    function renderPWM(rows, inp) {
+      let tops = rows.filter(r => r.status === 'Ideal PWM' || r.status === 'Aceitável');
+      if (tops.length === 0) tops = rows.slice(0, 2);
+
+      document.getElementById('matchCount').innerText = `${rows.filter(r => r.status === 'Ideal PWM').length} bicos ideais para PWM`;
+
+      const grid = document.getElementById('topCards');
+      grid.innerHTML = '';
+
+      tops.slice(0, 4).forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'nozzle-card';
+        card.style.setProperty('--nz-color', r.nz.color);
+
+        const badgeClass = (r.status === 'Ideal PWM') ? 'ok' : ((r.status === 'Aceitável') ? 'warning' : 'bad');
+        const pUnit = PRESS_UNIT.toUpperCase();
+
+        const dMinColor = r.dMin < inp.pwm.dutyMin ? 'var(--accent-warn)' : 'var(--accent-green)';
+        const dMaxColor = r.dMax > inp.pwm.dutyMax ? 'var(--accent-error)' : 'var(--accent-green)';
+
+        card.innerHTML = `
+          <div class="noz-header">
+            <div class="noz-iso">ISO ${r.nz.iso}</div>
+            <div class="noz-flow-badge">
+              <span class="label">Vazão Máxima Alvo</span>
+              <span class="value">${r.qNozzle.toFixed(2)} L/min</span>
+            </div>
+          </div>
+          <div class="noz-metrics">
+            <div class="metric-row">
+              <span class="metric-label">Duty Cycle Médio</span>
+              <span class="metric-val" style="color:var(--accent);">${r.dAvg.toFixed(0)}%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Duty Mín (V. Mín)</span>
+              <span class="metric-val" style="color:${dMinColor};">${r.dMin.toFixed(0)}%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Duty Máx (V. Máx)</span>
+              <span class="metric-val" style="color:${dMaxColor};">${r.dMax.toFixed(0)}%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Janela PWM Útil</span>
+              <span class="metric-val">${r.vAtDMin.toFixed(1)} a ${r.vAtDMax.toFixed(1)} km/h</span>
+            </div>
+          </div>
+          <div class="duty-bar-container">
+            <div class="duty-bar-labels">
+              <span>Mín: ${r.dMin.toFixed(0)}%</span>
+              <span>Máx: ${r.dMax.toFixed(0)}%</span>
+            </div>
+            <div class="duty-bar-track">
+              ${buildDutyProgress(r.dMin, r.dAvg, r.dMax, inp.pwm)}
+            </div>
+          </div>
+          <span class="status-badge ${badgeClass}" style="margin-top:10px;">${r.status}</span>
+        `;
+        grid.appendChild(card);
+      });
+
+      buildPWMAlerts(rows, inp);
+      updateChart_PWM(rows, inp);
+      renderTable_PWM(rows, inp);
+    }
+
+    function buildDutyProgress(dMin, dAvg, dMax, pwm) {
+      const clamp = (v) => Math.max(0, Math.min(100, v));
+      const left = clamp(dMin);
+      const width = clamp(dMax) - left;
+      const marker = clamp(dAvg);
+
+      let barColor = 'var(--accent-green)';
+      if (dMax > pwm.dutyMax || dMax > 100) barColor = 'var(--accent-error)';
+      else if (dMin < pwm.dutyMin) barColor = 'var(--accent-warn)';
+
+      return `
+        <div class="duty-bar-fill" style="left:${left}%; width:${width}%; background:${barColor};"></div>
+        <div style="position:absolute; top:0; bottom:0; left:${marker}%; width:2px; background:#fff; box-shadow:0 0 4px #000;"></div>
+      `;
+    }
+
+    function buildPWMAlerts(rows, inp) {
+      const alerts = [];
+      const ideals = rows.filter(r => r.status === 'Ideal PWM');
+
+      if (ideals.length > 0) {
+        alerts.push({ type: 'ok', icon: '✅', text: `O bico ISO ${ideals[0].nz.iso} é a melhor recomendação. Ele trabalha com média de ${ideals[0].dAvg.toFixed(0)}% de pulso, mantendo margens para aceleração e desaceleração.` });
+      } else {
+        alerts.push({ type: 'warn', icon: '⚠️', text: 'Nenhum bico se enquadra na faixa ideal de duty cycle (55% a 78%). Considere alterar a pressão alvo ou a velocidade média.' });
+      }
+
+      if (rows.some(r => r.dMin < inp.pwm.dutyMin && r.status !== 'Não Recomendado')) {
+        alerts.push({ type: 'warn', icon: '⚡', text: `Alguns bicos operam com duty cycle muito baixo (<${inp.pwm.dutyMin}%) na velocidade mínima. Isso pode resultar em cobertura falha de gotas devido a pulsações muito lentas.` });
+      }
+
+      alerts.push({ type: 'info', icon: 'ℹ️', text: 'A bomba do sistema PWM opera com pressão estável. Certifique-se de que a bomba da máquina possui retorno eletrônico estável ou sensor de pressão ativo.' });
+
+      renderAlerts(alerts);
+    }
+
+    // 🔀 BICO DUPLO
+    function renderDual(combos, inp) {
+      CURRENT_DUAL_COMBOS = combos;
+      if (SELECTED_DUAL_INDEX >= combos.length) {
+        SELECTED_DUAL_INDEX = 0;
+      }
+      let tops = combos.filter(c => c.status === 'Cobertura Total' || c.status === 'Cobertura Parcial');
+      const isFallback = (tops.length === 0);
+      if (isFallback && combos.length > 0) {
+        tops = combos.slice(0, 2);
+      }
+
+      document.getElementById('matchCount').innerText = isFallback
+        ? "Sem cobertura ideal. Combinações mais próximas:"
+        : `${combos.filter(c => c.status === 'Cobertura Total').length} combinações recomendadas`;
+
+      const grid = document.getElementById('topCards');
+      grid.innerHTML = '';
+
+      const pUnit = PRESS_UNIT.toUpperCase();
+
+      tops.slice(0, 4).forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'nozzle-card';
+        card.style.setProperty('--nz-color', c.nzA.color);
+
+        const badgeClass = (c.status === 'Cobertura Total') ? 'ok' : ((c.status === 'Cobertura Parcial') ? 'warning' : 'bad');
+
+        // Formata as pressões e transições detalhadas para o leigo
+        const stageItems = c.stages.map(s => {
+          return `
+            <div class="stage-item" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="stage-marker" style="background:${s.color};"></div>
+                <span class="stage-title">${s.label}</span>
+              </div>
+              <span class="stage-val-range" style="font-family:'Outfit'; font-weight:700;">
+                ${s.vMin.toFixed(1)} km/h <span style="font-size:10px; color:var(--text-muted); font-weight:400;">(${fromBar(inp.pMinBar).toFixed(1)} ${pUnit})</span>
+                a
+                ${s.vMax.toFixed(1)} km/h <span style="font-size:10px; color:var(--text-muted); font-weight:400;">(${fromBar(inp.pMaxBar).toFixed(1)} ${pUnit})</span>
+              </span>
+            </div>
+          `;
+        }).join('');
+
+        // Exibe informação de transição
+        let transitionText = '';
+        if (c.overlaps.length > 0) {
+          transitionText = `<div style="font-size:11px; color:var(--accent-green); margin-top:6px; border-top:1px dashed rgba(255, 255, 255, 0.05); padding-top:4px;">
+            <b>Sobreposição segura:</b> ${c.overlaps.map(o => `${o.from.toFixed(1)}–${o.to.toFixed(1)} km/h`).join(' | ')}
+          </div>`;
+        }
+        if (c.gaps.length > 0) {
+          transitionText += `<div style="font-size:11px; color:var(--accent-error); margin-top:4px;">
+            <b>⚠️ Lacunas detectadas:</b> ${c.gaps.map(g => `${g.from.toFixed(1)}–${g.to.toFixed(1)} km/h`).join(' | ')}
+          </div>`;
+        }
+
+        // Informação de pressões reais no limite de velocidade configurado do trator
+        const formatLimits = (label, info) => {
+          const color = info.gap ? 'var(--accent-error)' : (info.overlap ? 'var(--accent-green)' : 'var(--text-main)');
+          return `<span>${label}: <b>Estágio ${info.activeStage}</b> a <b style="color:${color};">${fromBar(info.pressure).toFixed(1)} ${pUnit}</b></span>`;
+        };
+
+        card.innerHTML = `
+          <div class="noz-header">
+            <div class="noz-iso" style="font-size: 18px;">ISO ${c.nzA.iso} + ${c.nzB.iso}</div>
+            <div class="noz-flow-badge">
+              <span class="label">Cobertura de Velocidade</span>
+              <span class="value">${c.coveragePct.toFixed(0)}%</span>
+            </div>
+          </div>
+          
+          <div class="stages-layout">
+            ${stageItems}
+          </div>
+
+          ${transitionText}
+
+          <div style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; font-size:11px; color:var(--text-muted); display:flex; flex-direction:column; gap:3px;">
+            <strong style="color:var(--accent); margin-bottom: 2px;">Pressão nas velocidades do pulverizador:</strong>
+            ${formatLimits(`V. Mín (${inp.vMin} km/h)`, c.infoMin)}
+            ${formatLimits(`V. Méd (${inp.vAvg} km/h)`, c.infoAvg)}
+            ${formatLimits(`V. Máx (${inp.vMax} km/h)`, c.infoMax)}
+          </div>
+
+          <span class="status-badge ${badgeClass}" style="margin-top: 10px;">${c.status}</span>
+        `;
+        grid.appendChild(card);
+      });
+
+      buildDualAlerts(combos, inp);
+      const selectedCombo = combos[SELECTED_DUAL_INDEX] || (tops.length > 0 ? tops[0] : null);
+      updateChart_Dual(selectedCombo, inp);
+      renderTable_Dual(combos, inp);
+    }
+
+    function buildDualAlerts(combos, inp) {
+      const alerts = [];
+      const totals = combos.filter(c => c.status === 'Cobertura Total');
+
+      if (totals.length > 0) {
+        alerts.push({ type: 'ok', icon: '✅', text: `A combinação ISO ${totals[0].nzA.iso} + ${totals[0].nzB.iso} garante 100% de cobertura operacional para velocidades entre ${inp.vMin} e ${inp.vMax} km/h dentro da pressão segura.` });
+      }
+
+      if (combos.length > 0 && combos[0].gaps.length > 0) {
+        alerts.push({ type: 'danger', icon: '❌', text: `Falta de cobertura em velocidades de transição: a melhor combinação possui buracos de pressão nos limites entre ${combos[0].gaps.map(g => `${g.from.toFixed(1)}–${g.to.toFixed(1)} km/h`).join(', ')}.` });
+      }
+
+      alerts.push({ type: 'info', icon: '🔀', text: 'Sobreposições entre estágios são benéficas, pois criam uma zona de histerese (transição suave) que impede que os bicos fiquem abrindo e fechando repetidamente em pequenas oscilações de velocidade.' });
+
+      renderAlerts(alerts);
+    }
+
+    // --- ALERTS COMPONENT ---
+    function renderAlerts(alerts) {
+      const section = document.getElementById('alertsSection');
+      const container = document.getElementById('alertsContainer');
+
+      if (alerts.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+
+      section.style.display = 'block';
+      container.innerHTML = '';
+
+      alerts.forEach(a => {
+        const div = document.createElement('div');
+        div.className = `alert-card ${a.type}`;
+        div.innerHTML = `
+          <span class="alert-icon">${a.icon}</span>
+          <div>${a.text}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // --- TABELA PREMIMUM RENDERIZADORES ---
+
+    function renderTable_Conventional(rows, inp) {
+      const pUnit = PRESS_UNIT.toUpperCase();
+      const sysPMin = parseFloat(document.getElementById('numPMin').value);
+      const sysPMax = parseFloat(document.getElementById('numPMax').value);
+
+      // Exibe apenas bicos que atingem ao menos um verde, ou cai nas alternativas
+      const filtered = rows.filter(r => r.greenCount > 0);
+      const dataRows = filtered.length > 0 ? filtered : rows.slice(0, 3);
+
+      let html = `
+        <thead>
+          <tr>
+            <th style="text-align:left;">ISO</th>
+            <th>Q@3bar (L/min)</th>
+            <th>Pressão V. Mín</th>
+            <th>Pressão V. Méd</th>
+            <th>Pressão V. Máx</th>
+            <th>Janela (km/h)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      dataRows.forEach(r => {
+        const makeCell = (label, p) => {
+          const ok = (p >= inp.pMinBar && p <= inp.pMaxBar);
+          const color = ok ? 'var(--accent-green)' : 'var(--accent-error)';
+          return `<td data-label="${label}" style="color:${color}; font-weight:700; font-family:'Outfit';">${fromBar(p).toFixed(1)} ${pUnit}</td>`;
+        };
+
+        const badgeClass = r.ok ? 'ok' : (r.statusText === 'PARCIAL' ? 'warning' : 'bad');
+        const rowClass = r.ok ? 'row-ok' : '';
+
+        html += `
+          <tr class="${rowClass}">
+            <td data-label="ISO" style="text-align:left; font-weight:bold; color:${r.nz.color};">ISO ${r.nz.iso}</td>
+            <td data-label="Q@3bar" style="color:var(--text-muted); font-family:'Outfit';">${r.nz.q3.toFixed(2)}</td>
+            ${makeCell("Pressão V. Mín", r.pressures[0])}
+            ${makeCell("Pressão V. Méd", r.pressures[1])}
+            ${makeCell("Pressão V. Máx", r.pressures[2])}
+            <td data-label="Janela (km/h)"><span style="font-family:'Outfit'; font-weight:600;">${r.range.vMin.toFixed(1)} a ${r.range.vMax.toFixed(1)}</span></td>
+            <td data-label="Status"><span class="status-badge ${badgeClass}" style="padding:4px 8px; font-size:10px;">${r.statusText}</span></td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody>';
+      document.getElementById('dataTable').innerHTML = html;
+      document.getElementById('tableTitle').innerText = '📋 Tabela Analítica — Convencional';
+    }
+
+    function renderTable_PWM(rows, inp) {
+      let html = `
+        <thead>
+          <tr>
+            <th style="text-align:left;">ISO</th>
+            <th>Capacidade Máxima</th>
+            <th>Duty V. Mín</th>
+            <th>Duty V. Méd</th>
+            <th>Duty V. Máx</th>
+            <th>Amplitude Útil</th>
+            <th>Status PWM</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      rows.forEach(r => {
+        const makeCell = (label, d) => {
+          const isDanger = (d > inp.pwm.dutyMax || d > 100);
+          const isWarn = (d < inp.pwm.dutyMin);
+          const color = isDanger ? 'var(--accent-error)' : (isWarn ? 'var(--accent-warn)' : 'var(--accent-green)');
+          return `<td data-label="${label}" style="color:${color}; font-weight:700; font-family:'Outfit';">${d.toFixed(0)}%</td>`;
+        };
+
+        const badgeClass = (r.status === 'Ideal PWM') ? 'ok' : ((r.status === 'Aceitável') ? 'warning' : 'bad');
+        const rowClass = (r.status === 'Ideal PWM') ? 'row-ok' : '';
+
+        html += `
+          <tr class="${rowClass}">
+            <td data-label="ISO" style="text-align:left; font-weight:bold; color:${r.nz.color};">ISO ${r.nz.iso}</td>
+            <td data-label="Capacidade" style="color:var(--text-muted); font-family:'Outfit';">${r.qNozzle.toFixed(2)} L/min</td>
+            ${makeCell("Duty V. Mín", r.dMin)}
+            ${makeCell("Duty V. Méd", r.dAvg)}
+            ${makeCell("Duty V. Máx", r.dMax)}
+            <td data-label="Amplitude" style="font-family:'Outfit'; font-weight:600;">${r.vAtDMin.toFixed(1)} a ${r.vAtDMax.toFixed(1)} km/h</td>
+            <td data-label="Status"><span class="status-badge ${badgeClass}" style="padding:4px 8px; font-size:10px;">${r.status}</span></td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody>';
+      document.getElementById('dataTable').innerHTML = html;
+      document.getElementById('tableTitle').innerText = '📋 Tabela Analítica — PWM';
+    }
+
+    function renderTable_Dual(combos, inp) {
+      const pUnit = PRESS_UNIT.toUpperCase();
+
+      let html = `
+        <thead>
+          <tr>
+            <th style="text-align:left;">Combinação</th>
+            <th>Estágio A</th>
+            <th>Estágio B</th>
+            <th>Estágio A+B</th>
+            <th>Cobertura</th>
+            <th>Pressão Real na Velocidade</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+
+      combos.slice(0, 10).forEach((c, idx) => {
+        const formatStageCell = (s) => {
+          return `<span style="font-weight:600; font-size:11px; white-space:nowrap;">${s.vMin.toFixed(1)}–${s.vMax.toFixed(1)} km/h<br><span style="opacity:0.6; font-size:10px;">(${fromBar(inp.pMinBar).toFixed(1)}–${fromBar(inp.pMaxBar).toFixed(1)} ${pUnit})</span></span>`;
+        };
+
+        const badgeClass = (c.status === 'Cobertura Total') ? 'ok' : ((c.status === 'Cobertura Parcial') ? 'warning' : 'bad');
+        const isSelected = (idx === SELECTED_DUAL_INDEX);
+        const selectedClass = isSelected ? 'row-selected' : '';
+        const rowClass = selectedClass || ((c.status === 'Cobertura Total') ? 'row-ok' : '');
+        const pctColor = c.coveragePct >= 98 ? 'var(--accent-green)' : (c.coveragePct >= 80 ? 'var(--accent-warn)' : 'var(--accent-error)');
+
+        // Formata as pressões e estágios para exibição em coluna técnica
+        const fmtSpeedPress = (label, info) => {
+          const cColor = info.gap ? 'var(--accent-error)' : (info.overlap ? 'var(--accent-green)' : 'var(--text-main)');
+          return `<div style="font-size:10px; white-space:nowrap; text-align:left;">${label}: <b>Est. ${info.activeStage}</b> @ <b style="color:${cColor};">${fromBar(info.pressure).toFixed(1)}</b></div>`;
+        };
+
+        html += `
+          <tr class="${rowClass}" style="cursor:pointer;" onclick="onSelectDualCombo(${idx})">
+            <td data-label="Combinação" style="text-align:left; font-weight:bold; font-family:'Outfit';">ISO ${c.nzA.iso} + ${c.nzB.iso}</td>
+            <td data-label="Estágio A">${formatStageCell(c.stages[0])}</td>
+            <td data-label="Estágio B">${formatStageCell(c.stages[1])}</td>
+            <td data-label="Estágio A+B">${formatStageCell(c.stages[2])}</td>
+            <td data-label="Cobertura" style="color:${pctColor}; font-weight:700; font-family:'Outfit';">${c.coveragePct.toFixed(0)}%</td>
+            <td data-label="Pressão no limite" style="font-family:'Outfit';">
+              <div style="display:flex; flex-direction:column; gap:1px; align-items:flex-end;">
+                ${fmtSpeedPress(`Mín (${inp.vMin})`, c.infoMin)}
+                ${fmtSpeedPress(`Méd (${inp.vAvg})`, c.infoAvg)}
+                ${fmtSpeedPress(`Máx (${inp.vMax})`, c.infoMax)}
+              </div>
+            </td>
+            <td data-label="Resultado"><span class="status-badge ${badgeClass}" style="padding:4px 8px; font-size:10px;">${c.status}</span></td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody>';
+      document.getElementById('dataTable').innerHTML = html;
+      document.getElementById('tableTitle').innerText = '📋 Combinações Analisadas — Bico Duplo';
+    }
+
+    // --- GRÁFICOS CHART.JS ---
+    function destroyChart() {
+      if (myChart) {
+        myChart.destroy();
+        myChart = null;
+      }
+    }
+
+    function isDarkTheme() {
+      return document.documentElement.getAttribute('data-theme') !== 'light';
+    }
+
+    function getChartThemeColors() {
+      const dark = isDarkTheme();
+      return {
+        text: dark ? "rgba(255,255,255,0.8)" : "#1e293b",
+        grid: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)",
+        lineColor: dark ? "rgba(255,75,75,0.85)" : "rgba(220,38,38,0.85)"
+      };
+    }
+
+    function updateChart_Conventional(rows, inp) {
+      document.getElementById('chartTitle').innerText = '📊 Janela de Velocidade p/ Pressão Segura';
+      destroyChart();
+
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      const colors = getChartThemeColors();
+
+      const labels = rows.map(r => `ISO ${r.nz.iso}`);
+      const barData = rows.map(r => ({
+        x: [r.range.vMin, r.range.vMax],
+        y: `ISO ${r.nz.iso}`,
+        min: r.range.vMin,
+        max: r.range.vMax,
+        color: r.nz.color,
+        ok: r.ok
+      }));
+
+      const scatterData = rows.map(r => ({
+        x: r.vAt3Bar,
+        y: `ISO ${r.nz.iso}`
+      }));
+
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              type: 'bar',
+              order: 2,
+              data: barData,
+              backgroundColor: barData.map(d => d.ok ? d.color + 'd0' : 'rgba(255, 75, 75, 0.35)'),
+              borderColor: barData.map(d => d.ok ? d.color : 'var(--accent-error)'),
+              borderWidth: 1.5,
+              borderRadius: 6,
+              borderSkipped: false,
+              barPercentage: 0.55,
+              indexAxis: 'y',
+              parsing: { xAxisKey: 'x', yAxisKey: 'y' }
+            },
+            {
+              type: 'scatter',
+              order: 1,
+              data: scatterData,
+              backgroundColor: '#ffffff',
+              borderColor: '#111111',
+              borderWidth: 2,
+              pointRadius: 6,
+              pointHoverRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            annotation: {
+              annotations: {
+                lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'V. Mín', color: colors.lineColor, font: { size: 9 } } },
+                lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'V. Máx', color: colors.lineColor, font: { size: 9 } } }
+              }
+            },
+            tooltip: {
+              backgroundColor: isDarkTheme() ? 'rgba(10,15,20,0.92)' : 'rgba(255,255,255,0.95)',
+              titleColor: colors.text,
+              bodyColor: colors.text,
+              titleFont: { family: 'Outfit', size: 14 },
+              borderColor: colors.grid,
+              borderWidth: 1,
+              callbacks: {
+                label: (ctx2) => {
+                  if (ctx2.dataset.type === 'scatter') return `3 bar (ISO): ${ctx2.parsed.x.toFixed(1)} km/h`;
+                  const raw = ctx2.raw;
+                  return `Faixa segura: ${raw.min.toFixed(1)} a ${raw.max.toFixed(1)} km/h`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: Math.max(0, inp.vMin - 6),
+              max: inp.vMax + 10,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text },
+              title: { display: true, text: 'Velocidade (km/h)', color: colors.text }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { family: 'Outfit', weight: 'bold', size: 13 }, color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    function updateChart_PWM(rows, inp) {
+      document.getElementById('chartTitle').innerText = '📊 Duty Cycle por Bico (Limites)';
+      destroyChart();
+
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      const colors = getChartThemeColors();
+
+      const showRows = rows.slice(0, 8); // Top 8 bicos
+      const labels = showRows.map(r => `ISO ${r.nz.iso}`);
+      
+      const barData = showRows.map(r => [Math.max(0, r.dMin), Math.min(120, r.dMax)]);
+      const scatterAvg = showRows.map((r, idx) => ({ x: r.dAvg, y: idx }));
+
+      myChart = new Chart(ctx, {
+        data: {
+          labels,
+          datasets: [
+            {
+              type: 'bar',
+              order: 2,
+              data: barData,
+              backgroundColor: showRows.map(r => {
+                if (r.status === 'Ideal PWM') return 'rgba(56, 239, 125, 0.4)';
+                if (r.status === 'Aceitável') return 'rgba(0, 210, 255, 0.35)';
+                if (r.status === 'Saturando') return 'rgba(255, 75, 75, 0.3)';
+                return 'rgba(255, 75, 75, 0.2)';
+              }),
+              borderColor: showRows.map(r => {
+                if (r.status === 'Ideal PWM') return 'var(--accent-green)';
+                if (r.status === 'Aceitável') return 'var(--accent)';
+                return 'var(--accent-error)';
+              }),
+              borderWidth: 1.5,
+              borderRadius: 4,
+              borderSkipped: false,
+              barPercentage: 0.55,
+              indexAxis: 'y'
+            },
+            {
+              type: 'scatter',
+              order: 1,
+              data: scatterAvg,
+              backgroundColor: '#ffffff',
+              borderColor: '#111111',
+              borderWidth: 2,
+              pointRadius: 6,
+              parsing: { xAxisKey: 'x', yAxisKey: 'y' }
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            annotation: {
+              annotations: {
+                zoneRedLeft: { type: 'box', xMin: 0, xMax: inp.pwm.dutyMin, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(255,75,75,0.06)', borderWidth: 0 },
+                zoneGreen: { type: 'box', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMax, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(56,239,125,0.04)', borderWidth: 0 },
+                zoneRedRight: { type: 'box', xMin: inp.pwm.dutyMax, xMax: 120, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(255,75,75,0.07)', borderWidth: 0 },
+                lineDMin: { type: 'line', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMin, borderColor: 'var(--accent-warn)', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `Mín ${inp.pwm.dutyMin}%`, color: 'var(--accent-warn)', font: { size: 9 }, position: 'start' } },
+                lineDMax: { type: 'line', xMin: inp.pwm.dutyMax, xMax: inp.pwm.dutyMax, borderColor: 'var(--accent-error)', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `Máx ${inp.pwm.dutyMax}%`, color: 'var(--accent-error)', font: { size: 9 }, position: 'start' } },
+                lineDIdeal: { type: 'line', xMin: inp.pwm.dutyIdeal, xMax: inp.pwm.dutyIdeal, borderColor: 'var(--accent)', borderDash: [2, 2], borderWidth: 1.5, label: { display: true, content: `Ideal ${inp.pwm.dutyIdeal}%`, color: 'var(--accent)', font: { size: 8 }, position: 'end' } }
+              }
+            },
+            tooltip: {
+              backgroundColor: isDarkTheme() ? 'rgba(10,15,20,0.92)' : 'rgba(255,255,255,0.95)',
+              titleColor: colors.text,
+              bodyColor: colors.text,
+              titleFont: { family: 'Outfit', size: 14 },
+              borderColor: colors.grid,
+              borderWidth: 1,
+              callbacks: {
+                label: (ctx2) => {
+                  if (ctx2.dataset.type === 'scatter') return `Duty Médio: ${ctx2.parsed.x.toFixed(0)}%`;
+                  return `Duty: ${ctx2.raw[0].toFixed(0)}% a ${ctx2.raw[1].toFixed(0)}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: 0,
+              max: 120,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text, callback: v => v + '%' },
+              title: { display: true, text: 'Duty Cycle (%)', color: colors.text }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { family: 'Outfit', weight: 'bold', size: 13 }, color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    function updateChart_Dual(topCombo, inp) {
+      document.getElementById('chartTitle').innerText = '📊 Cobertura por Estágio (Bico Duplo)';
+      destroyChart();
+
+      if (!topCombo) return;
+
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      const colors = getChartThemeColors();
+
+      const stages = topCombo.stages;
+      const labels = stages.map(s => s.label);
+      const barData = stages.map(s => [Math.max(0, s.vMin), s.vMax]);
+
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            data: barData,
+            backgroundColor: stages.map(s => s.color + 'bf'),
+            borderColor: stages.map(s => s.color),
+            borderWidth: 2,
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.5,
+            indexAxis: 'y'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            annotation: {
+              annotations: {
+                lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'Trator Mín', color: colors.lineColor, font: { size: 9 } } },
+                lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'Trator Máx', color: colors.lineColor, font: { size: 9 } } },
+                zoneOperational: { type: 'box', xMin: inp.vMin, xMax: inp.vMax, yMin: -0.5, yMax: 2.5, backgroundColor: 'rgba(0, 210, 255, 0.03)', borderColor: 'rgba(0, 210, 255, 0.12)', borderWidth: 1 }
+              }
+            },
+            tooltip: {
+              backgroundColor: isDarkTheme() ? 'rgba(10,15,20,0.92)' : 'rgba(255,255,255,0.95)',
+              titleColor: colors.text,
+              bodyColor: colors.text,
+              titleFont: { family: 'Outfit', size: 14 },
+              borderColor: colors.grid,
+              borderWidth: 1,
+              callbacks: {
+                label: (ctx2) => {
+                  const raw = ctx2.raw;
+                  return `Velocidades do estágio: ${raw[0].toFixed(1)} a ${raw[1].toFixed(1)} km/h`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              min: Math.max(0, inp.vMin - 6),
+              max: inp.vMax + 10,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text },
+              title: { display: true, text: 'Velocidade (km/h)', color: colors.text }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { family: 'Outfit', weight: 'bold', size: 13 }, color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    // --- COMPARATIVO ENTRE TECNOLOGIAS ---
+    function runComparativo() {
+      const inp = readInputs();
+      document.getElementById('comparativeSection').style.display = 'block';
+
+      // 1. Convencional
+      const convRes = calculateConventional(inp);
+      const topConv = convRes.find(r => r.ok) || convRes[0];
+      if (topConv) {
+        document.getElementById('cmpConvISO').innerText = `ISO ${topConv.nz.iso}`;
+        document.getElementById('cmpConvDesc').innerText = `P. Méd: ${fromBar(topConv.pressures[1]).toFixed(1)} | ${topConv.range.vMin.toFixed(1)}–${topConv.range.vMax.toFixed(1)} km/h`;
+      }
+
+      // 2. PWM
+      const pwmRes = calculatePWM(inp);
+      const topPwm = pwmRes.find(r => r.status === 'Ideal PWM') || pwmRes[0];
+      if (topPwm) {
+        document.getElementById('cmpPwmISO').innerText = `ISO ${topPwm.nz.iso}`;
+        document.getElementById('cmpPwmDesc').innerText = `Duty Méd: ${topPwm.dAvg.toFixed(0)}% | ${topPwm.status}`;
+      }
+
+      // 3. Bico Duplo
+      const dualRes = calculateDualNozzle(inp);
+      const topDual = dualRes.find(c => c.status === 'Cobertura Total') || dualRes[0];
+      if (topDual) {
+        document.getElementById('cmpDualISO').innerText = `ISO ${topDual.nzA.iso} + ${topDual.nzB.iso}`;
+        document.getElementById('cmpDualDesc').innerText = `Cobertura: ${topDual.coveragePct.toFixed(0)}% | ${topDual.status}`;
+      }
+    }
+
+    // --- INTERFACE CONTROL LOGIC ---
+    function setMode(mode) {
+      MACHINE_MODE = mode;
+
+      document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+      document.getElementById(`tab-${mode}`).classList.add('active');
+
+      document.getElementById('panelPwm').style.display = mode === 'pwm' ? 'flex' : 'none';
+      document.getElementById('panelDual').style.display = mode === 'dual' ? 'flex' : 'none';
+
+      const titles = {
+        conventional: '🎯 Bicos Recomendados — Convencional',
+        pwm: '⚡ Bicos Recomendados — PWM',
+        dual: '🔀 Combinações Recomendadas — Bico Duplo'
+      };
+      document.getElementById('dashboardTitle').innerText = titles[mode];
+
+      update();
+    }
+
+    function setUnit(u) {
+      if (PRESS_UNIT === u) return;
+      SELECTED_DUAL_INDEX = 0;
+
+      const oldMin = parseFloat(document.getElementById('numPMin').value);
+      const oldMax = parseFloat(document.getElementById('numPMax').value);
+      const oldPwmP = parseFloat(document.getElementById('numPwmPressure').value);
+
+      PRESS_UNIT = u;
+      document.getElementById('btnBar').classList.toggle('active', u === 'bar');
+      document.getElementById('btnPsi').classList.toggle('active', u === 'psi');
+      document.getElementById('pwmPressUnit').innerText = u;
+
+      if (u === 'psi') {
+        document.getElementById('numPMin').value = (oldMin * BAR_TO_PSI).toFixed(1);
+        document.getElementById('numPMax').value = (oldMax * BAR_TO_PSI).toFixed(1);
+        document.getElementById('numPwmPressure').value = (oldPwmP * BAR_TO_PSI).toFixed(1);
+      } else {
+        document.getElementById('numPMin').value = (oldMin / BAR_TO_PSI).toFixed(1);
+        document.getElementById('numPMax').value = (oldMax / BAR_TO_PSI).toFixed(1);
+        document.getElementById('numPwmPressure').value = (oldPwmP / BAR_TO_PSI).toFixed(1);
+      }
+
+      update();
+    }
+
+    function setSpacing(v) {
+      SELECTED_DUAL_INDEX = 0;
+      document.getElementById('numSpacing').value = v;
+      document.getElementById('rngSpacing').value = v;
+      document.getElementById('valSpacing').innerText = v;
+      
+      document.querySelectorAll('[id^="sp"]').forEach(b => {
+        b.classList.toggle('active', parseInt(b.innerText) === v);
+      });
+      update();
+    }
+
+    function setDensity(v) {
+      SELECTED_DUAL_INDEX = 0;
+      document.getElementById('numDensity').value = v.toFixed(2);
+      updatePresetButtons();
+      update();
+    }
+
+    function updatePresetButtons() {
+      const d = parseFloat(document.getElementById('numDensity').value);
+      document.querySelectorAll('[id^="dn"]').forEach(b => {
+        const val = parseFloat(b.id.replace('dn', '')) / 100.0;
+        b.classList.toggle('active', Math.abs(val - d) < 0.005);
+      });
+    }
+
+    function clearManufacturerAndPwmActiveStates() {
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        if (!b.id || (!b.id.startsWith('sp') && !b.id.startsWith('dn'))) {
+          b.classList.remove('active');
+        }
+      });
+    }
+
+    function onManualInput() {
+      SELECTED_DUAL_INDEX = 0;
+      clearManufacturerAndPwmActiveStates();
+      update();
+    }
+
+    function applyPWMPreset(key, btn) {
+      SELECTED_DUAL_INDEX = 0;
+      const p = PWM_PRESETS[key];
+      if (!p) return;
+      document.getElementById('numDutyMin').value = p.dutyMin;
+      document.getElementById('numDutyIdeal').value = p.dutyIdeal;
+      document.getElementById('numDutyMax').value = p.dutyMax;
+      
+      const press = PRESS_UNIT === 'bar' ? p.targetPressure : (p.targetPressure * BAR_TO_PSI).toFixed(1);
+      document.getElementById('numPwmPressure').value = press;
+
+      // Highlight active button
+      document.querySelectorAll('#panelPwm .preset-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      update();
+    }
+
+    function applyMachinePreset(key, btn) {
+      SELECTED_DUAL_INDEX = 0;
+      const p = MACHINE_PRESETS[key];
+      if (!p) return;
+      document.getElementById('numVMin').value = p.vMin;
+      document.getElementById('numVAvg').value = p.vAvg;
+      document.getElementById('numVMax').value = p.vMax;
+      document.getElementById('numRate').value = p.rate;
+      document.getElementById('rngRate').value = p.rate;
+      document.getElementById('valRate').innerText = p.rate;
+
+      const pMin = PRESS_UNIT === 'bar' ? p.pMin : (p.pMin * BAR_TO_PSI).toFixed(1);
+      const pMax = PRESS_UNIT === 'bar' ? p.pMax : (p.pMax * BAR_TO_PSI).toFixed(1);
+      document.getElementById('numPMin').value = pMin;
+      document.getElementById('numPMax').value = pMax;
+
+      // Set typical default nozzle pairs for the manufacturer
+      const selA = document.getElementById('selNozzleA');
+      const selB = document.getElementById('selNozzleB');
+      if (key === 'horsch') {
+        selA.value = '02';
+        selB.value = '04';
+      } else if (key === 'stara') {
+        selA.value = '015';
+        selB.value = '025';
+      } else if (key === 'jacto') {
+        selA.value = '015';
+        selB.value = '02';
+      }
+
+      // Highlight active button
+      document.querySelectorAll('#panelDual .preset-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      update();
+    }
+
+    function setDualStrategy(s) {
+      SELECTED_DUAL_INDEX = 0;
+      DUAL_STRATEGY = s;
+      document.getElementById('btnAutoStrategy').classList.toggle('active', s === 'auto');
+      document.getElementById('btnManualStrategy').classList.toggle('active', s === 'manual');
+      document.getElementById('manualNozzleSelection').style.display = s === 'manual' ? 'block' : 'none';
+      update();
+    }
+
+    function handleNozzleOrder() {
+      const selA = document.getElementById('selNozzleA');
+      const selB = document.getElementById('selNozzleB');
+      const idxA = selA.selectedIndex;
+      const idxB = selB.selectedIndex;
+
+      if (idxA >= idxB) {
+        if (idxA === NOZZLES.length - 1) {
+          selA.selectedIndex = NOZZLES.length - 2;
+          selB.selectedIndex = NOZZLES.length - 1;
+        } else {
+          selB.selectedIndex = idxA + 1;
+        }
+      }
+    }
+
+    function onSelectDualCombo(idx) {
+      SELECTED_DUAL_INDEX = idx;
+      const inp = readInputs();
+      const combo = CURRENT_DUAL_COMBOS[idx];
+      if (combo) {
+        updateChart_Dual(combo, inp);
+        
+        // Update row highlights
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        rows.forEach((r, i) => {
+          r.classList.toggle('row-selected', i === idx);
+        });
+      }
+    }
+
+    // Correção: simplificar sincs e atualizações
+    function syncInput(slider, numId, valId) {
+      document.getElementById(numId).value = slider.value;
+      document.getElementById(valId).innerText = slider.value;
+      onManualInput();
+    }
+
+    function syncRange(num, rngId, valId) {
+      document.getElementById(rngId).value = num.value;
+      document.getElementById(valId).innerText = num.value;
+      clearManufacturerAndPwmActiveStates();
+      update();
+    }
+
+    function toggleAdvanced() {
+      const container = document.getElementById('advancedContainer');
+      const trigger = document.getElementById('advArrow');
+      const active = container.classList.toggle('active');
+      trigger.innerText = active ? '▼' : '▶';
+    }
+
+    // --- THEME ---
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('spray-smart-theme', next);
+      if (myChart) {
+        destroyChart();
+        update();
+      }
+    }
+
+    function applyStoredTheme() {
+      const theme = localStorage.getItem('spray-smart-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    // --- POPULAR SELEÇÕES MANUAL ---
+    function populateSelects() {
+      const selA = document.getElementById('selNozzleA');
+      const selB = document.getElementById('selNozzleB');
+      
+      const options = NOZZLES.map(n => `<option value="${n.iso}">ISO ${n.iso} (${n.q3.toFixed(2)} L/min @3bar)</option>`).join('');
+      selA.innerHTML = options;
+      selB.innerHTML = options;
+
+      // Valores default: 015 e 03
+      selA.value = '015';
+      selB.value = '03';
+
+      selA.addEventListener('change', handleNozzleOrder);
+      selB.addEventListener('change', handleNozzleOrder);
+    }
+
+    // --- INICIALIZAÇÃO ---
+    window.addEventListener('DOMContentLoaded', () => {
+      applyStoredTheme();
+      populateSelects();
+
+      // Ajusta botões de espaçamento ativos
+      setSpacing(50);
+      setMode('conventional');
+    });
+  </script>
+</body>
+
+</html>

@@ -1054,6 +1054,187 @@
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-main);
     }
+
+    /* Mode Switcher Tabs */
+    .mode-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 5px;
+      border: 1px solid var(--glass-border);
+      margin-bottom: 15px;
+    }
+    .mode-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      text-align: left;
+      font-family: 'Outfit';
+      outline: none;
+    }
+    .mode-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+    .mode-tab.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Conditional panels styling */
+    .conditional-panel {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    .panel-pwm {
+      background: rgba(168, 85, 247, 0.08);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .panel-dual {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+    }
+
+    /* Progress bar for PWM */
+    .duty-bar-container {
+      margin-top: 6px;
+    }
+    .duty-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .duty-bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .duty-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      position: absolute;
+    }
+
+    /* Staged bars for Bico Duplo */
+    .stages-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 8px;
+    }
+    .stage-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .stage-marker {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .stage-title {
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 90px;
+    }
+    .stage-val-range {
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: 'Outfit';
+    }
+    .premium-table tbody tr.row-selected {
+      background: rgba(0, 210, 255, 0.15) !important;
+    }
+
+    /* Advanced Custom Flow */
+    .advanced-trigger {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      transition: color 0.2s;
+      outline: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+    .advanced-trigger:hover {
+      color: var(--text-main);
+    }
+    .advanced-container {
+      display: none;
+      margin-top: 10px;
+    }
+    .advanced-container.active {
+      display: block;
+    }
+
+    /* Comparative card */
+    .comparative-section {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.04), rgba(168, 85, 247, 0.04), rgba(249, 115, 22, 0.04));
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      margin-top: 20px;
+    }
+    .comparative-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .comp-card {
+      background: var(--control-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+    .comp-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+    .comp-val {
+      font-family: 'Outfit';
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .comp-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 
@@ -1191,6 +1372,26 @@
           Parâmetros
         </h2>
 
+        <!-- Seletor de Tecnologia / Modo -->
+        <div class="control-group">
+          <label>Tecnologia do Sistema</label>
+          <div class="mode-selector">
+            <button type="button" class="mode-tab active" id="tab-conventional" onclick="setMode('conventional')">
+              <span>💧</span> Convencional (Hidráulico)
+            </button>
+            <button type="button" class="mode-tab" id="tab-pwm" onclick="setMode('pwm')">
+              <span>⚡</span> PWM / Pulsado
+            </button>
+            <button type="button" class="mode-tab" id="tab-dual" onclick="setMode('dual')">
+              <span>🔀</span> Bico Duplo (Estágios)
+            </button>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--glass-border); padding-top: 14px; margin-bottom: 12px;">
+          <h3 style="font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Parâmetros Comuns</h3>
+        </div>
+
         <div class="control-group">
           <label>Espaçamento entre bicos (cm)</label>
           <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
@@ -1257,6 +1458,112 @@
           </div>
         </div>
 
+        <!-- ────── SEÇÃO CONDICIONAL: PWM ────── -->
+        <div class="conditional-panel panel-pwm" id="panelPwm" style="display: none;">
+          <div class="panel-header-title" style="font-family:'Outfit'; font-weight:700; font-size:13px; text-transform:uppercase; color:#c084fc; display:flex; align-items:center; gap:6px;">⚡ Parâmetros do PWM</div>
+          
+          <div class="control-group">
+            <label>Sistema de Pulsos</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="preset-btn" onclick="applyPWMPreset('jd', this)">ExactApply</button>
+              <button type="button" class="preset-btn" onclick="applyPWMPreset('raven', this)">Hawkeye</button>
+              <button type="button" class="preset-btn" onclick="applyPWMPreset('teejet', this)">DynaJet</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Pressão Alvo e Duty Ideal</label>
+            <div class="flex-row">
+              <div>
+                <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">P. ALVO (<span id="pwmPressUnit">bar</span>)</div>
+                <input type="number" id="numPwmPressure" value="3.0" step="0.1" oninput="onManualInput()">
+              </div>
+              <div>
+                <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">DUTY IDEAL</div>
+                <input type="number" id="numDutyIdeal" value="70" min="30" max="90" oninput="onManualInput()">
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Faixa de Duty Aceitável (%)</label>
+            <div class="flex-row">
+              <div>
+                <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">MÍNIMO</div>
+                <input type="number" id="numDutyMin" value="30" min="5" max="60" oninput="onManualInput()">
+              </div>
+              <div>
+                <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">MÁXIMO</div>
+                <input type="number" id="numDutyMax" value="90" min="70" max="100" oninput="onManualInput()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ────── SEÇÃO CONDICIONAL: BICO DUPLO ────── -->
+        <div class="conditional-panel panel-dual" id="panelDual" style="display: none;">
+          <div class="panel-header-title" style="font-family:'Outfit'; font-weight:700; font-size:13px; text-transform:uppercase; color:#fb923c; display:flex; align-items:center; gap:6px;">🔀 Parâmetros de Bico Duplo</div>
+
+          <div class="control-group">
+            <label>Preset por Fabricante</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="preset-btn" onclick="applyMachinePreset('horsch', this)">Horsch LS</button>
+              <button type="button" class="preset-btn" onclick="applyMachinePreset('stara', this)">Stara</button>
+              <button type="button" class="preset-btn" onclick="applyMachinePreset('jacto', this)">Jacto</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Estratégia de Seleção</label>
+            <div class="unit-toggle">
+              <button type="button" class="active" id="btnAutoStrategy" onclick="setDualStrategy('auto')">Auto</button>
+              <button type="button" id="btnManualStrategy" onclick="setDualStrategy('manual')">Manual</button>
+            </div>
+          </div>
+
+          <!-- Seleção Manual de Bicos -->
+          <div id="manualNozzleSelection" style="display: none; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
+            <div class="flex-row">
+              <div>
+                <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">BICO A (Menor)</div>
+                <select id="selNozzleA" onchange="onManualInput()" style="width:100%; padding:8px; border-radius:8px; background:var(--control-bg); border:1px solid var(--control-border); color:var(--text-main); font-size:13px; font-weight:bold; font-family:'Outfit';"></select>
+              </div>
+              <div>
+                <div style="font-size:9px; color:var(--text-muted); text-align:center; margin-bottom:3px;">BICO B (Maior)</div>
+                <select id="selNozzleB" onchange="onManualInput()" style="width:100%; padding:8px; border-radius:8px; background:var(--control-bg); border:1px solid var(--control-border); color:var(--text-main); font-size:13px; font-weight:bold; font-family:'Outfit';"></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layman Explainer Box -->
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px; font-size: 11px; line-height: 1.5; color:var(--text-muted);">
+            <strong style="color: var(--accent); display: block; margin-bottom: 4px;">💡 Como funciona o Bico Duplo:</strong>
+            <ul style="padding-left: 14px; display: flex; flex-direction: column; gap: 3px; margin:0;">
+              <li><strong>Estágio A:</strong> Apenas o bico A (menor) abre. Usado em baixas velocidades.</li>
+              <li><strong>Estágio B:</strong> O bico A fecha e o B (maior) abre. Para velocidades médias.</li>
+              <li><strong>Estágio A+B:</strong> Ambos os bicos abrem juntos. Para altas velocidades.</li>
+              <li><strong>Sobreposição:</strong> Faixa segura de transição onde a pressão permanece ideal em ambos.</li>
+              <li><strong>Lacuna (Gap):</strong> Velocidades críticas onde a pressão fica fora dos limites. <b>Evite rodar nesses trechos.</b></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Advanced Custom Q3 -->
+        <div style="border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top:15px; margin-bottom:15px;">
+          <button type="button" class="advanced-trigger" onclick="toggleAdvanced()">
+            <span id="advArrow">▶</span> Bico não listado (Q3 manual)
+          </button>
+          <div class="advanced-container" id="advancedContainer">
+            <div class="control-group" style="margin-top: 4px;">
+              <label>Vazão do bico personalizado (L/min @ 3 bar)</label>
+              <input type="number" id="numCustomQ3" value="" placeholder="Ex: 1.15" step="0.01" oninput="onManualInput()" style="padding:8px; font-size:14px;">
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 3px; line-height: 1.4;">
+                Útil para bicos TeeJet, Albuz, Greenleaf ou outros não listados. Deixe em branco para ignorar.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button type="button" class="login-btn" onclick="openSaveModal()" style="background: var(--accent); color: #000; margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border-radius: 8px;">
           💾 Salvar Calibração
         </button>
@@ -1278,15 +1585,25 @@
           </div>
         </div>
 
+        <!-- Alertas Técnicos Contextuais -->
+        <div class="glass-panel" id="alertsSection" style="display: none;">
+          <div class="section-title-row" style="margin-bottom: 12px;">
+            <h2 style="font-size:20px;">🛡️ Diagnóstico Técnico</h2>
+          </div>
+          <div class="alerts-container" id="alertsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Injetado dinamicamente via JS -->
+          </div>
+        </div>
+
         <div class="glass-panel">
-          <h2 style="font-size: 20px; margin-bottom: 12px;">Desempenho por Bico (Pressão vs Velocidade)</h2>
+          <h2 id="chartTitle" style="font-size: 20px; margin-bottom: 12px;">Desempenho por Bico (Pressão vs Velocidade)</h2>
           <div class="chart-container">
             <canvas id="mainChart"></canvas>
           </div>
         </div>
 
         <div class="glass-panel">
-          <h2 style="font-size: 20px; margin-bottom: 12px;">Tabela de Dados Técnicos</h2>
+          <h2 id="tableTitle" style="font-size: 20px; margin-bottom: 12px;">Tabela de Dados Técnicos</h2>
           <div class="table-responsive">
             <table class="premium-table" id="dataTable">
               <!-- Injetado via JS -->
@@ -1917,7 +2234,6 @@
       }
       window.t = t;
 
-      // --- DATABASE BICOS ISO OFFLINE ---
       const NOZZLES = [
         { iso: "01", q3: 0.40, color: "#F28C28" },
         { iso: "0134", q3: 0.50, color: "#795548" },
@@ -1932,12 +2248,313 @@
         { iso: "08", q3: 3.20, color: "#FFFFFF" }
       ];
 
+      // === TECNOLOGIA / MODOS SIMULADOR ===
+      let MACHINE_MODE = 'conventional';
+      let DUAL_STRATEGY = 'auto';
+      let CURRENT_DUAL_COMBOS = [];
+      let SELECTED_DUAL_INDEX = 0;
+
+      function setMode(mode) {
+        MACHINE_MODE = mode;
+
+        document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+        const activeTab = document.getElementById(`tab-${mode}`);
+        if (activeTab) activeTab.classList.add('active');
+
+        const pPwm = document.getElementById('panelPwm');
+        const pDual = document.getElementById('panelDual');
+        if (pPwm) pPwm.style.display = mode === 'pwm' ? 'flex' : 'none';
+        if (pDual) pDual.style.display = mode === 'dual' ? 'flex' : 'none';
+
+        const titles = {
+          conventional: '🎯 Bicos Recomendados — Convencional',
+          pwm: '⚡ Bicos Recomendados — PWM',
+          dual: '🔀 Combinações Recomendadas — Bico Duplo'
+        };
+        const dashboardTitle = document.getElementById('dashboardTitle');
+        if (dashboardTitle) dashboardTitle.innerText = titles[mode];
+
+        update();
+      }
+
+      const PWM_PRESETS = {
+        jd: { dutyMin: 30, dutyIdeal: 70, dutyMax: 90, targetPressure: 3.0 },
+        raven: { dutyMin: 30, dutyIdeal: 70, dutyMax: 85, targetPressure: 3.0 },
+        teejet: { dutyMin: 30, dutyIdeal: 70, dutyMax: 90, targetPressure: 3.0 }
+      };
+
+      const MACHINE_PRESETS = {
+        horsch: { vMin: 10.0, vAvg: 16.0, vMax: 24.0, rate: 80, pMin: 2.0, pMax: 5.0 },
+        stara: { vMin: 12.0, vAvg: 17.0, vMax: 22.0, rate: 80, pMin: 2.0, pMax: 5.0 },
+        jacto: { vMin: 12.0, vAvg: 17.0, vMax: 20.0, rate: 80, pMin: 2.0, pMax: 5.0 }
+      };
+
+      // --- AUXILIARY FORMULAS FOR PWM & DUAL ---
+      function classifyPWM(dMin, dAvg, dMax, pwm) {
+        if (dMax > 100) return 'Não Recomendado';
+        if (dMax > pwm.dutyMax) return 'Saturando';
+        if (dMin < pwm.dutyMin) return 'Duty Baixo';
+        if (dAvg >= 55 && dAvg <= 78 && dMax <= pwm.dutyMax) return 'Ideal PWM';
+        return 'Aceitável';
+      }
+
+      function isValidDual(nzA, nzB) {
+        if (nzA.iso === nzB.iso) return false;
+        if (nzA.q3 >= nzB.q3) return false; // A deve ser menor que B
+        if (nzB.q3 / nzA.q3 > 3.5) return false; // Proporção máxima razoável
+        return true;
+      }
+
+      function getStageInfoForSpeed(v, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density) {
+        const fitsA = v >= rangeA.vMin && v <= rangeA.vMax;
+        const fitsB = v >= rangeB.vMin && v <= rangeB.vMax;
+        const fitsAB = v >= rangeAB.vMin && v <= rangeAB.vMax;
+
+        let activeStage = '';
+        let pBar = 0;
+        let overlap = false;
+        let gap = false;
+
+        const q = qPorBico(rate, v, spacingM);
+        const pRefVal = 3.0; // P_REF_BAR
+
+        const pressaoNec = (qMix, q3, dens) => { 
+          const qWaterEq = qMix * Math.sqrt(dens); 
+          return pRefVal * Math.pow(qWaterEq / q3, 2); 
+        };
+
+        if (fitsA && fitsB && fitsAB) {
+          const pA = pressaoNec(q, nzA.q3, density);
+          const pB = pressaoNec(q, nzB.q3, density);
+          const pAB = pressaoNec(q, nzA.q3 + nzB.q3, density);
+          const dA = Math.abs(pA - P_REF_BAR);
+          const dB = Math.abs(pB - P_REF_BAR);
+          const dAB = Math.abs(pAB - P_REF_BAR);
+          const minD = Math.min(dA, dB, dAB);
+          if (minD === dA) { activeStage = 'A'; pBar = pA; }
+          else if (minD === dB) { activeStage = 'B'; pBar = pB; }
+          else { activeStage = 'A+B'; pBar = pAB; }
+          overlap = true;
+        } else if (fitsA && fitsB) {
+          const pA = pressaoNec(q, nzA.q3, density);
+          const pB = pressaoNec(q, nzB.q3, density);
+          if (Math.abs(pA - P_REF_BAR) <= Math.abs(pB - P_REF_BAR)) { activeStage = 'A'; pBar = pA; }
+          else { activeStage = 'B'; pBar = pB; }
+          overlap = true;
+        } else if (fitsB && fitsAB) {
+          const pB = pressaoNec(q, nzB.q3, density);
+          const pAB = pressaoNec(q, nzA.q3 + nzB.q3, density);
+          if (Math.abs(pB - P_REF_BAR) <= Math.abs(pAB - P_REF_BAR)) { activeStage = 'B'; pBar = pB; }
+          else { activeStage = 'A+B'; pBar = pAB; }
+          overlap = true;
+        } else if (fitsA) {
+          activeStage = 'A'; pBar = pressaoNec(q, nzA.q3, density);
+        } else if (fitsB) {
+          activeStage = 'B'; pBar = pressaoNec(q, nzB.q3, density);
+        } else if (fitsAB) {
+          activeStage = 'A+B'; pBar = pressaoNec(q, nzA.q3 + nzB.q3, density);
+        } else {
+          gap = true;
+          // Se estiver fora, descobre qual está mais perto
+          const distA = v < rangeA.vMin ? rangeA.vMin - v : (v > rangeA.vMax ? v - rangeA.vMax : 0);
+          const distB = v < rangeB.vMin ? rangeB.vMin - v : (v > rangeB.vMax ? v - rangeB.vMax : 0);
+          const distAB = v < rangeAB.vMin ? rangeAB.vMin - v : (v > rangeAB.vMax ? v - rangeAB.vMax : 0);
+          const minDist = Math.min(distA, distB, distAB);
+          if (minDist === distA) { activeStage = 'A'; pBar = pressaoNec(q, nzA.q3, density); }
+          else if (minDist === distB) { activeStage = 'B'; pBar = pressaoNec(q, nzB.q3, density); }
+          else { activeStage = 'A+B'; pBar = pressaoNec(q, nzA.q3 + nzB.q3, density); }
+        }
+
+        return { activeStage, pressure: pBar, overlap, gap };
+      }
+
+      function calculateVelocityCoverage(stages, vMin, vMax) {
+        const totalRange = vMax - vMin;
+        if (totalRange <= 0) return { coveragePct: 0, gaps: [], overlaps: [] };
+
+        // Limita os ranges ao intervalo operacional do trator
+        const segs = stages.map(s => ({
+          min: Math.max(s.vMin, vMin),
+          max: Math.min(s.vMax, vMax),
+          label: s.label
+        })).filter(s => s.max > s.min + 0.1);
+
+        segs.sort((a, b) => a.min - b.min);
+
+        // Calcula cobertura unida
+        const merged = [];
+        for (const seg of segs) {
+          if (!merged.length || seg.min > merged[merged.length - 1].max + 0.1) {
+            merged.push({ min: seg.min, max: seg.max });
+          } else {
+            merged[merged.length - 1].max = Math.max(merged[merged.length - 1].max, seg.max);
+          }
+        }
+
+        let totalCovered = 0;
+        merged.forEach(m => totalCovered += (m.max - m.min));
+        const coveragePct = Math.min(100, (totalCovered / totalRange) * 100);
+
+        // Identifica lacunas (gaps)
+        const gaps = [];
+        if (merged.length === 0) {
+          gaps.push({ from: vMin, to: vMax });
+        } else {
+          if (merged[0].min > vMin + 0.2) gaps.push({ from: vMin, to: merged[0].min });
+          for (let i = 0; i < merged.length - 1; i++) {
+            if (merged[i + 1].min > merged[i].max + 0.2) {
+              gaps.push({ from: merged[i].max, to: merged[i + 1].min });
+            }
+          }
+          if (merged[merged.length - 1].max < vMax - 0.2) {
+            gaps.push({ from: merged[merged.length - 1].max, to: vMax });
+          }
+        }
+
+        // Identifica sobreposições de transição (overlaps)
+        const overlaps = [];
+        const sA = stages[0], sB = stages[1], sAB = stages[2];
+        const getOverlap = (r1, r2) => {
+          const min = Math.max(r1.vMin, r2.vMin);
+          const max = Math.min(r1.vMax, r2.vMax);
+          return max > min + 0.1 ? { from: min, to: max } : null;
+        };
+
+        const ovAB = getOverlap(sA, sB);
+        const ovB_AB = getOverlap(sB, sAB);
+
+        if (ovAB) overlaps.push({ label: `${sA.label} ➔ ${sB.label}`, ...ovAB });
+        if (ovB_AB) overlaps.push({ label: `${sB.label} ➔ ${sAB.label}`, ...ovB_AB });
+
+        return { coveragePct, gaps, overlaps };
+      }
+
       let PRESS_UNIT = 'bar';
       const BAR_TO_PSI = 14.5038;
       const P_REF_BAR = 3.0;
 
+      function toBar(p) {
+        return PRESS_UNIT === 'bar' ? p : p / BAR_TO_PSI;
+      }
+      function fromBar(p) {
+        return PRESS_UNIT === 'bar' ? p : p * BAR_TO_PSI;
+      }
+
       function qPorBico(rate, vel, spacM) { return (rate * vel * spacM) / 600.0; }
       function velPara(rate, spacM, q) { return (q * 600.0) / (rate * spacM); }
+
+      function pressureRequired(qMix, q3, density) {
+        const qWaterEq = qMix * Math.sqrt(density);
+        return P_REF_BAR * Math.pow(qWaterEq / q3, 2);
+      }
+
+      function velRangeForQ3(rate, spacingM, q3, density, pMinBar, pMaxBar) {
+        const qAtPmin = q3 * Math.sqrt(pMinBar / P_REF_BAR) / Math.sqrt(density);
+        const qAtPmax = q3 * Math.sqrt(pMaxBar / P_REF_BAR) / Math.sqrt(density);
+        return {
+          vMin: velPara(rate, spacingM, qAtPmin),
+          vMax: velPara(rate, spacingM, qAtPmax)
+        };
+      }
+
+      function calculatePWM(inp) {
+        const { rate, spacingM, density, vMin, vAvg, vMax, customQ3, pwm } = inp;
+        const nozzles = [...NOZZLES];
+        if (customQ3 > 0) {
+          nozzles.push({ iso: "Custom", q3: customQ3, color: "var(--accent)" });
+        }
+
+        const results = nozzles.map(nz => {
+          const qNozzle = nz.q3 * Math.sqrt(pwm.targetPressureBar / P_REF_BAR) / Math.sqrt(density);
+          const qVmin = qPorBico(rate, vMin, spacingM);
+          const qVavg = qPorBico(rate, vAvg, spacingM);
+          const qVmax = qPorBico(rate, vMax, spacingM);
+
+          const dMin = (qVmin / qNozzle) * 100;
+          const dAvg = (qVavg / qNozzle) * 100;
+          const dMax = (qVmax / qNozzle) * 100;
+
+          const qAtDMin = qNozzle * (pwm.dutyMin / 100);
+          const qAtDMax = qNozzle * (pwm.dutyMax / 100);
+          const vAtDMin = velPara(rate, spacingM, qAtDMin);
+          const vAtDMax = velPara(rate, spacingM, qAtDMax);
+
+          const status = classifyPWM(dMin, dAvg, dMax, pwm);
+          const deviation = Math.abs(dAvg - pwm.dutyIdeal);
+
+          return { nz, dMin, dAvg, dMax, qNozzle, vAtDMin, vAtDMax, status, deviation };
+        });
+
+        const statusOrder = { 'Ideal PWM': 0, 'Aceitável': 1, 'Duty Baixo': 2, 'Saturando': 3, 'Não Recomendado': 4 };
+        return results.sort((a, b) => {
+          const sa = statusOrder[a.status] ?? 5;
+          const sb = statusOrder[b.status] ?? 5;
+          if (sa !== sb) return sa - sb;
+          return a.deviation - b.deviation;
+        });
+      }
+
+      function calculateDualCombo(nzA, nzB, inp) {
+        const { rate, spacingM, density, pMinBar, pMaxBar, vMin, vAvg, vMax } = inp;
+        const rangeA = velRangeForQ3(rate, spacingM, nzA.q3, density, pMinBar, pMaxBar);
+        const rangeB = velRangeForQ3(rate, spacingM, nzB.q3, density, pMinBar, pMaxBar);
+        const rangeAB = velRangeForQ3(rate, spacingM, nzA.q3 + nzB.q3, density, pMinBar, pMaxBar);
+
+        const stages = [
+          { label: `ISO ${nzA.iso}`, color: nzA.color, vMin: rangeA.vMin, vMax: rangeA.vMax },
+          { label: `ISO ${nzB.iso}`, color: nzB.color, vMin: rangeB.vMin, vMax: rangeB.vMax },
+          { label: `ISO ${nzA.iso}+${nzB.iso}`, color: "var(--accent)", vMin: rangeAB.vMin, vMax: rangeAB.vMax }
+        ];
+
+        const { coveragePct, gaps, overlaps } = calculateVelocityCoverage(stages, vMin, vMax);
+
+        // Calcula a pressão real nas velocidades selecionadas do pulverizador
+        const infoMin = getStageInfoForSpeed(vMin, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density);
+        const infoAvg = getStageInfoForSpeed(vAvg, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density);
+        const infoMax = getStageInfoForSpeed(vMax, nzA, nzB, rangeA, rangeB, rangeAB, rate, spacingM, density);
+
+        let status = 'Não Recomendado';
+        if (coveragePct >= 98 && gaps.length === 0) status = 'Cobertura Total';
+        else if (coveragePct >= 80 && gaps.length <= 1) status = 'Cobertura Parcial';
+        else if (coveragePct > 50) status = 'Troca Crítica';
+
+        return { nzA, nzB, stages, coveragePct, gaps, overlaps, infoMin, infoAvg, infoMax, status };
+      }
+
+      function calculateDualNozzle(inp) {
+        const { dual } = inp;
+        const combos = [];
+
+        if (dual.strategy === 'manual' && dual.nozzleA && dual.nozzleB) {
+          let nzA = NOZZLES.find(n => n.iso === dual.nozzleA);
+          let nzB = NOZZLES.find(n => n.iso === dual.nozzleB);
+          if (nzA && nzB) {
+            if (nzA.q3 > nzB.q3) {
+              const temp = nzA;
+              nzA = nzB;
+              nzB = temp;
+            }
+            combos.push(calculateDualCombo(nzA, nzB, inp));
+          }
+          return combos;
+        }
+
+        // Modo Automático: varre todas as combinações válidas
+        for (let i = 0; i < NOZZLES.length; i++) {
+          for (let j = i + 1; j < NOZZLES.length; j++) {
+            if (!isValidDual(NOZZLES[i], NOZZLES[j])) continue;
+            combos.push(calculateDualCombo(NOZZLES[i], NOZZLES[j], inp));
+          }
+        }
+
+        const statusOrder = { 'Cobertura Total': 0, 'Cobertura Parcial': 1, 'Troca Crítica': 2, 'Não Recomendado': 3 };
+        return combos.sort((a, b) => {
+          const sa = statusOrder[a.status] ?? 4;
+          const sb = statusOrder[b.status] ?? 4;
+          if (sa !== sb) return sa - sb;
+          return b.coveragePct - a.coveragePct;
+        });
+      }
 
       const rngSpacing = document.getElementById('rngSpacing');
       const numSpacing = document.getElementById('numSpacing');
@@ -2068,79 +2685,140 @@
 
       function pRef() { return PRESS_UNIT === 'bar' ? 3.0 : (3.0 * BAR_TO_PSI); }
 
+      function readInputs() {
+        const spacingM = parseFloat(document.getElementById('numSpacing').value) / 100.0;
+        const rate = parseFloat(document.getElementById('numRate').value) || 60;
+        const density = parseFloat(document.getElementById('numDensity').value) || 1.0;
+        const pMinBar = toBar(parseFloat(document.getElementById('numPMin').value) || 0.1);
+        const pMaxBar = toBar(parseFloat(document.getElementById('numPMax').value) || 10.0);
+        const vMin = parseFloat(document.getElementById('numVMin').value) || 0;
+        const vAvg = parseFloat(document.getElementById('numVAvg').value) || 0;
+        const vMax = parseFloat(document.getElementById('numVMax').value) || 0;
+        const customQ3 = parseFloat(document.getElementById('numCustomQ3').value) || 0;
+
+        const pwm = {
+          dutyMin: parseFloat(document.getElementById('numDutyMin').value) || 30,
+          dutyIdeal: parseFloat(document.getElementById('numDutyIdeal').value) || 70,
+          dutyMax: parseFloat(document.getElementById('numDutyMax').value) || 90,
+          targetPressureBar: toBar(parseFloat(document.getElementById('numPwmPressure').value) || 3.0)
+        };
+
+        const dual = {
+          strategy: DUAL_STRATEGY,
+          nozzleA: document.getElementById('selNozzleA').value,
+          nozzleB: document.getElementById('selNozzleB').value
+        };
+
+        return { spacingM, rate, density, pMinBar, pMaxBar, vMin, vAvg, vMax, customQ3, pwm, dual };
+      }
+
       async function update() {
-        const spacingM = parseFloat(numSpacing.value) / 100.0;
-        const rate = parseFloat(numRate.value);
-        const pMin = parseFloat(numPMin.value) || 0.1;
-        const pMax = parseFloat(numPMax.value) || 10.0;
-        const density = parseFloat(numDensity.value) || 1.0;
-        const vMin = parseFloat(numVMin.value) || 0;
-        const vAvg = parseFloat(numVAvg.value) || 0;
-        const vMax = parseFloat(numVMax.value) || 0;
-        const unit = PRESS_UNIT;
+        if (MACHINE_MODE === 'conventional') {
+          // --- ORIGINAL CONVENCIONAL ---
+          const spacingM = parseFloat(numSpacing.value) / 100.0;
+          const rate = parseFloat(numRate.value);
+          const pMin = parseFloat(numPMin.value) || 0.1;
+          const pMax = parseFloat(numPMax.value) || 10.0;
+          const density = parseFloat(numDensity.value) || 1.0;
+          const vMin = parseFloat(numVMin.value) || 0;
+          const vAvg = parseFloat(numVAvg.value) || 0;
+          const vMax = parseFloat(numVMax.value) || 0;
+          const unit = PRESS_UNIT;
 
-        const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
-        if (!maxLimitsValid) return;
+          const maxLimitsValid = pMax > pMin && rate > 0 && spacingM > 0;
+          if (!maxLimitsValid) return;
 
-        try {
-          document.getElementById('matchCount').innerText = 'Processando (Offline)...';
+          try {
+            document.getElementById('matchCount').innerText = 'Processando (Offline)...';
 
-          const pTarget = (pMin + pMax) / 2;
-          const pRef = unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
-          const pressaoNec = (qMix, q3, dens) => { 
-            const qWaterEq = qMix * Math.sqrt(dens); 
-            return pRef * Math.pow(qWaterEq / q3, 2); 
-          };
+            const alertsSection = document.getElementById('alertsSection');
+            if (alertsSection) alertsSection.style.display = 'none';
 
-          let rows = [];
-          NOZZLES.forEach(nz => {
-            const qAtPmin_water = nz.q3 * Math.sqrt(pMin / pRef);
-            const qAtPmax_water = nz.q3 * Math.sqrt(pMax / pRef);
-            const qAtPmin_mix = qAtPmin_water / Math.sqrt(density);
-            const qAtPmax_mix = qAtPmax_water / Math.sqrt(density);
+            const pTarget = (pMin + pMax) / 2;
+            const pRef = unit === 'bar' ? P_REF_BAR : (P_REF_BAR * BAR_TO_PSI);
+            const pressaoNec = (qMix, q3, dens) => { 
+              const qWaterEq = qMix * Math.sqrt(dens); 
+              return pRef * Math.pow(qWaterEq / q3, 2); 
+            };
 
-            const vAtPmin = velPara(rate, spacingM, qAtPmin_mix);
-            const vAtPmax = velPara(rate, spacingM, qAtPmax_mix);
+            let rows = [];
+            const customQ3 = parseFloat(document.getElementById('numCustomQ3').value) || 0;
+            const nozzles = [...NOZZLES];
+            if (customQ3 > 0) {
+              nozzles.push({ iso: "Custom", q3: customQ3, color: "var(--accent)" });
+            }
 
-            const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
-            const vAt3Bar = velPara(rate, spacingM, qAt3Bar_mix);
+            nozzles.forEach(nz => {
+              const qAtPmin_water = nz.q3 * Math.sqrt(pMin / pRef);
+              const qAtPmax_water = nz.q3 * Math.sqrt(pMax / pRef);
+              const qAtPmin_mix = qAtPmin_water / Math.sqrt(density);
+              const qAtPmax_mix = qAtPmax_water / Math.sqrt(density);
 
-            const qVmin = qPorBico(rate, vMin, spacingM);
-            const pVmin = pressaoNec(qVmin, nz.q3, density);
-            const qVavg = qPorBico(rate, vAvg, spacingM);
-            const pVavg = pressaoNec(qVavg, nz.q3, density);
-            const qVmax = qPorBico(rate, vMax, spacingM);
-            const pVmax = pressaoNec(qVmax, nz.q3, density);
+              const vAtPmin = velPara(rate, spacingM, qAtPmin_mix);
+              const vAtPmax = velPara(rate, spacingM, qAtPmax_mix);
 
-            const fitsMin = pVmin >= pMin;
-            const fitsMax = pVmax <= pMax;
-            const ok = fitsMin && fitsMax;
-            
-            let statusText = "Não recomendado";
-            if (ok) statusText = "Atende";
-            else if (fitsMin || fitsMax) statusText = "Parcial";
+              const qAt3Bar_mix = nz.q3 / Math.sqrt(density);
+              const vAt3Bar = velPara(rate, spacingM, qAt3Bar_mix);
 
-            const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
-            const deviation = Math.abs(pVavg - pTarget);
+              const qVmin = qPorBico(rate, vMin, spacingM);
+              const pVmin = pressaoNec(qVmin, nz.q3, density);
+              const qVavg = qPorBico(rate, vAvg, spacingM);
+              const pVavg = pressaoNec(qVavg, nz.q3, density);
+              const qVmax = qPorBico(rate, vMax, spacingM);
+              const pVmax = pressaoNec(qVmax, nz.q3, density);
 
-            rows.push({
-              nz, vAtPmin, vAtPmax, vAt3Bar, pVavg, qVavg, ok, statusText, violation, deviation,
-              pressures: [pVmin, pVavg, pVmax]
+              const fitsMin = pVmin >= pMin;
+              const fitsMax = pVmax <= pMax;
+              const ok = fitsMin && fitsMax;
+              
+              let statusText = "Não recomendado";
+              if (ok) statusText = "Atende";
+              else if (fitsMin || fitsMax) statusText = "Parcial";
+
+              const violation = Math.max(0, pMin - pVmin) + Math.max(0, pVmax - pMax);
+              const deviation = Math.abs(pVavg - pTarget);
+
+              rows.push({
+                nz, vAtPmin, vAtPmax, vAt3Bar, pVavg, qVavg, ok, statusText, violation, deviation,
+                pressures: [pVmin, pVavg, pVmax]
+              });
             });
-          });
 
-          rows.sort((a, b) => {
-            if (a.ok !== b.ok) return a.ok ? -1 : 1;
-            return a.ok ? (a.deviation - b.deviation) : (a.violation - b.violation);
-          });
+            rows.sort((a, b) => {
+              if (a.ok !== b.ok) return a.ok ? -1 : 1;
+              return a.ok ? (a.deviation - b.deviation) : (a.violation - b.violation);
+            });
 
-          renderCards(rows, pMin, pMax, vMin, vMax);
-          updateChart(rows, vMin, vMax);
-          renderTable(rows, vMin, vAvg, vMax);
+            renderCards(rows, pMin, pMax, vMin, vMax);
+            updateChart(rows, vMin, vMax);
+            renderTable(rows, vMin, vAvg, vMax);
 
-        } catch (err) {
-          console.error("Erro no cálculo local:", err);
-          document.getElementById('matchCount').innerText = 'Erro no processamento offline';
+          } catch (err) {
+            console.error("Erro no cálculo local:", err);
+            document.getElementById('matchCount').innerText = 'Erro no processamento offline';
+          }
+        } else {
+          // --- PWM & DUAL NOZZLES ---
+          const inp = readInputs();
+          if (!inp || inp.spacingM <= 0 || inp.rate <= 0 || inp.vMax <= inp.vMin) return;
+
+          try {
+            document.getElementById('matchCount').innerText = 'Processando (Offline)...';
+
+            const alertsSection = document.getElementById('alertsSection');
+            if (alertsSection) alertsSection.style.display = 'none';
+
+            if (MACHINE_MODE === 'pwm') {
+              const rows = calculatePWM(inp);
+              renderPWM(rows, inp);
+            } else {
+              const combos = calculateDualNozzle(inp);
+              renderDual(combos, inp);
+            }
+          } catch (err) {
+            console.error("Erro no cálculo local:", err);
+            document.getElementById('matchCount').innerText = 'Erro no processamento offline';
+          }
         }
       }
 
@@ -2354,6 +3032,511 @@
         modal.style.display = 'flex';
       }
 
+      // ==========================================
+      // === RENDERERS FOR PWM AND DUAL NOZZLES ===
+      // ==========================================
+
+      function renderPWM(rows, inp) {
+        let tops = rows.filter(r => r.status === 'Ideal PWM' || r.status === 'Aceitável');
+        if (tops.length === 0) tops = rows.slice(0, 2);
+
+        document.getElementById('matchCount').innerText = `${rows.filter(r => r.status === 'Ideal PWM').length} bicos ideais para PWM`;
+
+        const grid = document.getElementById('topCards');
+        grid.innerHTML = '';
+
+        tops.slice(0, 4).forEach(r => {
+          const card = document.createElement('div');
+          card.className = 'nozzle-card';
+          card.style.setProperty('--nz-color', r.nz.color);
+
+          const badgeClass = (r.status === 'Ideal PWM') ? 'ok' : ((r.status === 'Aceitável') ? 'warning' : 'bad');
+          const pUnit = PRESS_UNIT.toUpperCase();
+
+          const dMinColor = r.dMin < inp.pwm.dutyMin ? 'var(--accent-warn)' : 'var(--accent-green)';
+          const dMaxColor = r.dMax > inp.pwm.dutyMax ? 'var(--accent-error)' : 'var(--accent-green)';
+
+          card.innerHTML = `
+            <div class="noz-header">
+              <div class="noz-iso">ISO ${r.nz.iso}</div>
+              <div class="noz-flow-badge">
+                <span class="label">${t('Vazão Máxima Alvo')}</span>
+                <span class="value">${r.qNozzle.toFixed(2)} L/min</span>
+              </div>
+            </div>
+            <div class="noz-metrics">
+              <div class="metric-row">
+                <span class="metric-label">${t('Duty Cycle Médio')}</span>
+                <span class="metric-val" style="color:var(--accent);">${r.dAvg.toFixed(0)}%</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">${t('Duty Mín (V. Mín)')}</span>
+                <span class="metric-val" style="color:${dMinColor};">${r.dMin.toFixed(0)}%</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">${t('Duty Máx (V. Máx)')}</span>
+                <span class="metric-val" style="color:${dMaxColor};">${r.dMax.toFixed(0)}%</span>
+              </div>
+              <div class="metric-row">
+                <span class="metric-label">${t('Janela PWM Útil')}</span>
+                <span class="metric-val">${r.vAtDMin.toFixed(1)} a ${r.vAtDMax.toFixed(1)} km/h</span>
+              </div>
+            </div>
+            <div class="duty-bar-container">
+              <div class="duty-bar-labels">
+                <span>Mín: ${r.dMin.toFixed(0)}%</span>
+                <span>Máx: ${r.dMax.toFixed(0)}%</span>
+              </div>
+              <div class="duty-bar-track">
+                ${buildDutyProgress(r.dMin, r.dAvg, r.dMax, inp.pwm)}
+              </div>
+            </div>
+            <span class="status-badge ${badgeClass}" style="margin-top:10px;">${t(r.status)}</span>
+          `;
+          grid.appendChild(card);
+        });
+
+        buildPWMAlerts(rows, inp);
+        updateChart_PWM(rows, inp);
+        renderTable_PWM(rows, inp);
+      }
+
+      function buildDutyProgress(dMin, dAvg, dMax, pwm) {
+        const clamp = (v) => Math.max(0, Math.min(100, v));
+        const left = clamp(dMin);
+        const width = clamp(dMax) - left;
+        const marker = clamp(dAvg);
+
+        let barColor = 'var(--accent-green)';
+        if (dMax > pwm.dutyMax || dMax > 100) barColor = 'var(--accent-error)';
+        else if (dMin < pwm.dutyMin) barColor = 'var(--accent-warn)';
+
+        return `
+          <div class="duty-bar-fill" style="left:${left}%; width:${width}%; background:${barColor};"></div>
+          <div style="position:absolute; top:0; bottom:0; left:${marker}%; width:2px; background:#fff; box-shadow:0 0 4px #000;"></div>
+        `;
+      }
+
+      function buildPWMAlerts(rows, inp) {
+        const alerts = [];
+        const ideals = rows.filter(r => r.status === 'Ideal PWM');
+
+        if (ideals.length > 0) {
+          alerts.push({ type: 'ok', icon: '✅', text: `O bico ISO ${ideals[0].nz.iso} é a melhor recomendação. Ele trabalha com média de ${ideals[0].dAvg.toFixed(0)}% de pulso, mantendo margens para aceleração e desaceleração.` });
+          window.topNozzle = ideals[0];
+          window.topNozzleFallback = false;
+        } else {
+          alerts.push({ type: 'warn', icon: '⚠️', text: 'Nenhum bico se enquadra na faixa ideal de duty cycle (55% a 78%). Considere alterar a pressão alvo ou a velocidade média.' });
+          window.topNozzle = rows[0] || null;
+          window.topNozzleFallback = true;
+        }
+
+        if (rows.some(r => r.dMin < inp.pwm.dutyMin && r.status !== 'Não Recomendado')) {
+          alerts.push({ type: 'warn', icon: '⚡', text: `Alguns bicos operam com duty cycle muito baixo (<${inp.pwm.dutyMin}%) na velocidade mínima. Isso pode resultar em cobertura falha de gotas devido a pulsações muito lentas.` });
+        }
+
+        alerts.push({ type: 'info', icon: 'ℹ️', text: 'A bomba do sistema PWM opera com pressão estável. Certifique-se de que a bomba da máquina possui retorno eletrônico estável ou sensor de pressão ativo.' });
+
+        renderAlerts(alerts);
+      }
+
+      function renderDual(combos, inp) {
+        CURRENT_DUAL_COMBOS = combos;
+        if (SELECTED_DUAL_INDEX >= combos.length) {
+          SELECTED_DUAL_INDEX = 0;
+        }
+        let tops = combos.filter(c => c.status === 'Cobertura Total' || c.status === 'Cobertura Parcial');
+        const isFallback = (tops.length === 0);
+        if (isFallback && combos.length > 0) {
+          tops = combos.slice(0, 2);
+        }
+
+        document.getElementById('matchCount').innerText = isFallback
+          ? "Sem cobertura ideal. Combinações mais próximas:"
+          : `${combos.filter(c => c.status === 'Cobertura Total').length} combinações recomendadas`;
+
+        const grid = document.getElementById('topCards');
+        grid.innerHTML = '';
+
+        const pUnit = PRESS_UNIT.toUpperCase();
+
+        tops.slice(0, 4).forEach((c, idx) => {
+          const card = document.createElement('div');
+          card.className = 'nozzle-card';
+          card.style.setProperty('--nz-color', c.nzA.color);
+
+          const badgeClass = (c.status === 'Cobertura Total') ? 'ok' : ((c.status === 'Cobertura Parcial') ? 'warning' : 'bad');
+
+          const stageItems = c.stages.map(s => {
+            return `
+              <div class="stage-item" style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="stage-marker" style="background:${s.color};"></div>
+                  <span class="stage-title">${s.label}</span>
+                </div>
+                <span class="stage-val-range" style="font-family:'Outfit'; font-weight:700;">
+                  ${s.vMin.toFixed(1)} km/h <span style="font-size:10px; color:var(--text-muted); font-weight:400;">(${fromBar(inp.pMinBar).toFixed(1)} ${pUnit})</span>
+                  a
+                  ${s.vMax.toFixed(1)} km/h <span style="font-size:10px; color:var(--text-muted); font-weight:400;">(${fromBar(inp.pMaxBar).toFixed(1)} ${pUnit})</span>
+                </span>
+              </div>
+            `;
+          }).join('');
+
+          let transitionText = '';
+          if (c.overlaps.length > 0) {
+            transitionText = `<div style="font-size:11px; color:var(--accent-green); margin-top:6px; border-top:1px dashed rgba(255, 255, 255, 0.05); padding-top:4px;">
+              <b>Sobreposição:</b> ${c.overlaps.map(o => `${o.from.toFixed(1)}–${o.to.toFixed(1)} km/h`).join(' | ')}
+            </div>`;
+          }
+          if (c.gaps.length > 0) {
+            transitionText += `<div style="font-size:11px; color:var(--accent-error); margin-top:4px;">
+              <b>⚠️ Lacunas:</b> ${c.gaps.map(g => `${g.from.toFixed(1)}–${g.to.toFixed(1)} km/h`).join(' | ')}
+            </div>`;
+          }
+
+          const formatLimits = (label, info) => {
+            const color = info.gap ? 'var(--accent-error)' : (info.overlap ? 'var(--accent-green)' : 'var(--text-main)');
+            return `<span>${label}: <b>Estágio ${info.activeStage}</b> a <b style="color:${color};">${fromBar(info.pressure).toFixed(1)} ${pUnit}</b></span>`;
+          };
+
+          card.innerHTML = `
+            <div class="noz-header">
+              <div class="noz-iso" style="font-size: 18px;">ISO ${c.nzA.iso} + ${c.nzB.iso}</div>
+              <div class="noz-flow-badge">
+                <span class="label">${t('Cobertura de Velocidade')}</span>
+                <span class="value">${c.coveragePct.toFixed(0)}%</span>
+              </div>
+            </div>
+            
+            <div class="stages-layout">
+              ${stageItems}
+            </div>
+
+            ${transitionText}
+
+            <div style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; font-size:11px; color:var(--text-muted); display:flex; flex-direction:column; gap:3px;">
+              <strong style="color:var(--accent); margin-bottom: 2px;">Pressão nas velocidades do pulverizador:</strong>
+              ${formatLimits(`V. Mín (${inp.vMin} km/h)`, c.infoMin)}
+              ${formatLimits(`V. Méd (${inp.vAvg} km/h)`, c.infoAvg)}
+              ${formatLimits(`V. Máx (${inp.vMax} km/h)`, c.infoMax)}
+            </div>
+
+            <span class="status-badge ${badgeClass}" style="margin-top: 10px;">${t(c.status)}</span>
+          `;
+          grid.appendChild(card);
+        });
+
+        buildDualAlerts(combos, inp);
+        const selectedCombo = combos[SELECTED_DUAL_INDEX] || (tops.length > 0 ? tops[0] : null);
+        updateChart_Dual(selectedCombo, inp);
+        renderTable_Dual(combos, inp);
+      }
+
+      function buildDualAlerts(combos, inp) {
+        const alerts = [];
+        const totals = combos.filter(c => c.status === 'Cobertura Total');
+
+        if (totals.length > 0) {
+          alerts.push({ type: 'ok', icon: '✅', text: `A combinação ISO ${totals[0].nzA.iso} + ${totals[0].nzB.iso} garante 100% de cobertura operacional para velocidades entre ${inp.vMin} e ${inp.vMax} km/h dentro da pressão segura.` });
+          window.topNozzle = { nz: { iso: `${totals[0].nzA.iso} + ${totals[0].nzB.iso}`, color: totals[0].nzA.color }, statusText: totals[0].status, qVavg: (totals[0].nzA.q3 + totals[0].nzB.q3) / 2, pVavg: (totals[0].infoAvg.pressure) };
+          window.topNozzleFallback = false;
+        } else if (combos.length > 0) {
+          window.topNozzle = { nz: { iso: `${combos[0].nzA.iso} + ${combos[0].nzB.iso}`, color: combos[0].nzA.color }, statusText: combos[0].status, qVavg: (combos[0].nzA.q3 + combos[0].nzB.q3) / 2, pVavg: (combos[0].infoAvg.pressure) };
+          window.topNozzleFallback = true;
+        }
+
+        if (combos.length > 0 && combos[0].gaps.length > 0) {
+          alerts.push({ type: 'danger', icon: '❌', text: `Falta de cobertura em velocidades de transição: a melhor combinação possui buracos de pressão nos limites entre ${combos[0].gaps.map(g => `${g.from.toFixed(1)}–${g.to.toFixed(1)} km/h`).join(', ')}.` });
+        }
+
+        alerts.push({ type: 'info', icon: '🔀', text: 'Sobreposições entre estágios são benéficas, pois criam uma zona de histerese (transição suave) que impede que os bicos fiquem abrindo e fechando repetidamente em pequenas oscilações de velocidade.' });
+
+        renderAlerts(alerts);
+      }
+
+      function renderAlerts(alerts) {
+        const section = document.getElementById('alertsSection');
+        const container = document.getElementById('alertsContainer');
+
+        if (!section || !container) return;
+
+        if (alerts.length === 0) {
+          section.style.display = 'none';
+          return;
+        }
+
+        section.style.display = 'block';
+        container.innerHTML = '';
+
+        alerts.forEach(a => {
+          const div = document.createElement('div');
+          div.className = `alert-card ${a.type}`;
+          div.style.cssText = "display: flex; gap: 10px; padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; border-left: 4px solid;";
+          
+          let borderCol = '#ef4444'; // default danger
+          let bgCol = 'rgba(239, 68, 68, 0.08)';
+          if (a.type === 'ok') { borderCol = '#22c55e'; bgCol = 'rgba(34, 197, 94, 0.08)'; }
+          else if (a.type === 'warn') { borderCol = '#eab308'; bgCol = 'rgba(234, 179, 8, 0.08)'; }
+          else if (a.type === 'info') { borderCol = '#3b82f6'; bgCol = 'rgba(59, 130, 246, 0.08)'; }
+
+          div.style.borderColor = borderCol;
+          div.style.backgroundColor = bgCol;
+
+          div.innerHTML = `
+            <span class="alert-icon" style="font-size: 16px;">${a.icon}</span>
+            <div style="color: var(--text-main);">${t(a.text)}</div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      function renderTable_PWM(rows, inp) {
+        const tbody = document.getElementById('dataTable');
+        if (!tbody) return;
+
+        let html = `
+          <thead>
+            <tr>
+              <th style="text-align:left;">ISO</th>
+              <th>${t('Capacidade Máxima')}</th>
+              <th>${t('Duty V. Mín')}</th>
+              <th>${t('Duty V. Méd')}</th>
+              <th>${t('Duty V. Máx')}</th>
+              <th>${t('Amplitude Útil')}</th>
+              <th>${t('Status PWM')}</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+        rows.forEach(r => {
+          const makeCell = (label, d) => {
+            const isDanger = (d > inp.pwm.dutyMax || d > 100);
+            const isWarn = (d < inp.pwm.dutyMin);
+            const color = isDanger ? 'var(--accent-error)' : (isWarn ? 'var(--accent-warn)' : 'var(--accent-green)');
+            return `<td data-label="${t(label)}" style="color:${color}; font-weight:700; font-family:'Outfit';">${d.toFixed(0)}%</td>`;
+          };
+
+          const badgeClass = (r.status === 'Ideal PWM') ? 'ok' : ((r.status === 'Aceitável') ? 'warning' : 'bad');
+          const rowClass = (r.status === 'Ideal PWM') ? 'row-ok' : '';
+
+          html += `
+            <tr class="${rowClass}">
+              <td data-label="ISO" style="text-align:left; font-weight:bold; color:${r.nz.color};">ISO ${r.nz.iso}</td>
+              <td data-label="${t('Capacidade')}" style="color:var(--text-muted); font-family:'Outfit';">${r.qNozzle.toFixed(2)} L/min</td>
+              ${makeCell("Duty V. Mín", r.dMin)}
+              ${makeCell("Duty V. Méd", r.dAvg)}
+              ${makeCell("Duty V. Máx", r.dMax)}
+              <td data-label="${t('Amplitude')}" style="font-family:'Outfit'; font-weight:600;">${r.vAtDMin.toFixed(1)} a ${r.vAtDMax.toFixed(1)} km/h</td>
+              <td data-label="${t('Status')}"><span class="status-badge ${badgeClass}" style="padding:4px 8px; font-size:10px;">${t(r.status)}</span></td>
+            </tr>
+          `;
+        });
+
+        html += '</tbody>';
+        tbody.innerHTML = html;
+        document.getElementById('tableTitle').innerText = '📋 ' + t('Tabela Analítica — PWM');
+        if (typeof applyTranslations === 'function') applyTranslations();
+      }
+
+      function renderTable_Dual(combos, inp) {
+        const tbody = document.getElementById('dataTable');
+        if (!tbody) return;
+        const pUnit = PRESS_UNIT.toUpperCase();
+
+        let html = `
+          <thead>
+            <tr>
+              <th style="text-align:left;">${t('Combinação')}</th>
+              <th>${t('Estágio A')}</th>
+              <th>${t('Estágio B')}</th>
+              <th>${t('Estágio A+B')}</th>
+              <th>${t('Cobertura')}</th>
+              <th>${t('Pressão Real na Velocidade')}</th>
+              <th>${t('Resultado')}</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+        combos.slice(0, 10).forEach((c, idx) => {
+          const formatStageCell = (s) => {
+            return `<span style="font-weight:600; font-size:11px; white-space:nowrap;">${s.vMin.toFixed(1)}–${s.vMax.toFixed(1)} km/h<br><span style="opacity:0.6; font-size:10px;">(${fromBar(inp.pMinBar).toFixed(1)}–${fromBar(inp.pMaxBar).toFixed(1)} ${pUnit})</span></span>`;
+          };
+
+          const badgeClass = (c.status === 'Cobertura Total') ? 'ok' : ((c.status === 'Cobertura Parcial') ? 'warning' : 'bad');
+          const isSelected = (idx === SELECTED_DUAL_INDEX);
+          const selectedClass = isSelected ? 'row-selected' : '';
+          const rowClass = selectedClass || ((c.status === 'Cobertura Total') ? 'row-ok' : '');
+          const pctColor = c.coveragePct >= 98 ? 'var(--accent-green)' : (c.coveragePct >= 80 ? 'var(--accent-warn)' : 'var(--accent-error)');
+
+          const fmtSpeedPress = (label, info) => {
+            const cColor = info.gap ? 'var(--accent-error)' : (info.overlap ? 'var(--accent-green)' : 'var(--text-main)');
+            return `<div style="font-size:10px; white-space:nowrap; text-align:left;">${t(label)}: <b>Est. ${info.activeStage}</b> @ <b style="color:${cColor};">${fromBar(info.pressure).toFixed(1)}</b></div>`;
+          };
+
+          html += `
+            <tr class="${rowClass}" style="cursor:pointer;" onclick="onSelectDualCombo(${idx})">
+              <td data-label="${t('Combinação')}" style="text-align:left; font-weight:bold; font-family:'Outfit';">ISO ${c.nzA.iso} + ${c.nzB.iso}</td>
+              <td data-label="${t('Estágio A')}">${formatStageCell(c.stages[0])}</td>
+              <td data-label="${t('Estágio B')}">${formatStageCell(c.stages[1])}</td>
+              <td data-label="${t('Estágio A+B')}">${formatStageCell(c.stages[2])}</td>
+              <td data-label="${t('Cobertura')}" style="color:${pctColor}; font-weight:700; font-family:'Outfit';">${c.coveragePct.toFixed(0)}%</td>
+              <td data-label="${t('Pressão no limite')}" style="font-family:'Outfit';">
+                <div style="display:flex; flex-direction:column; gap:1px; align-items:flex-end;">
+                  ${fmtSpeedPress(`Mín (${inp.vMin})`, c.infoMin)}
+                  ${fmtSpeedPress(`Méd (${inp.vAvg})`, c.infoAvg)}
+                  ${fmtSpeedPress(`Máx (${inp.vMax})`, c.infoMax)}
+                </div>
+              </td>
+              <td data-label="${t('Resultado')}"><span class="status-badge ${badgeClass}" style="padding:4px 8px; font-size:10px;">${t(c.status)}</span></td>
+            </tr>
+          `;
+        });
+
+        html += '</tbody>';
+        tbody.innerHTML = html;
+        document.getElementById('tableTitle').innerText = '📋 ' + t('Combinações Analisadas — Bico Duplo');
+        if (typeof applyTranslations === 'function') applyTranslations();
+      }
+
+      function onSelectDualCombo(idx) {
+        SELECTED_DUAL_INDEX = idx;
+        const inp = readInputs();
+        const combo = CURRENT_DUAL_COMBOS[idx];
+        if (combo) {
+          updateChart_Dual(combo, inp);
+          
+          // Update row highlights
+          const rows = document.querySelectorAll('#dataTable tbody tr');
+          rows.forEach((r, i) => {
+            r.classList.toggle('row-selected', i === idx);
+          });
+        }
+      }
+
+      function handleNozzleOrder() {
+        const selA = document.getElementById('selNozzleA');
+        const selB = document.getElementById('selNozzleB');
+        if (!selA || !selB) return;
+        const idxA = selA.selectedIndex;
+        const idxB = selB.selectedIndex;
+
+        if (idxA >= idxB) {
+          if (idxA === NOZZLES.length - 1) {
+            selA.selectedIndex = NOZZLES.length - 2;
+            selB.selectedIndex = NOZZLES.length - 1;
+          } else {
+            selB.selectedIndex = idxA + 1;
+          }
+        }
+      }
+
+      function setDualStrategy(s) {
+        SELECTED_DUAL_INDEX = 0;
+        DUAL_STRATEGY = s;
+        document.getElementById('btnAutoStrategy').classList.toggle('active', s === 'auto');
+        document.getElementById('btnManualStrategy').classList.toggle('active', s === 'manual');
+        document.getElementById('manualNozzleSelection').style.display = s === 'manual' ? 'block' : 'none';
+        update();
+      }
+
+      function applyPWMPreset(key, btn) {
+        SELECTED_DUAL_INDEX = 0;
+        const p = PWM_PRESETS[key];
+        if (!p) return;
+        document.getElementById('numDutyMin').value = p.dutyMin;
+        document.getElementById('numDutyIdeal').value = p.dutyIdeal;
+        document.getElementById('numDutyMax').value = p.dutyMax;
+        
+        const press = PRESS_UNIT === 'bar' ? p.targetPressure : (p.targetPressure * BAR_TO_PSI).toFixed(1);
+        document.getElementById('numPwmPressure').value = press;
+
+        // Highlight active button
+        document.querySelectorAll('#panelPwm .preset-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        update();
+      }
+
+      function applyMachinePreset(key, btn) {
+        SELECTED_DUAL_INDEX = 0;
+        const p = MACHINE_PRESETS[key];
+        if (!p) return;
+        document.getElementById('numVMin').value = p.vMin;
+        document.getElementById('numVAvg').value = p.vAvg;
+        document.getElementById('numVMax').value = p.vMax;
+        document.getElementById('numRate').value = p.rate;
+        document.getElementById('rngRate').value = p.rate;
+
+        const pMin = PRESS_UNIT === 'bar' ? p.pMin : (p.pMin * BAR_TO_PSI).toFixed(1);
+        const pMax = PRESS_UNIT === 'bar' ? p.pMax : (p.pMax * BAR_TO_PSI).toFixed(1);
+        document.getElementById('numPMin').value = pMin;
+        document.getElementById('numPMax').value = pMax;
+
+        // Set typical default nozzle pairs for the manufacturer
+        const selA = document.getElementById('selNozzleA');
+        const selB = document.getElementById('selNozzleB');
+        if (selA && selB) {
+          if (key === 'horsch') {
+            selA.value = '02';
+            selB.value = '04';
+          } else if (key === 'stara') {
+            selA.value = '015';
+            selB.value = '025';
+          } else if (key === 'jacto') {
+            selA.value = '015';
+            selB.value = '02';
+          }
+        }
+
+        // Highlight active button
+        document.querySelectorAll('#panelDual .preset-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        update();
+      }
+
+      function clearManufacturerAndPwmActiveStates() {
+        document.querySelectorAll('.preset-btn').forEach(b => {
+          if (b.className.includes('spacing-btn') || (b.getAttribute('onclick') && b.getAttribute('onclick').includes('setDensity'))) {
+            return;
+          }
+          b.classList.remove('active');
+        });
+      }
+
+      function onManualInput() {
+        SELECTED_DUAL_INDEX = 0;
+        clearManufacturerAndPwmActiveStates();
+        update();
+      }
+
+      function toggleAdvanced() {
+        const container = document.getElementById('advancedContainer');
+        const trigger = document.getElementById('advArrow');
+        const active = container.classList.toggle('active');
+        trigger.innerText = active ? '▼' : '▶';
+      }
+
+      function populateSelects() {
+        const selA = document.getElementById('selNozzleA');
+        const selB = document.getElementById('selNozzleB');
+        if (!selA || !selB) return;
+        
+        const options = NOZZLES.map(n => `<option value="${n.iso}">ISO ${n.iso} (${n.q3.toFixed(2)} L/min @3bar)</option>`).join('');
+        selA.innerHTML = options;
+        selB.innerHTML = options;
+
+        // Valores default: 015 e 03
+        selA.value = '015';
+        selB.value = '03';
+
+        selA.addEventListener('change', handleNozzleOrder);
+        selB.addEventListener('change', handleNozzleOrder);
+      }
+
       function renderTable(rows) {
         const tbody = document.getElementById('dataTable');
         const pUnit = PRESS_UNIT.toUpperCase();
@@ -2462,22 +3645,30 @@
         const connector = lang === 'en' ? 'at' : (lang === 'es' ? 'a las' : 'às');
         const dateStr = now.toLocaleDateString(locale) + ' ' + connector + ' ' + now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 
-        const simulationData = {
-          rate: document.getElementById('numRate').value,
-          spacing: document.getElementById('numSpacing').value,
-          density: document.getElementById('numDensity').value,
-          unit: PRESS_UNIT.toUpperCase(),
-          vMin: document.getElementById('numVMin').value,
-          vAvg: document.getElementById('numVAvg').value,
-          vMax: document.getElementById('numVMax').value,
-          pMin: document.getElementById('numPMin').value,
-          pMax: document.getElementById('numPMax').value
-        };
+        const inp = readInputs();
+        const pUnit = PRESS_UNIT.toUpperCase();
 
-        const statusTextTranslated = window.topNozzle ? t(window.topNozzle.statusText) : '';
-        const nozzleInfo = window.topNozzle ? 
-          `ISO ${window.topNozzle.nz.iso} (${statusTextTranslated})` : 
-          t('Nenhuma recomendação ideal encontrada');
+        // 1. Capture dynamic chart under high-contrast LIGHT mode
+        let chartImgUrl = '';
+        if (myChart) {
+          const originalTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+          
+          // Desativa animações temporariamente para renderização síncrona imediata
+          const originalAnimation = Chart.defaults.animation;
+          Chart.defaults.animation = false;
+          
+          document.documentElement.setAttribute('data-theme', 'light');
+          update(); // re-draws calculations and chart dynamically in light mode ticks/gridlines
+          
+          chartImgUrl = myChart.toBase64Image();
+          
+          document.documentElement.setAttribute('data-theme', originalTheme);
+          
+          // Restaura a configuração de animação original
+          Chart.defaults.animation = originalAnimation;
+          
+          update(); // restores active visualization
+        }
 
         // Lógica de cabeçalho do produtor & equipamento vinculados
         let clientInfoHtml = '';
@@ -2503,15 +3694,189 @@
           }
         }
 
-        let scenarioDesc = "";
-        const qVavgVal = window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--';
-        const pVavgVal = window.topNozzle ? window.topNozzle.pVavg.toFixed(1) : '--';
-        if (lang === 'es') {
-          scenarioDesc = `Para este escenario, la boquilla indicada debe entregar un caudal de <b>${qVavgVal} L/min</b> (Caudal para Calibración) operando con una presión promedio de <b>${pVavgVal} ${simulationData.unit}</b> a la velocidad nominal.`;
-        } else if (lang === 'en') {
-          scenarioDesc = `For this scenario, the indicated nozzle must deliver a flow rate of <b>${qVavgVal} L/min</b> (Flow for Calibration) operating with an average pressure of <b>${pVavgVal} ${simulationData.unit}</b> at the nominal speed.`;
-        } else {
-          scenarioDesc = `Para este cenário, o bico indicado deve entregar uma vazão de <b>${qVavgVal} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${pVavgVal} ${simulationData.unit}</b> na velocidade nominal.`;
+        // Layout de conteúdo do laudo adaptativo por tecnologia
+        let nozzleInfo = '';
+        let mainRecHtml = '';
+        let detailsHtml = '';
+        let scenarioDesc = '';
+
+        if (MACHINE_MODE === 'conventional') {
+          const statusTextTranslated = window.topNozzle ? t(window.topNozzle.statusText) : '';
+          nozzleInfo = window.topNozzle ? 
+            `ISO ${window.topNozzle.nz.iso} (${statusTextTranslated})` : 
+            t('Nenhuma recomendação ideal encontrada');
+
+          const qVavgVal = window.topNozzle ? window.topNozzle.qVavg.toFixed(2) : '--';
+          const pVavgVal = window.topNozzle ? fromBar(window.topNozzle.pVavg).toFixed(1) : '--';
+          if (lang === 'es') {
+            scenarioDesc = `Para este escenario, la boquilla indicada debe entregar un caudal de <b>${qVavgVal} L/min</b> (Caudal para Calibración) operando con una presión promedio de <b>${pVavgVal} ${pUnit}</b> a la velocidad nominal.`;
+          } else if (lang === 'en') {
+            scenarioDesc = `For this scenario, the indicated nozzle must deliver a flow rate of <b>${qVavgVal} L/min</b> (Flow for Calibration) operating with an average pressure of <b>${pVavgVal} ${pUnit}</b> at the nominal speed.`;
+          } else {
+            scenarioDesc = `Para este cenário, o bico indicado deve entregar uma vazão de <b>${qVavgVal} L/min</b> (Vazão p/ Calibração) operando com uma pressão média de <b>${pVavgVal} ${pUnit}</b> na velocidade nominal.`;
+          }
+
+          mainRecHtml = `
+            <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
+              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 ${t('Recomendação Principal')}</h3>
+              <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
+              <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
+                ${scenarioDesc}
+              </p>
+            </div>
+          `;
+
+          detailsHtml = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Parâmetros da Simulação')}</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Vazão Alvo')}:</td><td style="text-align: right; font-weight: bold;">${inp.rate} L/ha</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Espaçamento:')}</td><td style="text-align: right; font-weight: bold;">${inp.spacingM*100} cm</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Densidade da Calda:')}</td><td style="text-align: right; font-weight: bold;">${inp.density} kg/L</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Limites de Pressão:')}</td><td style="text-align: right; font-weight: bold;">${fromBar(inp.pMinBar).toFixed(1)} a ${fromBar(inp.pMaxBar).toFixed(1)} ${pUnit}</td></tr>
+                </table>
+              </div>
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Velocidades de Operação')}</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Mínima:')}</td><td style="text-align: right; font-weight: bold;">${inp.vMin} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Média (Calibração):')}</td><td style="text-align: right; font-weight: bold;">${inp.vAvg} km/h</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Máxima:')}</td><td style="text-align: right; font-weight: bold;">${inp.vMax} km/h</td></tr>
+                </table>
+              </div>
+            </div>
+          `;
+        } else if (MACHINE_MODE === 'pwm') {
+          const statusTextTranslated = window.topNozzle ? t(window.topNozzle.status) : '';
+          nozzleInfo = window.topNozzle ? 
+            `ISO ${window.topNozzle.nz.iso} (${statusTextTranslated})` : 
+            t('Nenhuma recomendação ideal encontrada');
+
+          if (lang === 'es') {
+            scenarioDesc = `La boquilla recomendada opera con una presión estable de <b>${fromBar(inp.pwm.targetPressureBar).toFixed(1)} ${pUnit}</b>.
+            A la velocidad nominal de trabajo (<b>${inp.vAvg} km/h</b>), el ciclo de trabajo (Duty Cycle) promedio estimado es de <b>${window.topNozzle ? window.topNozzle.dAvg.toFixed(0) : '--'}%</b>.
+            Duty en la velocidad mínima: <b>${window.topNozzle ? window.topNozzle.dMin.toFixed(0) : '--'}%</b> | máxima: <b>${window.topNozzle ? window.topNozzle.dMax.toFixed(0) : '--'}%</b>.`;
+          } else if (lang === 'en') {
+            scenarioDesc = `The recommended nozzle operates with a stable pressure of <b>${fromBar(inp.pwm.targetPressureBar).toFixed(1)} ${pUnit}</b>.
+            At the nominal working speed (<b>${inp.vAvg} km/h</b>), the estimated average duty cycle is <b>${window.topNozzle ? window.topNozzle.dAvg.toFixed(0) : '--'}%</b>.
+            Duty cycle at minimum speed: <b>${window.topNozzle ? window.topNozzle.dMin.toFixed(0) : '--'}%</b> | maximum: <b>${window.topNozzle ? window.topNozzle.dMax.toFixed(0) : '--'}%</b>.`;
+          } else {
+            scenarioDesc = `O bico recomendado opera com uma pressão estável de <b>${fromBar(inp.pwm.targetPressureBar).toFixed(1)} ${pUnit}</b>.
+            Na velocidade média de trabalho (<b>${inp.vAvg} km/h</b>), o ciclo de trabalho (Duty Cycle) ideal estimado é de <b>${window.topNozzle ? window.topNozzle.dAvg.toFixed(0) : '--'}%</b>.
+            Duty na velocidade mínima: <b>${window.topNozzle ? window.topNozzle.dMin.toFixed(0) : '--'}%</b> | máxima: <b>${window.topNozzle ? window.topNozzle.dMax.toFixed(0) : '--'}%</b>.`;
+          }
+
+          mainRecHtml = `
+            <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
+              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 ${t('Recomendação Principal — Sistema PWM / Pulsado')}</h3>
+              <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
+              <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
+                ${scenarioDesc}
+              </p>
+            </div>
+          `;
+
+          detailsHtml = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Parâmetros da Calda & Espaçamento')}</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Vazão Alvo')}:</td><td style="text-align: right; font-weight: bold;">${inp.rate} L/ha</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Espaçamento:')}</td><td style="text-align: right; font-weight: bold;">${inp.spacingM*100} cm</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Densidade da Calda:')}</td><td style="text-align: right; font-weight: bold;">${inp.density} kg/L</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Velocidades (Mín/Méd/Máx):')}</td><td style="text-align: right; font-weight: bold;">${inp.vMin} / ${inp.vAvg} / ${inp.vMax} km/h</td></tr>
+                </table>
+              </div>
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Configurações do PWM')}</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Pressão Alvo:')}</td><td style="text-align: right; font-weight: bold;">${fromBar(inp.pwm.targetPressureBar).toFixed(1)} ${pUnit}</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Duty Cycle Ideal:')}</td><td style="text-align: right; font-weight: bold;">${inp.pwm.dutyIdeal}%</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Duty Cycle Mínimo:')}</td><td style="text-align: right; font-weight: bold;">${inp.pwm.dutyMin}%</td></tr>
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Duty Cycle Máximo:')}</td><td style="text-align: right; font-weight: bold;">${inp.pwm.dutyMax}%</td></tr>
+                </table>
+              </div>
+            </div>
+          `;
+        } else if (MACHINE_MODE === 'dual') {
+          const combo = CURRENT_DUAL_COMBOS[SELECTED_DUAL_INDEX];
+          const statusTextTranslated = combo ? t(combo.status) : '';
+          nozzleInfo = combo ? 
+            `ISO ${combo.nzA.iso} + ${combo.nzB.iso} (${statusTextTranslated})` : 
+            t('Nenhuma combinação selecionada');
+
+          let stageItemsHtml = '';
+          let transitionHtml = '';
+          let otherAlternativesHtml = '';
+
+          if (combo) {
+            stageItemsHtml = combo.stages.map((s, idx) => `
+              <tr>
+                <td style="padding: 6px 0; border-bottom: 1px solid #eee; font-weight: 600;">${t('Estágio')} ${idx+1} — ${s.label}:</td>
+                <td style="text-align: right; font-weight: bold; color: #0f172a;">${s.vMin.toFixed(1)} a ${s.vMax.toFixed(1)} km/h</td>
+              </tr>
+            `).join('');
+
+            transitionHtml = `
+              <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Cobertura Operacional:')}</td><td style="text-align: right; font-weight: bold; color: ${combo.coveragePct >= 98 ? '#16a34a' : '#d97706'}">${combo.coveragePct.toFixed(0)}%</td></tr>
+              <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Sobreposições Seguras:')}</td><td style="text-align: right; font-weight: bold;">${combo.overlaps.length > 0 ? combo.overlaps.map(o => `${o.from.toFixed(1)}–${o.to.toFixed(1)} km/h`).join(' | ') : t('Nenhuma')}</td></tr>
+              <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Lacunas Operacionais:')}</td><td style="text-align: right; font-weight: bold; color: #dc2626;">${combo.gaps.length > 0 ? combo.gaps.map(g => `${g.from.toFixed(1)}–${g.to.toFixed(1)} km/h`).join(' | ') : t('Nenhuma')}</td></tr>
+            `;
+
+            // List other combinations with 'Cobertura Total'
+            const otherTotals = CURRENT_DUAL_COMBOS.filter((c, idx) => idx !== SELECTED_DUAL_INDEX && c.status === 'Cobertura Total');
+            if (otherTotals.length > 0) {
+              otherAlternativesHtml = `
+                <div style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px;">
+                  <h4 style="margin-top:0; margin-bottom:8px; color:#1e293b; font-family:'Outfit'; text-transform:uppercase; font-size:12px;">${t('Outras Combinações com Cobertura Total')}</h4>
+                  <ul style="margin:0; padding-left:20px; color:#475569; text-align: left;">
+                    ${otherTotals.map(c => `<li>ISO <b>${c.nzA.iso} + ${c.nzB.iso}</b>: 100% ${t('de cobertura operacional')}</li>`).join('')}
+                  </ul>
+                </div>
+              `;
+            }
+          }
+
+          if (lang === 'es') {
+            scenarioDesc = `Combinación seleccionada para operación en etapas secuenciales alternadas por velocidad.
+            Caudales nominales: Boquilla A (ISO ${combo ? combo.nzA.iso : '--'}) = <b>${combo ? combo.nzA.q3.toFixed(2) : '--'} L/min</b> | Boquilla B (ISO ${combo ? combo.nzB.iso : '--'}) = <b>${combo ? combo.nzB.q3.toFixed(2) : '--'} L/min</b>.`;
+          } else if (lang === 'en') {
+            scenarioDesc = `Selected nozzle combination for sequential stage operation triggered by speed.
+            Nominal flow rates: Nozzle A (ISO ${combo ? combo.nzA.iso : '--'}) = <b>${combo ? combo.nzA.q3.toFixed(2) : '--'} L/min</b> | Nozzle B (ISO ${combo ? combo.nzB.iso : '--'}) = <b>${combo ? combo.nzB.q3.toFixed(2) : '--'} L/min</b>.`;
+          } else {
+            scenarioDesc = `Combinação selecionada para operação em estágios sequenciais alternados por velocidade.
+            Vazões nominais: Bico A (ISO ${combo ? combo.nzA.iso : '--'}) = <b>${combo ? combo.nzA.q3.toFixed(2) : '--'} L/min</b> | Bico B (ISO ${combo ? combo.nzB.iso : '--'}) = <b>${combo ? combo.nzB.q3.toFixed(2) : '--'} L/min</b>.`;
+          }
+
+          mainRecHtml = `
+            <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
+              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 ${t('Recomendação Principal — Sistema de Bico Duplo')}</h3>
+              <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
+              <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
+                ${scenarioDesc}
+              </p>
+            </div>
+          `;
+
+          detailsHtml = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 10px;">
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Estágios da Combinação')}</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  ${stageItemsHtml}
+                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee; font-weight: 500;">${t('Pressão Operacional:')}</td><td style="text-align: right; font-weight: bold;">${fromBar(inp.pMinBar).toFixed(1)} a ${fromBar(inp.pMaxBar).toFixed(1)} ${pUnit}</td></tr>
+                </table>
+              </div>
+              <div>
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Desempenho de Transição')}</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                  ${transitionHtml}
+                </table>
+              </div>
+            </div>
+            ${otherAlternativesHtml}
+          `;
         }
 
         let footerText = "";
@@ -2525,7 +3890,7 @@
         }
 
         report.innerHTML = `
-          <div style="border: 2px solid ${pColor}; padding: 40px; border-radius: 12px; background: white; min-height: 1000px;">
+          <div style="border: 2px solid ${pColor}; padding: 40px; border-radius: 12px; background: white; min-height: 1000px; color: #334155;">
             <div style="border-bottom: 2px solid ${pColor}; padding-bottom: 20px; margin-bottom: 30px;">
               <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px;">
                 <img src="${pLogo}" style="max-height: 80px; max-width: 300px; object-fit: contain;">
@@ -2533,7 +3898,7 @@
                   <h1 style="margin:0; font-family: 'Outfit'; font-size: 28px; color: ${pColor};">${pName}</h1>
                   <div style="text-align: right;">
                     <h2 style="margin:0; color: #1e293b; font-family: 'Outfit'; font-size: 18px;">${t('Laudo Técnico de Pulverização')}</h2>
-                    <p style="margin:3px 0 0; font-size: 11px; color: #666;">${t('Data:')} ${dateStr}</p>
+                    <p style="margin:3px 0 0; font-size: 11px; color: #666;">Data: ${dateStr}</p>
                   </div>
                 </div>
               </div>
@@ -2541,39 +3906,24 @@
 
             ${clientInfoHtml}
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
-              <div>
-                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Parâmetros da Simulação')}</h3>
-                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Vazão Alvo')}:</td><td style="text-align: right; font-weight: bold;">${simulationData.rate} L/ha</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Espaçamento:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.spacing} cm</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Densidade da Calda:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.density} kg/L</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Limites de Pressão:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.pMin} a ${simulationData.pMax} ${simulationData.unit}</td></tr>
-                </table>
-              </div>
-              <div>
-                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 8px; font-size: 14px; text-transform: uppercase;">${t('Velocidades de Operação')}</h3>
-                <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Mínima:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.vMin} km/h</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Média (Calibração):')}</td><td style="text-align: right; font-weight: bold;">${simulationData.vAvg} km/h</td></tr>
-                  <tr><td style="padding: 6px 0; border-bottom: 1px solid #eee;">${t('Máxima:')}</td><td style="text-align: right; font-weight: bold;">${simulationData.vMax} km/h</td></tr>
-                </table>
-              </div>
-            </div>
+            ${detailsHtml}
 
-            <div style="background: ${pColor}10; padding: 20px; border-radius: 8px; border-left: 5px solid ${pColor}; margin-bottom: 30px;">
-              <h3 style="margin-top: 0; color: ${pColor}; font-size: 16px;">🔍 ${t('Recomendação Principal')}</h3>
-              <div style="font-size: 24px; font-family: 'Outfit'; font-weight: 800;">${nozzleInfo}</div>
-              <p style="margin: 10px 0 0; font-size: 14px; line-height: 1.5; color: #444;">
-                ${scenarioDesc}
-              </p>
-            </div>
+            ${mainRecHtml}
 
-            <h3 style="font-size: 14px; text-transform: uppercase; margin-bottom: 10px;">📊 ${t('Tabela de Desempenho por Ponta')}</h3>
-            <div id="reportTableContainer"></div>
+            ${chartImgUrl ? `
+              <div style="text-align: center; margin-bottom: 30px; page-break-inside: avoid;">
+                <h3 style="font-size: 13px; text-transform: uppercase; margin-bottom: 10px; text-align: left; border-bottom: 1px solid #ddd; padding-bottom: 6px;">📊 ${t('Gráfico Operacional de Desempenho')}</h3>
+                <img src="${chartImgUrl}" style="width: 100%; max-height: 260px; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; background: white;">
+              </div>
+            ` : ''}
+
+            <div style="page-break-inside: avoid;">
+              <h3 style="font-size: 13px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 6px;">📋 ${t('Tabela de Dados Técnicos (Resultados Recomendados)')}</h3>
+              <div id="reportTableContainer"></div>
+            </div>
 
             <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 11px;">
-              ${footerText}
+              ${footerText} <span style="font-size:10px; opacity:0.8;">As recomendações são baseadas em simulação matemática e nos parâmetros informados. A calibração física em campo deve ser conferida por medição de vazão real.</span>
             </div>
           </div>
         `;
@@ -2582,17 +3932,24 @@
         originalTable.style.width = '100%';
         originalTable.style.borderCollapse = 'collapse';
         originalTable.style.fontSize = '12px';
+        originalTable.style.color = '#334155';
         
         const rowsToFilter = originalTable.querySelectorAll('tbody tr');
         rowsToFilter.forEach(tr => {
-          const hasGreen = tr.innerHTML.indexOf('var(--accent-green)') !== -1;
-          if (!hasGreen) {
+          const text = tr.innerText.toUpperCase();
+          const isNotRecommended = text.includes('NÃO RECOMENDADO') || text.includes('FORA') || text.includes('TROCA CRÍTICA');
+          if (isNotRecommended) {
             tr.remove(); 
           } else {
             tr.querySelectorAll('td').forEach(cell => {
               cell.style.border = '1px solid #eee';
               cell.style.padding = '8px';
+              cell.style.color = '#334155';
+              if (cell.style.color === 'white' || cell.style.color === 'var(--text-main)') {
+                cell.style.color = '#0f172a';
+              }
             });
+            tr.style.background = 'none';
           }
         });
 
@@ -2603,13 +3960,25 @@
           th.style.color = '#64748b';
         });
 
-        document.getElementById('reportTableContainer').innerHTML = '';
-        document.getElementById('reportTableContainer').appendChild(originalTable);
+        const container = document.getElementById('reportTableContainer');
+        container.innerHTML = '';
+        container.appendChild(originalTable);
 
         const oldTitle = document.title;
-        const nzPart = window.topNozzle ? `_ISO${window.topNozzle.nz.iso}` : '';
-        const cleanRate = Math.round(parseFloat(simulationData.rate));
-        const cleanVel  = Math.round(parseFloat(simulationData.vAvg));
+        let nzPart = '';
+        if (window.topNozzle) {
+          if (MACHINE_MODE === 'dual') {
+            const combo = CURRENT_DUAL_COMBOS[SELECTED_DUAL_INDEX];
+            if (combo) {
+              nzPart = `_ISO${combo.nzA.iso}_${combo.nzB.iso}`;
+            }
+          } else {
+            const topNzVal = window.topNozzle.nz ? window.topNozzle.nz.iso : window.topNozzle.iso;
+            nzPart = `_ISO${topNzVal}`;
+          }
+        }
+        const cleanRate = Math.round(parseFloat(inp.rate));
+        const cleanVel  = Math.round(parseFloat(inp.vAvg));
         const fileName = `Laudo_${cleanRate}Lha_${cleanVel}kmh${nzPart}`;
 
         const titleTag = document.querySelector('title');
@@ -2625,87 +3994,296 @@
         }, 300);
       }
 
-      function updateChart(rows, sysVMin, sysVMax) {
-        if (!myChart) return;
+      function destroyChart() {
+        if (myChart) {
+          myChart.destroy();
+          myChart = null;
+        }
+      }
 
-        myChart.options.scales.x.min = Math.max(0, sysVMin - 5);
-        myChart.options.scales.x.max = sysVMax + 10;
+      function isDarkTheme() {
+        return document.documentElement.getAttribute('data-theme') !== 'light';
+      }
+
+      function getChartThemeColors() {
+        const dark = isDarkTheme();
+        return {
+          text: dark ? "rgba(255,255,255,0.8)" : "#1e293b",
+          grid: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)",
+          lineColor: dark ? "rgba(255,75,75,0.85)" : "rgba(220,38,38,0.85)"
+        };
+      }
+
+      function updateChart_Conventional(rows, inp) {
+        document.getElementById('chartTitle').innerText = '📊 ' + t('Janela de Velocidade p/ Pressão Segura');
+        destroyChart();
+
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const colors = getChartThemeColors();
 
         const labels = rows.map(r => `ISO ${r.nz.iso}`);
+        const barData = rows.map(r => ({
+          x: [r.vAtPmin, r.vAtPmax],
+          y: `ISO ${r.nz.iso}`,
+          min: r.vAtPmin,
+          max: r.vAtPmax,
+          color: r.nz.color,
+          ok: r.ok
+        }));
 
-        const barData = rows.map(r => {
-          return {
-            x: [r.vAtPmin, r.vAtPmax],
-            y: `ISO ${r.nz.iso}`,
-            min: r.vAtPmin,
-            max: r.vAtPmax,
-            color: r.nz.color,
-            ok: r.ok
-          }
-        });
+        const scatterData = rows.map(r => ({
+          x: r.vAt3Bar,
+          y: `ISO ${r.nz.iso}`
+        }));
 
-        const scatterData = rows.map(r => {
-          return {
-            x: r.vAt3Bar,
-            y: `ISO ${r.nz.iso}`
-          }
-        });
-
-        myChart.data.labels = labels;
-        myChart.data.datasets = [
-          {
-            type: 'bar',
-            order: 2,
-            label: 'Janela de Velocidade (Pmin a Pmax)',
-            data: barData,
-            backgroundColor: barData.map(d => !d.ok ? 'rgba(255, 75, 75, 0.4)' : d.color),
-            borderColor: barData.map(d => d.ok ? d.color : 'rgba(255, 75, 75, 1)'),
-            borderWidth: 1,
-            borderRadius: 6,
-            borderSkipped: false,
-            barPercentage: 0.6
+        myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              {
+                type: 'bar',
+                order: 2,
+                data: barData,
+                backgroundColor: barData.map(d => d.ok ? d.color + 'd0' : 'rgba(255, 75, 75, 0.35)'),
+                borderColor: barData.map(d => d.ok ? d.color : 'var(--accent-error)'),
+                borderWidth: 1.5,
+                borderRadius: 6,
+                borderSkipped: false,
+                barPercentage: 0.55,
+                indexAxis: 'y',
+                parsing: { xAxisKey: 'x', yAxisKey: 'y' }
+              },
+              {
+                type: 'scatter',
+                order: 1,
+                data: scatterData,
+                backgroundColor: '#ffffff',
+                borderColor: '#111111',
+                borderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+              }
+            ]
           },
-          {
-            type: 'scatter',
-            order: 1,
-            label: 'Padrão (3 bar)',
-            data: scatterData,
-            backgroundColor: '#ffffff',
-            borderColor: '#111111',
-            borderWidth: 2,
-            pointRadius: 6,
-            pointHoverRadius: 8
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: { display: false },
+              annotation: {
+                annotations: {
+                  lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: t('V. Mín'), color: colors.lineColor, font: { size: 9 } } },
+                  lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: t('V. Máx'), color: colors.lineColor, font: { size: 9 } } }
+                }
+              },
+              tooltip: {
+                backgroundColor: isDarkTheme() ? 'rgba(10,15,20,0.92)' : 'rgba(255,255,255,0.95)',
+                titleColor: colors.text,
+                bodyColor: colors.text,
+                titleFont: { family: 'Outfit', size: 14 },
+                borderColor: colors.grid,
+                borderWidth: 1,
+                callbacks: {
+                  label: (ctx2) => {
+                    if (ctx2.dataset.type === 'scatter') return `${t('3 bar (ISO Catálogo)')}: ${ctx2.parsed.x.toFixed(1)} km/h`;
+                    const raw = ctx2.raw;
+                    return `${t('Faixa segura')}: ${raw.min.toFixed(1)} ${t('a')} ${raw.max.toFixed(1)} km/h`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                min: Math.max(0, inp.vMin - 6),
+                max: inp.vMax + 10,
+                grid: { color: colors.grid },
+                ticks: { color: colors.text },
+                title: { display: true, text: t('Velocidade (km/h)'), color: colors.text }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { font: { family: 'Outfit', weight: 'bold', size: 13 }, color: colors.text }
+              }
+            }
           }
-        ];
+        });
+      }
 
-        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-        const dangerColor = isDark ? 'rgba(255, 75, 75, 1)' : 'rgba(220, 38, 38, 1)';
+      function updateChart_PWM(rows, inp) {
+        document.getElementById('chartTitle').innerText = '📊 ' + t('Duty Cycle por Bico (Limites)');
+        destroyChart();
 
-        if (myChart.options.plugins.annotation && myChart.options.plugins.annotation.annotations) {
-          myChart.options.plugins.annotation.annotations.line1.xMin = sysVMin;
-          myChart.options.plugins.annotation.annotations.line1.xMax = sysVMin;
-          myChart.options.plugins.annotation.annotations.line1.borderColor = dangerColor;
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const colors = getChartThemeColors();
 
-          myChart.options.plugins.annotation.annotations.line2.xMin = sysVMax;
-          myChart.options.plugins.annotation.annotations.line2.xMax = sysVMax;
-          myChart.options.plugins.annotation.annotations.line2.borderColor = dangerColor;
-        }
+        const showRows = rows.slice(0, 8); // Top 8 bicos
+        const labels = showRows.map(r => `ISO ${r.nz.iso}`);
+        
+        const barData = showRows.map(r => [Math.max(0, r.dMin), Math.min(120, r.dMax)]);
+        const scatterAvg = showRows.map((r, idx) => ({ x: r.dAvg, y: idx }));
 
-        const textColor = isDark ? 'rgba(255,255,255,0.9)' : '#000000';
-        const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)';
+        myChart = new Chart(ctx, {
+          data: {
+            labels,
+            datasets: [
+              {
+                type: 'bar',
+                order: 2,
+                data: barData,
+                backgroundColor: showRows.map(r => {
+                  if (r.status === 'Ideal PWM') return 'rgba(56, 239, 125, 0.4)';
+                  if (r.status === 'Aceitável') return 'rgba(0, 210, 255, 0.35)';
+                  if (r.status === 'Saturando') return 'rgba(255, 75, 75, 0.3)';
+                  return 'rgba(255, 75, 75, 0.2)';
+                }),
+                borderColor: showRows.map(r => {
+                  if (r.status === 'Ideal PWM') return 'var(--accent-green)';
+                  if (r.status === 'Aceitável') return 'var(--accent)';
+                  return 'var(--accent-error)';
+                }),
+                borderWidth: 1.5,
+                borderRadius: 4,
+                borderSkipped: false,
+                barPercentage: 0.55,
+                indexAxis: 'y'
+              },
+              {
+                type: 'scatter',
+                order: 1,
+                data: scatterAvg,
+                backgroundColor: '#ffffff',
+                borderColor: '#111111',
+                borderWidth: 2,
+                pointRadius: 6,
+                parsing: { xAxisKey: 'x', yAxisKey: 'y' }
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: { display: false },
+              annotation: {
+                annotations: {
+                  zoneRedLeft: { type: 'box', xMin: 0, xMax: inp.pwm.dutyMin, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(255,75,75,0.06)', borderWidth: 0 },
+                  zoneGreen: { type: 'box', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMax, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(56,239,125,0.04)', borderWidth: 0 },
+                  zoneRedRight: { type: 'box', xMin: inp.pwm.dutyMax, xMax: 120, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(255,75,75,0.07)', borderWidth: 0 },
+                  lineDMin: { type: 'line', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMin, borderColor: 'var(--accent-warn)', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `${t('Mín')} ${inp.pwm.dutyMin}%`, color: 'var(--accent-warn)', font: { size: 9 }, position: 'start' } },
+                  lineDMax: { type: 'line', xMin: inp.pwm.dutyMax, xMax: inp.pwm.dutyMax, borderColor: 'var(--accent-error)', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `${t('Máx')} ${inp.pwm.dutyMax}%`, color: 'var(--accent-error)', font: { size: 9 }, position: 'start' } },
+                  lineDIdeal: { type: 'line', xMin: inp.pwm.dutyIdeal, xMax: inp.pwm.dutyIdeal, borderColor: 'var(--accent)', borderDash: [2, 2], borderWidth: 1.5, label: { display: true, content: `${t('Ideal')} ${inp.pwm.dutyIdeal}%`, color: 'var(--accent)', font: { size: 8 }, position: 'end' } }
+                }
+              },
+              tooltip: {
+                backgroundColor: isDarkTheme() ? 'rgba(10,15,20,0.92)' : 'rgba(255,255,255,0.95)',
+                titleColor: colors.text,
+                bodyColor: colors.text,
+                titleFont: { family: 'Outfit', size: 14 },
+                borderColor: colors.grid,
+                borderWidth: 1,
+                callbacks: {
+                  label: (ctx2) => {
+                    if (ctx2.dataset.type === 'scatter') return `${t('Duty Médio')}: ${ctx2.parsed.x.toFixed(0)}%`;
+                    return `Duty: ${ctx2.raw[0].toFixed(0)}% a ${ctx2.raw[1].toFixed(0)}%`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                min: 0,
+                max: 120,
+                grid: { color: colors.grid },
+                ticks: { color: colors.text, callback: v => v + '%' },
+                title: { display: true, text: 'Duty Cycle (%)', color: colors.text }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { font: { family: 'Outfit', weight: 'bold', size: 13 }, color: colors.text }
+              }
+            }
+          }
+        });
+      }
 
-        if (myChart.options.scales.x) {
-          myChart.options.scales.x.ticks.color = textColor;
-          myChart.options.scales.x.grid.color = gridColor;
-          myChart.options.scales.x.title.color = textColor;
-        }
-        if (myChart.options.scales.y) {
-          myChart.options.scales.y.ticks.color = textColor;
-        }
+      function updateChart_Dual(topCombo, inp) {
+        document.getElementById('chartTitle').innerText = '📊 ' + t('Cobertura por Estágio (Bico Duplo)');
+        destroyChart();
 
-        Chart.defaults.color = textColor;
+        if (!topCombo) return;
 
-        myChart.update();
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const colors = getChartThemeColors();
+
+        const stages = topCombo.stages;
+        const labels = stages.map(s => s.label);
+        const barData = stages.map(s => [Math.max(0, s.vMin), s.vMax]);
+
+        myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              data: barData,
+              backgroundColor: stages.map(s => s.color + 'bf'),
+              borderColor: stages.map(s => s.color),
+              borderWidth: 2,
+              borderRadius: 6,
+              borderSkipped: false,
+              barPercentage: 0.5,
+              indexAxis: 'y'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: { display: false },
+              annotation: {
+                annotations: {
+                  lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: t('Trator Mín'), color: colors.lineColor, font: { size: 9 } } },
+                  lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: t('Trator Máx'), color: colors.lineColor, font: { size: 9 } } },
+                  zoneOperational: { type: 'box', xMin: inp.vMin, xMax: inp.vMax, yMin: -0.5, yMax: 2.5, backgroundColor: 'rgba(0, 210, 255, 0.03)', borderColor: 'rgba(0, 210, 255, 0.12)', borderWidth: 1 }
+                }
+              },
+              tooltip: {
+                backgroundColor: isDarkTheme() ? 'rgba(10,15,20,0.92)' : 'rgba(255,255,255,0.95)',
+                titleColor: colors.text,
+                bodyColor: colors.text,
+                titleFont: { family: 'Outfit', size: 14 },
+                borderColor: colors.grid,
+                borderWidth: 1,
+                callbacks: {
+                  label: (ctx2) => {
+                    const raw = ctx2.raw;
+                    return `${t('Velocidades do estágio')}: ${raw[0].toFixed(1)} ${t('a')} ${raw[1].toFixed(1)} km/h`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                min: Math.max(0, inp.vMin - 6),
+                max: inp.vMax + 10,
+                grid: { color: colors.grid },
+                ticks: { color: colors.text },
+                title: { display: true, text: t('Velocidade (km/h)'), color: colors.text }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { font: { family: 'Outfit', weight: 'bold', size: 13 }, color: colors.text }
+              }
+            }
+          }
+        });
+      }
+
+      function updateChart(rows, sysVMin, sysVMax) {
+        updateChart_Conventional(rows, { vMin: sysVMin, vMax: sysVMax });
       }
 
       // --- ACTIVE SESSION BANNER LOGIC ---
@@ -3494,6 +5072,7 @@
         }
 
         const config = {
+          machineMode: MACHINE_MODE,
           spacing: parseFloat(numSpacing.value),
           rate: parseFloat(numRate.value),
           density: parseFloat(numDensity.value),
@@ -3502,18 +5081,60 @@
           vMin: parseFloat(numVMin.value),
           vAvg: parseFloat(numVAvg.value),
           vMax: parseFloat(numVMax.value),
-          unit: PRESS_UNIT
+          unit: PRESS_UNIT,
+          customQ3: parseFloat(document.getElementById('numCustomQ3').value) || 0,
+          pwm: {
+            dutyMin: parseFloat(document.getElementById('numDutyMin').value) || 30,
+            dutyIdeal: parseFloat(document.getElementById('numDutyIdeal').value) || 70,
+            dutyMax: parseFloat(document.getElementById('numDutyMax').value) || 90,
+            targetPressure: parseFloat(document.getElementById('numPwmPressure').value) || 3.0
+          },
+          dual: {
+            strategy: DUAL_STRATEGY,
+            nozzleA: document.getElementById('selNozzleA').value,
+            nozzleB: document.getElementById('selNozzleB').value
+          }
         };
 
-        const rec = window.topNozzle ? {
-          iso: window.topNozzle.nz.iso,
-          color: window.topNozzle.nz.color,
-          qVavg: window.topNozzle.qVavg,
-          pVavg: window.topNozzle.pVavg,
-          vAtPmin: window.topNozzle.vAtPmin,
-          vAtPmax: window.topNozzle.vAtPmax,
-          statusText: window.topNozzle.statusText
-        } : null;
+        let rec = null;
+        if (MACHINE_MODE === 'conventional' && window.topNozzle) {
+          rec = {
+            iso: window.topNozzle.nz.iso,
+            color: window.topNozzle.nz.color,
+            qVavg: window.topNozzle.qVavg,
+            pVavg: window.topNozzle.pVavg,
+            vAtPmin: window.topNozzle.vAtPmin,
+            vAtPmax: window.topNozzle.vAtPmax,
+            statusText: window.topNozzle.statusText
+          };
+        } else if (MACHINE_MODE === 'pwm' && window.topNozzle) {
+          rec = {
+            iso: window.topNozzle.nz.iso,
+            color: window.topNozzle.nz.color,
+            qVavg: window.topNozzle.qNozzle, // vazão máxima alvo
+            pVavg: toBar(parseFloat(document.getElementById('numPwmPressure').value) || 3.0),
+            vAtPmin: window.topNozzle.vAtDMin,
+            vAtPmax: window.topNozzle.vAtDMax,
+            statusText: window.topNozzle.status,
+            dMin: window.topNozzle.dMin,
+            dAvg: window.topNozzle.dAvg,
+            dMax: window.topNozzle.dMax
+          };
+        } else if (MACHINE_MODE === 'dual') {
+          const combo = CURRENT_DUAL_COMBOS[SELECTED_DUAL_INDEX];
+          if (combo) {
+            rec = {
+              iso: `${combo.nzA.iso} + ${combo.nzB.iso}`,
+              color: combo.nzA.color,
+              qVavg: combo.nzA.q3 + combo.nzB.q3,
+              pVavg: combo.infoAvg.pressure,
+              vAtPmin: combo.stages[0].vMin,
+              vAtPmax: combo.stages[2].vMax,
+              statusText: combo.status,
+              stages: combo.stages.map(s => ({ label: s.label, vMin: s.vMin, vMax: s.vMax }))
+            };
+          }
+        }
 
         let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
         const cIndex = clients.findIndex(c => c.id === clientId);
@@ -3670,24 +5291,84 @@
         if (!m || !m.lastSimulation) return;
 
         const sim = m.lastSimulation;
+        const config = sim.config;
 
-        numSpacing.value = sim.config.spacing;
-        rngSpacing.value = sim.config.spacing;
-        numRate.value = sim.config.rate;
-        rngRate.value = sim.config.rate;
-        numDensity.value = sim.config.density;
-        numPMin.value = sim.config.pMin;
-        numPMax.value = sim.config.pMax;
-        numVMin.value = sim.config.vMin;
-        numVAvg.value = sim.config.vAvg;
-        numVMax.value = sim.config.vMax;
-        PRESS_UNIT = sim.config.unit;
+        numSpacing.value = config.spacing;
+        rngSpacing.value = config.spacing;
+        numRate.value = config.rate;
+        rngRate.value = config.rate;
+        numDensity.value = config.density;
+        numPMin.value = config.pMin;
+        numPMax.value = config.pMax;
+        numVMin.value = config.vMin;
+        numVAvg.value = config.vAvg;
+        numVMax.value = config.vMax;
+        PRESS_UNIT = config.unit;
 
         document.getElementById('btnBar').classList.toggle('active', PRESS_UNIT === 'bar');
         document.getElementById('btnPsi').classList.toggle('active', PRESS_UNIT === 'psi');
 
+        // Configuração de modo
+        if (config.machineMode) {
+          MACHINE_MODE = config.machineMode;
+        } else {
+          MACHINE_MODE = 'conventional';
+        }
+
+        // Carrega Q3 customizado
+        document.getElementById('numCustomQ3').value = config.customQ3 || '';
+        const advancedContainer = document.getElementById('advancedContainer');
+        const advArrow = document.getElementById('advArrow');
+        if (config.customQ3 > 0) {
+          if (advancedContainer) advancedContainer.classList.add('active');
+          if (advArrow) advArrow.innerText = '▼';
+        } else {
+          if (advancedContainer) advancedContainer.classList.remove('active');
+          if (advArrow) advArrow.innerText = '▶';
+        }
+
+        // Carrega campos PWM
+        if (config.pwm) {
+          document.getElementById('numDutyMin').value = config.pwm.dutyMin;
+          document.getElementById('numDutyIdeal').value = config.pwm.dutyIdeal;
+          document.getElementById('numDutyMax').value = config.pwm.dutyMax;
+          document.getElementById('numPwmPressure').value = config.pwm.targetPressure;
+        }
+
+        // Carrega campos Bico Duplo
+        if (config.dual) {
+          DUAL_STRATEGY = config.dual.strategy || 'auto';
+          document.getElementById('selNozzleA').value = config.dual.nozzleA || '015';
+          document.getElementById('selNozzleB').value = config.dual.nozzleB || '03';
+          
+          document.getElementById('btnAutoStrategy').classList.toggle('active', DUAL_STRATEGY === 'auto');
+          document.getElementById('btnManualStrategy').classList.toggle('active', DUAL_STRATEGY === 'manual');
+          document.getElementById('manualNozzleSelection').style.display = DUAL_STRATEGY === 'manual' ? 'block' : 'none';
+        }
+
+        // Ajusta abas de modo e layouts visuais
+        document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+        const activeTab = document.getElementById(`tab-${MACHINE_MODE}`);
+        if (activeTab) activeTab.classList.add('active');
+
+        const pPwm = document.getElementById('panelPwm');
+        const pDual = document.getElementById('panelDual');
+        if (pPwm) pPwm.style.display = MACHINE_MODE === 'pwm' ? 'flex' : 'none';
+        if (pDual) pDual.style.display = MACHINE_MODE === 'dual' ? 'flex' : 'none';
+
+        const titles = {
+          conventional: '🎯 Bicos Recomendados — Convencional',
+          pwm: '⚡ Bicos Recomendados — PWM',
+          dual: '🔀 Combinações Recomendadas — Bico Duplo'
+        };
+        const dashboardTitle = document.getElementById('dashboardTitle');
+        if (dashboardTitle) dashboardTitle.innerText = titles[MACHINE_MODE];
+
         updateSpacingButtons();
         updatePresetButtons();
+        
+        clearManufacturerAndPwmActiveStates();
+
         update();
 
         // Salva a sessão ativa global
@@ -3728,7 +5409,7 @@
           myChart.options.plugins.tooltip.titleColor = isDark ? '#fff' : '#0f172a';
           myChart.options.plugins.tooltip.bodyColor = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)';
           myChart.options.plugins.tooltip.borderColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-          myChart.update();
+          update();
         }
       }
 
@@ -4278,6 +5959,7 @@
     // Run lang initialization
     window.addEventListener('DOMContentLoaded', () => {
       initLanguage();
+      populateSelects();
     });
   </script>
 

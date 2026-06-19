@@ -105,6 +105,16 @@ async function checkAuthSession() {
   const supabase = window.supabaseClient;
   const isPreAuthorized = checkOfflinePreAuthorization();
   
+  // Contingência de branding offline (White-label cacheado)
+  const cachedBranding = localStorage.getItem('spray_partner_branding');
+  if (cachedBranding) {
+    try {
+      applyPartnerBranding(JSON.parse(cachedBranding));
+    } catch (e) {
+      console.error("Erro ao aplicar branding cacheado:", e);
+    }
+  }
+  
   if (!supabase) {
     console.warn("Cliente Supabase não detectado. Verificando contingência offline.");
     if (isPreAuthorized) {
@@ -189,6 +199,123 @@ function handleOfflineBypass() {
   
   // Carregar histórico local
   renderHistoryList();
+}
+
+function applyPartnerBranding(meta) {
+  if (!meta) return;
+
+  const accent = meta.partner_color || '#0066cc';
+  const logo = meta.partner_logo || '../logo.png';
+  const name = meta.partner_name || 'Spray Precision PRO';
+  const whatsapp = meta.partner_whatsapp || '5565999106415';
+
+  // 1. Aplicar cores (CSS Variables)
+  const root = document.documentElement;
+  root.style.setProperty('--accent', accent);
+  root.style.setProperty('--accent-glow', accent + '26'); // ~15% de opacidade
+  root.style.setProperty('--accent-hover', accent);
+
+  // 2. Aplicar logos (.app-logo e novo .report-partner-logo)
+  const logos = document.querySelectorAll('.app-logo, .report-partner-logo');
+  logos.forEach(img => {
+    img.src = logo;
+    img.style.objectFit = 'contain';
+    img.onerror = () => { img.src = '../logo.png'; };
+  });
+
+  // Mostrar logo no relatório se for parceiro
+  const reportLogo = document.querySelector('.report-partner-logo');
+  if (reportLogo) {
+    reportLogo.style.display = 'block';
+  }
+
+  // 3. Aplicar títulos e textos corporativos
+  const headerTitles = document.querySelectorAll('.app-brand-text h1');
+  headerTitles.forEach(el => {
+    el.innerHTML = `${name} <span style="font-weight:300;">PRO</span>`;
+  });
+
+  const footerText = document.getElementById('rep-footer-text');
+  if (footerText) {
+    footerText.innerHTML = `Laudo gerado via parceiro credenciado <strong>${name}</strong>. Contato: <strong>${whatsapp}</strong>`;
+  }
+
+  // Salvar no escopo global/window para uso em PDFs ou links
+  window.partnerWhatsApp = whatsapp;
+  window.partnerName = name;
+
+  // 5. Ajustar o Responsável Técnico / Inspetor com base no parceiro
+  const responsavelInput = document.getElementById('input-responsavel');
+  if (responsavelInput) {
+    responsavelInput.placeholder = `Consultor Técnico (${name})`;
+    const currentVal = responsavelInput.value.trim();
+    if (!currentVal || currentVal === 'CONSULTOR' || currentVal.includes('Spray Precision')) {
+      responsavelInput.value = `Consultor Técnico (${name})`;
+    }
+  }
+
+  // 4. Injetar estilos customizados para botões/componentes ativos que usam bordas ou backgrounds específicos
+  let customStyleEl = document.getElementById('partner-branding-styles');
+  if (!customStyleEl) {
+    customStyleEl = document.createElement('style');
+    customStyleEl.id = 'partner-branding-styles';
+    document.head.appendChild(customStyleEl);
+  }
+  customStyleEl.innerHTML = `
+    .btn-primary, .timer-preset-btn.active, .tolerance-preset-btn.active { background: ${accent} !important; border-color: ${accent} !important; }
+    .btn-success { background: var(--accent-green, #10b981) !important; border-color: var(--accent-green, #10b981) !important; }
+    .nav-btn.active { border-color: ${accent} !important; color: ${accent} !important; }
+    .guided-box { border-color: ${accent} !important; }
+    .guided-progress-fill { background: ${accent} !important; }
+    .boom-nozzle.active { border-color: ${accent} !important; box-shadow: 0 0 10px ${accent} !important; }
+  `;
+}
+
+function resetPartnerBranding() {
+  localStorage.removeItem('spray_partner_branding');
+  
+  // Resetar variáveis CSS para o padrão do Spray Precision
+  const root = document.documentElement;
+  root.style.setProperty('--accent', '#0066cc');
+  root.style.setProperty('--accent-glow', 'rgba(0, 102, 204, 0.15)');
+  root.style.setProperty('--accent-hover', '#0052a3');
+
+  // Resetar logos
+  const logos = document.querySelectorAll('.app-logo, .report-partner-logo');
+  logos.forEach(img => {
+    img.src = '../logo.png';
+  });
+  
+  const reportLogo = document.querySelector('.report-partner-logo');
+  if (reportLogo) reportLogo.style.display = 'none';
+
+  // Resetar títulos
+  const headerTitles = document.querySelectorAll('.app-brand-text h1');
+  headerTitles.forEach(el => {
+    el.innerHTML = `Spray Precision <span style="font-weight:300;">PRO</span>`;
+  });
+
+  const footerText = document.getElementById('rep-footer-text');
+  if (footerText) {
+    footerText.innerHTML = `Simulação gerada via aplicativo oficial <strong>Spray Precision PRO</strong>.`;
+  }
+
+  // Remover estilos injetados
+  const customStyleEl = document.getElementById('partner-branding-styles');
+  if (customStyleEl) customStyleEl.remove();
+
+  // Resetar o Responsável Técnico / Inspetor para o padrão do Spray Precision
+  const responsavelInput = document.getElementById('input-responsavel');
+  if (responsavelInput) {
+    responsavelInput.placeholder = 'Nome do Consultor';
+    const currentVal = responsavelInput.value.trim();
+    if (!currentVal || currentVal.startsWith('Consultor Técnico (')) {
+      responsavelInput.value = '';
+    }
+  }
+
+  window.partnerWhatsApp = null;
+  window.partnerName = null;
 }
 
 // Registra a sessão ativa do usuário no Supabase e localStorage usando o session_id nativo do Supabase
@@ -371,6 +498,23 @@ async function handleUserLoggedIn(user) {
   
   // Carregar histórico de inspeções sincronizadas da nuvem
   renderHistoryList();
+
+  // Aplicar White-label se disponível no metadata do usuário
+  if (user.user_metadata) {
+    const meta = user.user_metadata;
+    if (meta.partner_name || meta.partner_color) {
+      console.log("Enterprise/White-label: Dados de branding encontrados!", meta);
+      localStorage.setItem('spray_partner_branding', JSON.stringify(meta));
+      applyPartnerBranding(meta);
+    } else {
+      console.log("Enterprise/White-label: Nenhum branding no usuário.");
+      localStorage.removeItem('spray_partner_branding');
+      resetPartnerBranding();
+    }
+  } else {
+    localStorage.removeItem('spray_partner_branding');
+    resetPartnerBranding();
+  }
 }
 
 async function handleUserLogin(event) {
@@ -411,6 +555,7 @@ async function handleUserLogin(event) {
 }
 
 async function forceUserLogout() {
+  resetPartnerBranding();
   if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
   localStorage.removeItem('spray_active_session_token');
   
@@ -436,6 +581,7 @@ async function handleUserLogout() {
     return;
   }
   
+  resetPartnerBranding();
   if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
   localStorage.removeItem('spray_active_session_token');
   
@@ -1718,7 +1864,9 @@ async function loadInspectionIntoApp(id) {
     
     // Recuperar Responsável Técnico (ou auto-preencher se vazio para evitar bloqueios de validação)
     let inspectorVal = notesArray[1] ? notesArray[1].trim() : '';
-    if (!inspectorVal) {
+    if (window.partnerName && (!inspectorVal || inspectorVal === 'CONSULTOR' || inspectorVal.includes('Spray Precision'))) {
+      inspectorVal = `Consultor Técnico (${window.partnerName})`;
+    } else if (!inspectorVal) {
       const emailSpan = document.getElementById('logged-user-email');
       if (emailSpan && emailSpan.textContent && emailSpan.textContent !== '--') {
         inspectorVal = emailSpan.textContent.split('@')[0].toUpperCase();
@@ -2203,7 +2351,16 @@ function createNewInspectionWorkflow() {
   document.getElementById('input-talhao').value = '';
   document.getElementById('input-cultura').value = '';
   document.getElementById('input-operacao').selectedIndex = 3; // fungicida default
-  document.getElementById('input-responsavel').value = '';
+  if (window.partnerName) {
+    document.getElementById('input-responsavel').value = `Consultor Técnico (${window.partnerName})`;
+  } else {
+    const emailSpan = document.getElementById('logged-user-email');
+    if (emailSpan && emailSpan.textContent && emailSpan.textContent !== '--') {
+      document.getElementById('input-responsavel').value = emailSpan.textContent.split('@')[0].toUpperCase();
+    } else {
+      document.getElementById('input-responsavel').value = '';
+    }
+  }
   document.getElementById('input-notas-identificacao').value = '';
   
   // Pulverizador (Etapa 2)

@@ -507,9 +507,12 @@
       <!-- Cabeçalho Limpo para Impressão -->
       <div class="report-header-sec">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-          <div>
-            <h1 style="font-size: 26px; color: #000; font-weight: 800;">Laudo Técnico de Inspeção de Pulverizador</h1>
-            <p style="color: var(--text-muted); font-size: 14px; font-weight: 500; margin-top: 2px;">Inspeção Espacial por Método Manual de Proveta</p>
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 10px;">
+            <img class="report-partner-logo" src="../logo.png" style="max-height: 55px; max-width: 150px; object-fit: contain; display: none;">
+            <div>
+              <h1 style="font-size: 24px; color: #000; font-weight: 800; line-height: 1.2; margin: 0;">Laudo Técnico de Inspeção de Pulverizador</h1>
+              <p style="color: var(--text-muted); font-size: 13px; font-weight: 500; margin-top: 2px;">Inspeção Espacial por Método Manual de Proveta</p>
+            </div>
           </div>
           <div style="text-align: right; display: flex; gap: 6px; flex-wrap: wrap;" class="no-print">
             <button id="btn-save-report" class="btn btn-success" style="padding: 8px 12px; min-height: 38px; font-weight: bold;">💾 Salvar no Histórico</button>
@@ -746,6 +749,11 @@
         </div>
       </div>
 
+      <!-- Rodapé do Relatório (Suporta White-label) -->
+      <div class="report-footer-sec" style="margin-top: 35px; border-top: 1px solid #cbd5e1; padding-top: 12px; font-size: 11px; text-align: center; color: #64748b; page-break-inside: avoid;">
+        <span id="rep-footer-text">Simulação gerada via aplicativo oficial <strong>Spray Precision PRO</strong>.</span>
+      </div>
+
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;" class="no-print">
         <button id="btn-back-to-coleta" class="btn btn-secondary">⬅️ Editar Coleta</button>
         <div style="display: flex; gap: 8px;">
@@ -881,11 +889,11 @@
   </div>
 
   <!-- Controlador da SPA (Lógica Frontend de Alta Acessibilidade Offline) -->
-  <script src="./js/calculations.js?v=2.0.3"></script>
-  <script src="./js/supabaseClient.js?v=2.0.3"></script>
-  <script src="./js/dbService.js?v=2.0.3"></script>
-  <script src="./js/voiceService.js?v=2.0.3"></script>
-  <script src="./app.js?v=2.0.3"></script>
+  <script src="./js/calculations.js?v=2.0.4"></script>
+  <script src="./js/supabaseClient.js?v=2.0.4"></script>
+  <script src="./js/dbService.js?v=2.0.4"></script>
+  <script src="./js/voiceService.js?v=2.0.4"></script>
+  <script src="./app.js?v=2.0.4"></script>
 
   <!-- === MULTI-LANGUAGE SYSTEM === -->
   <script>

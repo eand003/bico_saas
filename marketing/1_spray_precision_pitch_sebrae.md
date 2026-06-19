@@ -1,323 +1,224 @@
 # Pitch Sebrae — Spray Precision PRO
 
-> **Versão realista para fase de validação | Junho/2026**  
+> **Versão estratégica e realista para fase de validação | Junho/2026**  
 > **Projeto:** Spray Precision PRO  
-> **Foco:** apoio Sebrae, validação comercial, melhoria de produto e preparação para editais de inovação  
-> **Estágio atual:** MVP funcional com usuários em teste e validação inicial em campo
+> **Foco:** Apoio Sebrae, validação comercial em escala, melhoria de canais e preparação para editais de fomento (FAPEMAT/FINEP/EMBRAPII)  
+> **Estágio atual:** MVP funcional completo (Convencional, PWM, Bico Duplo e White-label ativos) com usuários em teste e validação em campo.
 
 ---
 
 ## 1. Tese do Projeto
 
-A **Spray Precision PRO** é uma plataforma digital para **gestão inteligente de pontas de pulverização**, criada para ajudar produtores, consultores, revendas e técnicos a reduzir erros na escolha, calibração e aferição de bicos agrícolas.
+A **Spray Precision PRO** é uma plataforma digital para **gestão inteligente de pontas de pulverização**, criada para ajudar produtores, consultores, revendas e técnicos a eliminar o achismo na escolha, calibração e auditoria de bicos agrícolas.
 
-O projeto nasce de uma dor simples e recorrente no campo: mesmo com pulverizadores modernos, a decisão sobre pontas ainda depende muito de catálogos, experiência individual, tentativa e erro, e diagnósticos manuais pouco padronizados.
+O projeto resolve uma dor crítica no campo: embora os pulverizadores modernos possuam tecnologia embarcada de ponta, a escolha do bico adequado e o diagnóstico de desgaste físico ainda dependem de tabelas de papel, processos manuais lentos e cálculos complexos de desvio. A Spray Precision PRO unifica essa jornada em um ecossistema digital inteligente:
 
-A proposta da Spray Precision PRO é transformar esse processo em uma jornada digital:
-
-**Selecionar a ponta correta. Aferir a vazão real. Emitir laudo técnico. Gerar histórico. Apoiar a decisão comercial e agronômica.**
+**Seleção técnica multitecnologia (PWA Offline) ➔ Aferição bico a bico simplificada ➔ Geração de laudo comercial/técnico instantâneo com marca própria (White-label) ➔ Apoio direto à decisão agronômica e à venda de peças.**
 
 ---
 
-## 2. Problema
+## 2. O Problema
 
-A pulverização agrícola é uma das etapas mais críticas da produção, pois influencia diretamente o controle de plantas daninhas, pragas e doenças. Porém, a eficiência da aplicação depende de fatores que muitas vezes não são medidos no dia a dia:
+A pulverização de defensivos é uma das operações mais caras e decisivas da lavoura. A eficiência da aplicação depende de uma harmonia exata de parâmetros hidráulicos:
 
-- escolha correta da ponta de pulverização;
-- pressão de trabalho;
-- velocidade operacional;
-- espaçamento entre bicos;
-- desgaste das pontas;
-- uniformidade da barra;
-- tecnologia do pulverizador, como convencional, PWM e sistemas com bico duplo.
-
-O desgaste das pontas pode não ser visível a olho nu, mas altera a vazão e compromete a uniformidade da aplicação. Materiais técnicos e manuais do setor recomendam a substituição de pontas quando a vazão medida ultrapassa em torno de **10%** a vazão nominal ou a vazão de referência. Esse limite é amplamente usado como critério prático de manutenção e controle de qualidade.
+* **Inadequação Tecnológica:** A chegada de tecnologias avançadas como PWM (pulsação) e Bico Duplo (estágios sequenciais de vazão) aumentou drasticamente a complexidade para o operador. Catálogos físicos convencionais não conseguem prever o comportamento de pressão e tamanho de gota sob oscilações de velocidade nessas máquinas.
+* **Desgaste Físico Invisível:** Pontas de pulverização sofrem erosão contínua por abrasão química e física dos defensivos. Um desgaste de 10% a 15% na vazão é invisível a olho nu, mas compromete totalmente o padrão de deposição de gotas.
+* **Falta de Padronização:** O diagnóstico de campo (jaragem) é historicamente lento. O técnico anota os valores em um papel amassado, realiza cálculos de cabeça ou em planilhas isoladas, impossibilitando a criação de um histórico auditável para a fazenda.
 
 ---
 
-## 3. Dor Econômica
+## 3. Dor Econômica (Valor sob Risco)
 
-A Spray Precision PRO não parte da premissa de que todo desvio vira perda direta. A proposta é mais conservadora e defensável:
+O diferencial da Spray Precision PRO é adotar uma abordagem financeira conservadora e altamente defensável perante avaliadores de inovação: **não assumimos que todo desgaste se traduz em perda total de insumos, mas sim em valor financeiro sob risco operacional.**
 
-> **Quando a máquina aplica fora do planejado, parte do investimento em defensivos, tempo operacional e qualidade de aplicação fica fora de controle.**
+### Cenário de Referência (Fazenda de 1.000 Hectares)
+* **Custo anual médio com defensivos:** R$ 1.200,00 a R$ 1.300,00 por hectare.
+* **Investimento anual fitossanitário total:** R$ 1,2 milhão a R$ 1,3 milhão.
+* **Desvio hidráulico operacional médio:** 5% de desconformidade na aplicação (bicos gastos aplicando a mais ou bicos obstruídos aplicando a menos).
 
-### Exemplo conservador
+#### O Impacto no Bolso:
+$$\text{Investimento Fitossanitário} \times \text{Desvio Médio} = \text{Valor sob Risco}$$
+$$\text{R\$ } 1.200.000,00 \times 5\% = \text{R\$ } 60.000,00 \text{ por ano under-risk}$$
 
-Uma fazenda com **1.000 hectares** e custo anual de defensivos de aproximadamente **R$ 1.200 a R$ 1.300/ha** pode movimentar mais de **R$ 1,2 milhão por ano** apenas em produtos fitossanitários.
-
-Um desvio médio de **5%** na aplicação planejada representa aproximadamente:
-
-**R$ 1.200.000 x 5% = R$ 60.000/ano**
-
-Esse valor não é apresentado como perda líquida automática, mas como **valor financeiro sob risco operacional** por falta de aferição, padronização e tomada de decisão baseada em dados.
-
----
-
-## 4. Solução
-
-A Spray Precision PRO é composta por dois módulos principais em fase de validação:
-
-### 4.1 Spray Precision Selector
-
-Ferramenta para seleção técnica de pontas de pulverização com base em:
-
-- taxa de aplicação desejada;
-- velocidade mínima e máxima;
-- pressão de trabalho;
-- espaçamento entre bicos;
-- vazão ISO;
-- compatibilidade com tecnologias convencionais;
-- roadmap para PWM e bico duplo.
-
-**Objetivo:** ajudar o usuário a escolher a ponta mais adequada antes da aplicação.
+* **Sobredosagem (Risco de Desperdício):** Bicos gastos aplicam acima do limite tolerado de +10%, jogando calda cara diretamente no solo, aumentando resíduos químicos e elevando o custo operacional de forma invisível.
+* **Subdosagem (Risco de Ineficácia):** Bicos entupidos ou com vazão abaixo de -10% aplicam doses subletais, gerando escapes de pragas, doenças ou matocompetição, forçando reentradas de pulverização que custam caro.
 
 ---
 
-### 4.2 Spray Precision Audit
+## 4. A Solução (Ecossistema Funcional)
 
-Ferramenta para diagnóstico e aferição de pontas no campo.
+Diferente de projetos em fase de ideia, a Spray Precision PRO apresenta uma plataforma PWA (Progressive Web App) offline-first com seus módulos core totalmente construídos e funcionais:
 
-Funcionalidades previstas e/ou em validação:
+### 4.1 Spray Precision Selector (Seletor Inteligente)
+Ferramenta matemática que recomenda o bico ideal com base nas variáveis operacionais inseridas (velocidade de trabalho, taxa L/ha, tamanho de gota e espaçamento). O grande diferencial é o suporte nativo a três modos tecnológicos:
+* **Convencional:** Recomendação direta baseada na norma ISO 10625.
+* **Pulsado (PWM):** Calcula o Duty Cycle ideal e a velocidade operacional de trabalho segura para sistemas como *ExactApply (John Deere)*, *Hawkeye (Raven)* e *DynaJet (TeeJet)*.
+* **Bico Duplo (Estágios):** Determina as faixas exatas de transição (Estágio A, Estágio B, Estágio A+B), pressões de trabalho correspondentes e identifica zonas de sobreposição e lacunas de aplicação para sistemas como *Horsch*, *Stara* e *Jacto*.
 
-- cadastro de máquina;
-- coleta da vazão individual dos bicos;
-- cálculo de desvio por ponta;
-- cálculo de uniformidade da barra;
-- classificação visual dos bicos;
-- geração de laudo técnico em PDF;
-- possibilidade de versão white label para revendas, cooperativas e consultores.
-
-**Objetivo:** transformar uma aferição manual em um processo padronizado, auditável e com valor comercial.
-
----
-
-## 5. Estágio Atual
-
-A Spray Precision PRO está em fase de **validação de MVP**, não em fase de escala.
-
-### Já realizado
-
-- MVP funcional do seletor de pontas;
-- MVP funcional do diagnóstico de aferição;
-- validação inicial realizada pelo fundador em campo;
-- validação inicial por usuário externo em campo;
-- usuários em teste;
-- primeiro material comercial e técnico estruturado;
-- posicionamento inicial frente a soluções do mercado, como FluxIn e SprayX.
-
-### Ainda em validação
-
-- disposição real de pagamento;
-- preço ideal;
-- taxa de conversão de teste para cliente pagante;
-- melhor canal de venda;
-- melhor modelo comercial para revendas;
-- frequência real de uso no campo.
+### 4.2 Spray Precision Audit (Diagnóstico e Aferição)
+Automatiza a coleta física de vazão bico a bico com proveta e cronômetro digital integrado na tela (com suporte hands-free via comando de voz).
+* **Veredito Visual e Gráficos:** Gera gráficos de barras e representações espaciais da barra em tempo real. Bicos normais em **verde**, bicos de atenção em **amarelo** e bicos críticos em **vermelho**.
+* **Laudo PDF Profissional:** Emissão de laudo técnico instantâneo com veredito estatístico baseado no Coeficiente de Variação (CV% da barra) e desvio nominal.
+* **Mecanismo White-Label Ativo:** Ao fazer login, a plataforma adapta inteiramente suas cores de destaque, logotipos e rodapés de laudo para a identidade visual de revendas parceiras, incluindo links diretos para o WhatsApp do setor de peças da concessionária para venda de pontas novas.
 
 ---
 
-## 6. Mercado-Alvo Inicial
+## 5. Estágio Atual de Desenvolvimento
 
-A Spray Precision PRO não busca atingir todo o agro imediatamente. A estratégia inicial é focar em nichos com maior aderência à dor:
+A startup encontra-se no estágio de **validação comercial e ajuste de fit de mercado**, com o desenvolvimento tecnológico do MVP core concluído.
 
-### Público 1 — Consultores e agrônomos independentes
+### Já Realizado (Tecnologia & Produto)
+* [x] Plataforma PWA (Progressive Web App) responsiva com funcionamento 100% offline.
+* [x] Módulo Seletor multitecnologia (Convencional, PWM e Bico Duplo) ativo.
+* [x] Módulo Diagnóstico Manual de Vazão com geração de laudos em tempo real ativo.
+* [x] Mecanismo corporativo de White-label automatizado via metadados de usuário.
+* [x] Validação inicial em campo realizada pelo fundador e consultor parceiro.
+* [x] Histórico local e sincronização automática em nuvem (Supabase) configurados.
 
-Usam o app para gerar laudos, demonstrar valor técnico e justificar recomendações de troca de pontas.
-
-### Público 2 — Revendas e cooperativas
-
-Usam a ferramenta como serviço de relacionamento com cliente, venda técnica de pontas e geração de demanda no balcão.
-
-### Público 3 — Prestadores de serviço e consultorias de aplicação
-
-Usam a plataforma para padronizar diagnósticos em diferentes fazendas e máquinas.
-
-### Público 4 — Produtores tecnificados
-
-Usam a ferramenta para reduzir risco operacional, organizar histórico e tomar decisões baseadas em dados.
+### Foco da Validação Atual (Negócios & Mercado)
+* [ ] Disposição real de pagamento recorrente (SaaS) por agrônomos autônomos.
+* [ ] Precificação ideal dos planos White-Label para concessionárias de máquinas.
+* [ ] Métricas de ativação e taxa de conversão do período de teste grátis (7 a 10 dias).
+* [ ] Frequência de uso do laudo de diagnóstico como ferramenta de fechamento comercial de bicos nas revendas.
 
 ---
 
-## 7. Concorrência e Posicionamento
+## 6. Mercado-Alvo e Canais Iniciais
 
-O mercado já possui soluções e referências relevantes, como **FluxIn** e **SprayX**, que ajudam a validar a existência da dor e da demanda por ferramentas digitais na pulverização.
+A estratégia de go-to-market foca em canais de alto volume de relacionamento no agronegócio:
 
-A Spray Precision PRO não pretende competir apenas como “app de aferição”. O posicionamento proposto é:
-
-> **Plataforma de decisão e auditoria para pontas de pulverização.**
-
-| Recurso / Posicionamento | FluxIn | SprayX | Spray Precision PRO |
-|---|---:|---:|---:|
-| Diagnóstico de aferição | Sim | Sim/parcial | Sim |
-| Relatório técnico | Sim | Sim/parcial | Sim |
-| Seletor técnico de pontas | Parcial/Não validado | Parcial/Não validado | Sim |
-| Convencional | Sim | Sim | Sim |
-| PWM | Não confirmado | Não confirmado | Roadmap |
-| Bico duplo / estágios | Não confirmado | Não confirmado | Roadmap |
-| White label para revendas | Possível/parcial | Possível/parcial | Roadmap estratégico |
-| Foco em venda técnica de pontas | Parcial | Parcial | Sim |
-| Funcionamento PWA/offline-first | Não confirmado | Não confirmado | Estratégia do produto |
-
-**Diferencial central:** unir seleção, diagnóstico, laudo e inteligência comercial em uma única jornada.
+1. **Consultores Agronômicos e Agrônomos de Campo:** Utilizam o aplicativo para prestar serviços técnicos de auditoria, gerando relatórios de alto impacto visual para convencer os produtores a corrigirem falhas e trocarem bicos.
+2. **Revendas, Distribuidoras e Cooperativas (White-Label):** O maior canal comercial. A concessionária de máquinas ou defensivos adquire o app sob sua própria marca para que os técnicos de pós-venda auditem pulverizadores de clientes, impulsionando a venda física de pontas de pulverização de reposição no balcão de peças.
+3. **Produtores Rurais e Administradores de Grandes Fazendas:** Monitoram internamente o status das frotas de pulverizadores para redução de risco operacional e governança fitossanitária.
 
 ---
 
-## 8. Modelo de Negócio em Validação
+## 7. Concorrência e Diferenciais Estratégicos
 
-Nesta fase, o objetivo não é defender uma projeção agressiva, mas testar o modelo comercial com dados reais.
+O mercado possui concorrentes consolidados focados em hardware ou em calibração analógica convencional. A Spray Precision PRO diferencia-se por abranger a jornada completa (da seleção técnica à auditoria de campo) e cobrir as tecnologias de aplicação mais modernas em uma única interface Web/Mobile offline:
 
-### Hipóteses de cobrança
-
-#### Plano Individual PRO
-- Público: consultores, agrônomos e técnicos.
-- Preço inicial a testar: **R$ 29,90 a R$ 49,90/mês**.
-- Entrega: seletor, diagnósticos, laudos e histórico básico.
-
-#### Plano Revenda / White Label
-- Público: revendas, cooperativas e distribuidores.
-- Preço inicial a testar: **R$ 199 a R$ 499/mês por unidade/parceiro**.
-- Entrega: laudos com marca da revenda, contato do vendedor, histórico de clientes e apoio à venda de pontas.
-
-#### Serviço de implantação / treinamento
-- Público: revendas e fazendas.
-- Preço a testar: sob proposta.
-- Entrega: treinamento, configuração inicial e padronização da aferição.
+| Recurso / Diferencial | Concorrente A (Aferidores Físicos) | Concorrente B (Apps de Calibração) | Spray Precision PRO |
+| :--- | :---: | :---: | :---: |
+| **Diagnóstico de Vazão** | Sim | Sim/Parcial | **Sim (PWA Offline)** |
+| **Laudo Técnico com Gráficos** | Não | Sim/Parcial | **Sim (Instantâneo)** |
+| **Seletor de Bicos Multitecnologia** | Não | Não | **Sim (Norma ISO 10625)** |
+| **Suporte Avançado PWM** | Não | Não | **Sim (Duty Cycle & Limites)** |
+| **Suporte Bico Duplo / Estágios** | Não | Não | **Sim (Transições & Lacunas)** |
+| **Branding White-Label Ativo** | Não | Não | **Sim (Cores, Logos e WhatsApp)** |
+| **Assistência de Voz Hands-free** | Não | Não | **Sim (Coleta por comando de voz)** |
 
 ---
 
-## 9. Metas de Validação — 12 Meses
+## 8. Modelo de Negócio (SaaS Recorrente)
 
-Com apoio do Sebrae, a Spray Precision PRO pretende transformar o MVP em um produto comercial validado.
+O modelo de negócio foi estruturado sob assinatura mensal recorrente com faixas de valores calibradas para testes de tração comercial:
 
-### Metas operacionais
-
-- 50 usuários ativos em teste ou uso recorrente;
-- 10 clientes pagantes;
-- 5 revendas ou parceiros comerciais em piloto;
-- 500 aferições registradas;
-- 100 laudos técnicos emitidos;
-- 3 estudos de caso documentados em campo.
-
-### Metas estratégicas
-
-- validar precificação;
-- medir conversão de teste para cliente pagante;
-- identificar melhor canal de aquisição;
-- melhorar UX/UI;
-- consolidar documentação técnica;
-- preparar candidatura para editais de inovação.
+* **Plano Individual PRO:** 
+  * *Público:* Agrônomos autônomos, consultores de pulverização e técnicos agrícolas.
+  * *Valor:* **R$ 60,00 por mês** (com teste gratuito de 7 a 10 dias).
+  * *Entregas:* Acesso irrestrito ao Seletor e Audit, exportações ilimitadas de laudos em PDF com o nome do técnico e histórico básico local.
+* **Plano Revenda / Enterprise (White-Label):**
+  * *Público:* Distribuidoras de insumos, cooperativas agrícolas e concessionárias de máquinas.
+  * *Valor:* **R$ 199,00 a R$ 499,00 por mês por concessionária/parceiro** (faturado anualmente).
+  * *Entregas:* Personalização completa da plataforma com logotipo, cores da revenda, rodapé institucional e link do WhatsApp da equipe de peças no laudo, painel de relatórios consolidados e múltiplos usuários técnicos.
 
 ---
 
-## 10. Uso Pretendido do Apoio Sebrae
+## 9. Metas de Validação Comercial (12 Meses)
 
-A solicitação não é posicionada como “rodada de investimento”, mas como apoio para validação, estruturação e preparação para crescimento.
+Com o suporte e a mentoria do Sebrae, a Spray Precision PRO estabelece metas claras focadas no crescimento do negócio:
 
-### Faixa sugerida de apoio
-
-**R$ 50.000 a R$ 100.000**
-
-### Destinação sugerida
-
-| Área | Percentual | Uso |
-|---|---:|---|
-| Produto e UX/UI | 35% | melhorar interface, fluxo de aferição, dashboard e laudo |
-| Desenvolvimento | 30% | estabilização do MVP, banco de dados, permissões e PWA/offline |
-| Validação comercial | 20% | landing page, testes de preço, funil, materiais comerciais |
-| Campo e conteúdo técnico | 10% | pilotos, documentação, estudos de caso |
-| Jurídico/LGPD/estruturação | 5% | termos de uso, política de privacidade, contratos piloto |
+* **Usuários Ativos em Teste (Ativação):** 50 usuários.
+* **Assinantes Pagantes PRO (Conversão):** 10 assinantes individuais recorrentes.
+* **Parceiros Comerciais de Revenda (Pilotos White-label):** 5 concessionárias/cooperativas ativas.
+* **Diagnósticos Realizados na Plataforma (Engajamento):** 500 aferições de barras em campo.
+* **Laudos Técnicos Gerados em PDF:** 100 relatórios comerciais emitidos.
+* **Estudos de Caso de Retorno Agronômico:** 3 casos de sucesso estruturados em campo comprovando redução de desperdício.
 
 ---
 
-## 11. Roadmap
+## 10. Uso Planejado dos Recursos (Apoio Sebrae)
 
-### Fase 1 — Validação comercial
-**0 a 3 meses**
+A proposta de captação inicial visa obter fomento na faixa de **R$ 50.000,00 a R$ 100.000,00** para acelerar a validação comercial, estruturação corporativa e governança do produto:
 
-- organizar pilotos;
-- coletar feedbacks;
-- testar cobrança;
-- aprimorar laudo;
-- definir métrica de valor.
-
-### Fase 2 — Produto comercial
-**3 a 6 meses**
-
-- lançar versão PRO;
-- estruturar planos;
-- integrar pagamentos;
-- criar painel para revendas;
-- documentar casos de sucesso.
-
-### Fase 3 — Expansão regional
-**6 a 12 meses**
-
-- prospectar revendas no Mato Grosso;
-- criar programa de parceiros;
-- ampliar base de usuários;
-- preparar editais FAPEMAT/FINEP/EMBRAPII;
-- iniciar módulo avançado PWM e bico duplo.
+| Destinação | Percentual | Aplicação Prática |
+| :--- | :---: | :--- |
+| **Validação Comercial e Tração** | 35% | Landing page profissional, tráfego pago geolocalizado para revendas do MT/Centro-Oeste, produção de materiais explicativos e ativação comercial. |
+| **Melhorias de Produto e UX/UI** | 30% | Refinamento da usabilidade móvel da planilha de coleta no campo, otimização visual dos gráficos interativos e estruturação do painel B2B para revendas. |
+| **Desenvolvimento e Infraestrutura** | 20% | Hospedagem na nuvem, segurança de banco de dados (Supabase), estabilização das rotinas de sincronismo offline e proteção de dados. |
+| **Validação de Campo e Conteúdo Técnico** | 10% | Viagens para acompanhamento dos pilotos nas concessionárias parceiras, coleta de depoimentos e estruturação técnica dos laudos. |
+| **Assessoria Jurídica e Regulatória** | 5% | Elaboração dos Termos de Uso do SaaS, Políticas de Privacidade alinhadas à LGPD e Contratos de Licenciamento piloto para empresas. |
 
 ---
 
-## 12. Indicadores que o Sebrae deve acompanhar
+## 11. Roadmap de Execução
 
-A Spray Precision PRO propõe uma validação baseada em indicadores simples e objetivos:
+### Fase 1: Validação de Pilotos e Testes de Preço (0 a 3 meses)
+* Fechamento dos primeiros 5 acordos de piloto White-label com revendas agrícolas locais.
+* Coleta de feedback contínuo sobre a usabilidade da coleta bico a bico no smartphone.
+* Testes iniciais com o paywall integrado no Hub do aplicativo.
 
-| Indicador | Meta inicial |
-|---|---:|
-| Usuários em teste | 50 |
-| Clientes pagantes | 10 |
-| Revendas em piloto | 5 |
-| Aferições registradas | 500 |
-| Laudos emitidos | 100 |
-| Taxa de conversão teste → pago | medir |
-| Ticket médio mensal | medir |
-| CAC inicial | medir |
-| NPS / satisfação | medir |
+### Fase 2: Automação do SaaS e Lançamento Comercial (3 a 6 meses)
+* Implementação do gateway de pagamento automatizado para assinaturas PRO individuais.
+* Lançamento do dashboard consolidado para gestores de revenda monitorarem a equipe de técnicos em campo.
+* Publicação do primeiro estudo de caso mostrando o aumento na venda de bicos físicos nas concessionárias parceiras.
+
+### Fase 3: Expansão e Captação de Fomento Adicional (6 a 12 meses)
+* Prospecção comercial focada nas principais regiões produtoras de grãos do Centro-Oeste brasileiro.
+* Conexão e integração inicial do seletor inteligente com pontas inovadoras de novos fabricantes parceiros.
+* Preparação de propostas para editais públicos de fomento à inovação de maior escala (FINEP Startup, FAPEMAT, EMBRAPII).
+
+---
+
+## 12. Indicadores de Sucesso para Acompanhamento
+
+| Indicador Estratégico | Unidade de Medida | Foco de Monitoramento |
+| :--- | :---: | :--- |
+| **Usuários Recorrentes** | Quantidade | Frequência de uso semanal do seletor e do diagnóstico. |
+| **Conversão do Trial** | Percentual | % de agrônomos que assinam o plano pago após os 10 dias de teste. |
+| **Receita Recorrente Mensal (MRR)** | R$ | Crescimento do faturamento com assinaturas individuais e contratos Enterprise. |
+| **LTV / CAC (Economia da Unidade)** | Proporção | Relação entre o tempo de permanência do assinante e o custo de atração comercial. |
+| **NPS (Net Promoter Score)** | Pontuação | Nível de satisfação dos técnicos de campo com a interface offline. |
 
 ---
 
 ## 13. Pedido ao Sebrae
 
-A Spray Precision PRO busca apoio do Sebrae para:
-
-1. validar o modelo de negócio;
-2. estruturar a proposta de valor;
-3. profissionalizar o MVP;
-4. testar a cobrança;
-5. conectar o projeto com editais e programas de inovação;
-6. transformar uma solução técnica validada em campo em uma startup AgTech comercialmente viável.
+A **Spray Precision PRO** solicita a parceria do Sebrae para acelerar seu amadurecimento corporativo e transformá-la em uma startup AgTech escalável. Buscamos:
+1. **Apoio Financeiro de Fomento:** Para estruturação comercial e validação de fit de mercado no Centro-Oeste.
+2. **Mentoria em Modelagem de Negócio:** Conexão com mentores especializados em vendas B2B SaaS e canais de distribuição para o agro.
+3. **Conexão com Ecossistemas de Inovação:** Preparação e ponte para captações subsequentes em editais de inovação tecnológica e rodadas de investidores anjo agrícolas.
 
 ---
 
-## 14. Frase de Fechamento
+## 14. Frase de Impacto Final
 
-> O agro brasileiro investe milhões em defensivos, máquinas e tecnologia. Mas uma parte decisiva da eficiência ainda passa por um componente pequeno e muitas vezes negligenciado: a ponta de pulverização.
->
-> A Spray Precision PRO nasceu para digitalizar essa decisão, reduzir incertezas no campo e transformar aferição de bicos em inteligência técnica, comercial e agronômica.
+> "O agronegócio brasileiro investe bilhões em defensivos químicos de última geração, máquinas gigantescas e softwares de satélite. Mas a eficiência real da aplicação e a economia de calda no final do dia ainda dependem de um pequeno componente de plástico ou cerâmica na ponta da barra: o bico de pulverização.
+> 
+> A **Spray Precision PRO** digitaliza essa última e decisiva etapa operacional, transformando a calibração de campo em inteligência de dados, economia agronômica e alavancagem comercial de peças."
 
 ---
 
-## 15. Fontes Técnicas e de Mercado
+## 15. Fontes Técnicas, Científicas e Mercadológicas
 
-1. **Sebrae Startups** — plataforma nacional do Sebrae para iniciativas de apoio a startups, inovação e escalabilidade.  
-   Fonte: https://programas.sebraestartups.com.br/
-
-2. **Sebrae For Startups — Start Digital** — programa de pré-aceleração indicado para startups digitais validarem MVPs, estruturarem modelos de negócio e se prepararem para primeiras vendas.  
-   Fonte: https://sebraeforstartups.sebraesp.com.br/startups/start/
-
-3. **CropLife Latin America — Calibração de Equipamentos** — reforça a importância da escolha correta, uso e substituição de bicos para aplicações mais seguras, eficientes e sustentáveis.  
-   Fonte: https://croplifela.org/pt/novidades/o-que-voce-precisa-saber-sobre-calibracao-de-equipamentos
-
-4. **TeeJet — A User’s Guide to Spray Technology** — manual técnico indica que desgaste de 10%, 20% ou 30% pode não ser visível e recomenda substituir a ponta quando a vazão usada for 10% ou mais acima da referência.  
-   Fonte: https://www.teejet.com/pt-br/-/media/dam/agricultural/usa/sales-material/product-market-bulletin/li-tj416_user-guide-to-spray-technology.pdf
-
-5. **Baio et al., 2024 — Evaluation of spray nozzle wear under field conditions** — estudo científico sobre desgaste de pontas em condições de campo e referência a critérios de substituição por aumento de vazão.  
-   Fonte: https://www.scielo.br/j/eagri/a/sZFHBmBN7gwjLFxfLWGGTzg/?lang=en
-
-6. **Conab — Custos de Produção Agropecuária** — base oficial brasileira para informações e metodologias de custos de produção.  
-   Fonte: https://www.gov.br/conab/pt-br/atuacao/informacoes-agropecuarias/custos-de-producao
-
-7. **Safras & Mercado / Senar-MT — Custo da soja em Mato Grosso, janeiro/2026** — referência recente apontando defensivos como componente relevante do custeio da soja transgênica em Mato Grosso.  
-   Fonte: https://safras.com.br/custo-de-producao-da-soja-em-mato-grosso-reduz-em-janeiro/
+1. **Sebrae Startups — Fomento e Inovação Nacional**  
+   Plataforma nacional do Sebrae para iniciativas de apoio a startups, aceleração e estruturação de negócios inovadores.  
+   *Link:* [sebraestartups.com.br](https://programas.sebraestartups.com.br/)
+2. **Sebrae For Startups — Start Digital**  
+   Programa estratégico de pré-aceleração projetado para startups digitais validarem MVPs, testarem canais e estruturarem primeiras vendas.  
+   *Link:* [sebraeforstartups.sebraesp.com.br](https://sebraeforstartups.sebraesp.com.br/startups/start/)
+3. **TeeJet Technologies — A User’s Guide to Spray Technology**  
+   Manual de engenharia de aplicação que detalha que desgastes de vazão de 10% ou mais nas pontas comprometem a aplicação e indica a troca mecânica imediata.  
+   *Link:* [teejet.com](https://www.teejet.com/pt-br/-/media/dam/agricultural/usa/sales-material/product-market-bulletin/li-tj416_user-guide-to-spray-technology.pdf)
+4. **Baio et al., 2024 — Evaluation of spray nozzle wear under field conditions**  
+   Estudo acadêmico de engenharia agrícola analisando taxas reais de erosão em bicos e validação do limite estatístico de CV% para calibração hidráulica.  
+   *Link:* [scielo.br/j/eagri](https://www.scielo.br/j/eagri/a/sZFHBmBN7gwjLFxfLWGGTzg/?lang=en)
+5. **CropLife Latin America — Calibração e Tecnologia de Aplicação**  
+   Diretrizes institucionais sobre boas práticas agronômicas, segurança na aplicação de defensivos e impacto econômico das calibrações de vazão no campo.  
+   *Link:* [croplifela.org](https://croplifela.org/pt/novidades/o-que-voce-precisa-saber-sobre-calibracao-de-equipamentos)
+6. **Conab — Metodologia e Custos de Produção Agropecuária**  
+   Dados oficiais brasileiros para cálculo de custos de insumos agrícolas e planejamento de safra por hectare.  
+   *Link:* [gov.br/conab](https://www.gov.br/conab/pt-br/atuacao/informacoes-agropecuarias/custos-de-producao)
+7. **Safras & Mercado / Senar-MT — Custos de Produção da Soja no Mato Grosso (2026)**  
+   Levantamentos recentes demonstrando o peso dos defensivos fitossanitários nos custos operacionais totais de lavouras graneleiras do Centro-Oeste.  
+   *Link:* [safras.com.br](https://safras.com.br/custo-de-producao-da-soja-em-mato-grosso-reduz-em-janeiro/)

@@ -1,0 +1,693 @@
+Found 4 script blocks
+
+=================== Block 2: length 65115 ===================
+--- Line 266 ---
+    }
+
+    function openAccessModal(userId, email) {
+      const user = cachedUsers.find(u => u.id === userId);
+      if (!user) return alert('Usuário não encontrado em cache.');
+
+      const metadata = user.user_metadata || {};
+      
+      document.getElementById('accessUserId').value = userId;
+      document.getElementById('accessModalUserEmail').innerText = `Usuário: ${email}`;
+
+      // Load name and phone
+      document.getElementById('accessFullName').value = metadata.full_name || '';
+      document.getElementById('accessPhone').value = metadata.phone || '';
+------------------------------
+--- Line 276 ---
+
+      // Load name and phone
+      document.getElementById('accessFullName').value = metadata.full_name || '';
+      document.getElementById('accessPhone').value = metadata.phone || '';
+      
+      // Load start and end date from metadata
+      document.getElementById('accessSubStart').value = metadata.subscription_start || '';
+      document.getElementById('accessSubEnd').value = metadata.subscription_end || '';
+      
+      // Load blocked status (checkbox)
+      document.getElementById('accessIsBlocked').checked = metadata.is_blocked === true;
+
+      document.getElementById('accessModal').style.display = 'flex';
+    }
+------------------------------
+--- Line 277 ---
+      // Load name and phone
+      document.getElementById('accessFullName').value = metadata.full_name || '';
+      document.getElementById('accessPhone').value = metadata.phone || '';
+      
+      // Load start and end date from metadata
+      document.getElementById('accessSubStart').value = metadata.subscription_start || '';
+      document.getElementById('accessSubEnd').value = metadata.subscription_end || '';
+      
+      // Load blocked status (checkbox)
+      document.getElementById('accessIsBlocked').checked = metadata.is_blocked === true;
+
+      document.getElementById('accessModal').style.display = 'flex';
+    }
+
+------------------------------
+--- Line 523 ---
+          <span class="enterprise-badge" id="badgeAll">${cachedUsers.length}</span>
+        </div>
+      `;
+
+      const partnersMap = {};
+      cachedUsers.forEach(u => {
+        const pId = (u.user_metadata && u.user_metadata.partner_id) || 'desconhecido';
+        const pName = (u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa';
+        
+        if (!partnersMap[pId]) {
+          partnersMap[pId] = { name: pName, count: 0 };
+        }
+        partnersMap[pId].count++;
+      });
+------------------------------
+--- Line 524 ---
+        </div>
+      `;
+
+      const partnersMap = {};
+      cachedUsers.forEach(u => {
+        const pId = (u.user_metadata && u.user_metadata.partner_id) || 'desconhecido';
+        const pName = (u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa';
+        
+        if (!partnersMap[pId]) {
+          partnersMap[pId] = { name: pName, count: 0 };
+        }
+        partnersMap[pId].count++;
+      });
+
+------------------------------
+--- Line 592 ---
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+
+      let filteredUsers = selectedEnterpriseId === 'all' 
+        ? cachedUsers 
+        : cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === selectedEnterpriseId);
+
+      // Filtro de Busca
+      const searchInput = document.getElementById('userSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      if (query) {
+        filteredUsers = filteredUsers.filter(u => {
+          const email = (u.email || '').toLowerCase();
+------------------------------
+--- Line 600 ---
+      // Filtro de Busca
+      const searchInput = document.getElementById('userSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      if (query) {
+        filteredUsers = filteredUsers.filter(u => {
+          const email = (u.email || '').toLowerCase();
+          const role = ((u.user_metadata && u.user_metadata.role) || 'consultor').toLowerCase();
+          const partnerName = ((u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          const fullName = ((u.user_metadata && u.user_metadata.full_name) || '').toLowerCase();
+          const phone = ((u.user_metadata && u.user_metadata.phone) || '').toLowerCase();
+          return email.includes(query) || role.includes(query) || partnerName.includes(query) || fullName.includes(query) || phone.includes(query);
+        });
+      }
+
+------------------------------
+--- Line 601 ---
+      const searchInput = document.getElementById('userSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      if (query) {
+        filteredUsers = filteredUsers.filter(u => {
+          const email = (u.email || '').toLowerCase();
+          const role = ((u.user_metadata && u.user_metadata.role) || 'consultor').toLowerCase();
+          const partnerName = ((u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          const fullName = ((u.user_metadata && u.user_metadata.full_name) || '').toLowerCase();
+          const phone = ((u.user_metadata && u.user_metadata.phone) || '').toLowerCase();
+          return email.includes(query) || role.includes(query) || partnerName.includes(query) || fullName.includes(query) || phone.includes(query);
+        });
+      }
+
+      document.getElementById('userCount').innerText = filteredUsers.length;
+------------------------------
+--- Line 602 ---
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      if (query) {
+        filteredUsers = filteredUsers.filter(u => {
+          const email = (u.email || '').toLowerCase();
+          const role = ((u.user_metadata && u.user_metadata.role) || 'consultor').toLowerCase();
+          const partnerName = ((u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          const fullName = ((u.user_metadata && u.user_metadata.full_name) || '').toLowerCase();
+          const phone = ((u.user_metadata && u.user_metadata.phone) || '').toLowerCase();
+          return email.includes(query) || role.includes(query) || partnerName.includes(query) || fullName.includes(query) || phone.includes(query);
+        });
+      }
+
+      document.getElementById('userCount').innerText = filteredUsers.length;
+
+------------------------------
+--- Line 603 ---
+      if (query) {
+        filteredUsers = filteredUsers.filter(u => {
+          const email = (u.email || '').toLowerCase();
+          const role = ((u.user_metadata && u.user_metadata.role) || 'consultor').toLowerCase();
+          const partnerName = ((u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          const fullName = ((u.user_metadata && u.user_metadata.full_name) || '').toLowerCase();
+          const phone = ((u.user_metadata && u.user_metadata.phone) || '').toLowerCase();
+          return email.includes(query) || role.includes(query) || partnerName.includes(query) || fullName.includes(query) || phone.includes(query);
+        });
+      }
+
+      document.getElementById('userCount').innerText = filteredUsers.length;
+
+      if (filteredUsers.length === 0) {
+------------------------------
+--- Line 632 ---
+        let valB = '';
+
+        if (userSortField === 'email') {
+          valA = (a.email || '').toLowerCase();
+          valB = (b.email || '').toLowerCase();
+        } else if (userSortField === 'role') {
+          valA = ((a.user_metadata && a.user_metadata.role) || 'consultor').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.role) || 'consultor').toLowerCase();
+        } else if (userSortField === 'enterprise') {
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+------------------------------
+--- Line 633 ---
+
+        if (userSortField === 'email') {
+          valA = (a.email || '').toLowerCase();
+          valB = (b.email || '').toLowerCase();
+        } else if (userSortField === 'role') {
+          valA = ((a.user_metadata && a.user_metadata.role) || 'consultor').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.role) || 'consultor').toLowerCase();
+        } else if (userSortField === 'enterprise') {
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+------------------------------
+--- Line 635 ---
+          valA = (a.email || '').toLowerCase();
+          valB = (b.email || '').toLowerCase();
+        } else if (userSortField === 'role') {
+          valA = ((a.user_metadata && a.user_metadata.role) || 'consultor').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.role) || 'consultor').toLowerCase();
+        } else if (userSortField === 'enterprise') {
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+------------------------------
+--- Line 636 ---
+          valB = (b.email || '').toLowerCase();
+        } else if (userSortField === 'role') {
+          valA = ((a.user_metadata && a.user_metadata.role) || 'consultor').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.role) || 'consultor').toLowerCase();
+        } else if (userSortField === 'enterprise') {
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+------------------------------
+--- Line 640 ---
+        } else if (userSortField === 'enterprise') {
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+            valA = blockA;
+            valB = blockB;
+          } else {
+            valA = (a.user_metadata && a.user_metadata.subscription_end) ? new Date(a.user_metadata.subscription_end).getTime() : 9999999999999;
+------------------------------
+--- Line 641 ---
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+            valA = blockA;
+            valB = blockB;
+          } else {
+            valA = (a.user_metadata && a.user_metadata.subscription_end) ? new Date(a.user_metadata.subscription_end).getTime() : 9999999999999;
+            valB = (b.user_metadata && b.user_metadata.subscription_end) ? new Date(b.user_metadata.subscription_end).getTime() : 9999999999999;
+------------------------------
+--- Line 642 ---
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+            valA = blockA;
+            valB = blockB;
+          } else {
+            valA = (a.user_metadata && a.user_metadata.subscription_end) ? new Date(a.user_metadata.subscription_end).getTime() : 9999999999999;
+            valB = (b.user_metadata && b.user_metadata.subscription_end) ? new Date(b.user_metadata.subscription_end).getTime() : 9999999999999;
+          }
+------------------------------
+--- Line 647 ---
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+            valA = blockA;
+            valB = blockB;
+          } else {
+            valA = (a.user_metadata && a.user_metadata.subscription_end) ? new Date(a.user_metadata.subscription_end).getTime() : 9999999999999;
+            valB = (b.user_metadata && b.user_metadata.subscription_end) ? new Date(b.user_metadata.subscription_end).getTime() : 9999999999999;
+          }
+        } else if (userSortField === 'last_access') {
+          const sessA = cachedSessions.find(s => s.user_id === a.id);
+          const sessB = cachedSessions.find(s => s.user_id === b.id);
+          valA = sessA ? new Date(sessA.updated_at).getTime() : 0;
+          valB = sessB ? new Date(sessB.updated_at).getTime() : 0;
+------------------------------
+--- Line 648 ---
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+            valA = blockA;
+            valB = blockB;
+          } else {
+            valA = (a.user_metadata && a.user_metadata.subscription_end) ? new Date(a.user_metadata.subscription_end).getTime() : 9999999999999;
+            valB = (b.user_metadata && b.user_metadata.subscription_end) ? new Date(b.user_metadata.subscription_end).getTime() : 9999999999999;
+          }
+        } else if (userSortField === 'last_access') {
+          const sessA = cachedSessions.find(s => s.user_id === a.id);
+          const sessB = cachedSessions.find(s => s.user_id === b.id);
+          valA = sessA ? new Date(sessA.updated_at).getTime() : 0;
+          valB = sessB ? new Date(sessB.updated_at).getTime() : 0;
+        }
+------------------------------
+--- Line 663 ---
+        if (valA < valB) return userSortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return userSortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      // Atualiza ícones de ordenação visualmente
+      const fields = ['email', 'role', 'enterprise', 'created_at', 'subscription', 'last_access'];
+      fields.forEach(f => {
+        const iconEl = document.getElementById(`sortIcon-${f}`);
+        if (iconEl) {
+          if (userSortField === f) {
+            iconEl.innerHTML = userSortDirection === 'asc' ? '▲' : '▼';
+            iconEl.style.color = 'var(--accent)';
+          } else {
+------------------------------
+--- Line 678 ---
+            iconEl.style.color = 'var(--text-muted)';
+          }
+        }
+      });
+
+      filteredUsers.forEach(user => {
+        const metadata = user.user_metadata || {};
+        const role = metadata.role || 'consultor';
+        const partnerName = metadata.partner_name || 'Sem Empresa';
+        const partnerId = metadata.partner_id || '-';
+        const createdDate = new Date(user.created_at).toLocaleDateString('pt-BR');
+        const badgeHtml = getStatusBadge(user.id);
+        const fullName = metadata.full_name || '';
+        const phone = metadata.phone || '';
+------------------------------
+--- Line 692 ---
+
+        // Assinatura & Acesso status
+        let accessHtml = '';
+        let renewalBtnHtml = '';
+        if (metadata.is_blocked === true) {
+          accessHtml = `<span style="background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🚫 Bloqueado</span>`;
+        } else if (metadata.subscription_end) {
+          const end = new Date(metadata.subscription_end);
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          end.setHours(23,59,59,999);
+          const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          if (end < today) {
+            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+------------------------------
+--- Line 693 ---
+        // Assinatura & Acesso status
+        let accessHtml = '';
+        let renewalBtnHtml = '';
+        if (metadata.is_blocked === true) {
+          accessHtml = `<span style="background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🚫 Bloqueado</span>`;
+        } else if (metadata.subscription_end) {
+          const end = new Date(metadata.subscription_end);
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          end.setHours(23,59,59,999);
+          const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          if (end < today) {
+            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+          } else {
+------------------------------
+--- Line 697 ---
+          accessHtml = `<span style="background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🚫 Bloqueado</span>`;
+        } else if (metadata.subscription_end) {
+          const end = new Date(metadata.subscription_end);
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          end.setHours(23,59,59,999);
+          const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          if (end < today) {
+            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+          } else {
+            accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+          }
+          // Botão de renovação via WhatsApp (só quando tem subscription_end)
+          if (phone) {
+------------------------------
+--- Line 703 ---
+          const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          if (end < today) {
+            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+          } else {
+            accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+          }
+          // Botão de renovação via WhatsApp (só quando tem subscription_end)
+          if (phone) {
+            const firstName = fullName ? fullName.split(' ')[0] : user.email.split('@')[0];
+            const renewMsg = encodeURIComponent(`Oi ${firstName}! Seu acesso ao Spray Precision PRO vence em ${formattedEnd}. Para continuar usando o Seletor de Bicos + Diagnóstico de Vazão ilimitado, é só fazer o PIX de R$ 60 e eu renovo por mais 30 dias na hora! 🚀`);
+            renewalBtnHtml = `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${renewMsg}" target="_blank" class="btn" style="padding: 6px 10px; font-size: 11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center;" title="Enviar mensagem de renovação no WhatsApp">📲 Renovar</a>`;
+          }
+        } else {
+          accessHtml = `<span style="background:#4b5563; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🌾 Livre</span>`;
+------------------------------
+--- Line 788 ---
+
+      cachedEmpresas.forEach(comp => {
+        const color = comp.partner_color || '#00d2ff';
+        const logo = comp.partner_logo || './logo.png';
+        const wa = comp.partner_whatsapp || '-';
+        
+        const usersCount = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === comp.partner_id).length;
+
+        const card = document.createElement('div');
+        card.className = 'company-card';
+        card.style.setProperty('--comp-color', color);
+        card.innerHTML = `
+          <div class="company-card-header">
+            <img src="${logo}" class="company-logo-img" onerror="this.src='./logo.png'">
+------------------------------
+--- Line 831 ---
+            `  created_at timestamptz default now(),\n` +
+            `  updated_at timestamptz default now()\n` +
+            `);\n\n` +
+            `alter table empresas enable row level security;\n` +
+            `create policy "Usuarios leem todas as empresas" on empresas for select using (true);\n` +
+            `create policy "Apenas Master Admin gerencia empresas" on empresas for all using (\n` +
+            `  (auth.jwt() -> 'user_metadata' ->> 'role') = 'master'\n` +
+            `  and auth.jwt() ->> 'email' = 'eand003@gmail.com'\n` +
+            `);`);
+    }
+
+    async function saveCompanyForm(e) {
+      e.preventDefault();
+      
+------------------------------
+--- Line 871 ---
+
+        if (mode === 'edit') {
+          const confirmUpdateUsers = confirm(`Empresa "${partnerName}" atualizada com sucesso!\n\nDeseja propagar estas atualizações visuais (cor, logo, whatsapp) para todos os consultores já cadastrados nesta empresa automaticamente?`);
+          
+          if (confirmUpdateUsers) {
+            submitBtn.innerText = 'Propagando para consultores...';
+            const usersToUpdate = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === partnerId);
+            
+            for (let user of usersToUpdate) {
+              const currentRole = user.user_metadata.role || 'consultor';
+              await supabaseAdmin.auth.admin.updateUserById(user.id, {
+                user_metadata: {
+                  role: currentRole,
+                  partner_id: partnerId,
+------------------------------
+--- Line 874 ---
+          
+          if (confirmUpdateUsers) {
+            submitBtn.innerText = 'Propagando para consultores...';
+            const usersToUpdate = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === partnerId);
+            
+            for (let user of usersToUpdate) {
+              const currentRole = user.user_metadata.role || 'consultor';
+              await supabaseAdmin.auth.admin.updateUserById(user.id, {
+                user_metadata: {
+                  role: currentRole,
+                  partner_id: partnerId,
+                  partner_name: partnerName,
+                  partner_color: partnerColor,
+                  partner_logo: partnerLogo,
+------------------------------
+--- Line 876 ---
+            submitBtn.innerText = 'Propagando para consultores...';
+            const usersToUpdate = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === partnerId);
+            
+            for (let user of usersToUpdate) {
+              const currentRole = user.user_metadata.role || 'consultor';
+              await supabaseAdmin.auth.admin.updateUserById(user.id, {
+                user_metadata: {
+                  role: currentRole,
+                  partner_id: partnerId,
+                  partner_name: partnerName,
+                  partner_color: partnerColor,
+                  partner_logo: partnerLogo,
+                  partner_whatsapp: partnerWhatsapp,
+                  is_enterprise: true
+------------------------------
+--- Line 953 ---
+
+      try {
+        const { data, error } = await supabaseAdmin.auth.admin.createUser({
+          email: email,
+          password: password,
+          email_confirm: true,
+          user_metadata: {
+            full_name: fullName,
+            phone: phone,
+            role: role,
+            partner_id: selectedPartnerId,
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+------------------------------
+--- Line 987 ---
+    }
+
+    async function changeUserRole(userId, newRole, partnerId, partnerName) {
+      if (!supabaseAdmin) return;
+
+      const user = cachedUsers.find(u => u.id === userId) || {};
+      const currentMetadata = user.user_metadata || {};
+      const company = cachedEmpresas.find(e => e.partner_id === partnerId) || {};
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            role: newRole,
+------------------------------
+--- Line 992 ---
+      const user = cachedUsers.find(u => u.id === userId) || {};
+      const currentMetadata = user.user_metadata || {};
+      const company = cachedEmpresas.find(e => e.partner_id === partnerId) || {};
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            role: newRole,
+            partner_id: partnerId,
+            partner_name: partnerName,
+            partner_color: company.partner_color || '#00d2ff',
+            partner_logo: company.partner_logo || './logo.png',
+            partner_whatsapp: company.partner_whatsapp || '',
+------------------------------
+--- Line 1024 ---
+      const role = document.getElementById('transferUserRole').value;
+      const newPartnerId = document.getElementById('transferPartnerSelect').value;
+
+      if (!supabaseAdmin || !userId || !newPartnerId) return;
+
+      const user = cachedUsers.find(u => u.id === userId) || {};
+      const currentMetadata = user.user_metadata || {};
+
+      let partnerName = 'Autônomo';
+      let partnerColor = '#00d2ff';
+      let partnerLogo = './logo.png';
+      let partnerWhatsapp = '5565999106415';
+      let isEnterprise = false;
+
+------------------------------
+--- Line 1044 ---
+        partnerWhatsapp = company.partner_whatsapp || '';
+        isEnterprise = true;
+      }
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            role: role,
+            partner_id: newPartnerId,
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+------------------------------
+--- Line 1073 ---
+      e.preventDefault();
+      
+      const userId = document.getElementById('accessUserId').value;
+      const fullName = document.getElementById('accessFullName').value.trim();
+      const phone = document.getElementById('accessPhone').value.trim();
+      const subStart = document.getElementById('accessSubStart').value;
+      const subEnd = document.getElementById('accessSubEnd').value;
+      const isBlocked = document.getElementById('accessIsBlocked').checked;
+
+      if (!supabaseAdmin || !userId) return;
+
+      const submitBtn = document.getElementById('accessSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Salvando...';
+------------------------------
+--- Line 1086 ---
+      submitBtn.innerText = 'Salvando...';
+
+      try {
+        const user = cachedUsers.find(u => u.id === userId);
+        if (!user) throw new Error('Usuário não localizado no cache local.');
+
+        const currentMetadata = user.user_metadata || {};
+        
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            full_name: fullName || currentMetadata.full_name || null,
+            phone: phone || currentMetadata.phone || null,
+            subscription_start: subStart ? subStart : null,
+------------------------------
+--- Line 1089 ---
+        const user = cachedUsers.find(u => u.id === userId);
+        if (!user) throw new Error('Usuário não localizado no cache local.');
+
+        const currentMetadata = user.user_metadata || {};
+        
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            full_name: fullName || currentMetadata.full_name || null,
+            phone: phone || currentMetadata.phone || null,
+            subscription_start: subStart ? subStart : null,
+            subscription_end: subEnd ? subEnd : null,
+            is_blocked: isBlocked
+          }
+------------------------------
+--- Line 1093 ---
+        
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            full_name: fullName || currentMetadata.full_name || null,
+            phone: phone || currentMetadata.phone || null,
+            subscription_start: subStart ? subStart : null,
+            subscription_end: subEnd ? subEnd : null,
+            is_blocked: isBlocked
+          }
+        });
+
+        if (error) throw error;
+
+------------------------------
+--- Line 1094 ---
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            full_name: fullName || currentMetadata.full_name || null,
+            phone: phone || currentMetadata.phone || null,
+            subscription_start: subStart ? subStart : null,
+            subscription_end: subEnd ? subEnd : null,
+            is_blocked: isBlocked
+          }
+        });
+
+        if (error) throw error;
+
+        alert('Alterações salvas com sucesso!');
+------------------------------
+--- Line 1463 ---
+        return;
+      }
+
+      filteredClients.forEach(client => {
+        const consultant = cachedUsers.find(u => u.id === client.user_id) || {};
+        const consultantEmail = client.created_by_email || consultant.email || 'Consultor desconhecido';
+        const partnerName = (consultant.user_metadata && consultant.user_metadata.partner_name) || 'Sem Revenda / Autônomo';
+        const partnerColor = (consultant.user_metadata && consultant.user_metadata.partner_color) || '#94a3b8';
+
+        const clientMachines = cachedMachines.filter(m => m.client_id === client.id);
+
+        let machinesHtml = '';
+        if (clientMachines.length === 0) {
+          machinesHtml = `<p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 6px;">Nenhum pulverizador registrado.</p>`;
+------------------------------
+--- Line 1464 ---
+      }
+
+      filteredClients.forEach(client => {
+        const consultant = cachedUsers.find(u => u.id === client.user_id) || {};
+        const consultantEmail = client.created_by_email || consultant.email || 'Consultor desconhecido';
+        const partnerName = (consultant.user_metadata && consultant.user_metadata.partner_name) || 'Sem Revenda / Autônomo';
+        const partnerColor = (consultant.user_metadata && consultant.user_metadata.partner_color) || '#94a3b8';
+
+        const clientMachines = cachedMachines.filter(m => m.client_id === client.id);
+
+        let machinesHtml = '';
+        if (clientMachines.length === 0) {
+          machinesHtml = `<p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 6px;">Nenhum pulverizador registrado.</p>`;
+        } else {
+------------------------------
+
+=================== Block 3: length 11259 ===================
+--- Line 106 ---
+    // 1. Fetch user_telemetry
+    let telemetryQuery = supabaseAdmin.from('user_telemetry').select('*');
+    
+    // If filtering by partner, find all user IDs belonging to this partner
+    if (selectedPartner !== 'all') {
+      const partnerUserIds = cachedUsers
+        .filter(u => u.user_metadata && u.user_metadata.partner_id === selectedPartner)
+        .map(u => u.id);
+      
+      if (partnerUserIds.length > 0) {
+        telemetryQuery = telemetryQuery.in('user_id', partnerUserIds);
+      } else {
+        // No users in this partner, force empty results
+        telemetryQuery = telemetryQuery.eq('user_id', '00000000-0000-0000-0000-000000000000');
+------------------------------

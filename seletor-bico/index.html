@@ -1349,6 +1349,7 @@
 
   <!-- MAIN APP (Hidden by default) -->
   <div id="mainApp" style="display: none; width: 100%; flex-direction: column; align-items: center;">
+    <div id="trial-banner" style="display:none; width: 100%; max-width: 1200px; padding: 12px 20px; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.25); border-radius: 12px; margin-top: 16px; margin-bottom: 8px; color: #fbbf24; font-weight: bold; text-align: center; gap: 8px; align-items: center; justify-content: center; font-size: 14px; font-family: 'Inter', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.2);"></div>
 
     <div class="header">
       <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; width: 100%;">
@@ -3580,6 +3581,10 @@
 
       // --- RELATÓRIO PDF COM GRÁFICOS INTEGRADOS ---
       function generateReport() {
+        if (window.isTrialActive) {
+          showTrialPremiumModal();
+          return;
+        }
         if (typeof logTelemetry === 'function') {
           logTelemetry('generate_report', {
             machineMode: MACHINE_MODE,
@@ -5323,12 +5328,8 @@
       }
     }
 
-    // Verifica a integridade da sessão do usuário
-    // IMPORTANTE: usa o session_id nativo do Supabase como referência,
-    // e tolera ausência temporária do localStorage (comum no Safari/iOS em segundo plano)
     async function verifySessionIntegrity(userId) {
       try {
-        // Validação de bloqueio e expiração de assinatura
         const { data: { user } } = await clienteSupabase.auth.getUser();
         if (user) {
           const metadata = user.user_metadata || {};
@@ -5337,6 +5338,7 @@
             await logout();
             return;
           }
+          window.isTrialActive = (metadata.is_trial === true);
           if (metadata.subscription_end) {
             const end = new Date(metadata.subscription_end);
             const today = new Date();
@@ -5344,27 +5346,39 @@
             end.setHours(23, 59, 59, 999);
             if (end < today) {
               const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-              alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+              const isTrialUser = metadata.is_trial === true;
+              if (isTrialUser) {
+                alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
+                const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
+                window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
+              } else {
+                alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+              }
               await logout();
               return;
             }
           }
+          if (window.isTrialActive && metadata.subscription_end) {
+            const banner = document.getElementById('trial-banner');
+            if (banner) {
+              const end = new Date(metadata.subscription_end + 'T12:00:00');
+              const formattedEnd = end.toLocaleDateString('pt-BR');
+              banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs está desativada.`;
+              banner.style.display = 'flex';
+            }
+          }
         }
 
-        // Lê o token local — no Safari/iOS o localStorage pode ser limpo pelo OS
-        // Se o token local está ausente, tenta recuperar da sessão Supabase atual
         let localToken = localStorage.getItem('spray_active_session_token');
         if (!localToken) {
-          // Tenta restaurar a partir da sessão Supabase ativa (sem expulsar)
           const { data: { session } } = await clienteSupabase.auth.getSession();
           if (session) {
             const recovered = session.access_token.slice(-32);
             localStorage.setItem('spray_active_session_token', recovered);
             localToken = recovered;
-            // Re-registra no banco para evitar desconexão na próxima verificação
             await registerActiveSession(userId);
           } else {
-            return; // sem sessão ativa, ignora
+            return;
           }
         }
 
@@ -5388,14 +5402,11 @@
           dbToken = data.session_token;
         }
 
-        // Só expulsa se o token do banco for claramente diferente do local
-        // (ignora casos onde dbToken está nulo/vazio — indicativo de dado corrompido)
         if (dbToken && localToken && dbToken !== localToken) {
           alert(t("⚠️ Acesso interrompido: Esta conta foi conectada em outro dispositivo!"));
           await logout();
         }
       } catch (err) {
-        // Em caso de falha de rede, NÃO expulsa o usuário — falha silenciosa
         console.log("Falha ao checar integridade da sessão (ignorando):", err);
       }
     }
@@ -5420,6 +5431,7 @@
             await logout();
             return;
           }
+          window.isTrialActive = (metadata.is_trial === true);
           if (metadata.subscription_end) {
             const end = new Date(metadata.subscription_end);
             const today = new Date();
@@ -5427,9 +5439,25 @@
             end.setHours(23,59,59,999);
             if (end < today) {
               const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-              alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+              const isTrialUser = metadata.is_trial === true;
+              if (isTrialUser) {
+                alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
+                const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
+                window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
+              } else {
+                alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+              }
               await logout();
               return;
+            }
+          }
+          if (window.isTrialActive && metadata.subscription_end) {
+            const banner = document.getElementById('trial-banner');
+            if (banner) {
+              const end = new Date(metadata.subscription_end + 'T12:00:00');
+              const formattedEnd = end.toLocaleDateString('pt-BR');
+              banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs está desativada.`;
+              banner.style.display = 'flex';
             }
           }
 
@@ -5734,12 +5762,37 @@
       if (d2) d2.style.display = 'none';
     });
 
+    function showTrialPremiumModal() {
+      const modal = document.getElementById('trial-premium-modal');
+      if (modal) {
+        document.getElementById('trial-modal-text').innerText = "A geração de laudos técnicos detalhados e orçamentos em PDF é exclusiva para a versão profissional. Libere o acesso ilimitado para gerar relatórios com a sua marca e fechar mais vendas de bicos!";
+        const waMsg = encodeURIComponent("Olá! Gostaria de assinar a versão profissional do Spray Precision PRO para liberar a geração de laudos técnicos em PDF.");
+        document.getElementById('trial-modal-whatsapp').href = `https://wa.me/5565999106415?text=${waMsg}`;
+        modal.style.display = 'flex';
+      }
+    }
+
     // Run lang initialization
     window.addEventListener('DOMContentLoaded', () => {
       initLanguage();
       populateSelects();
     });
   </script>
+
+  <!-- MODAL PREMIUM PARA CONTAS TRIAL -->
+  <div id="trial-premium-modal" class="modal-overlay" style="display:none;" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content" style="background: rgba(15, 20, 24, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; padding: 40px 30px; text-align: center; max-width: 480px; box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(249, 115, 22, 0.15); margin: auto; position: relative;">
+      <button class="modal-close" onclick="document.getElementById('trial-premium-modal').style.display='none'">&times;</button>
+      <div style="width: 70px; height: 70px; background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.25); color: #f97316; border-radius: 20px; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto; box-shadow: 0 8px 25px rgba(249, 115, 22, 0.2);">🔒</div>
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, #ffffff 40%, #fed7aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; border: none; padding: 0; box-shadow: none; width: auto; height: auto;">Recurso Premium</h3>
+      <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px;" id="trial-modal-text">
+        A geração de laudos técnicos detalhados e orçamentos em PDF é exclusiva para a versão profissional.
+      </p>
+      <a id="trial-modal-whatsapp" href="#" target="_blank" class="btn" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border: none; color: #ffffff; padding: 16px 32px; border-radius: 14px; font-size: 1rem; font-weight: 700; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);">
+        💬 Liberar Acesso Profissional
+      </a>
+    </div>
+  </div>
 
   <div style="
     width: 100%;

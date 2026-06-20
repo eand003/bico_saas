@@ -386,6 +386,7 @@ async function verifySessionIntegrity(userId) {
         await forceUserLogout();
         return;
       }
+      window.isTrialActive = (metadata.is_trial === true);
       if (metadata.subscription_end) {
         const end = new Date(metadata.subscription_end);
         const today = new Date();
@@ -393,9 +394,25 @@ async function verifySessionIntegrity(userId) {
         end.setHours(23,59,59,999);
         if (end < today) {
           const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-          alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+          const isTrialUser = metadata.is_trial === true;
+          if (isTrialUser) {
+            alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
+            const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
+            window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
+          } else {
+            alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+          }
           await forceUserLogout();
           return;
+        }
+      }
+      if (window.isTrialActive && metadata.subscription_end) {
+        const banner = document.getElementById('trial-banner');
+        if (banner) {
+          const end = new Date(metadata.subscription_end + 'T12:00:00');
+          const formattedEnd = end.toLocaleDateString('pt-BR');
+          banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs e exportação de CSV estão desativadas.`;
+          banner.style.display = 'flex';
         }
       }
     }
@@ -457,6 +474,7 @@ async function handleUserLoggedIn(user) {
     await forceUserLogout();
     return;
   }
+  window.isTrialActive = (metadata.is_trial === true);
   if (metadata.subscription_end) {
     const end = new Date(metadata.subscription_end);
     const today = new Date();
@@ -464,9 +482,25 @@ async function handleUserLoggedIn(user) {
     end.setHours(23,59,59,999);
     if (end < today) {
       const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-      alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+      const isTrialUser = metadata.is_trial === true;
+      if (isTrialUser) {
+        alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
+        const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
+        window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
+      } else {
+        alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+      }
       await forceUserLogout();
       return;
+    }
+  }
+  if (window.isTrialActive && metadata.subscription_end) {
+    const banner = document.getElementById('trial-banner');
+    if (banner) {
+      const end = new Date(metadata.subscription_end + 'T12:00:00');
+      const formattedEnd = end.toLocaleDateString('pt-BR');
+      banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs e exportação de CSV estão desativadas.`;
+      banner.style.display = 'flex';
     }
   }
 
@@ -2132,6 +2166,10 @@ function setupEventListeners() {
   document.getElementById('btn-save-report').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-save-report-bottom').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-print').addEventListener('click', () => {
+    if (window.isTrialActive) {
+      showTrialPremiumModal();
+      return;
+    }
     if (typeof logTelemetry === 'function') {
       logTelemetry('print_report', { 
         client: document.getElementById('input-cliente')?.value || 'Anonymous',
@@ -2236,6 +2274,10 @@ function setupEventListeners() {
 
 // Exportador CSV
 function exportToCSV() {
+  if (window.isTrialActive) {
+    showTrialPremiumModal();
+    return;
+  }
   const cliente = document.getElementById('input-cliente').value;
   const data = new Date().toLocaleDateString('pt-BR');
   
@@ -2699,3 +2741,14 @@ async function logInspectionStats(inspection, measurementsList = null) {
   }
 }
 
+
+// Helper function to display the premium trial warning modal in flow diagnostics
+function showTrialPremiumModal() {
+  const modal = document.getElementById('trial-premium-modal');
+  if (modal) {
+    document.getElementById('trial-modal-text').innerText = "A geração de laudos técnicos detalhados e orçamentos em PDF é exclusiva para a versão profissional. Libere o acesso ilimitado para gerar relatórios com a sua marca e fechar mais vendas de bicos!";
+    const waMsg = encodeURIComponent("Olá! Gostaria de assinar a versão profissional do Spray Precision PRO para liberar a geração de laudos técnicos em PDF.");
+    document.getElementById('trial-modal-whatsapp').href = `https://wa.me/5565999106415?text=${waMsg}`;
+    modal.style.display = 'flex';
+  }
+}

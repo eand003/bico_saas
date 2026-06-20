@@ -1,0 +1,139 @@
+=== createUserModal fields ===
+1284:         <div class="form-group">
+1285:           <label>Empresa Vinculada (SaaS)</label>
+1286:           <select id="userPartnerSelect" class="input-field" required>
+1287:             <option value="">Carregando empresas...</option>
+1288:           </select>
+1289:         </div>
+1290:         <div class="form-group">
+1291:           <label>Nível de Acesso (Cargo)</label>
+1292:           <select id="userRole" class="input-field" required>
+1293:             <option value="consultor">🌾 Consultor (Apenas seus registros)</option>
+1294:             <option value="gerente">📈 Gerente (Toda a revenda/equipe)</option>
+1295:           </select>
+1296:         </div>
+1297:         <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Criar Usuário no Supabase</button>
+1298:       </form>
+1299:     </div>
+1300:   </div>
+
+=== accessModal fields ===
+1350:         
+1351:         <div class="form-group">
+1352:           <label for="accessSubEnd">Término do Acesso (Assinatura)</label>
+1353:           <input type="date" id="accessSubEnd" class="input-field">
+1354:           <p style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Deixe em branco para acesso ilimitado/livre.</p>
+1355:         </div>
+1356: 
+1357:         <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin: 16px 0;">
+1358:           <input type="checkbox" id="accessIsBlocked" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
+1359:           <label for="accessIsBlocked" style="margin: 0; cursor: pointer; font-weight: 700; color: #ef4444;">🚫 Bloquear Acesso Temporariamente</label>
+1360:         </div>
+1361:         
+1362:         <button type="submit" id="accessSubmitBtn" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Salvar Alterações</button>
+1363:       </form>
+1364:     </div>
+1365:   </div>
+1366: 
+
+=== openAccessModal ===
+1640:       document.getElementById('accessFullName').value = metadata.full_name || '';
+1641:       document.getElementById('accessPhone').value = metadata.phone || '';
+1642:       
+1643:       // Load start and end date from metadata
+1644:       document.getElementById('accessSubStart').value = metadata.subscription_start || '';
+1645:       document.getElementById('accessSubEnd').value = metadata.subscription_end || '';
+1646:       
+1647:       // Load blocked status (checkbox)
+1648:       document.getElementById('accessIsBlocked').checked = metadata.is_blocked === true;
+1649: 
+1650:       document.getElementById('accessModal').style.display = 'flex';
+1651:     }
+1652: 
+1653:     function populatePartnersDropdown(selectElementId, selectValue = '') {
+
+=== renderUsersTable status ===
+2055:         // Assinatura & Acesso status
+2056:         let accessHtml = '';
+2057:         let renewalBtnHtml = '';
+2058:         if (metadata.is_blocked === true) {
+2059:           accessHtml = `<span style="background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🚫 Bloqueado</span>`;
+2060:         } else if (metadata.subscription_end) {
+2061:           const end = new Date(metadata.subscription_end);
+2062:           const today = new Date();
+2063:           today.setHours(0,0,0,0);
+2064:           end.setHours(23,59,59,999);
+2065:           const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+2066:           if (end < today) {
+2067:             accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+2068:           } else {
+2069:             accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+2070:           }
+2071:           // Botão de renovação via WhatsApp (só quando tem subscription_end)
+2072:           if (phone) {
+2073:             const firstName = fullName ? fullName.split(' ')[0] : user.email.split('@')[0];
+2074:             const renewMsg = encodeURIComponent(`Oi ${firstName}! Seu acesso ao Spray Precision PRO vence em ${formattedEnd}. Para continuar usando o Seletor de Bicos + Diagnóstico de Vazão ilimitado, é só fazer o PIX de R$ 60 e eu renovo por mais 30 dias na hora! 🚀`);
+2075:             renewalBtnHtml = `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${renewMsg}" target="_blank" class="btn" style="padding: 6px 10px; font-size: 11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center;" title="Enviar mensagem de renovação no WhatsApp">📲 Renovar</a>`;
+2076:           }
+2077:         } else {
+2078:           accessHtml = `<span style="background:#4b5563; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🌾 Livre</span>`;
+2079:         }
+2080: 
+2081:         const tr = document.createElement('tr');
+2082:         tr.innerHTML = `
+2083:           <td class="user-email-cell" data-label="Usuário">
+2084:             <div style="display:flex; flex-direction:column; gap:2px;">
+2085:               ${fullName ? `<span style="font-weight:700; color:var(--text-main); font-size:13px;">👤 ${fullName}</span>` : ''}
+
+=== createUser ===
+2310:         partnerColor = selectedCompany.partner_color || '#00d2ff';
+2311:         partnerLogo = selectedCompany.partner_logo || './logo.png';
+2312:         partnerWhatsapp = selectedCompany.partner_whatsapp || '';
+2313:         isEnterprise = true;
+2314:       }
+2315: 
+2316:       try {
+2317:         const { data, error } = await supabaseAdmin.auth.admin.createUser({
+2318:           email: email,
+2319:           password: password,
+2320:           email_confirm: true,
+2321:           user_metadata: {
+2322:             full_name: fullName,
+2323:             phone: phone,
+2324:             role: role,
+2325:             partner_id: selectedPartnerId,
+2326:             partner_name: partnerName,
+2327:             partner_color: partnerColor,
+2328:             partner_logo: partnerLogo,
+2329:             partner_whatsapp: partnerWhatsapp,
+2330:             is_enterprise: isEnterprise
+2331:           }
+2332:         });
+2333: 
+2334:         if (error) throw error;
+2335: 
+2336:         alert(`Usuário ${fullName || email} criado com sucesso!`);
+2337:         document.getElementById('createUserModal').style.display = 'none';
+
+=== saveAccessControl ===
+2450:       try {
+2451:         const user = cachedUsers.find(u => u.id === userId);
+2452:         if (!user) throw new Error('Usuário não localizado no cache local.');
+2453: 
+2454:         const currentMetadata = user.user_metadata || {};
+2455:         
+2456:         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+2457:           user_metadata: {
+2458:             ...currentMetadata,
+2459:             full_name: fullName || currentMetadata.full_name || null,
+2460:             phone: phone || currentMetadata.phone || null,
+2461:             subscription_start: subStart ? subStart : null,
+2462:             subscription_end: subEnd ? subEnd : null,
+2463:             is_blocked: isBlocked
+2464:           }
+2465:         });
+2466: 
+2467:         if (error) throw error;
+2468: 
+2469:         alert('Alterações salvas com sucesso!');
+2470:         document.getElementById('accessModal').style.display = 'none';

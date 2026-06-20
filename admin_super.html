@@ -1294,6 +1294,10 @@
             <option value="gerente">📈 Gerente (Toda a revenda/equipe)</option>
           </select>
         </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin: 16px 0;">
+          <input type="checkbox" id="userIsTrial" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
+          <label for="userIsTrial" style="margin: 0; cursor: pointer; font-weight: 700; color: #eab308;">🧪 Conta de Teste (Demo 5 dias)</label>
+        </div>
         <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Criar Usuário no Supabase</button>
       </form>
     </div>
@@ -1354,6 +1358,10 @@
           <p style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Deixe em branco para acesso ilimitado/livre.</p>
         </div>
 
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin: 8px 0 16px 0;">
+          <input type="checkbox" id="accessIsTrial" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
+          <label for="accessIsTrial" style="margin: 0; cursor: pointer; font-weight: 700; color: #eab308;">🧪 Conta de Teste (Demo)</label>
+        </div>
         <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin: 16px 0;">
           <input type="checkbox" id="accessIsBlocked" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
           <label for="accessIsBlocked" style="margin: 0; cursor: pointer; font-weight: 700; color: #ef4444;">🚫 Bloquear Acesso Temporariamente</label>
@@ -1646,6 +1654,9 @@
       
       // Load blocked status (checkbox)
       document.getElementById('accessIsBlocked').checked = metadata.is_blocked === true;
+      
+      // Load trial status
+      document.getElementById('accessIsTrial').checked = metadata.is_trial === true;
 
       document.getElementById('accessModal').style.display = 'flex';
     }
@@ -2063,10 +2074,19 @@
           today.setHours(0,0,0,0);
           end.setHours(23,59,59,999);
           const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          const isTrialUser = metadata.is_trial === true;
           if (end < today) {
-            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+            if (isTrialUser) {
+              accessHtml = `<span style="background:#ea580c; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Demo Expirou ${formattedEnd}</span>`;
+            } else {
+              accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+            }
           } else {
-            accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+            if (isTrialUser) {
+              accessHtml = `<span style="background:#eab308; color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🧪 Demo até ${formattedEnd}</span>`;
+            } else {
+              accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+            }
           }
           // Botão de renovação via WhatsApp (só quando tem subscription_end)
           if (phone) {
@@ -2313,6 +2333,17 @@
         isEnterprise = true;
       }
 
+      const isTrial = document.getElementById('userIsTrial').checked;
+      let subStart = null;
+      let subEnd = null;
+      if (isTrial) {
+        const today = new Date();
+        subStart = today.toISOString().split('T')[0];
+        const trialEnd = new Date(today);
+        trialEnd.setDate(today.getDate() + 5);
+        subEnd = trialEnd.toISOString().split('T')[0];
+      }
+
       try {
         const { data, error } = await supabaseAdmin.auth.admin.createUser({
           email: email,
@@ -2327,7 +2358,10 @@
             partner_color: partnerColor,
             partner_logo: partnerLogo,
             partner_whatsapp: partnerWhatsapp,
-            is_enterprise: isEnterprise
+            is_enterprise: isEnterprise,
+            subscription_start: subStart,
+            subscription_end: subEnd,
+            is_trial: isTrial
           }
         });
 
@@ -2340,6 +2374,7 @@
         document.getElementById('userPhone').value = '';
         document.getElementById('userEmail').value = '';
         document.getElementById('userPassword').value = '';
+        document.getElementById('userIsTrial').checked = false;
         
         fetchDatabaseData();
 
@@ -2453,6 +2488,7 @@
 
         const currentMetadata = user.user_metadata || {};
         
+        const isTrial = document.getElementById('accessIsTrial').checked;
         const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
           user_metadata: {
             ...currentMetadata,
@@ -2460,7 +2496,8 @@
             phone: phone || currentMetadata.phone || null,
             subscription_start: subStart ? subStart : null,
             subscription_end: subEnd ? subEnd : null,
-            is_blocked: isBlocked
+            is_blocked: isBlocked,
+            is_trial: isTrial
           }
         });
 

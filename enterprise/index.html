@@ -2271,6 +2271,9 @@
 
       function setMode(mode) {
         MACHINE_MODE = mode;
+        if (typeof logTelemetry === 'function') {
+          logTelemetry('select_mode', { mode: mode });
+        }
 
         document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
         const activeTab = document.getElementById(`tab-${mode}`);
@@ -3628,6 +3631,30 @@
       }
 
       function generateReport() {
+        if (typeof logTelemetry === 'function') {
+          const inp = readInputs();
+          logTelemetry('generate_report', {
+            machineMode: MACHINE_MODE,
+            spacing: inp ? inp.spacingM * 100 : 50,
+            rate: inp ? inp.rate : 50,
+            vMin: inp ? inp.vMin : 14,
+            vMax: inp ? inp.vMax : 20
+          });
+        }
+
+        if (typeof logAnonymousSimulationStats === 'function' && window.topNozzle) {
+          const recommendedNozzle = `ISO-${window.topNozzle.nz.iso}`;
+          let veredito = 'N/A';
+          if (MACHINE_MODE === 'conventional') {
+            veredito = (window.topNozzle.statusText || 'N/A').toUpperCase();
+          } else if (MACHINE_MODE === 'pwm') {
+            veredito = (window.topNozzle.status || window.topNozzle.statusText || 'N/A').toUpperCase();
+          } else if (MACHINE_MODE === 'dual') {
+            veredito = (window.topNozzle.statusText || window.topNozzle.status || 'N/A').toUpperCase();
+          }
+          logAnonymousSimulationStats(recommendedNozzle, veredito);
+        }
+
         // Tenta obter o nome da empresa de forma extremamente robusta e tolerante a falhas
         let pName = window.partnerName;
         
@@ -5553,6 +5580,53 @@
 
     let clienteSupabase;
 
+    async function logTelemetry(eventType, details = {}) {
+      if (!clienteSupabase || !navigator.onLine) return;
+      try {
+        const session = await clienteSupabase.auth.getSession().then(({ data: { session } }) => session).catch(() => null);
+        const userId = session?.user?.id || null;
+        const userEmail = session?.user?.email || null;
+        
+        await clienteSupabase.from('user_telemetry').insert([{
+          user_id: userId,
+          user_email: userEmail,
+          event_type: eventType,
+          app_module: 'enterprise',
+          details: details
+        }]);
+      } catch (e) {
+        console.warn('Erro ao registrar telemetria:', e);
+      }
+    }
+
+    async function logAnonymousSimulationStats(nozzleCode, veredito) {
+      if (!clienteSupabase || !navigator.onLine) return;
+      try {
+        const activeSessionJson = localStorage.getItem('spray_active_machine_session');
+        let uf = null;
+        let culture = null;
+        if (activeSessionJson) {
+          try {
+            const activeSession = JSON.parse(activeSessionJson);
+            uf = activeSession.client_state || null;
+            culture = activeSession.machine_culture || null;
+          } catch (e) {}
+        }
+        
+        await clienteSupabase.from('anonymous_inspections_stats').insert([{
+          state_uf: uf,
+          culture: culture,
+          cv_percentage: null,
+          veredito: veredito,
+          nozzle_iso_code: nozzleCode,
+          machine_mode: MACHINE_MODE,
+          partner_id: window.partnerId || null
+        }]);
+      } catch (e) {
+        console.warn('Erro ao registrar estatísticas anônimas de simulação:', e);
+      }
+    }
+
     function initAuth() {
       try {
         clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -5904,6 +5978,7 @@
 
       window.partnerWhatsApp = whatsapp;
       window.partnerName = name;
+      window.partnerId = meta.partner_id || null;
 
       const allWaLinks = document.querySelectorAll('a[href*="wa.me"]');
       allWaLinks.forEach(link => {

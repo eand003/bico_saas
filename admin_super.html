@@ -866,7 +866,8 @@
       <button class="tab-btn active" id="tabUsersBtn" onclick="switchTab('users')">👥 Gestão de Usuários</button>
       <button class="tab-btn" id="tabCompaniesBtn" onclick="switchTab('companies')">🏢 Cadastro de Empresas (SaaS)</button>
       <button class="tab-btn" id="tabConfigsBtn" onclick="switchTab('configs')">📢 Configurações do Hub</button>
-      <button class="tab-btn" id="tabCrmBtn" onclick="switchTab('crm')">📊 CRM Geral</button>
+      <button class="tab-btn" id="tabCrmBtn" onclick="switchTab('crm')">📂 CRM Geral</button>
+      <button class="tab-btn" id="tabBiBtn" onclick="switchTab('bi')">📊 BI & Estatísticas</button>
     </div>
 
     <!-- Stats Dashboard -->
@@ -1077,6 +1078,77 @@
           <!-- Dynamic cards -->
           <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
             <p>Carregando registros do CRM...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5 CONTENT: BI & Estatísticas -->
+    <div id="tabBiContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px; margin-bottom: 20px;">
+        <div class="table-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin-bottom: 0;">📊 Business Intelligence & Telemetria</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Monitore a adoção do produto, uso de tecnologias e perfil técnico-comercial de campo.</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <label for="biPartnerSelect" style="font-size: 12px; color: var(--text-muted);">Empresa Parceira:</label>
+            <select id="biPartnerSelect" class="input-field" style="width: auto; margin: 0; padding: 6px 12px; font-size: 12px; height: 32px;" onchange="fetchBiData()">
+              <option value="all">Todas as Empresas</option>
+            </select>
+            <button class="btn" onclick="fetchBiData()" style="padding: 6px 12px; font-size: 12px; height: 32px;">🔄 Atualizar BI</button>
+          </div>
+        </div>
+
+        <!-- Mini Stats Summary -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;">
+          <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Ações Registradas</span>
+            <span id="biStatsActions" style="font-size: 20px; font-weight: 700; color: var(--accent); display: block; margin-top: 5px;">0</span>
+          </div>
+          <div class="stat-card green" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Aferições Realizadas</span>
+            <span id="biStatsInspections" style="font-size: 20px; font-weight: 700; color: #10b981; display: block; margin-top: 5px;">0</span>
+          </div>
+          <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">CV% Médio da Barra</span>
+            <span id="biStatsAvgCv" style="font-size: 20px; font-weight: 700; color: #fbbf24; display: block; margin-top: 5px;">0.0%</span>
+          </div>
+          <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Cultura Predominante</span>
+            <span id="biStatsTopCrop" style="font-size: 16px; font-weight: 700; color: #60a5fa; display: block; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">—</span>
+          </div>
+        </div>
+
+        <!-- Grid of charts -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+          <!-- Chart 1: Cultures -->
+          <div class="glass-panel" style="padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; color: var(--text-muted);">🌱 Culturas Monitoradas</h4>
+            <div style="height: 250px; position: relative;">
+              <canvas id="chartBiCultures"></canvas>
+            </div>
+          </div>
+          <!-- Chart 2: Verdicts -->
+          <div class="glass-panel" style="padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; color: var(--text-muted);">🩺 Vereditos das Aferições (Estado Geral)</h4>
+            <div style="height: 250px; position: relative;">
+              <canvas id="chartBiVerdicts"></canvas>
+            </div>
+          </div>
+          <!-- Chart 3: Tech Modes -->
+          <div class="glass-panel" style="padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; color: var(--text-muted);">⚡ Tecnologias de Simulação Usadas</h4>
+            <div style="height: 250px; position: relative;">
+              <canvas id="chartBiTechs"></canvas>
+            </div>
+          </div>
+          <!-- Chart 4: Popular ISO Nozzles -->
+          <div class="glass-panel" style="padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05);">
+            <h4 style="margin-top: 0; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; color: var(--text-muted);">🛍️ Bicos ISO Mais Recomendados/Aferidos (Inteligência de Estoque)</h4>
+            <div style="height: 250px; position: relative;">
+              <canvas id="chartBiNozzles"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -1339,11 +1411,13 @@
       document.getElementById('tabCompaniesBtn').classList.toggle('active', tab === 'companies');
       document.getElementById('tabConfigsBtn').classList.toggle('active', tab === 'configs');
       document.getElementById('tabCrmBtn').classList.toggle('active', tab === 'crm');
+      document.getElementById('tabBiBtn').classList.toggle('active', tab === 'bi');
       
       document.getElementById('tabUsersContent').style.display = tab === 'users' ? 'grid' : 'none';
       document.getElementById('tabCompaniesContent').style.display = tab === 'companies' ? 'block' : 'none';
       document.getElementById('tabConfigsContent').style.display = tab === 'configs' ? 'block' : 'none';
       document.getElementById('tabCrmContent').style.display = tab === 'crm' ? 'block' : 'none';
+      document.getElementById('tabBiContent').style.display = tab === 'bi' ? 'block' : 'none';
       
       if (tab === 'companies') {
         renderCompaniesGrid();
@@ -1351,6 +1425,9 @@
         loadGlobalConfigs();
       } else if (tab === 'crm') {
         renderCrmTab();
+      } else if (tab === 'bi') {
+        populateBiPartnerSelect();
+        fetchBiData();
       }
     }
 
@@ -1738,6 +1815,10 @@
           renderCompaniesGrid();
         } else if (currentTab === 'configs') {
           loadGlobalConfigs();
+        } else if (currentTab === 'crm') {
+          renderCrmTab();
+        } else if (currentTab === 'bi') {
+          fetchBiData();
         }
 
       } catch (err) {
@@ -2851,6 +2932,263 @@ async function loadHubViews3d() {
     .gte('viewed_at', fromDate.toISOString());
   const el = document.getElementById('statsHubViews3d');
   if (el) el.textContent = error ? '?' : (data ? data.length : 0);
+}
+
+// ==========================================
+// 17. PAINEL DE BUSINESS INTELLIGENCE (BI) E GRÁFICOS
+// ==========================================
+let biCharts = {};
+
+function populateBiPartnerSelect() {
+  const select = document.getElementById('biPartnerSelect');
+  if (!select) return;
+  
+  const currentSelection = select.value || 'all';
+  select.innerHTML = '<option value="all">Todas as Empresas</option>';
+  
+  cachedEmpresas.forEach(comp => {
+    const opt = document.createElement('option');
+    opt.value = comp.partner_id;
+    opt.innerText = comp.partner_name;
+    select.appendChild(opt);
+  });
+  
+  select.value = currentSelection;
+}
+
+async function fetchBiData() {
+  if (!supabaseAdmin) return;
+  showLoading(true);
+  
+  const selectedPartner = document.getElementById('biPartnerSelect')?.value || 'all';
+  
+  try {
+    // 1. Fetch user_telemetry
+    let telemetryQuery = supabaseAdmin.from('user_telemetry').select('*');
+    
+    // If filtering by partner, find all user IDs belonging to this partner
+    if (selectedPartner !== 'all') {
+      const partnerUserIds = cachedUsers
+        .filter(u => u.user_metadata && u.user_metadata.partner_id === selectedPartner)
+        .map(u => u.id);
+      
+      if (partnerUserIds.length > 0) {
+        telemetryQuery = telemetryQuery.in('user_id', partnerUserIds);
+      } else {
+        // No users in this partner, force empty results
+        telemetryQuery = telemetryQuery.eq('user_id', '00000000-0000-0000-0000-000000000000');
+      }
+    }
+    
+    const { data: telemetryData, error: telError } = await telemetryQuery;
+    if (telError) throw telError;
+    
+    // 2. Fetch anonymous_inspections_stats
+    let statsQuery = supabaseAdmin.from('anonymous_inspections_stats').select('*');
+    if (selectedPartner !== 'all') {
+      statsQuery = statsQuery.eq('partner_id', selectedPartner);
+    }
+    
+    const { data: statsData, error: statsError } = await statsQuery;
+    if (statsError) throw statsError;
+    
+    // 3. Process indicators for mini stats
+    document.getElementById('biStatsActions').textContent = telemetryData.length;
+    document.getElementById('biStatsInspections').textContent = statsData.length;
+    
+    let sumCv = 0;
+    let countCv = 0;
+    const cropCounts = {};
+    
+    statsData.forEach(row => {
+      if (row.cv_percentage !== null) {
+        sumCv += parseFloat(row.cv_percentage);
+        countCv++;
+      }
+      if (row.culture) {
+        const crop = row.culture.trim().toUpperCase();
+        cropCounts[crop] = (cropCounts[crop] || 0) + 1;
+      }
+    });
+    
+    const avgCv = countCv > 0 ? (sumCv / countCv).toFixed(1) + '%' : '0.0%';
+    document.getElementById('biStatsAvgCv').textContent = avgCv;
+    
+    let topCrop = 'N/A';
+    let maxCropCount = 0;
+    Object.keys(cropCounts).forEach(c => {
+      if (cropCounts[c] > maxCropCount) {
+        maxCropCount = cropCounts[c];
+        topCrop = c;
+      }
+    });
+    document.getElementById('biStatsTopCrop').textContent = topCrop;
+    
+    // 4. Render charts
+    renderBiCharts(telemetryData, statsData);
+    
+  } catch (err) {
+    console.error('Erro ao buscar dados do BI:', err);
+    alert('Erro ao carregar dados do painel de BI: ' + err.message);
+  } finally {
+    showLoading(false);
+  }
+}
+
+function renderBiCharts(telemetryData, statsData) {
+  // Clear any existing chart instances to prevent canvas reuse errors
+  Object.keys(biCharts).forEach(key => {
+    if (biCharts[key]) {
+      biCharts[key].destroy();
+      biCharts[key] = null;
+    }
+  });
+  
+  // 1. Chart 1: Cultures (Pie/Doughnut)
+  const crops = {};
+  statsData.forEach(row => {
+    if (row.culture) {
+      const name = row.culture.trim().toUpperCase();
+      crops[name] = (crops[name] || 0) + 1;
+    }
+  });
+  const cropsLabels = Object.keys(crops);
+  const cropsData = Object.values(crops);
+  
+  const ctxCrops = document.getElementById('chartBiCultures').getContext('2d');
+  biCharts.crops = new Chart(ctxCrops, {
+    type: 'doughnut',
+    data: {
+      labels: cropsLabels.length ? cropsLabels : ['Nenhum Dado'],
+      datasets: [{
+        data: cropsData.length ? cropsData : [1],
+        backgroundColor: cropsData.length ? ['#10b981', '#3b82f6', '#fbbf24', '#f87171', '#a78bfa', '#ec4899', '#6b7280'] : ['rgba(255,255,255,0.05)'],
+        borderWidth: 1,
+        borderColor: '#05080a'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#94a3b8' } } }
+    }
+  });
+  
+  // 2. Chart 2: Verdicts (Pie/Doughnut)
+  const verdicts = { 'APROVADO': 0, 'RESSALVA': 0, 'REPROVADO': 0 };
+  statsData.forEach(row => {
+    if (row.veredito) {
+      const v = row.veredito.trim().toUpperCase();
+      if (verdicts[v] !== undefined) {
+        verdicts[v]++;
+      }
+    }
+  });
+  const verdictsLabels = Object.keys(verdicts);
+  const verdictsData = Object.values(verdicts);
+  
+  const ctxVerdicts = document.getElementById('chartBiVerdicts').getContext('2d');
+  biCharts.verdicts = new Chart(ctxVerdicts, {
+    type: 'pie',
+    data: {
+      labels: verdictsLabels,
+      datasets: [{
+        data: verdictsData,
+        backgroundColor: ['#10b981', '#fbbf24', '#ef4444'],
+        borderWidth: 1,
+        borderColor: '#05080a'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#94a3b8' } } }
+    }
+  });
+  
+  // 3. Chart 3: Tech Modes (Bar)
+  const techs = { 'conventional': 0, 'pwm': 0, 'dual': 0 };
+  telemetryData.forEach(row => {
+    if (row.event_type === 'select_mode' && row.details && row.details.mode) {
+      const mode = row.details.mode;
+      if (techs[mode] !== undefined) {
+        techs[mode]++;
+      }
+    }
+  });
+  
+  // Combine with simulation stats machine modes if available
+  statsData.forEach(row => {
+    if (row.machine_mode && row.machine_mode !== 'manual_boom') {
+      const m = row.machine_mode;
+      if (techs[m] !== undefined) {
+        techs[m]++;
+      }
+    }
+  });
+  
+  const ctxTechs = document.getElementById('chartBiTechs').getContext('2d');
+  biCharts.techs = new Chart(ctxTechs, {
+    type: 'bar',
+    data: {
+      labels: ['Convencional', 'PWM', 'Bico Duplo'],
+      datasets: [{
+        label: 'Acessos / Seleções',
+        data: [techs.conventional, techs.pwm, techs.dual],
+        backgroundColor: '#3b82f6',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+        y: { ticks: { color: '#94a3b8', precision: 0 }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+  
+  // 4. Chart 4: Popular ISO Nozzles (Horizontal Bar)
+  const nozzles = {};
+  statsData.forEach(row => {
+    if (row.nozzle_iso_code) {
+      let code = row.nozzle_iso_code.trim().toUpperCase();
+      if (!code.startsWith('ISO-') && !code.startsWith('ISO ')) {
+        code = 'ISO ' + code;
+      }
+      nozzles[code] = (nozzles[code] || 0) + 1;
+    }
+  });
+  
+  const sortedNozzles = Object.keys(nozzles).map(k => ({ code: k, count: nozzles[k] })).sort((a,b) => b.count - a.count).slice(0, 10);
+  const nozzlesLabels = sortedNozzles.map(n => n.code);
+  const nozzlesData = sortedNozzles.map(n => n.count);
+  
+  const ctxNozzles = document.getElementById('chartBiNozzles').getContext('2d');
+  biCharts.nozzles = new Chart(ctxNozzles, {
+    type: 'bar',
+    data: {
+      labels: nozzlesLabels.length ? nozzlesLabels : ['Nenhum Bico'],
+      datasets: [{
+        label: 'Quantidade Recomendada/Aferida',
+        data: nozzlesData.length ? nozzlesData : [0],
+        backgroundColor: '#fbbf24',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#94a3b8', precision: 0 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+      }
+    }
+  });
 }
 </script>
 <!-- Hub Traffic Dashboard Modal -->

@@ -3147,6 +3147,9 @@
       // --- CONTROLE DE MODO & PRESETS ---
       function setMode(mode) {
         MACHINE_MODE = mode;
+        if (typeof logTelemetry === 'function') {
+          logTelemetry('select_mode', { mode: mode });
+        }
 
         document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
         const activeTab = document.getElementById(`tab-${mode}`);
@@ -3577,6 +3580,46 @@
 
       // --- RELATÓRIO PDF COM GRÁFICOS INTEGRADOS ---
       function generateReport() {
+        if (typeof logTelemetry === 'function') {
+          logTelemetry('generate_report', {
+            machineMode: MACHINE_MODE,
+            spacing: parseFloat(document.getElementById('numSpacing')?.value) || 50,
+            rate: parseFloat(document.getElementById('numRate')?.value) || 50,
+            vMin: parseFloat(document.getElementById('numVMin')?.value) || 14,
+            vMax: parseFloat(document.getElementById('numVMax')?.value) || 20
+          });
+        }
+        
+        if (typeof logAnonymousSimulationStats === 'function') {
+          let recommendedNozzle = null;
+          let veredito = 'N/A';
+          if (MACHINE_MODE === 'conventional') {
+            const list = calculateConventional();
+            const best = list.find(c => c.hasGreen) || list.find(c => c.hasYellow) || list[0];
+            if (best) {
+              recommendedNozzle = `ISO-${best.iso}`;
+              veredito = best.hasGreen ? 'ATENDE' : (best.hasYellow ? 'PARCIAL' : 'REPROVADO');
+            }
+          } else if (MACHINE_MODE === 'pwm') {
+            const list = calculatePWM();
+            const best = list.find(c => c.status === 'Atende') || list.find(c => c.status === 'Parcial') || list[0];
+            if (best) {
+              recommendedNozzle = `ISO-${best.iso}`;
+              veredito = best.status.toUpperCase();
+            }
+          } else if (MACHINE_MODE === 'dual') {
+            const list = calculateVelocityCoverage();
+            const best = list.find(c => c.status === 'Cobertura Total') || list[0];
+            if (best) {
+              recommendedNozzle = `ISO-${best.nzA.iso}+${best.nzB.iso}`;
+              veredito = best.status === 'Cobertura Total' ? 'APROVADO' : 'REPROVADO';
+            }
+          }
+          if (recommendedNozzle) {
+            logAnonymousSimulationStats(recommendedNozzle, veredito);
+          }
+        }
+
         const pName = 'Spray Precision PRO';
         const pLogo = '../logo.png';
         const pColor = '#00d2ff';
@@ -5054,6 +5097,52 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
 
     let clienteSupabase;
+
+    async function logTelemetry(eventType, details = {}) {
+      if (!clienteSupabase || !navigator.onLine) return;
+      try {
+        const session = await clienteSupabase.auth.getSession().then(({ data: { session } }) => session).catch(() => null);
+        const userId = session?.user?.id || null;
+        const userEmail = session?.user?.email || null;
+        
+        await clienteSupabase.from('user_telemetry').insert([{
+          user_id: userId,
+          user_email: userEmail,
+          event_type: eventType,
+          app_module: 'seletor-bico',
+          details: details
+        }]);
+      } catch (e) {
+        console.warn('Erro ao registrar telemetria:', e);
+      }
+    }
+
+    async function logAnonymousSimulationStats(nozzleCode, veredito) {
+      if (!clienteSupabase || !navigator.onLine) return;
+      try {
+        const activeSessionJson = localStorage.getItem('spray_active_machine_session');
+        let uf = null;
+        let culture = null;
+        if (activeSessionJson) {
+          try {
+            const activeSession = JSON.parse(activeSessionJson);
+            uf = activeSession.client_state || null;
+            culture = activeSession.machine_culture || null;
+          } catch (e) {}
+        }
+        
+        await clienteSupabase.from('anonymous_inspections_stats').insert([{
+          state_uf: uf,
+          culture: culture,
+          cv_percentage: null,
+          veredito: veredito,
+          nozzle_iso_code: nozzleCode,
+          machine_mode: MACHINE_MODE
+        }]);
+      } catch (e) {
+        console.warn('Erro ao registrar estatísticas anônimas de simulação:', e);
+      }
+    }
 
     function initAuth() {
       try {

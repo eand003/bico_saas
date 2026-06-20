@@ -243,6 +243,7 @@ function applyPartnerBranding(meta) {
   // Salvar no escopo global/window para uso em PDFs ou links
   window.partnerWhatsApp = whatsapp;
   window.partnerName = name;
+  window.partnerId = meta.partner_id || null;
 
   // 5. Ajustar o Responsável Técnico / Inspetor com base no parceiro
   const responsavelInput = document.getElementById('input-responsavel');
@@ -316,6 +317,7 @@ function resetPartnerBranding() {
 
   window.partnerWhatsApp = null;
   window.partnerName = null;
+  window.partnerId = null;
 }
 
 // Registra a sessão ativa do usuário no Supabase e localStorage usando o session_id nativo do Supabase
@@ -475,6 +477,9 @@ async function handleUserLoggedIn(user) {
   
   // Registrar nova sessão ativa
   await registerActiveSession(user.id);
+  if (typeof logTelemetry === 'function') {
+    logTelemetry('login', { email: user.email });
+  }
   if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
   window.sessionCheckInterval = setInterval(async () => {
     await verifySessionIntegrity(user.id);
@@ -1614,7 +1619,16 @@ async function saveInspectionToDatabase(summary) {
     const saved = await saveInspection(header, measurements);
     currentInspectionId = saved.id;
     console.log("Diagnóstico salvo com sucesso no banco de dados!", saved.id);
+    if (typeof logTelemetry === 'function') {
+      logTelemetry('save_diagnostic', { nozzle_model: header.nozzle_model, total_nozzles: header.total_nozzles });
+    }
+    if (typeof logInspectionStats === 'function') {
+      logInspectionStats(header);
+    }
   } catch (error) {
+    if (typeof logTelemetry === 'function') {
+      logTelemetry('save_diagnostic_offline', { nozzle_model: header.nozzle_model, total_nozzles: header.total_nozzles });
+    }
     console.error("Falha ao salvar diagnóstico online, executando contingência local:", error);
     
     // CONTINGÊNCIA: Salvar localmente via localStorage de forma segura
@@ -1977,6 +1991,9 @@ function setupVoiceAssistant() {
     } else {
       startListening();
       speak(t("Assistente ativado. Diga o volume ou cronômetro."));
+      if (typeof logTelemetry === 'function') {
+        logTelemetry('enable_voice_assistant');
+      }
     }
   });
 }
@@ -2114,7 +2131,15 @@ function setupEventListeners() {
   // Ações de relatório
   document.getElementById('btn-save-report').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-save-report-bottom').addEventListener('click', handleSaveInspectionWorkflow);
-  document.getElementById('btn-print').addEventListener('click', () => window.print());
+  document.getElementById('btn-print').addEventListener('click', () => {
+    if (typeof logTelemetry === 'function') {
+      logTelemetry('print_report', { 
+        client: document.getElementById('input-cliente')?.value || 'Anonymous',
+        total_nozzles: totalNozzles
+      });
+    }
+    window.print();
+  });
   document.getElementById('btn-export-csv').addEventListener('click', exportToCSV);
   document.getElementById('btn-export-json').addEventListener('click', exportToJSON);
 
@@ -2594,4 +2619,60 @@ window.addEventListener('afterprint', () => {
     });
   }
 });
+
+// ==========================================
+// 16. SISTEMA DE TELEMETRIA E INTELIGÊNCIA COMERCIAL (LGPD COMPLIANT)
+// ==========================================
+async function logTelemetry(eventType, details = {}) {
+  const supabase = window.supabaseClient;
+  if (!supabase || !navigator.onLine) return;
+  try {
+    const { data: { session } } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
+    const userId = session?.user?.id || null;
+    const userEmail = session?.user?.email || null;
+    
+    await supabase.from('user_telemetry').insert([{
+      user_id: userId,
+      user_email: userEmail,
+      event_type: eventType,
+      app_module: 'flow_diagnostic',
+      details: details
+    }]);
+  } catch (e) {
+    console.warn('Erro ao registrar telemetria:', e);
+  }
+}
+
+async function logInspectionStats(inspection) {
+  const supabase = window.supabaseClient;
+  if (!supabase || !navigator.onLine || !inspection) return;
+  try {
+    let nozzleCode = inspection.nozzle_model || 'N/A';
+    if (inspection.expected_flow_l_min) {
+      const nozzleISO = document.getElementById('select-iso-nozzle')?.value;
+      if (nozzleISO) {
+        nozzleCode = nozzleISO;
+      }
+    }
+    
+    let veredito = 'N/A';
+    if (inspection.summary) {
+      const reprovados = inspection.summary.red_nozzles_count || 0;
+      const atencao = inspection.summary.yellow_nozzles_count || 0;
+      veredito = reprovados > 0 ? 'REPROVADO' : (atencao > 0 ? 'RESSALVA' : 'APROVADO');
+    }
+
+    await supabase.from('anonymous_inspections_stats').insert([{
+      state_uf: inspection.state || null,
+      culture: inspection.crop || null,
+      cv_percentage: inspection.summary ? inspection.summary.cv_percent : null,
+      veredito: veredito,
+      nozzle_iso_code: nozzleCode,
+      machine_mode: 'manual_boom',
+      partner_id: window.partnerId || null
+    }]);
+  } catch (e) {
+    console.warn('Erro ao registrar estatísticas anônimas de calibração:', e);
+  }
+}
 

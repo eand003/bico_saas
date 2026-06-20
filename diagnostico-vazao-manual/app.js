@@ -1623,7 +1623,7 @@ async function saveInspectionToDatabase(summary) {
       logTelemetry('save_diagnostic', { nozzle_model: header.nozzle_model, total_nozzles: header.total_nozzles });
     }
     if (typeof logInspectionStats === 'function') {
-      logInspectionStats(header);
+      logInspectionStats(header, measurements);
     }
   } catch (error) {
     if (typeof logTelemetry === 'function') {
@@ -2643,7 +2643,7 @@ async function logTelemetry(eventType, details = {}) {
   }
 }
 
-async function logInspectionStats(inspection) {
+async function logInspectionStats(inspection, measurementsList = null) {
   const supabase = window.supabaseClient;
   if (!supabase || !navigator.onLine || !inspection) return;
   try {
@@ -2662,6 +2662,25 @@ async function logInspectionStats(inspection) {
       veredito = reprovados > 0 ? 'REPROVADO' : (atencao > 0 ? 'RESSALVA' : 'APROVADO');
     }
 
+    // Calcular contagens de desvio das pontas
+    let nozzlesEvaluated = 0;
+    let nozzlesAbove10 = 0;
+    let nozzlesBelow10 = 0;
+    let nozzlesAbove15 = 0;
+    
+    const listToUse = measurementsList || window.measurements || [];
+    if (Array.isArray(listToUse)) {
+      listToUse.forEach(m => {
+        if (m.status && m.status !== 'nao_avaliado') {
+          nozzlesEvaluated++;
+          const dev = m.deviation_percent || 0;
+          if (dev > 10) nozzlesAbove10++;
+          if (dev < -10) nozzlesBelow10++;
+          if (dev > 15) nozzlesAbove15++;
+        }
+      });
+    }
+
     await supabase.from('anonymous_inspections_stats').insert([{
       state_uf: inspection.state || null,
       culture: inspection.crop || null,
@@ -2669,7 +2688,11 @@ async function logInspectionStats(inspection) {
       veredito: veredito,
       nozzle_iso_code: nozzleCode,
       machine_mode: 'manual_boom',
-      partner_id: window.partnerId || null
+      partner_id: window.partnerId || null,
+      nozzles_evaluated: nozzlesEvaluated,
+      nozzles_above_10: nozzlesAbove10,
+      nozzles_below_10: nozzlesBelow10,
+      nozzles_above_15: nozzlesAbove15
     }]);
   } catch (e) {
     console.warn('Erro ao registrar estatísticas anônimas de calibração:', e);

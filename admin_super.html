@@ -1120,6 +1120,27 @@
           </div>
         </div>
 
+        <!-- Nozzle Diagnostic Metrics -->
+        <h4 style="margin-top: 10px; margin-bottom: 12px; font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">🔍 Análise de Desgaste e Obstrução de Pontas (Total Acumulado)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;">
+          <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Pontas Aferidas</span>
+            <span id="biStatsNozzlesTotal" style="font-size: 20px; font-weight: 700; color: var(--accent); display: block; margin-top: 5px;">0</span>
+          </div>
+          <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; border-left: 3px solid #fbbf24;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Desgaste (&gt; 10%)</span>
+            <span id="biStatsNozzlesAbove10" style="font-size: 20px; font-weight: 700; color: #fbbf24; display: block; margin-top: 5px;">0</span>
+          </div>
+          <div class="stat-card" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; border-left: 3px solid #3b82f6;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Obstrução (&lt; -10%)</span>
+            <span id="biStatsNozzlesBelow10" style="font-size: 20px; font-weight: 700; color: #3b82f6; display: block; margin-top: 5px;">0</span>
+          </div>
+          <div class="stat-card red" style="padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; border-left: 3px solid #ef4444;">
+            <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Desgaste Crítico (&gt; 15%)</span>
+            <span id="biStatsNozzlesAbove15" style="font-size: 20px; font-weight: 700; color: #ef4444; display: block; margin-top: 5px;">0</span>
+          </div>
+        </div>
+
         <!-- Grid of charts -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
           <!-- Chart 1: Cultures -->
@@ -3000,6 +3021,11 @@ async function fetchBiData() {
     let countCv = 0;
     const cropCounts = {};
     
+    let nozzlesTotal = 0;
+    let nozzlesAbove10 = 0;
+    let nozzlesBelow10 = 0;
+    let nozzlesAbove15 = 0;
+    
     statsData.forEach(row => {
       if (row.cv_percentage !== null) {
         sumCv += parseFloat(row.cv_percentage);
@@ -3009,6 +3035,12 @@ async function fetchBiData() {
         const crop = row.culture.trim().toUpperCase();
         cropCounts[crop] = (cropCounts[crop] || 0) + 1;
       }
+      
+      // Acumular métricas de pontas
+      nozzlesTotal += parseInt(row.nozzles_evaluated || 0);
+      nozzlesAbove10 += parseInt(row.nozzles_above_10 || 0);
+      nozzlesBelow10 += parseInt(row.nozzles_below_10 || 0);
+      nozzlesAbove15 += parseInt(row.nozzles_above_15 || 0);
     });
     
     const avgCv = countCv > 0 ? (sumCv / countCv).toFixed(1) + '%' : '0.0%';
@@ -3023,6 +3055,12 @@ async function fetchBiData() {
       }
     });
     document.getElementById('biStatsTopCrop').textContent = topCrop;
+    
+    // Atualizar indicadores de pontas
+    document.getElementById('biStatsNozzlesTotal').textContent = nozzlesTotal;
+    document.getElementById('biStatsNozzlesAbove10').textContent = nozzlesAbove10;
+    document.getElementById('biStatsNozzlesBelow10').textContent = nozzlesBelow10;
+    document.getElementById('biStatsNozzlesAbove15').textContent = nozzlesAbove15;
     
     // 4. Render charts
     renderBiCharts(telemetryData, statsData);

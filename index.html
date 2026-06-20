@@ -711,7 +711,7 @@
       border-radius: 28px;
       padding: 40px 30px;
       width: 100%;
-      max-width: 950px;
+      max-width: 1100px;
       position: relative;
       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 210, 255, 0.15);
       text-align: center;
@@ -734,6 +734,7 @@
       background: linear-gradient(135deg, #ffffff 40%, #a5f3fc 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
     }
     .pricing-header p {
       color: var(--text-muted);
@@ -741,7 +742,7 @@
     }
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 20px;
       align-items: stretch;
       margin-bottom: 10px;
@@ -878,18 +879,17 @@
       top: 20px;
       right: 20px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: none;
       color: var(--text-muted);
-      font-size: 1.5rem;
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
+      font-size: 22px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s;
-      z-index: 10;
+      transition: all 0.2s;
     }
     .pricing-close:hover {
       color: #fff;
@@ -897,10 +897,19 @@
       transform: rotate(90deg);
     }
     
-    @media (max-width: 820px) {
+    @media (max-width: 990px) {
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      .pricing-content {
+        max-width: 750px;
+      }
+    }
+    @media (max-width: 600px) {
       .pricing-grid {
         grid-template-columns: 1fr;
-        gap: 25px;
+        gap: 20px;
       }
       .pricing-content {
         max-width: 480px;
@@ -934,6 +943,241 @@
       color: #ffffff;
       box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
       transform: translateY(-1px);
+    }
+
+    /* === TRIAL REGISTRATION STYLE === */
+    .trial-cta-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 20px 30px;
+      width: 100%;
+      max-width: 860px;
+      margin: 20px auto 40px auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    }
+    .trial-cta-text {
+      text-align: left;
+    }
+    .trial-cta-text h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .trial-cta-text p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .trial-cta-btn {
+      background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+      color: #000000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2);
+    }
+    .trial-cta-btn:hover {
+      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.45);
+      transform: translateY(-2px);
+    }
+
+    @media screen and (max-width: 650px) {
+      .trial-cta-container {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px 20px;
+      }
+      .trial-cta-text {
+        text-align: center;
+      }
+      .trial-cta-btn {
+        width: 100%;
+      }
+    }
+
+    .trial-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(5, 8, 10, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 1100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .trial-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+      display: flex;
+    }
+    .trial-content {
+      background: rgba(15, 20, 24, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(234, 179, 8, 0.1);
+      transform: scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .trial-overlay.show .trial-content {
+      transform: scale(1);
+    }
+    .trial-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .trial-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+    .trial-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .trial-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .trial-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .trial-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .trial-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .trial-input-group label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .trial-input {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s;
+    }
+    .trial-input:focus {
+      outline: none;
+      border-color: #eab308;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 10px rgba(234, 179, 8, 0.15);
+    }
+    .trial-checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+    .trial-checkbox-label input {
+      margin-top: 2px;
+    }
+    .trial-submit-btn {
+      background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+      color: #000000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2);
+    }
+    .trial-submit-btn:hover:not(:disabled) {
+      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.4);
+      transform: translateY(-1px);
+    }
+    .trial-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .trial-message {
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      display: none;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .trial-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.20);
+      color: #f87171;
+      display: block;
+    }
+    .trial-message.success {
+      background: rgba(56, 239, 125, 0.1);
+      border: 1px solid rgba(56, 239, 125, 0.20);
+      color: #4ade80;
+      display: block;
     }
   </style>
 </head>
@@ -978,7 +1222,7 @@
           <span class="badge badge-blue">Simulador PRO</span>
           <span class="card-icon">🎯</span>
           <h2 class="card-title">Seletor de Bicos ISO</h2>
-          <p class="card-desc">Cálculo de vazão, classificação de gotas, calibração reversa avançada e catálogo inteligente de cores ISO.</p>
+          <p class="card-desc">Recomendação de pontas ideais, simulador de pressão por velocidade, fator de densidade de calda e relatórios em PDF.</p>
         </div>
         <div class="card-button btn-blue">
           <span>Acessar Simulador</span>
@@ -999,6 +1243,15 @@
           <span class="arrow-icon">➡️</span>
         </div>
       </a>
+    </div>
+
+    <!-- Trial CTA Section below the cards -->
+    <div class="trial-cta-container">
+      <div class="trial-cta-text">
+        <h3>🧪 Teste Gratuito por 5 Dias</h3>
+        <p>Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.</p>
+      </div>
+      <button onclick="openTrialModal(); return false;" class="trial-cta-btn">Começar Teste Grátis ➔</button>
     </div>
   </main>
 
@@ -1082,7 +1335,7 @@
         "Spray Precision": "Spray Precision",
         "Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.": "Ecosistema digital inteligente para pulverización y calibración agrícola de alta precisión.",
         "Seletor de Bicos ISO": "Selector de Boquillas ISO",
-        "Cálculo de vazão, classificação de gotas, calibração reversa avançada e catálogo inteligente de cores ISO.": "Cálculo de caudal, clasificación de gotas, calibración inversa avanzada y catálogo inteligente de colores ISO.",
+        "Recomendação de pontas ideais, simulador de pressão por velocidade, fator de densidade de calda e relatórios em PDF.": "Recomendación de boquillas ideales, simulador de presión por velocidad, factor de densidad de mezcla y reportes en PDF.",
         "Acessar Simulador": "Acceder al Simulador",
         "Diagnóstico de Vazão": "Diagnóstico de Caudal",
         "Leitura bico a bico, Coeficiente de Variação (CV%), indicação de desgaste crítico e emissão de laudo técnico em PDF.": "Medición boquilla por boquilla, Coeficiente de Variación (CV%), indicación de desgaste crítico y laudo técnico en PDF.",
@@ -1094,13 +1347,33 @@
         "Solicitar Acesso ➔": "Solicitar Acceso ➔",
         "Simulador PRO": "Simulador PRO",
         "Aferição & Relatórios": "Aferición e Reportes",
-        "💳 Planos e Preços": "💳 Planes y Precios"
+        "💳 Planos e Preços": "💳 Planes y Precios",
+        "🧪 Teste Gratuito por 5 Dias": "🧪 Prueba Gratuita por 5 Días",
+        "Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.": "¿Quiere probar las herramientas antes de suscribirse? Cree una cuenta de prueba gratuita y evalúe en el campo, sin compromiso.",
+        "Começar Teste Grátis ➔": "Comenzar Prueba Gratis ➔",
+        "Teste 5 Dias": "Prueba 5 Días",
+        "Sem Custo": "Sin Costo",
+        "Grátis": "Gratis",
+        "/5 dias": "/5 días",
+        "Experimente e comprove a precisão no campo.": "Pruebe y compruebe la precisión en el campo.",
+        "Visualização do Simulador de Pressão": "Visualización del Simulador de Presión",
+        "Restrição: Geração de laudos PDF e CSV bloqueados": "Restricción: Generación de laudos PDF y CSV bloqueados",
+        "Começar Teste": "Comenzar Prueba",
+        "Criar Conta de Teste (5 dias)": "Crear Cuenta de Prueba (5 días)",
+        "Insira seus dados para liberar acesso imediato às ferramentas de teste.": "Ingrese sus datos para liberar acceso inmediato a las herramientas de prueba.",
+        "Nome Completo": "Nombre Completo",
+        "WhatsApp (apenas números)": "WhatsApp (solo números)",
+        "Seu E-mail": "Su Correo Electrónico",
+        "Sua Senha (mín. 6 caracteres)": "Su Contraseña (mín. 6 caracteres)",
+        "Eu li e concordo com os": "He leído y acepto los",
+        "Ativar Meu Teste de 5 Dias ➔": "Activar Mi Prueba de 5 Días ➔",
+        "Cadastrando...": "Registrando..."
       },
       en: {
         "Spray Precision": "Spray Precision",
         "Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.": "Smart digital ecosystem for agricultural spraying and high-precision calibration.",
         "Seletor de Bicos ISO": "ISO Nozzle Selector",
-        "Cálculo de vazão, classificação de gotas, calibração reversa avançada e catálogo inteligente de cores ISO.": "Flow calculation, droplet classification, advanced reverse calibration, and smart ISO color catalog.",
+        "Recomendação de pontas ideais, simulador de pressão por velocidade, fator de densidade de calda e relatórios em PDF.": "Ideal nozzle recommendation, working pressure simulator by speed, spray density factor, and PDF reports.",
         "Acessar Simulador": "Access Simulator",
         "Diagnóstico de Vazão": "Flow Rate Diagnostic",
         "Leitura bico a bico, Coeficiente de Variação (CV%), indicação de desgaste crítico e emissão de laudo técnico em PDF.": "Nozzle-by-nozzle collection, Coeff. of Variation (CV%), critical wear warning, and PDF report generation.",
@@ -1112,7 +1385,27 @@
         "Solicitar Acesso ➔": "Request Access ➔",
         "Simulador PRO": "PRO Simulator",
         "Aferição & Relatórios": "Aferition & Reports",
-        "💳 Planos e Preços": "💳 Plans & Pricing"
+        "💳 Planos e Preços": "💳 Plans & Pricing",
+        "🧪 Teste Gratuito por 5 Dias": "🧪 5-Day Free Trial",
+        "Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.": "Want to try the tools before subscribing? Create a free trial account and evaluate in the field, with no commitment.",
+        "Começar Teste Grátis ➔": "Start Free Trial ➔",
+        "Teste 5 Dias": "5-Day Trial",
+        "Sem Custo": "Free",
+        "Grátis": "Free",
+        "/5 dias": "/5 days",
+        "Experimente e comprove a precisão no campo.": "Try and verify accuracy in the field.",
+        "Visualização do Simulador de Pressão": "Pressure Simulator Visualization",
+        "Restrição: Geração de laudos PDF e CSV bloqueados": "Restriction: PDF and CSV report generation blocked",
+        "Começar Teste": "Start Trial",
+        "Criar Conta de Teste (5 dias)": "Create Trial Account (5 days)",
+        "Insira seus dados para liberar acesso imediato às ferramentas de teste.": "Enter your details to unlock immediate access to the testing tools.",
+        "Nome Completo": "Full Name",
+        "WhatsApp (apenas números)": "WhatsApp (numbers only)",
+        "Seu E-mail": "Your Email",
+        "Sua Senha (mín. 6 caracteres)": "Your Password (min. 6 characters)",
+        "Eu li e concordo com os": "I have read and agree to the",
+        "Ativar Meu Teste de 5 Dias ➔": "Activate My 5-Day Trial ➔",
+        "Cadastrando...": "Signing up..."
       }
     };
 
@@ -1253,6 +1546,142 @@
       if (modal) modal.classList.remove('show');
     }
 
+    function getSupabaseClient() {
+      const url = localStorage.getItem('spray_supabase_url') || 'https://mjouahzglomvvcfpxtuq.supabase.co';
+      const key = localStorage.getItem('spray_supabase_key') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
+      if (typeof window.supabase === 'undefined') return null;
+      try {
+        return window.supabase.createClient(url, key);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+
+    function openTrialModal() {
+      closePricingModal();
+      const modal = document.getElementById('modal-trial');
+      if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('show'), 10);
+      }
+    }
+
+    function closeTrialModal() {
+      const modal = document.getElementById('modal-trial');
+      if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 400);
+      }
+      const form = document.getElementById('trialForm');
+      if (form) form.reset();
+      const msg = document.getElementById('trialMessage');
+      if (msg) {
+        msg.style.display = 'none';
+        msg.className = 'trial-message';
+        msg.innerText = '';
+      }
+      const submitBtn = document.getElementById('trialSubmitBtn');
+      if (submitBtn) {
+        submitBtn.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Ativar Meu Teste de 5 Dias ➔';
+      }
+    }
+
+    async function handleTrialRegistration(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('trialSubmitBtn');
+      const msgEl = document.getElementById('trialMessage');
+      
+      const name = document.getElementById('trialName').value.trim();
+      const phone = document.getElementById('trialPhone').value.trim();
+      const email = document.getElementById('trialEmail').value.trim();
+      const password = document.getElementById('trialPassword').value.trim();
+
+      if (!name || !phone || !email || !password) {
+        msgEl.innerText = 'Por favor, preencha todos os campos.';
+        msgEl.className = 'trial-message error';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Cadastrando...';
+      msgEl.style.display = 'none';
+
+      try {
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+          throw new Error('Supabase não foi carregado corretamente.');
+        }
+
+        const today = new Date();
+        const subStart = today.toISOString().split('T')[0];
+        const trialEnd = new Date(today);
+        trialEnd.setDate(today.getDate() + 5);
+        const subEnd = trialEnd.toISOString().split('T')[0];
+
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              nome: name,
+              full_name: name,
+              whatsapp: phone,
+              phone: phone,
+              role: 'consultor',
+              partner_id: 'individual',
+              partner_name: 'Autônomo',
+              partner_color: '#00d2ff',
+              partner_logo: './logo.png',
+              partner_whatsapp: '5565999106415',
+              is_enterprise: false,
+              subscription_start: subStart,
+              subscription_end: subEnd,
+              is_trial: true
+            }
+          }
+        });
+
+        if (error) {
+          if (error.message.toLowerCase().includes('already') || error.message.toLowerCase().includes('registered') || error.message.toLowerCase().includes('exists')) {
+            throw new Error('Este e-mail já possui cadastro. Para estender seu período de demonstração, entre em contato com o suporte.');
+          }
+          throw error;
+        }
+
+        if (data && data.user && data.user.identities && data.user.identities.length === 0) {
+          throw new Error('Este e-mail já possui cadastro. Para estender seu período de demonstração, entre em contato com o suporte.');
+        }
+
+        msgEl.className = 'trial-message success';
+        
+        if (data.session) {
+          msgEl.innerHTML = '<strong>✅ Teste de 5 dias ativado com sucesso!</strong><br>Sua conta está liberada. Você já pode fazer login nos aplicativos.';
+          localStorage.setItem('spray_trial_registered', 'true');
+        } else {
+          msgEl.innerHTML = `
+            <strong>✅ Cadastro enviado para confirmação!</strong><br>
+            <span style="font-size: 12px; opacity: 0.9;">
+              Enviamos um link de confirmação para <strong>${email}</strong>.<br>
+              Acesse seu e-mail e clique no link para liberar seu teste de 5 dias.
+            </span>
+          `;
+        }
+        
+        document.getElementById('trialForm').reset();
+        submitBtn.style.display = 'none';
+
+      } catch (err) {
+        msgEl.innerText = err.message || 'Erro inesperado ao criar conta de teste.';
+        msgEl.className = 'trial-message error';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Ativar Meu Teste de 5 Dias ➔';
+      }
+    }
+
     // Run initializations
     window.addEventListener('DOMContentLoaded', () => {
       initLanguage();
@@ -1283,6 +1712,30 @@
       </div>
 
       <div class="pricing-grid">
+        <!-- Plano Teste Gratuito (5 Dias) -->
+        <div class="pricing-card trial-card">
+          <div class="pricing-badge" style="background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color: #000; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);">
+            Sem Custo
+          </div>
+          <div>
+            <h3 class="plan-title">Teste 5 Dias</h3>
+            <div class="plan-price-box">
+              <span class="plan-price-value">Grátis</span>
+              <span class="plan-price-period">/5 dias</span>
+              <p class="plan-price-subtitle">Experimente e comprove a precisão no campo.</p>
+            </div>
+            <ul class="plan-features-list">
+              <li>Acesso completo aos 2 módulos (Seletor + Diagnóstico)</li>
+              <li>Análises e calibrações ilimitadas no campo</li>
+              <li>Visualização do Simulador de Pressão</li>
+              <li style="color: #ea580c; font-weight: 500;">Restrição: Geração de laudos PDF e CSV bloqueados</li>
+            </ul>
+          </div>
+          <button onclick="openTrialModal(); return false;" class="plan-btn" style="border-color: rgba(234, 179, 8, 0.4); color: #facc15; background: rgba(234, 179, 8, 0.05); margin-top: auto;">
+            Começar Teste
+          </button>
+        </div>
+
         <!-- Plano Mensal -->
         <div class="pricing-card">
           <div>
@@ -1350,6 +1803,49 @@
           </a>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE REGISTRO DE TESTE 5 DIAS -->
+  <div id="modal-trial" class="trial-overlay" onclick="if(event.target === this) closeTrialModal()">
+    <div class="trial-content">
+      <button class="trial-close" onclick="closeTrialModal()">&times;</button>
+      
+      <div class="trial-header">
+        <h2>Criar Conta de Teste (5 dias)</h2>
+        <p>Insira seus dados para liberar acesso imediato às ferramentas de teste.</p>
+      </div>
+
+      <form id="trialForm" onsubmit="handleTrialRegistration(event)" class="trial-form">
+        <div class="trial-input-group">
+          <label for="trialName">Nome Completo</label>
+          <input type="text" id="trialName" class="trial-input" placeholder="Seu nome completo" required>
+        </div>
+        
+        <div class="trial-input-group">
+          <label for="trialPhone">WhatsApp (apenas números)</label>
+          <input type="tel" id="trialPhone" class="trial-input" placeholder="Ex: 65999106415" required pattern="[0-9]{10,11}">
+        </div>
+
+        <div class="trial-input-group">
+          <label for="trialEmail">Seu E-mail</label>
+          <input type="email" id="trialEmail" class="trial-input" placeholder="Ex: seuemail@provedor.com" required>
+        </div>
+
+        <div class="trial-input-group">
+          <label for="trialPassword">Sua Senha (mín. 6 caracteres)</label>
+          <input type="password" id="trialPassword" class="trial-input" placeholder="Crie uma senha de acesso" required minlength="6">
+        </div>
+
+        <label class="trial-checkbox-label">
+          <input type="checkbox" required>
+          <span>Eu li e concordo com os <a href="./termos_uso.html" target="_blank" style="color: #eab308; text-decoration: underline;">Termos de Uso</a>.</span>
+        </label>
+
+        <button type="submit" id="trialSubmitBtn" class="trial-submit-btn">Ativar Meu Teste de 5 Dias ➔</button>
+      </form>
+
+      <div id="trialMessage" class="trial-message"></div>
     </div>
   </div>
 

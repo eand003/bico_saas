@@ -85,9 +85,225 @@
       background: #f1f5f9;
       color: #0f172a;
     }
+
+    /* Terms Acceptance Modal */
+    .terms-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(5, 8, 10, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 20px;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+    .terms-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .terms-content {
+      background: rgba(15, 20, 24, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 30px 24px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 210, 255, 0.15);
+      position: relative;
+      animation: zoomIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.95) translateY(10px); }
+      to { transform: scale(1) translateY(0); }
+    }
+    .terms-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .terms-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .terms-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 40%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .terms-subtitle {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    .terms-scroll-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.85);
+      overflow-y: auto;
+      max-height: 35vh;
+      margin-bottom: 20px;
+      text-align: justify;
+      scrollbar-width: thin;
+      scrollbar-color: #00d2ff transparent;
+    }
+    .terms-scroll-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .terms-scroll-box::-webkit-scrollbar-thumb {
+      background-color: #00d2ff;
+      border-radius: 3px;
+    }
+    .terms-scroll-box h4 {
+      color: #00d2ff;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-family: 'Outfit';
+      font-size: 0.95rem;
+    }
+    .terms-scroll-box p {
+      margin-bottom: 10px;
+    }
+    .terms-scroll-box ul {
+      margin-left: 16px;
+      margin-bottom: 10px;
+    }
+    .terms-scroll-box li {
+      margin-bottom: 4px;
+    }
+    .terms-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .terms-checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.4;
+      text-align: left;
+    }
+    .terms-checkbox-label input {
+      display: none;
+    }
+    .checkbox-custom {
+      width: 18px;
+      height: 18px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.02);
+      margin-top: 2px;
+    }
+    .terms-checkbox-label input:checked + .checkbox-custom {
+      background: #00d2ff;
+      border-color: #00d2ff;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+    }
+    .terms-checkbox-label input:checked + .checkbox-custom::after {
+      content: "✓";
+      color: #000;
+      font-size: 13px;
+      font-weight: bold;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .terms-btn {
+      background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%);
+      color: #ffffff;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Outfit';
+    }
+    .terms-btn:disabled {
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255,255,255,0.3);
+      cursor: not-allowed;
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .terms-btn:not(:disabled):hover {
+      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.45);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
+
+  <!-- TERMS ACCEPTANCE OVERLAY -->
+  <div id="modal-terms-acceptance" class="terms-overlay" style="display: none;">
+    <div class="terms-content">
+      <div class="terms-header">
+        <img src="../logo.png" alt="Logo" class="terms-logo">
+        <h2 class="terms-title">Termos de Uso & Privacidade</h2>
+        <p class="terms-subtitle">Para continuar usando o Spray Precision PRO, por favor revise e concorde com os termos abaixo.</p>
+      </div>
+      <div class="terms-scroll-box" id="terms-scroll-box">
+        <h4>1. Propriedade Intelectual & Proteção do Projeto</h4>
+        <p>Este software e todo o seu conteúdo — o que inclui as lógicas de seleção e recomendação de pontas ideais, tabelas estruturadas de conformidade ISO 10625, cálculos estatísticos e designs visuais — são de propriedade intelectual exclusiva da <b>Spray Precision Technology</b>.</p>
+        <p>É expressamente proibida qualquer tentativa de engenharia reversa, cópia ou extração de parte dos scripts de cálculo ou a utilização de robôs automatizados (scrapers/crawlers) para extração de dados do nosso banco de dados.</p>
+
+        <h4>2. Isenção de Responsabilidade Técnica e Agronômica</h4>
+        <p>A aplicação é fornecida como uma ferramenta digital de <b>suporte à decisão técnica</b>. As sugestões de bicos, estimativas de velocidade e pressões de pulverização são cálculos ideais simplificados.</p>
+        <p>A calibração física correta, verificação de vazão em campo e adaptação às condições microclimáticas (vento, temperatura e umidade) são de exclusiva responsabilidade do operador. O projeto não se responsabiliza por perdas de cultivo, fitotoxicidade, falhas na cobertura ou sanções ambientais decorrentes do uso da ferramenta.</p>
+
+        <h4>3. LGPD & Privacidade do Cliente</h4>
+        <p>Respeitamos a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018). Coletamos apenas dados cadastrais mínimos (nome, email, WhatsApp) e registros técnicos necessários para a geração dos relatórios PDF.</p>
+        <p><b>Isolamento de Dados:</b> As informações inseridas pelas revendas parceiras no banco de dados permanecem em ambiente isolado e nunca serão compartilhadas ou comercializadas com terceiros ou concorrentes de mercado.</p>
+        <p>Você pode solicitar a exportação ou exclusão definitiva de sua conta e todos os dados associados a qualquer momento por meio de nosso suporte oficial.</p>
+      </div>
+      <div class="terms-form">
+        <label class="terms-checkbox-label">
+          <input type="checkbox" id="chk-accept-terms" onchange="toggleTermsButton()">
+          <span class="checkbox-custom"></span>
+          <span class="checkbox-text">Li, compreendo e concordo com os Termos de Uso e Política de Privacidade descritos.</span>
+        </label>
+        <button id="btn-accept-terms" class="terms-btn" onclick="acceptTerms()" disabled>
+          <span>Aceitar e Continuar</span> ➔
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- TELA DE LOGIN PREMIUM (Sincronização Nuvem Supabase) -->
   <div id="app-login-screen" class="login-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">

@@ -1574,7 +1574,10 @@
         setTimeout(() => modal.style.display = 'none', 400);
       }
       const form = document.getElementById('trialForm');
-      if (form) form.reset();
+      if (form) {
+        form.reset();
+        form.style.display = ''; // Reset display style in case it was hidden on success
+      }
       const msg = document.getElementById('trialMessage');
       if (msg) {
         msg.style.display = 'none';
@@ -1603,6 +1606,7 @@
       if (!name || !phone || !email || !password) {
         msgEl.innerText = 'Por favor, preencha todos os campos.';
         msgEl.className = 'trial-message error';
+        msgEl.style.display = 'block';
         return;
       }
 
@@ -1657,26 +1661,34 @@
         }
 
         msgEl.className = 'trial-message success';
+        msgEl.style.display = 'block';
         
         if (data.session) {
-          msgEl.innerHTML = '<strong>✅ Teste de 5 dias ativado com sucesso!</strong><br>Sua conta está liberada. Você já pode fazer login nos aplicativos.';
+          msgEl.innerHTML = `
+            <strong>✅ Teste de 5 dias ativado com sucesso!</strong><br>
+            Sua conta está liberada. Você já pode fazer login e usar as ferramentas.<br><br>
+            <button onclick="closeTrialModal(); document.getElementById('link-seletor').scrollIntoView({behavior: 'smooth'});" class="trial-submit-btn" style="margin-top: 5px; width: 100%;">Acessar Plataforma ➔</button>
+          `;
           localStorage.setItem('spray_trial_registered', 'true');
         } else {
           msgEl.innerHTML = `
-            <strong>✅ Cadastro enviado para confirmação!</strong><br>
-            <span style="font-size: 12px; opacity: 0.9;">
+            <strong>✅ Cadastro realizado com sucesso!</strong><br>
+            <span style="font-size: 13px; opacity: 0.95; display: block; margin-top: 5px; margin-bottom: 10px;">
               Enviamos um link de confirmação para <strong>${email}</strong>.<br>
-              Acesse seu e-mail e clique no link para liberar seu teste de 5 dias.
+              Acesse seu e-mail e clique no link para ativar seu teste de 5 dias.<br>
+              Depois, retorne aqui para acessar as ferramentas.
             </span>
+            <button onclick="closeTrialModal(); document.getElementById('link-seletor').scrollIntoView({behavior: 'smooth'});" class="trial-submit-btn" style="width: 100%;">Acessar Plataforma ➔</button>
           `;
         }
         
-        document.getElementById('trialForm').reset();
+        document.getElementById('trialForm').style.display = 'none';
         submitBtn.style.display = 'none';
 
       } catch (err) {
         msgEl.innerText = err.message || 'Erro inesperado ao criar conta de teste.';
         msgEl.className = 'trial-message error';
+        msgEl.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.innerText = 'Ativar Meu Teste de 5 Dias ➔';
       }

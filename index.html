@@ -907,6 +907,34 @@
         padding: 35px 20px;
       }
     }
+
+    /* Botão de destaque do Plano e Preços */
+    .btn-pricing-highlight {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      color: #fdba74;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.08);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 16px;
+    }
+    .btn-pricing-highlight:hover {
+      background: rgba(249, 115, 22, 0.25);
+      border-color: #f97316;
+      color: #ffffff;
+      box-shadow: 0 6px 18px rgba(249, 115, 22, 0.25);
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -932,11 +960,14 @@
       </div>
       <h1 class="brand-title">Spray Precision</h1>
       <p class="brand-subtitle">Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.</p>
+      <button onclick="openPricingModal()" class="btn-pricing-highlight">
+        <span>💳 Planos e Preços</span>
+      </button>
     </header>
 
     <div class="quick-cta-banner" id="quick-cta" style="display: none;">
       <span class="cta-pulse"></span>
-      <span>Novo por aqui? Solicite seu acesso às plataformas pelo WhatsApp! <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20acesso%20às%20plataformas%20do%20Spray%20Precision." target="_blank" class="cta-link">Solicitar Acesso ➔</a></span>
+      <span>Novo por aqui? Conheça nossos <a href="#" onclick="openPricingModal(); return false;" style="color: var(--accent); font-weight: 700; text-decoration: underline; margin-right: 4px;">Planos e Preços</a> ou solicite seu acesso pelo WhatsApp! <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20acesso%20às%20plataformas%20do%20Spray%20Precision." target="_blank" class="cta-link" style="margin-left: 4px;">Solicitar Acesso ➔</a></span>
       <button class="cta-close-btn" onclick="dismissCTA()" title="Fechar">&times;</button>
     </div>
 
@@ -1059,7 +1090,7 @@
         "💬 Suporte Técnico (WhatsApp)": "💬 Soporte Técnico (WhatsApp)",
         "📄 Termos de Uso": "📄 Términos de Uso",
         "📢 Soluções para Consultores": "📢 Soluciones para Consultores",
-        "Novo por aqui? Solicite seu acesso às plataformas pelo WhatsApp!": "¿Nuevo por aquí? ¡Solicite su acceso a las plataformas por WhatsApp!",
+        "Novo por aqui? Conheça nossos Planos e Preços ou solicite seu acesso pelo WhatsApp!": "¿Nuevo por aquí? ¡Conozca nuestros Planes y Precios o solicite su acesso por WhatsApp!",
         "Solicitar Acesso ➔": "Solicitar Acceso ➔",
         "Simulador PRO": "Simulador PRO",
         "Aferição & Relatórios": "Aferición e Reportes",
@@ -1077,7 +1108,7 @@
         "💬 Suporte Técnico (WhatsApp)": "💬 Technical Support (WhatsApp)",
         "📄 Termos de Uso": "📄 Terms of Use",
         "📢 Soluções para Consultores": "📢 Agronomist Solutions",
-        "Novo por aqui? Solicite seu acesso às plataformas pelo WhatsApp!": "New here? Request your access to the platforms via WhatsApp!",
+        "Novo por aqui? Conheça nossos Planos e Preços ou solicite seu acesso pelo WhatsApp!": "New here? Check our Plans & Pricing or request your access via WhatsApp!",
         "Solicitar Acesso ➔": "Request Access ➔",
         "Simulador PRO": "PRO Simulator",
         "Aferição & Relatórios": "Aferition & Reports",

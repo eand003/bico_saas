@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spray Precision PRO – Calibração de Bicos com Precisão Técnica</title>
+  <meta name="description" content="Selecione o bico ideal pela norma ISO e diagnostique sua barra bico a bico. Laudo técnico em segundos. Para agrônomos, técnicos e revendas.">
+  <meta property="og:title" content="Spray Precision PRO">
+  <meta property="og:description" content="Tecnologia de calibração para quem precisa de resultado no campo.">
+  <meta property="og:image" content="./imagem_1.jpeg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── TOKENS ────────────────────────────────────────── */
+    :root {
+      --bg:           #05080a;
+      --bg-elevated:  #090d10;
+      --blue:         #00d2ff;
+      --green:        #38ef7d;
+      --yellow:       #ffe600;
+      --red:          #ff4f4f;
+      --text:         #f1f5f9;
+      --muted:        #6b7f96;
+      --subtle:       #1a2230;
+      --glass:        rgba(255,255,255,0.038);
+      --glass-b:      rgba(255,255,255,0.09);
+      --radius-lg:    22px;
+      --radius-sm:    12px;
+    }
+
+    /* ─── RESET ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── SCROLL REVEAL ──────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── KEYFRAMES ──────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 32px rgba(37,211,102,0.38); }
+      50%       { box-shadow: 0 0 56px rgba(37,211,102,0.65); }
+    }
+    @keyframes borderPulse {
+      0%, 100% { border-color: rgba(255,230,0,0.25); }
+      50%       { border-color: rgba(255,230,0,0.55); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ─── TYPOGRAPHY HELPERS ─────────────────────────────── */
+    .label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 14px;
+    }
+    .label.green { color: var(--green); }
+    .label.yellow { color: var(--yellow); }
+
+    h2.section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.9rem, 4vw, 2.9rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.5px;
+      margin-bottom: 18px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--blue) 0%, var(--green) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gradient-text-yellow {
+      background: linear-gradient(90deg, var(--yellow) 0%, #ffaa00 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 560px;
+    }
+
+    /* ─── LAYOUT WRAPPER ─────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(5,8,10,0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo img {
+      height: 36px;
+      width: auto;
+    }
+    .nav-logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .nav-logo-text span { color: var(--blue); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #25D366, #1da851);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      transition: all 0.25s ease;
+      box-shadow: 0 0 20px rgba(37,211,102,0.25);
+    }
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(37,211,102,0.45);
+    }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% -5%, rgba(0,210,255,0.16) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 35% at 90% 110%, rgba(56,239,125,0.09) 0%, transparent 60%),
+        var(--bg);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(0,210,255,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(56,239,125,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,230,0,0.08);
+      border: 1px solid rgba(255,230,0,0.22);
+      border-radius: 100px;
+      padding: 6px 20px 6px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--yellow);
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-eyebrow .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--yellow);
+      animation: borderPulse 2s ease infinite;
+      box-shadow: 0 0 8px rgba(255,230,0,0.6);
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.6rem, 6.5vw, 4.8rem);
+      font-weight: 900;
+      line-height: 1.06;
+      letter-spacing: -2px;
+      max-width: 820px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.65s ease 0.1s both;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.75;
+      margin-bottom: 48px;
+      animation: fadeUp 0.65s ease 0.2s both;
+    }
+
+    .hero-cta-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      animation: fadeUp 0.65s ease 0.3s both;
+    }
+
+    .btn-wa-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #25D366 0%, #1da851 100%);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      padding: 18px 40px;
+      border-radius: 14px;
+      transition: all 0.3s ease;
+      animation: pulseGlow 3s ease infinite;
+    }
+    .btn-wa-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 40px rgba(37,211,102,0.55);
+    }
+    .btn-wa-primary svg { flex-shrink: 0; }
+
+    .hero-meta {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-meta span {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .hero-visual {
+      margin-top: 72px;
+      width: 100%;
+      max-width: 960px;
+      position: relative;
+      animation: fadeUp 0.9s ease 0.45s both;
+    }
+    .hero-visual img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-b);
+      box-shadow:
+        0 40px 100px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(255,255,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .hero-visual::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 80px;
+      background: radial-gradient(ellipse, rgba(0,210,255,0.18), transparent 70%);
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    /* ─── PROBLEMA ───────────────────────────────────────── */
+    .problem-section {
+      padding: 112px 24px;
+      position: relative;
+    }
+    .problem-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,230,0,0.25), transparent);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+      margin-top: 52px;
+    }
+
+    .problem-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .problem-card {
+      background: var(--glass);
+      border: 1px solid rgba(255,79,79,0.15);
+      border-radius: var(--radius-sm);
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+    .problem-card:hover {
+      border-color: rgba(255,79,79,0.35);
+      background: rgba(255,79,79,0.04);
+    }
+
+    .problem-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 2px;
+    }
+    .problem-card h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .problem-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .problem-stat-block {
+      background: rgba(255,79,79,0.04);
+      border: 1px solid rgba(255,79,79,0.15);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .problem-stat-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--yellow), var(--red));
+    }
+
+    .stat-big {
+      font-family: 'Outfit', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--yellow), var(--red));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 280px;
+      margin: 0 auto 24px;
+    }
+    .stat-source {
+      font-size: 11px;
+      color: rgba(107,127,150,0.6);
+      letter-spacing: 0.5px;
+    }
+
+    .problem-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,230,0,0.2), transparent);
+      margin: 24px 0;
+    }
+
+    .stat-secondary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      text-align: center;
+    }
+    .stat-sec-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      color: var(--yellow);
+      line-height: 1;
+    }
+    .stat-sec-txt {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* ─── MODULES ────────────────────────────────────────── */
+    .module-section {
+      padding: 96px 24px;
+      position: relative;
+    }
+    .module-section.alt {
+      background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(56,239,125,0.05) 0%, transparent 70%);
+    }
+
+    .module-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .module-inner.reverse { direction: rtl; }
+    .module-inner.reverse > * { direction: ltr; }
+
+    .module-content {}
+    .module-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .module-tag.blue {
+      background: rgba(0,210,255,0.1);
+      color: var(--blue);
+      border: 1px solid rgba(0,210,255,0.2);
+    }
+    .module-tag.green {
+      background: rgba(56,239,125,0.1);
+      color: var(--green);
+      border: 1px solid rgba(56,239,125,0.2);
+    }
+
+    .module-content h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .module-content > p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .check-blue, .check-green {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .check-blue {
+      background: rgba(0,210,255,0.14);
+      color: var(--blue);
+      border: 1px solid rgba(0,210,255,0.25);
+    }
+    .check-green {
+      background: rgba(56,239,125,0.14);
+      color: var(--green);
+      border: 1px solid rgba(56,239,125,0.25);
+    }
+
+    .module-visual {
+      position: relative;
+    }
+    .module-visual img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-b);
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(255,255,255,0.04);
+      transition: transform 0.4s ease;
+    }
+    .module-visual img:hover {
+      transform: scale(1.015);
+    }
+    .module-visual::after {
+      content: '';
+      position: absolute;
+      bottom: -48px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 60px;
+      background: radial-gradient(ellipse, rgba(0,210,255,0.15), transparent 70%);
+      filter: blur(18px);
+      pointer-events: none;
+    }
+    .module-visual.green-glow::after {
+      background: radial-gradient(ellipse, rgba(56,239,125,0.15), transparent 70%);
+    }
+
+    /* ─── PROOF ──────────────────────────────────────────── */
+    .proof-section {
+      padding: 96px 24px;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,210,255,0.05) 0%, transparent 70%);
+      position: relative;
+    }
+    .proof-section::before, .proof-section::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+    }
+    .proof-section::before {
+      top: 0;
+      background: linear-gradient(90deg, transparent, rgba(0,210,255,0.15), transparent);
+    }
+    .proof-section::after {
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(56,239,125,0.15), transparent);
+    }
+
+    .proof-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .proof-img-main {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--glass-b);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      width: 100%;
+      transition: transform 0.4s ease;
+    }
+    .proof-img-main:hover { transform: scale(1.012); }
+
+    .proof-phone-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+    .proof-phone-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .proof-phone-img {
+      width: 200px;
+      border-radius: 32px;
+      border: 1px solid rgba(0,210,255,0.2);
+      box-shadow:
+        0 24px 64px rgba(0,0,0,0.65),
+        0 0 40px rgba(0,210,255,0.1);
+      animation: float 4s ease infinite;
+    }
+    .proof-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56,239,125,0.08);
+      border: 1px solid rgba(56,239,125,0.2);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    /* ─── AUDIÊNCIAS ─────────────────────────────────────── */
+    .audience-section {
+      padding: 96px 24px;
+    }
+    .audience-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .audience-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-b);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .audience-card:hover {
+      transform: translateY(-5px);
+    }
+    .audience-card.blue-card:hover { border-color: rgba(0,210,255,0.3); }
+    .audience-card.green-card:hover { border-color: rgba(56,239,125,0.3); }
+    .audience-card.yellow-card:hover { border-color: rgba(255,230,0,0.3); }
+
+    .audience-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .blue-card::before  { background: linear-gradient(90deg, var(--blue), transparent); }
+    .green-card::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .yellow-card::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+
+    .audience-emoji { font-size: 2.4rem; margin-bottom: 18px; line-height: 1; }
+
+    .audience-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .audience-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+
+    .audience-benefit {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+    }
+    .blue-card .audience-benefit {
+      background: rgba(0,210,255,0.08);
+      color: var(--blue);
+      border: 1px solid rgba(0,210,255,0.15);
+    }
+    .green-card .audience-benefit {
+      background: rgba(56,239,125,0.08);
+      color: var(--green);
+      border: 1px solid rgba(56,239,125,0.15);
+    }
+    .yellow-card .audience-benefit {
+      background: rgba(255,230,0,0.08);
+      color: var(--yellow);
+      border: 1px solid rgba(255,230,0,0.15);
+    }
+
+    /* ─── CTA FINAL ──────────────────────────────────────── */
+    .cta-section {
+      padding: 112px 24px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 70% 65% at 50% 110%, rgba(56,239,125,0.09) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 20% -20%, rgba(0,210,255,0.06) 0%, transparent 60%),
+        var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56,239,125,0.3), transparent);
+    }
+
+    .cta-price-badge {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-b);
+      border-radius: 100px;
+      padding: 10px 28px;
+      margin-bottom: 32px;
+    }
+    .cta-price-currency {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .cta-price-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+    }
+    .cta-price-period {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .cta-section h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      max-width: 680px;
+      margin: 0 auto 20px;
+    }
+    .cta-section > p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.75;
+    }
+
+    .btn-wa-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, #25D366 0%, #1da851 100%);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 19px;
+      padding: 20px 48px;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      animation: pulseGlow 3s ease infinite;
+      position: relative;
+    }
+    .btn-wa-large:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 50px rgba(37,211,102,0.6);
+    }
+
+    .cta-perks {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+    .cta-perk {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .cta-perk-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 36px 24px;
+      text-align: center;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1120px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-brand img { height: 28px; width: auto; }
+    .footer-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .footer-brand-name span { color: var(--blue); }
+    .footer-copy {
+      font-size: 13px;
+      color: rgba(107,127,150,0.6);
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--blue); }
+
+    /* ─── STATUS BAR (optional divider decoration) ───────── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-b), transparent);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .problem-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .problem-stat-block {
+        max-width: 480px;
+        margin: 0 auto;
+      }
+      .module-inner {
+        grid-template-columns: 1fr;
+        gap: 44px;
+      }
+      .module-inner.reverse { direction: ltr; }
+      .proof-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+      .proof-phone-img { width: 160px; }
+      .audience-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { letter-spacing: -1px; }
+      nav { padding: 12px 16px; }
+      .nav-logo-text { display: none; }
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+      .cta-perks { flex-direction: column; gap: 16px; }
+      .btn-wa-large { font-size: 16px; padding: 16px 32px; }
+      .stat-secondary { grid-template-columns: 1fr; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAV ═════════════════════════════════════════════════ -->
+  <nav>
+    <div class="nav-logo">
+      <img src="./logo.png" alt="Spray Precision PRO">
+      <div class="nav-logo-text">Spray Precision <span>PRO</span></div>
+    </div>
+    <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO."
+       target="_blank" class="nav-cta" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Quero acesso
+    </a>
+  </nav>
+
+  <!-- ══ HERO ═════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <div class="dot"></div>
+      Plataforma SaaS para calibração de pulverização
+    </div>
+
+    <h1>
+      Bico errado está jogando<br>
+      seu defensivo<br>
+      <span class="gradient-text">no ralo.</span>
+    </h1>
+
+    <p class="hero-sub">
+      O Spray Precision PRO elimina o achismo na escolha de bicos e transforma a aferição de vazão em um laudo técnico pronto em segundos.
+    </p>
+
+    <div class="hero-cta-wrap">
+      <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO."
+         target="_blank" class="btn-wa-primary" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Solicitar acesso — R$ 79,90/mês
+      </a>
+      <div class="hero-meta">
+        <span>✓</span> 7 dias grátis &nbsp;·&nbsp;
+        <span>✓</span> Funciona offline &nbsp;·&nbsp;
+        <span>✓</span> Sem contrato
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <img src="./hub-acesso.jpeg" alt="Portal Spray Precision PRO – Hub de acesso com dois módulos">
+    </div>
+  </section>
+
+  <!-- ══ PROBLEMA ══════════════════════════════════════════════ -->
+  <section class="problem-section container">
+    <div class="reveal">
+      <div class="label yellow">O Problema</div>
+      <h2 class="section-title">
+        O desperdício que você<br>
+        <span class="gradient-text-yellow">não consegue ver.</span>
+      </h2>
+    </div>
+
+    <div class="problem-grid">
+      <div class="problem-cards reveal reveal-delay-1">
+        <div class="problem-card">
+          <div class="problem-icon">💧</div>
+          <div>
+            <h4>Bicos desgastados aplicam além do necessário</h4>
+            <p>A norma ISO define tolerância de ±10% de desvio. Na prática, bicos com 2 anos de uso chegam a 20–35% de desvio — sem nenhum sinal visual.</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📐</div>
+          <div>
+            <h4>Decisão de bico feita no "olhômetro"</h4>
+            <p>Sem ferramenta, o técnico escolhe a ponta pelo catálogo impresso. Velocidade de campo, L/ha e tamanho de gota raramente são calculados juntos.</p>
+          </div>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📊</div>
+          <div>
+            <h4>O produtor não troca o que não vê quebrado</h4>
+            <p>Sem um laudo com números e cores, a conversa sobre reposição de bicos vira opinião. O técnico perde a venda por falta de prova técnica.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-stat-block reveal reveal-delay-2">
+        <div class="stat-big">+15%</div>
+        <p class="stat-label">
+          de defensivo aplicado além do necessário quando bicos ultrapassam o limite de desgaste pela norma ISO 10625
+        </p>
+        <p class="stat-source">* Referência técnica ISO 10625 – tolerância máx. ±10% de desvio individual</p>
+        <div class="problem-divider"></div>
+        <div class="stat-secondary">
+          <div>
+            <div class="stat-sec-val">30s</div>
+            <div class="stat-sec-txt">para gerar o laudo<br>completo no app</div>
+          </div>
+          <div>
+            <div class="stat-sec-val">100%</div>
+            <div class="stat-sec-txt">offline — funciona<br>onde não tem sinal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ══ MÓDULO 1 ═══════════════════════════════════════════════ -->
+  <section class="module-section container reveal">
+    <div class="module-inner">
+      <div class="module-content">
+        <div class="module-tag blue">Módulo 1 · Seletor de Bicos</div>
+        <h2>Escolha o bico certo.<br><span class="gradient-text">Com matemática, não com achismo.</span></h2>
+        <p>Insira sua velocidade de trabalho, taxa de aplicação (L/ha) e o tamanho de gota desejado. O sistema cruza os dados com o banco ISO 10625 e indica a ponta que opera no centro da janela de pressão — permitindo variações de velocidade no campo sem perda de precisão.</p>
+        <ul class="feature-list">
+          <li>
+            <div class="check-blue">✓</div>
+            Recomendação baseada na norma ISO 10625 — não em catálogo
+          </li>
+          <li>
+            <div class="check-blue">✓</div>
+            Simulador Ultra: manômetro digital neon com janela de estabilidade em tempo real
+          </li>
+          <li>
+            <div class="check-blue">✓</div>
+            Funciona 100% offline como PWA — sem Wi-Fi, sem problema
+          </li>
+          <li>
+            <div class="check-blue">✓</div>
+            Gera relatório técnico em PDF para entregar ao produtor
+          </li>
+        </ul>
+      </div>
+      <div class="module-visual">
+        <img src="./imagem_2.jpeg" alt="Módulo 1 – Seletor Inteligente de Bicos com Simulador Ultra e manômetro digital">
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ══ MÓDULO 2 ═══════════════════════════════════════════════ -->
+  <section class="module-section alt container reveal">
+    <div class="module-inner reverse">
+      <div class="module-content">
+        <div class="module-tag green">Módulo 2 · Diagnóstico de Vazão</div>
+        <h2>Aferição bico a bico.<br><span style="background: linear-gradient(90deg,var(--green),#a8ffcc); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;">Laudo em segundos.</span></h2>
+        <p>O técnico coleta a água de cada bico com proveta durante um tempo cronometrado. O app calcula o desvio percentual individual e classifica cada ponta por cor — verde (ok), amarelo (atenção), vermelho (substituir). O laudo técnico-comercial sai na hora, com o mapa visual completo da barra.</p>
+        <ul class="feature-list">
+          <li>
+            <div class="check-green">✓</div>
+            Cálculo automático do CV% e do desvio por bico vs. padrão ISO
+          </li>
+          <li>
+            <div class="check-green">✓</div>
+            Mapa colorido da barra: verde, amarelo e vermelho por posição
+          </li>
+          <li>
+            <div class="check-green">✓</div>
+            Laudo PDF com identificação da revenda — ferramenta de fechamento de venda
+          </li>
+          <li>
+            <div class="check-green">✓</div>
+            White-label: relatório sai com logo e WhatsApp da sua empresa
+          </li>
+        </ul>
+      </div>
+      <div class="module-visual green-glow">
+        <img src="./imagem_3.jpeg" alt="Módulo 2 – Diagnóstico de Vazão com gráfico de CV% e mapa colorido da barra">
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ══ PROVA VISUAL ═══════════════════════════════════════════ -->
+  <section class="proof-section">
+    <div class="container">
+      <div class="proof-header reveal">
+        <div class="label">Prova Real</div>
+        <h2 class="section-title" style="text-align:center;">
+          Assim é o app<br>
+          <span class="gradient-text">rodando no campo.</span>
+        </h2>
+        <p class="sub" style="margin: 16px auto 0; text-align:center;">
+          Não é mockup. É o resultado real do Seletor na palma da mão — bico ISO 02, vazão 0,85 L/min, pressão estável.
+        </p>
+      </div>
+
+      <div class="proof-grid reveal reveal-delay-1">
+        <img src="./imagem_1.jpeg"
+             alt="Visão geral dos dois módulos do Spray Precision PRO lado a lado"
+             class="proof-img-main">
+
+        <div class="proof-phone-wrap">
+          <div class="proof-phone-label">Resultado real no app</div>
+          <img src="./exemplo_resultado_app.jpeg"
+               alt="Screenshot real do app – resultado ISO 02 com 0,85 L/min"
+               class="proof-phone-img">
+          <div class="proof-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+            </svg>
+            Screenshot do app em produção
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ══ PARA QUEM É ════════════════════════════════════════════ -->
+  <section class="audience-section container">
+    <div class="audience-header reveal">
+      <div class="label">Para quem é</div>
+      <h2 class="section-title" style="text-align:center;">
+        Desenvolvido para quem<br>
+        <span class="gradient-text">precisa de dados, não de opinião.</span>
+      </h2>
+    </div>
+
+    <div class="audience-grid">
+      <div class="audience-card blue-card reveal reveal-delay-1">
+        <div class="audience-emoji">👨‍🌾</div>
+        <h3>Agrônomos e Técnicos</h3>
+        <p>
+          Você já mede. Agora tem a ferramenta que calcula, classifica e documenta tudo em segundos — sem planilha, sem calculadora.
+        </p>
+        <div class="audience-benefit">🎯 Decisão técnica, não palpite</div>
+      </div>
+
+      <div class="audience-card green-card reveal reveal-delay-2">
+        <div class="audience-emoji">🏪</div>
+        <h3>Revendas Agrícolas</h3>
+        <p>
+          O laudo vermelho é o seu argumento de vendas. Mostre ao produtor os bicos fora de norma e feche a reposição na hora — com a sua marca no relatório.
+        </p>
+        <div class="audience-benefit">📈 Venda mais bicos com prova técnica</div>
+      </div>
+
+      <div class="audience-card yellow-card reveal reveal-delay-3">
+        <div class="audience-emoji">🌾</div>
+        <h3>Cooperativas</h3>
+        <p>
+          Padronize a calibração de toda a equipe técnica. Gere laudos com identidade visual da cooperativa para cada produtor atendido.
+        </p>
+        <div class="audience-benefit">🏷️ White-label com sua marca</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CTA FINAL ════════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="reveal">
+      <div class="cta-price-badge">
+        <span class="cta-price-currency">R$</span>
+        <span class="cta-price-value">79,90</span>
+        <span class="cta-price-period">/ usuário / mês</span>
+      </div>
+
+      <h2>
+        7 dias grátis.<br>
+        <span class="gradient-text">Sem compromisso.</span>
+      </h2>
+
+      <p>
+        Acesso completo a ambos os módulos desde o primeiro dia. Cancele quando quiser — sem burocracia.
+      </p>
+
+      <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO."
+         target="_blank" class="btn-wa-large" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Começar agora pelo WhatsApp
+      </a>
+
+      <div class="cta-perks">
+        <div class="cta-perk">
+          <div class="cta-perk-dot"></div>
+          Dois módulos completos
+        </div>
+        <div class="cta-perk">
+          <div class="cta-perk-dot"></div>
+          White-label disponível
+        </div>
+        <div class="cta-perk">
+          <div class="cta-perk-dot"></div>
+          Funciona sem internet
+        </div>
+        <div class="cta-perk">
+          <div class="cta-perk-dot"></div>
+          Suporte via WhatsApp
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ═══════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="./logo.png" alt="Spray Precision PRO logo">
+        <div class="footer-brand-name">Spray Precision <span>PRO</span></div>
+      </div>
+      <div class="footer-copy">
+        © 2026 Spray Precision PRO · Todos os direitos reservados.
+      </div>
+      <div class="footer-links">
+        <a href="https://wa.me/5565999106415" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Solicitar acesso</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══ SCROLL REVEAL SCRIPT ════════════════════════════════════ -->
+  <script>
+function _0x3fe7(_0x5d0ef1,_0xcccf30){_0x5d0ef1=_0x5d0ef1-0xc7;var _0x3eeb11=_0x3eeb();var _0x3fe750=_0x3eeb11[_0x5d0ef1];if(_0x3fe7['\x76\x69\x67\x6f\x4c\x45']===undefined){var _0x274336=function(_0xc0da01){var _0x37e37a='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x1c5f8f='',_0x2ae277='';for(var _0xe7323e=0x0,_0x29d07c,_0x30206a,_0x47b060=0x0;_0x30206a=_0xc0da01['\x63\x68\x61\x72\x41\x74'](_0x47b060++);~_0x30206a&&(_0x29d07c=_0xe7323e%0x4?_0x29d07c*0x40+_0x30206a:_0x30206a,_0xe7323e++%0x4)?_0x1c5f8f+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x29d07c>>(-0x2*_0xe7323e&0x6)):0x0){_0x30206a=_0x37e37a['\x69\x6e\x64\x65\x78\x4f\x66'](_0x30206a);}for(var _0xe717cd=0x0,_0x6362e2=_0x1c5f8f['\x6c\x65\x6e\x67\x74\x68'];_0xe717cd<_0x6362e2;_0xe717cd++){_0x2ae277+='\x25'+('\x30\x30'+_0x1c5f8f['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0xe717cd)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x2ae277);};_0x3fe7['\x4a\x45\x62\x70\x6f\x53']=_0x274336,_0x3fe7['\x6d\x6a\x61\x79\x61\x42']={},_0x3fe7['\x76\x69\x67\x6f\x4c\x45']=!![];}var _0x50610c=_0x3eeb11[0x0],_0x4bfec2=_0x5d0ef1+_0x50610c,_0x108837=_0x3fe7['\x6d\x6a\x61\x79\x61\x42'][_0x4bfec2];return!_0x108837?(_0x3fe750=_0x3fe7['\x4a\x45\x62\x70\x6f\x53'](_0x3fe750),_0x3fe7['\x6d\x6a\x61\x79\x61\x42'][_0x4bfec2]=_0x3fe750):_0x3fe750=_0x108837,_0x3fe750;}(function(_0x4114c7,_0x3aa660){var _0x4b952d=_0x3fe7,_0x1f4d0c=_0x4114c7();while(!![]){try{var _0x4e48cc=-parseInt(_0x4b952d(0xda))/0x1+-parseInt(_0x4b952d(0xcc))/0x2+-parseInt(_0x4b952d(0xcb))/0x3+-parseInt(_0x4b952d(0xd6))/0x4*(-parseInt(_0x4b952d(0xd3))/0x5)+-parseInt(_0x4b952d(0xd9))/0x6+parseInt(_0x4b952d(0xc8))/0x7+parseInt(_0x4b952d(0xce))/0x8*(parseInt(_0x4b952d(0xd7))/0x9);if(_0x4e48cc===_0x3aa660)break;else _0x1f4d0c['push'](_0x1f4d0c['shift']());}catch(_0x38b500){_0x1f4d0c['push'](_0x1f4d0c['shift']());}}}(_0x3eeb,0x39ac3),(function(){var _0x623f12=_0x3fe7,_0x2ae277={};_0x2ae277[_0x623f12(0xd5)]=0.12,_0x2ae277[_0x623f12(0xd4)]=_0x623f12(0xd1);var _0xe7323e=new IntersectionObserver(function(_0x29d07c){var _0x180ad=_0x623f12;_0x29d07c[_0x180ad(0xca)](function(_0x30206a){var _0x10f2b4=_0x180ad;_0x30206a[_0x10f2b4(0xdb)]&&_0x30206a[_0x10f2b4(0xc7)][_0x10f2b4(0xd2)][_0x10f2b4(0xc9)](_0x10f2b4(0xcf));});},_0x2ae277);document[_0x623f12(0xd8)](_0x623f12(0xcd))[_0x623f12(0xca)](function(_0x47b060){var _0x15797c=_0x623f12;_0xe7323e[_0x15797c(0xd0)](_0x47b060);});}()));function _0x3eeb(){var _0x87c396=['\x6e\x78\x66\x69\x43\x65\x58\x48\x79\x47','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47','\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b','\x6d\x4a\x79\x35\x6e\x64\x71\x57\x75\x68\x6e\x34\x72\x4b\x44\x52','\x6d\x5a\x65\x30\x6f\x64\x47\x5a\x6f\x76\x6e\x66\x73\x66\x6e\x72\x42\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6d\x74\x71\x57\x6e\x64\x65\x34\x6e\x4e\x7a\x4b\x72\x68\x6a\x55\x72\x47','\x6e\x64\x65\x57\x6f\x74\x4b\x33\x74\x66\x7a\x35\x44\x75\x4c\x6d','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x44\x67\x66\x59\x7a\x32\x76\x30','\x6d\x74\x43\x5a\x6f\x64\x65\x32\x6d\x30\x54\x51\x76\x67\x35\x63\x7a\x57','\x79\x77\x72\x4b','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6d\x4a\x43\x32\x6d\x4a\x47\x31\x7a\x67\x48\x70\x73\x4d\x76\x4b','\x6f\x64\x71\x58\x6d\x4a\x6a\x34\x77\x77\x4c\x50\x74\x4b\x43','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61','\x6d\x74\x7a\x6f\x75\x30\x54\x52\x72\x77\x71','\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x6d\x68\x62\x34\x69\x64\x62\x57\x45\x63\x61\x54\x6e\x64\x62\x57\x45\x63\x61\x57\x43\x68\x47','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30'];_0x3eeb=function(){return _0x87c396;};return _0x3eeb();}
+</script>
+
+</body>
+</html>

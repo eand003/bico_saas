@@ -1840,6 +1840,21 @@
           <li><b>Gerar Relatório (📄):</b> Clique no botão de documento no cabeçalho para gerar um laudo de engenharia pronto para impressão ou envio por PDF. Se houver cliente e máquina ativos na sessão, o laudo unificará todos os dados cadastrais automaticamente no topo!</li>
           <li><b>Orçamento via WhatsApp:</b> Ao tocar em um bico sugerido, você pode emitir um laudo visual resumido e solicitar orçamentos em 1 clique.</li>
         </ul>
+
+        <h3>🎛️ 8. Modo PWM (Pulso Largura Modulada)</h3>
+        <p>No modo PWM, a pressão física do sistema permanece fixa/estabilizada (mantendo o tamanho de gota ideal), e o aplicativo calcula a vazão necessária variando a taxa de abertura do bico (Duty Cycle/Ciclo de Trabalho %):</p>
+        <ul>
+          <li><b>Alvo ideal de 70%:</b> O simulador recomenda bicos cuja vazão alvo opere em torno de 70% do Ciclo de Trabalho. Isso oferece uma margem de segurança de ±30% para que o pulverizador aumente ou reduza a velocidade em campo mantendo a vazão exata.</li>
+          <li><b>Estabilidade de Gotas:</b> O aplicativo valida e mostra se a classe de gota escolhida (Grossa, Fina, etc.) permanecerá constante e estável ao longo de toda a variação de velocidade permitida.</li>
+        </ul>
+
+        <h3>👥 9. Modo Bico Duplo (Combinações Sequenciais)</h3>
+        <p>Desenvolvido para sistemas com porta-bicos duplos de acionamento automático (como em máquinas Jacto, Stara, John Deere, etc.), onde o sistema chaveia entre o Bico A, Bico B ou ambos simultaneamente conforme a velocidade varia:</p>
+        <ul>
+          <li><b>Estágios de Velocidade:</b> O simulador calcula as velocidades exatas de transição (Estágio A ativo, Estágio B ativo e Estágio A+B combinados).</li>
+          <li><b>Filtragem de Baixa Pressão:</b> Combinações de bicos que exigiriam pressões abaixo da mínima operacional (o que causaria falhas de abertura de leque e cobertura de calda insuficiente) são descartadas da lista de recomendações automaticamente.</li>
+          <li><b>PDF Otimizado:</b> Para manter a leitura simples no campo, o relatório PDF oculta as opções redundantes e exibe apenas as 4 melhores combinações de maior amplitude operacional.</li>
+        </ul>
       </div>
     </div>
 
@@ -2818,8 +2833,19 @@
         const ctx = document.getElementById('mainChart').getContext('2d');
         const colors = getChartThemeColors();
 
-        const labels = rows.map(r => `ISO ${r.nz.iso}`);
-        const barData = rows.map(r => ({
+        // Filter chart rows to show only Atende/Parcial (matching the data table)
+        const sysPMin = parseFloat(document.getElementById('numPMin').value);
+        const sysPMax = parseFloat(document.getElementById('numPMax').value);
+        const filtered = rows.filter(r => {
+          const hasGreen = (r.pressures[0] >= sysPMin && r.pressures[0] <= sysPMax) ||
+                           (r.pressures[1] >= sysPMin && r.pressures[1] <= sysPMax) ||
+                           (r.pressures[2] >= sysPMin && r.pressures[2] <= sysPMax);
+          return hasGreen;
+        });
+        const chartRows = filtered.length > 0 ? filtered : rows.slice(0, 3);
+
+        const labels = chartRows.map(r => `ISO ${r.nz.iso}`);
+        const barData = chartRows.map(r => ({
           x: [r.range.vMin, r.range.vMax],
           y: `ISO ${r.nz.iso}`,
           min: r.range.vMin,
@@ -2828,7 +2854,7 @@
           ok: r.ok
         }));
 
-        const scatterData = rows.map(r => ({
+        const scatterData = chartRows.map(r => ({
           x: r.vAt3Bar,
           y: `ISO ${r.nz.iso}`
         }));
@@ -2871,8 +2897,8 @@
               legend: { display: false },
               annotation: {
                 annotations: {
-                  lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'V. Mín', color: colors.lineColor, font: { size: 9 } } },
-                  lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'V. Máx', color: colors.lineColor, font: { size: 9 } } }
+                  lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'V. Mín', backgroundColor: colors.lineColor, color: '#ffffff', font: { size: 9, weight: 'bold' } } },
+                  lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'V. Máx', backgroundColor: colors.lineColor, color: '#ffffff', font: { size: 9, weight: 'bold' } } }
                 }
               },
               tooltip: {
@@ -2969,9 +2995,9 @@
                   zoneRedLeft: { type: 'box', xMin: 0, xMax: inp.pwm.dutyMin, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(255,75,75,0.06)', borderWidth: 0 },
                   zoneGreen: { type: 'box', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMax, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(56,239,125,0.04)', borderWidth: 0 },
                   zoneRedRight: { type: 'box', xMin: inp.pwm.dutyMax, xMax: 120, yMin: -0.5, yMax: labels.length - 0.5, backgroundColor: 'rgba(255,75,75,0.07)', borderWidth: 0 },
-                  lineDMin: { type: 'line', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMin, borderColor: 'var(--accent-warn)', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `Mín ${inp.pwm.dutyMin}%`, color: 'var(--accent-warn)', font: { size: 9 }, position: 'start' } },
-                  lineDMax: { type: 'line', xMin: inp.pwm.dutyMax, xMax: inp.pwm.dutyMax, borderColor: 'var(--accent-error)', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `Máx ${inp.pwm.dutyMax}%`, color: 'var(--accent-error)', font: { size: 9 }, position: 'start' } },
-                  lineDIdeal: { type: 'line', xMin: inp.pwm.dutyIdeal, xMax: inp.pwm.dutyIdeal, borderColor: 'var(--accent)', borderDash: [2, 2], borderWidth: 1.5, label: { display: true, content: `Ideal ${inp.pwm.dutyIdeal}%`, color: 'var(--accent)', font: { size: 8 }, position: 'end' } }
+                  lineDMin: { type: 'line', xMin: inp.pwm.dutyMin, xMax: inp.pwm.dutyMin, borderColor: '#d97706', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `Mín ${inp.pwm.dutyMin}%`, backgroundColor: '#d97706', color: '#ffffff', font: { size: 9, weight: 'bold' }, position: 'start' } },
+                  lineDMax: { type: 'line', xMin: inp.pwm.dutyMax, xMax: inp.pwm.dutyMax, borderColor: '#ef4444', borderDash: [4, 4], borderWidth: 1.5, label: { display: true, content: `Máx ${inp.pwm.dutyMax}%`, backgroundColor: '#ef4444', color: '#ffffff', font: { size: 9, weight: 'bold' }, position: 'start' } },
+                  lineDIdeal: { type: 'line', xMin: inp.pwm.dutyIdeal, xMax: inp.pwm.dutyIdeal, borderColor: colors.lineColor, borderDash: [2, 2], borderWidth: 1.5, label: { display: true, content: `Ideal ${inp.pwm.dutyIdeal}%`, backgroundColor: colors.lineColor, color: '#ffffff', font: { size: 9, weight: 'bold' }, position: 'end' } }
                 }
               },
               tooltip: {
@@ -3042,8 +3068,8 @@
               legend: { display: false },
               annotation: {
                 annotations: {
-                  lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'Trator Mín', color: colors.lineColor, font: { size: 9 } } },
-                  lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'Trator Máx', color: colors.lineColor, font: { size: 9 } } },
+                  lineMin: { type: 'line', xMin: inp.vMin, xMax: inp.vMin, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'Trator Mín', backgroundColor: colors.lineColor, color: '#ffffff', font: { size: 9, weight: 'bold' } } },
+                  lineMax: { type: 'line', xMin: inp.vMax, xMax: inp.vMax, borderColor: colors.lineColor, borderDash: [4, 4], borderWidth: 2, label: { display: true, content: 'Trator Máx', backgroundColor: colors.lineColor, color: '#ffffff', font: { size: 9, weight: 'bold' } } },
                   zoneOperational: { type: 'box', xMin: inp.vMin, xMax: inp.vMax, yMin: -0.5, yMax: 2.5, backgroundColor: 'rgba(0, 210, 255, 0.03)', borderColor: 'rgba(0, 210, 255, 0.12)', borderWidth: 1 }
                 }
               },
@@ -3801,21 +3827,85 @@
         originalTable.style.borderCollapse = 'collapse';
         originalTable.style.fontSize = '12px';
         originalTable.style.color = '#334155';
+
+        // Helper function for print-safe high-contrast colors
+        function getPrintSafeColor(styleColor) {
+          if (!styleColor) return '#334155';
+          const c = styleColor.trim().toLowerCase().replace(/\s+/g, '');
+          
+          if (c.includes('var(--accent-green)')) return '#15803d';
+          if (c.includes('var(--accent-error)')) return '#b91c1c';
+          if (c.includes('var(--accent-warn)') || c.includes('#ffc107') || c.includes('rgb(255,193,7)')) return '#b45309';
+          if (c.includes('var(--text-main)')) return '#0f172a';
+          if (c.includes('var(--text-muted)')) return '#4b5563';
+          
+          // Nozzle colors matching
+          if (c.includes('#ffeb3b') || c.includes('rgb(255,235,59)')) return '#b58900'; // Amarelo
+          if (c.includes('#f28c28') || c.includes('rgb(242,140,40)')) return '#b45309'; // Laranja
+          if (c.includes('#795548') || c.includes('rgb(121,85,72)')) return '#5c3d31'; // Marrom
+          if (c.includes('#4caf50') || c.includes('rgb(76,175,80)')) return '#15803d'; // Verde
+          if (c.includes('#9e9e9e') || c.includes('rgb(158,158,158)')) return '#4b5563'; // Cinza
+          if (c.includes('#9c27b0') || c.includes('rgb(156,39,176)')) return '#7e22ce'; // Lilás
+          if (c.includes('#2196f3') || c.includes('rgb(33,150,243)')) return '#1d4ed8'; // Azul
+          if (c.includes('#f44336') || c.includes('rgb(244,67,54)')) return '#b91c1c'; // Vermelho
+          if (c.includes('#a1887f') || c.includes('rgb(161,136,127)')) return '#78350f'; // Marrom Claro
+          if (c.includes('#bdbdbd') || c.includes('rgb(189,189,189)')) return '#4b5563'; // Cinza Prata
+          if (c.includes('#ffffff') || c.includes('rgb(255,255,255)')) return '#0f172a'; // Branco -> Slate escuro
+          
+          return styleColor;
+        }
         
         const rowsToFilter = originalTable.querySelectorAll('tbody tr');
+        let renderedCount = 0;
+        const maxRows = MACHINE_MODE === 'dual' ? 4 : 5;
+
         rowsToFilter.forEach(tr => {
           const text = tr.innerText.toUpperCase();
-          const isNotRecommended = text.includes('NÃO RECOMENDADO') || text.includes('FORA') || text.includes('TROCA CRÍTICA');
-          if (isNotRecommended) {
+          const isNotRecommended = text.includes('NÃO RECOMENDADO') || 
+                                   text.includes('FORA') || 
+                                   text.includes('TROCA CRÍTICA') ||
+                                   text.includes('INSUFICIENTE');
+          if (isNotRecommended || renderedCount >= maxRows) {
             tr.remove(); 
           } else {
+            renderedCount++;
             tr.querySelectorAll('td').forEach(cell => {
               cell.style.border = '1px solid #eee';
               cell.style.padding = '8px';
-              cell.style.color = '#334155';
-              if (cell.style.color === 'white' || cell.style.color === 'var(--text-main)') {
-                cell.style.color = '#0f172a';
-              }
+              
+              // Resolve cell text color
+              const origColor = cell.style.color;
+              cell.style.color = getPrintSafeColor(origColor);
+
+              // Customize badges inside cells for high contrast and style
+              cell.querySelectorAll('.status-badge').forEach(badge => {
+                badge.style.display = 'inline-block';
+                badge.style.padding = '4px 8px';
+                badge.style.borderRadius = '12px';
+                badge.style.fontSize = '10px';
+                badge.style.fontWeight = '700';
+                badge.style.textAlign = 'center';
+                badge.style.textTransform = 'uppercase';
+
+                const txt = badge.innerText.toUpperCase();
+                if (badge.classList.contains('bad') || txt.includes('FORA') || txt.includes('REPLACE')) {
+                  badge.style.setProperty('background-color', '#fef2f2', 'important');
+                  badge.style.setProperty('color', '#b91c1c', 'important');
+                  badge.style.setProperty('border', '1px solid #fecaca', 'important');
+                } else if (badge.classList.contains('warning') || txt.includes('PARCIAL') || txt.includes('ALERTA')) {
+                  badge.style.setProperty('background-color', '#fffbeb', 'important');
+                  badge.style.setProperty('color', '#b45309', 'important');
+                  badge.style.setProperty('border', '1px solid #fef3c7', 'important');
+                } else if (badge.classList.contains('ok') || txt.includes('OK') || txt.includes('ATENDE') || txt.includes('CUMPLE')) {
+                  badge.style.setProperty('background-color', '#f0fdf4', 'important');
+                  badge.style.setProperty('color', '#15803d', 'important');
+                  badge.style.setProperty('border', '1px solid #bbf7d0', 'important');
+                } else {
+                  badge.style.setProperty('background-color', '#f8fafc', 'important');
+                  badge.style.setProperty('color', '#334155', 'important');
+                  badge.style.setProperty('border', '1px solid #e2e8f0', 'important');
+                }
+              });
             });
             tr.style.background = 'none';
           }

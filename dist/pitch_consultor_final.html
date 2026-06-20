@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch FINAL - Consultor PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a0f1a;
+            --primary-light: #162032;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --red: #ef4444;
+            --green: #10b981;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .page {
+            background: #ffffff;
+            width: 800px;
+            /* Fator A4: 794x1123, usar tamanho rígido fixo */
+            height: 1120px;
+            padding: 40px 60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+        
+        .tag {
+            display: inline-block;
+            background: rgba(163, 207, 61, 0.1);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            color: var(--primary);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* SECTIONS */
+        .section-title {
+            font-size: 17px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 18px;
+            background: var(--secondary);
+        }
+
+        p { font-size: 14px; line-height: 1.5; margin-bottom: 12px; }
+
+        /* THE PROBLEM */
+        .pain-box {
+            background: #fff1f2;
+            padding: 18px 25px;
+            border-left: 4px solid var(--red);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+        }
+
+        .pain-box strong { color: #991b1b; display: block; font-size: 16px; margin-bottom: 10px; font-family: 'Outfit'; }
+        
+        .bullet-list { list-style: none; margin-bottom: 10px; }
+        .bullet-list li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #7f1d1d;
+        }
+        .bullet-list li::before {
+            content: "•";
+            color: var(--red);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* GRID BLOCKS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: var(--primary-light);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .card h4 { color: var(--secondary); font-size: 18px; margin-bottom: 10px; }
+        .card p { color: #cbd5e1; font-size: 13px; }
+        
+        .card ul { list-style: none; margin-top: 10px; }
+        .card ul li { padding-left: 20px; position: relative; margin-bottom: 8px; font-size: 13px; color: #f8fafc; }
+        .card ul li::before {
+            content: "✔";
+            color: var(--secondary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* USAGE STEPS */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+            margin: 0 auto 8px auto;
+        }
+
+        .step p { font-size: 12px; margin: 0; color: var(--text-main); font-weight: 600; }
+
+        /* REAL EXAMPLE BOX */
+        .example-box {
+            border: 2px dashed #cbd5e1;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .example-box h4 { font-size: 20px; color: var(--primary); margin-bottom: 15px; }
+        
+        .example-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .ex-col { padding: 15px; border-radius: 6px; }
+        .ex-table { background: #f1f5f9; }
+        .ex-app { background: #fff1f2; border: 1px solid #fecdd3; }
+        
+        .ex-app ul { list-style: none; margin-top: 8px; }
+        .ex-app li { font-size: 13px; color: #991b1b; margin-bottom: 5px; }
+
+        /* FINAL STATS / BENEFITS */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .b-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .b-item span { color: var(--green); font-size: 16px; }
+
+        /* FOOTER BRANDING */
+        .footer-brand {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: none;
+            font-family: 'Outfit';
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        @page { margin: 0; }
+        @media print {
+            body { background: white; padding: 0 !important; }
+            .controls { display: none; }
+            .page { 
+                box-shadow: none; 
+                margin: 0; 
+                padding: 40px 60px !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="btn" onclick="window.print()">Exportar PDF</button>
+    </div>
+
+    <!-- PÁGINA 1 -->
+    <div class="page">
+        <div class="header">
+            <span class="tag">Spray Precision PRO</span>
+            <h1>Decis&atilde;o t&eacute;cnica de pulveriza&ccedil;&atilde;o em segundos.</h1>
+            <p>Pare de confiar em tabela m&eacute;dia. Valide a aplica&ccedil;&atilde;o <b>real</b> da m&aacute;quina no campo &mdash; antes de aplicar.</p>
+        </div>
+
+        <h3 class="section-title">O Problema Real (Campo)</h3>
+        <div class="pain-box">
+            <strong>O produtor investe milh&otilde;es na m&aacute;quina... mas a decis&atilde;o do bico ainda &eacute; feita na m&eacute;dia da tabela.</strong>
+            <p style="color: #7f1d1d">Só que a máquina NÃO trabalha em média. No campo:</p>
+            <ul class="bullet-list">
+                <li>A velocidade <b>varia</b></li>
+                <li>A press&atilde;o <b>oscila</b></li>
+                <li>A gota <b>perde padr&atilde;o</b></li>
+            </ul>
+            <p style="color: #7f1d1d; margin-top: 15px;"><b>🚨 Resultado:</b> Deriva invis&iacute;vel, subdose ou superdose, falha de controle. E o erro sempre recai sobre quem recomendou.</p>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h4>A Solu&ccedil;&atilde;o</h4>
+                <p>O Spray Precision PRO transforma a regulagem num diagn&oacute;stico t&eacute;cnico. Em segundos, voc&ecirc; sabe:</p>
+                <ul>
+                    <li>Qual bico usar</li>
+                    <li>Em qual faixa de velocidade ele funciona</li>
+                    <li>Qual pressão a máquina vai gerar na prática</li>
+                </ul>
+            </div>
+            
+            <div class="card" style="background: var(--primary);">
+                <h4 style="color: var(--accent);">O Diferencial</h4>
+                <p>Isso <b>N&Atilde;O</b> &eacute; uma tabela. &Eacute; um cruzamento direto entre:</p>
+                <ul>
+                    <li style="color: white; font-weight: normal;">Hidr&aacute;ulica da m&aacute;quina;</li>
+                    <li style="color: white; font-weight: normal;">F&iacute;sica da vaz&atilde;o;</li>
+                    <li style="color: white; font-weight: normal;">Varia&ccedil;&atilde;o de velocidade real.</li>
+                </ul>
+                <p style="margin-top: 10px; color: var(--secondary); font-weight: bold;">Você valida a operação antes de aplicar.</p>
+            </div>
+        </div>
+
+        <h3 class="section-title">Como o Consultor Usa (Vida Real)</h3>
+        <p>No talh&atilde;o da fazenda, sem teoria. Fluxo 100% pr&aacute;tico:</p>
+        
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <p>Chega no Talh&atilde;o</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <p>Coleta: L/ha, Vel. M&eacute;dia e Espa&ccedil;amento</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <p>Insere os dados no Aplicativo</p>
+            </div>
+            <div class="step" style="border-color: var(--secondary); background: #f4fce3;">
+                <div class="step-num" style="background: var(--secondary);">4</div>
+                <p style="color: #4d7c0f">Diagn&oacute;stico Exato (Verde / Vermelho)</p>
+            </div>
+        </div>
+
+        <div style="background: #e2e8f0; padding: 15px; border-radius: 8px; text-align: center; font-weight: 500; font-size: 14px;">
+            Sem interpreta&ccedil;&atilde;o subjetiva. Sem "acho que funciona".
+        </div>
+    </div>
+
+    <!-- PÁGINA 2 -->
+    <div class="page">
+        <h3 class="section-title">Exemplo Real (Todo Dia)</h3>
+        <div class="example-box">
+            <h4>O operador quer 60 L/ha &agrave; 25 km/h.</h4>
+            <div class="example-grid">
+                <div class="ex-col ex-table">
+                    <strong style="color: #475569;">A Tabela Física Tradicional diz:</strong>
+                    <p style="font-size: 24px; font-weight: 900; color: #64748b; margin-top: 10px;">"OK"</p>
+                </div>
+                <div class="ex-col ex-app">
+                    <strong style="color: #b91c1c;">O App PRO mostra a verdade:</strong>
+                    <ul>
+                        <li>❌ Press&atilde;o fora da faixa de seguran&ccedil;a da bomba.</li>
+                        <li>❌ Risco iminente de deriva severa no campo.</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-weight: bold; color: var(--primary);">
+                &#10140; Solu&ccedil;&atilde;o orientada na hora: Ajustar velocidade <b>OU</b> Trocar o bico.
+            </p>
+        </div>
+
+        <h3 class="section-title">Impacto na Consultoria</h3>
+        <p>Você deixa de recomendar baseado apenas em tabelas de catálogo limitadas e <b>passa a:</b></p>
+        <div class="benefits-grid">
+            <div class="b-item"><span>✔</span> Validar tecnicamente a operação</div>
+            <div class="b-item"><span>✔</span> Antecipar erro antes de acontecer</div>
+            <div class="b-item"><span>✔</span> Ganhar autoridade imediata no campo</div>
+            <div class="b-item"><span>✔</span> Eliminar erro de regulagem crônico</div>
+        </div>
+
+        <div class="benefits-grid">
+            <div class="b-item" style="background: white; border: 1px solid #e2e8f0;"><span>🎯</span> Reduz deriva invis&iacute;vel</div>
+            <div class="b-item" style="background: white; border: 1px solid #e2e8f0;"><span>🎯</span> Melhora efici&ecirc;ncia da aplica&ccedil;&atilde;o</div>
+            <div class="b-item" style="background: white; border: 1px solid #e2e8f0;"><span>🎯</span> Aumenta confian&ccedil;a do cliente</div>
+            <div class="b-item" style="background: white; border: 1px solid #e2e8f0;"><span>🎯</span> De "recomenda&ccedil;&atilde;o" para "decis&atilde;o t&eacute;cnica"</div>
+        </div>
+
+        <h3 class="section-title">Na Pr&aacute;tica</h3>
+        <div style="background: var(--primary); color: white; padding: 25px; border-radius: 12px; margin-bottom: 40px; display: flex; justify-content: space-around; text-align: center;">
+            <div>
+                <strong style="display: block; font-size: 24px; color: var(--accent); font-family: 'Outfit';">10s</strong>
+                <span style="font-size: 13px;">Para validar uma aplica&ccedil;&atilde;o</span>
+            </div>
+            <div>
+                <strong style="display: block; font-size: 24px; color: var(--accent); font-family: 'Outfit';">100%</strong>
+                <span style="font-size: 13px;">Baseado em dados reais</span>
+            </div>
+            <div>
+                <strong style="display: block; font-size: 24px; color: var(--accent); font-family: 'Outfit';">Universal</strong>
+                <span style="font-size: 13px;">Para qualquer pulverizador</span>
+            </div>
+        </div>
+
+        <div class="footer-brand">
+            <h2 style="font-size: 24px; color: var(--primary); margin-bottom: 10px;">Spray Precision PRO</h2>
+            <p style="font-size: 15px; color: var(--text-muted);">Ferramenta de validação t&eacute;cnica da pulverização.</p>
+            <p style="font-size: 12px; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px; color: var(--secondary);">
+                "Se você recomenda aplicação, você precisa garantir que ela funciona na prática."
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>

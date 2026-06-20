@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia T&eacute;cnico - Ferramenta de Balc&atilde;o</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #004b63;
+            --secondary: #a3cf3d;
+            --accent: #00d2ff;
+            --text: #1e293b;
+            --light: #f1f5f9;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: #e2e8f0; color: var(--text); padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        .page { background: white; width: 800px; padding: 60px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 10px solid var(--primary); }
+        h1, h2, h3 { font-family: 'Outfit'; color: var(--primary); margin-bottom: 20px; }
+        .code-block { background: #0f172a; color: #38ef7d; padding: 20px; border-radius: 8px; margin: 20px 0; font-family: monospace; font-size: 13px; line-height: 1.5; position: relative; }
+        .code-block::before { content: "Snippet de Implementa&ccedil;&atilde;o"; position: absolute; top: -10px; right: 20px; background: var(--secondary); color: var(--primary); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 800; font-family: 'Inter'; }
+        .feature-card { border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid var(--secondary); }
+        .feature-card h3 { font-size: 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .feature-card i { width: 20px; color: var(--secondary); }
+        .btn-print { position: fixed; top: 20px; right: 20px; background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 50px; cursor: pointer; font-family: Outfit; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print" onclick="window.print()">Exportar Guia de Implementa&ccedil;&atilde;o (PDF)</button>
+
+    <div class="page">
+        <header style="text-align: center; margin-bottom: 40px;">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: var(--secondary); font-size: 12px;">Roadmap T&eacute;cnico</p>
+            <h1>Implementa&ccedil;&atilde;o: Ferramenta de Balc&atilde;o</h1>
+        </header>
+
+        <section>
+            <h2>Objetivo Profissional</h2>
+            <p>Transformar o <strong>Spray Precision PRO</strong> de um site gen&eacute;rico em uma plataforma de consultoria robusta e customiz&aacute;vel para cada loja/vendedor que assinar o servi&ccedil;o.</p>
+        </section>
+
+        <section>
+            <div class="feature-card">
+                <h3><i data-lucide="layout"></i> 1. Branding Din&acirc;mico (Dynamic Logo)</h3>
+                <p>N&atilde;o crie um arquivo HTML para cada loja. Use o Supabase para carregar a logo da loja logada. Se o usu&aacute;rio for da "Loja X", o sistema busca a URL da imagem no banco de dados e substitui o seu logo no cabe&ccedil;alho.</p>
+                <div class="code-block">
+                    // Exemplo de como substituir o logo via JS<br>
+                    const logoUrl = user_metadata.store_logo_url || './logo.png';<br>
+                    document.getElementById('headerLogo').src = logoUrl;
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3><i data-lucide="message-square"></i> 2. Roteamento de WhatsApp</h3>
+                <p>O vendedor quer que o cliente responda para o n&uacute;mero dele. Voc&ecirc; deve armazenar o telefone do vendedor (ou da unidade) nas configura&ccedil;&otilde;es da conta no Supabase.</p>
+                <div class="code-block">
+                    // Dinamizando o link do WhatsApp na exporta&ccedil;&atilde;o<br>
+                    const whatsNumber = user_metadata.store_whatsapp;<br>
+                    const message = encodeURIComponent("Simula&ccedil;&atilde;o finalizada...");<br>
+                    btnZap.href = `https://wa.me/${whatsNumber}?text=${message}`;
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3><i data-lucide="list"></i> 3. Filtro de Invent&aacute;rio de Estoque</h3>
+                <p>Grandes revendas muitas vezes representam marcas espec&iacute;ficas (John Deere, TeeJet, Hypro). Voc&ecirc; pode adicionar uma coluna <code>brand</code> no seu objeto de bicos e filtrar para que o sistema s&oacute; recomende bicos que a loja tenha no estoque f&iacute;sico.</p>
+                <div class="code-block">
+                    // Filtragem no array NOZZLES<br>
+                    const storeBrands = ['TeeJet', 'MagnoJet'];<br>
+                    const visibleNozzles = NOZZLES.filter(n => storeBrands.includes(n.brand));
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3><i data-lucide="printer"></i> 4. Relat&oacute;rio de Consultoria (A For&ccedil;a do Balc&atilde;o)</h3>
+                <p>O vendedor entrega um papel ou PDF com o logotipo da loja dele ao cliente. Isso fixa a marca da loja na cabe&ccedil;a do produtor. Use a fun&ccedil;&atilde;o <code>window.print()</code> e uma folha de estilo <code>@media print</code> para esconder os controles do site e deixar apenas o resultado final limpo.</p>
+            </div>
+        </section>
+
+        <section style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <h3>Estrat&eacute;gia de Scaling:</h3>
+            <p><strong>Fase 1:</strong> Comece com par&acirc;metros na URL para testes r&aacute;pidos.</p>
+            <p><strong>Fase 2:</strong> Migre para perfis de usu&aacute;rio no Supabase (Vers&atilde;o Senior).</p>
+            <p><strong>Fase 3:</strong> Crie um "Painel de Admin" onde o dono da loja pode entrar e trocar o logo e o telefone sozinho.</p>
+        </section>
+
+        <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8;">
+            Guia de Engenharia para Eduardo Andrade - Spray Precision PRO 2026
+        </div>
+    </div>
+
+    <script>
+function _0x321f(_0x2cfd13,_0x474829){_0x2cfd13=_0x2cfd13-0x1a3;var _0x2259f1=_0x2259();var _0x321f03=_0x2259f1[_0x2cfd13];if(_0x321f['\x66\x51\x48\x50\x6f\x68']===undefined){var _0x2d0243=function(_0x12afa3){var _0xefcc7d='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x5c7204='',_0x8d9666='';for(var _0x7f1ff7=0x0,_0x1503c6,_0xfe57ff,_0x5a5908=0x0;_0xfe57ff=_0x12afa3['\x63\x68\x61\x72\x41\x74'](_0x5a5908++);~_0xfe57ff&&(_0x1503c6=_0x7f1ff7%0x4?_0x1503c6*0x40+_0xfe57ff:_0xfe57ff,_0x7f1ff7++%0x4)?_0x5c7204+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x1503c6>>(-0x2*_0x7f1ff7&0x6)):0x0){_0xfe57ff=_0xefcc7d['\x69\x6e\x64\x65\x78\x4f\x66'](_0xfe57ff);}for(var _0x493e1a=0x0,_0xa86fea=_0x5c7204['\x6c\x65\x6e\x67\x74\x68'];_0x493e1a<_0xa86fea;_0x493e1a++){_0x8d9666+='\x25'+('\x30\x30'+_0x5c7204['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x493e1a)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x8d9666);};_0x321f['\x46\x64\x75\x7a\x64\x57']=_0x2d0243,_0x321f['\x44\x50\x6e\x6e\x4b\x42']={},_0x321f['\x66\x51\x48\x50\x6f\x68']=!![];}var _0x1d789c=_0x2259f1[0x0],_0xc6e446=_0x2cfd13+_0x1d789c,_0x2f084d=_0x321f['\x44\x50\x6e\x6e\x4b\x42'][_0xc6e446];return!_0x2f084d?(_0x321f03=_0x321f['\x46\x64\x75\x7a\x64\x57'](_0x321f03),_0x321f['\x44\x50\x6e\x6e\x4b\x42'][_0xc6e446]=_0x321f03):_0x321f03=_0x2f084d,_0x321f03;}var _0x25a522=_0x321f;function _0x2259(){var _0x5d2bb1=['\x6e\x75\x58\x51\x43\x68\x4c\x4e\x76\x71','\x6d\x5a\x69\x32\x6e\x64\x61\x35\x6f\x77\x50\x34\x41\x77\x66\x49\x73\x61','\x6e\x74\x65\x34\x6e\x5a\x69\x5a\x6e\x4b\x58\x50\x45\x4d\x4c\x65\x75\x61','\x79\x33\x6a\x4c\x79\x78\x72\x4c\x73\x77\x6e\x56\x42\x4e\x6d','\x6d\x74\x75\x34\x6e\x64\x69\x33\x6d\x66\x76\x6d\x77\x68\x76\x79\x43\x57','\x6d\x5a\x71\x57\x6d\x4a\x65\x35\x6f\x64\x4c\x6f\x72\x33\x7a\x69\x73\x78\x4f','\x6d\x5a\x69\x30\x6d\x4a\x69\x34\x6d\x4c\x6a\x4e\x71\x78\x72\x4b\x43\x71','\x6e\x5a\x69\x35\x6e\x4a\x75\x30\x6d\x76\x72\x74\x41\x67\x66\x74\x41\x71','\x6d\x74\x62\x59\x73\x31\x6e\x4d\x75\x76\x6d','\x6d\x74\x61\x30\x6e\x64\x61\x31\x6e\x64\x7a\x66\x74\x68\x6a\x31\x45\x78\x79','\x6f\x65\x54\x58\x7a\x4b\x4c\x57\x77\x47'];_0x2259=function(){return _0x5d2bb1;};return _0x2259();}(function(_0x523801,_0x346b0f){var _0x6126e0=_0x321f,_0x680a9f=_0x523801();while(!![]){try{var _0xce9a43=-parseInt(_0x6126e0(0x1a7))/0x1+-parseInt(_0x6126e0(0x1a9))/0x2+-parseInt(_0x6126e0(0x1a4))/0x3+-parseInt(_0x6126e0(0x1a5))/0x4+parseInt(_0x6126e0(0x1a3))/0x5*(parseInt(_0x6126e0(0x1ac))/0x6)+parseInt(_0x6126e0(0x1aa))/0x7*(parseInt(_0x6126e0(0x1ad))/0x8)+-parseInt(_0x6126e0(0x1a8))/0x9*(-parseInt(_0x6126e0(0x1ab))/0xa);if(_0xce9a43===_0x346b0f)break;else _0x680a9f['push'](_0x680a9f['shift']());}catch(_0x436869){_0x680a9f['push'](_0x680a9f['shift']());}}}(_0x2259,0xed686),lucide[_0x25a522(0x1a6)]());
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "Spray Precision PRO",
+  "short_name": "Spray PRO",
+  "description": "Simulador ISO de Bicos de Pulverização",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "./logo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

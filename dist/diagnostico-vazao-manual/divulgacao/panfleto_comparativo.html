@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Laudo Comparativo: O Custo Invisível da Descalibração - Spray Precision PRO</title>
+  
+  <!-- Fontes Premium do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --accent-blue: #0066cc;
+      --accent-blue-glow: rgba(0, 102, 204, 0.06);
+      --accent-green: #10b981;
+      --accent-green-glow: rgba(16, 185, 129, 0.08);
+      --accent-red: #ef4444;
+      --accent-red-glow: rgba(239, 68, 68, 0.08);
+      --accent-warning: #f59e0b;
+      --accent-warning-glow: rgba(245, 158, 11, 0.08);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-light: #64748b;
+      --border-color: rgba(15, 23, 42, 0.06);
+      --shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.02);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* HEADER & HERO */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .brand-subtitle {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: -3px;
+    }
+
+    .hero-box {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 24px 16px;
+      background: radial-gradient(circle at top, rgba(0, 102, 204, 0.05) 0%, rgba(255,255,255,0) 70%);
+      border-radius: var(--radius-lg);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--accent-blue-glow);
+      color: var(--accent-blue);
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      border: 1px solid rgba(0, 102, 204, 0.1);
+    }
+
+    .hero-title {
+      font-size: 26px;
+      line-height: 1.2;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* COMPARAÇÃO LADO A LADO - CARDS */
+    .compare-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .compare-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .compare-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+    }
+
+    .compare-card.approved::before {
+      background-color: var(--accent-green);
+    }
+
+    .compare-card.rejected::before {
+      background-color: var(--accent-red);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .card-title-box h3 {
+      font-size: 18px;
+      color: var(--text-main);
+    }
+
+    .card-title-box p {
+      font-size: 11.5px;
+      color: var(--text-light);
+      margin-top: 1px;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.approved {
+      background-color: var(--accent-green-glow);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .status-badge.rejected {
+      background-color: var(--accent-red-glow);
+      color: var(--accent-red);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+
+    /* MINI METRICAS GRID */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-item {
+      background: #f1f5f9;
+      border: 1px solid rgba(15, 23, 42, 0.04);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .metric-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .compare-card.approved .metric-value.cv { color: var(--accent-green); }
+    .compare-card.rejected .metric-value.cv { color: var(--accent-red); }
+
+    /* VISUALIZADOR DE BARRA SIMPLIFICADO */
+    .bar-visualizer-box {
+      margin-bottom: 16px;
+    }
+
+    .bar-label {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .nozzle-dots {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .dot {
+      flex: 1;
+      height: 10px;
+      border-radius: 3px;
+      transition: transform 0.2s ease;
+    }
+
+    .dot.green { background-color: var(--accent-green); }
+    .dot.red-low { background-color: #ef4444; }
+    .dot.red-high { background-color: #dc2626; }
+    .dot.yellow { background-color: var(--accent-warning); }
+
+    /* DETALHE DO DESASTRE FINANCEIRO */
+    .financial-loss-alert {
+      background: var(--accent-red-glow);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .loss-icon {
+      font-size: 24px;
+      animation: pulse 2s infinite;
+    }
+
+    .loss-text {
+      flex-grow: 1;
+    }
+
+    .loss-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-red);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .loss-desc {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .loss-desc span {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .financial-saving-success {
+      background: var(--accent-green-glow);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .saving-text {
+      flex-grow: 1;
+    }
+
+    .saving-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-green);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .saving-desc {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* INFOGRÁFICO DO PREJUÍZO */
+    .infographic-box {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .info-title {
+      font-size: 16px;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .loss-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .loss-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .loss-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .loss-badge {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .loss-badge.waste {
+      background-color: var(--accent-warning-glow);
+      color: var(--accent-warning);
+    }
+
+    .loss-badge.escape {
+      background-color: var(--accent-red-glow);
+      color: var(--accent-red);
+    }
+
+    .item-body h4 {
+      font-size: 13.5px;
+      color: var(--text-main);
+    }
+
+    .item-body p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* CTAS E BOTÕES */
+    .cta-box {
+      background: var(--accent-blue-glow);
+      border: 1px solid rgba(0, 102, 204, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .cta-box h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .cta-box p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15.5px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      min-height: 48px;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: #ffffff;
+      box-shadow: 0 10px 20px -5px rgba(0, 102, 204, 0.2);
+    }
+
+    .btn-primary:hover {
+      background-color: #0052a3;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: #ffffff;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 20px 0;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    /* ESTILO EXCLUSIVO DE IMPRESSÃO (A4 PORTRAIT) */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+      }
+
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+
+      .app-header {
+        border-bottom: 2px solid #000000 !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 20px !important;
+      }
+
+      .btn, .cta-box {
+        display: none !important; /* Esconde botões e caixas de ação web na impressão */
+      }
+
+      .hero-box {
+        background: none !important;
+        padding: 10px 0 !important;
+        margin-bottom: 15px !important;
+      }
+
+      .hero-title {
+        font-size: 20pt !important;
+      }
+
+      .compare-card {
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 2px solid #cbd5e1 !important;
+        margin-bottom: 15px !important;
+      }
+
+      .compare-card::before {
+        width: 10px !important;
+      }
+
+      .compare-card.approved {
+        border-color: #10b981 !important;
+      }
+
+      .compare-card.rejected {
+        border-color: #ef4444 !important;
+      }
+
+      .nozzle-dots {
+        background: #f1f5f9 !important;
+        border: 1px solid #94a3b8 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .dot {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .dot.green { background-color: #10b981 !important; }
+      .dot.red-low { background-color: #ef4444 !important; }
+      .dot.red-high { background-color: #dc2626 !important; }
+      .dot.yellow { background-color: #f59e0b !important; }
+
+      .financial-loss-alert {
+        background: #fee2e2 !important;
+        border: 1px solid #ef4444 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .financial-saving-success {
+        background: #d1fae5 !important;
+        border: 1px solid #10b981 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .infographic-box {
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="brand">
+        <img src="../logo.png" alt="Spray Precision Logo" onerror="this.src='https://placehold.co/80x80?text=SP'">
+        <div>
+          <h1 class="brand-title">Spray Precision <span style="font-weight:300;">PRO</span></h1>
+          <p class="brand-subtitle">Tecnologia de Aplicação</p>
+        </div>
+      </div>
+      <div style="font-size: 11px; font-weight: bold; color: var(--text-light); text-transform: uppercase;">
+        Material Comercial A4
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero-box">
+      <div class="badge">🚜 Relatório de Engenharia Agronômica</div>
+      <h2 class="hero-title">O Custo Invisível de um Pulverizador Desregulado</h2>
+      <p class="hero-desc">
+        A desuniformidade na barra de pulverização drena silenciosamente a rentabilidade da safra. Compare a precisão científica contra o desperdício oculto na calibração de bicos.
+      </p>
+    </section>
+
+    <!-- COMPARAÇÃO -->
+    <section class="compare-section">
+      
+      <!-- CASO APROVADO -->
+      <div class="compare-card approved">
+        <div class="card-header">
+          <div class="card-title-box">
+            <h3>Caso 1: Fazenda Progresso</h3>
+            <p>Sorriso - MT | Pulverizador John Deere M4030</p>
+          </div>
+          <span class="status-badge approved">Aprovado</span>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-item">
+            <p class="metric-label">Barra (CV%)</p>
+            <p class="metric-value cv">2.1%</p>
+          </div>
+          <div class="metric-item">
+            <p class="metric-label">Status Pontas</p>
+            <p class="metric-value">10/10 OK</p>
+          </div>
+        </div>
+
+        <div class="bar-visualizer-box">
+          <div class="bar-label">
+            <span>Visualização da Uniformidade das Pontas</span>
+            <span>100% Estável</span>
+          </div>
+          <div class="nozzle-dots">
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+          </div>
+        </div>
+
+        <div class="financial-saving-success">
+          <div class="loss-icon">🟢</div>
+          <div class="saving-text">
+            <p class="saving-title">Perda/Desperdício de Calda</p>
+            <p class="saving-desc">R$ 0,00 <span>(Máxima eficiência agronômica)</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASO REPROVADO -->
+      <div class="compare-card rejected">
+        <div class="card-header">
+          <div class="card-title-box">
+            <h3>Caso 2: Fazenda Santo Antônio</h3>
+            <p>Sorriso - MT | Pulverizador Case IH Patriot 350</p>
+          </div>
+          <span class="status-badge rejected">Reprovado</span>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-item">
+            <p class="metric-label">Barra (CV%)</p>
+            <p class="metric-value cv">28.4%</p>
+          </div>
+          <div class="metric-item">
+            <p class="metric-label">Status Pontas</p>
+            <p class="metric-value" style="color: var(--accent-red)">5 OK | 5 Críticos</p>
+          </div>
+        </div>
+
+        <div class="bar-visualizer-box">
+          <div class="bar-label">
+            <span>Visualização da Uniformidade das Pontas</span>
+            <span style="color: var(--accent-red)">Gravemente Desuniforme</span>
+          </div>
+          <div class="nozzle-dots">
+            <div class="dot green"></div>
+            <div class="dot red-low"></div> <!-- Bico 2 com entupimento severo -->
+            <div class="dot yellow"></div> <!-- Bico 3 com restrição leve -->
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot green"></div>
+            <div class="dot yellow"></div> <!-- Bico 7 com restrição leve -->
+            <div class="dot yellow"></div> <!-- Bico 8 com desgaste leve -->
+            <div class="dot red-high"></div> <!-- Bico 9 com desgaste severo/vazamento -->
+            <div class="dot green"></div>
+          </div>
+        </div>
+
+        <div class="financial-loss-alert">
+          <div class="loss-icon">🔴</div>
+          <div class="loss-text">
+            <p class="loss-title">Prejuízo Estimado por Barra Desregulada</p>
+            <p class="loss-desc">R$ 17.550,00 <span>(Área de 250 ha simulada)</span></p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ENTENDENDO AS PERDAS -->
+    <section class="infographic-box">
+      <h3 class="info-title">📊 Por onde escorre o dinheiro do Produtor?</h3>
+      <div class="loss-items">
+        <div class="loss-item">
+          <span class="loss-badge waste">Sobredosagem</span>
+          <div class="item-body">
+            <h4>Bicos Desgastados (Desperdício de Calda): **Perda de R$ 1.950,00**</h4>
+            <p>O bico 9, por exemplo, operando com **+60.0%** acima da vazão nominal. É calda de defensivo jogada fora que não gera controle adicional, além de risco grave de fitotoxicidade na planta e resíduos no solo.</p>
+          </div>
+        </div>
+        <div class="loss-item">
+          <span class="loss-badge escape">Subdosagem</span>
+          <div class="item-body">
+            <h4>Bicos Entupidos (Risco de Escape): **Perda de R$ 15.600,00**</h4>
+            <p>O bico 2 com **-46.7%** de vazão gera subaplicação severa. Essa faixa da lavoura fica vulnerável a ataques de pragas, fungos e mato competir com a cultura, reduzindo brutalmente a produtividade final na colheita.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTAS -->
+    <section class="cta-box">
+      <h3>Calibre sua Barra e Proteja sua Safra Hoje</h3>
+      <p>Consultor, valorize seu serviço. Produtor, pare de perder dinheiro.</p>
+      <a href="../index.html" class="btn btn-primary">🚜 Fazer Diagnóstico Grátis</a>
+      <a href="https://wa.me/5599999999999?text=Quero%20conhecer%20o%20plano%20PRO%20do%20Spray%20Precision" target="_blank" class="btn btn-secondary">💬 Falar com Consultor Técnico</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 Spray Precision PRO. Todos os direitos reservados.</p>
+      <p style="margin-top: 4px;">Pressione <b>Ctrl + P</b> no computador para salvar este laudo comercial em formato PDF A4 profissional.</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>

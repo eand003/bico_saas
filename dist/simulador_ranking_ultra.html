@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spray Precision: Diagnóstico Visual Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Outfit:wght@800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #0077b6;
+            --bg: #f4f7f9;
+            --card: #ffffff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --text: #212529;
+            --text-muted: #6c757d;
+        }
+
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); padding: 15px; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; margin: 0; }
+        .container { max-width: 900px; width: 100%; border: 1px solid #dee2e6; border-radius: 20px; background: var(--card); padding: 30px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--primary); padding-bottom: 15px; }
+        .header h1 { font-family: 'Outfit'; font-size: 28px; font-weight: 800; color: var(--secondary); margin: 0; }
+        .header p { color: var(--text-muted); font-size: 12px; margin-top: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Sliders Section */
+        .control-unit { text-align: center; margin-bottom: 50px; background: #e9f5ff; padding: 30px; border-radius: 15px; }
+        .speed-val { font-size: 70px; font-weight: 900; color: var(--secondary); line-height: 1; }
+        .speed-label { font-size: 12px; font-weight: 900; color: var(--text-muted); margin-bottom: 20px; }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; max-width: 500px; height: 10px; border-radius: 5px; background: #ced4da; outline: none; margin: 20px 0; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; background: var(--secondary); border: 4px solid #fff; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: 0.1s; }
+
+        /* Gauges Matrix */
+        .gauges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        @media (max-width: 768px) {
+            .gauges-grid { grid-template-columns: 1fr; }
+            .speed-val { font-size: 54px; }
+            .control-unit { padding: 20px; margin-bottom: 30px; }
+            .gauge-card { order: 2; }
+            .gauge-card.winner { order: 1; } /* Força o Campeão no Topo no Celular */
+            .metafor-box { padding-top: 20px; margin-top: 30px; }
+            .header h1 { font-size: 24px; }
+        }
+
+        .gauge-card { background: #fff; border: 1px solid #dee2e6; border-radius: 15px; padding: 20px; text-align: center; position: relative; }
+        .gauge-card.winner { border: 2px solid var(--success); background: #f8fff9; }
+        .winner-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--success); color: #fff; font-size: 10px; font-weight: 900; padding: 3px 12px; border-radius: 50px; }
+
+        .gauge-title { font-size: 14px; font-weight: 900; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; }
+
+        /* Manômetro Flat Snap-Style */
+        .gauge-visual { height: 100px; position: relative; margin: 15px 0; display: flex; align-items: flex-end; justify-content: center; }
+        .arc-base { width: 140px; height: 70px; border: 10px solid #dee2e6; border-bottom: 0; border-radius: 100px 100px 0 0; position: relative; overflow: hidden; }
+        .arc-zone { width: 50%; height: 100%; position: absolute; left: 25%; background: var(--success); opacity: 0.15; border-left: 2px solid var(--success); border-right: 2px solid var(--success); }
+        
+        .needle { position: absolute; bottom: 0; left: 50%; width: 4px; height: 60px; background: #333; border-radius: 5px; transform-origin: bottom center; transform: rotate(0deg); transition: 0.1s cubic-bezier(0, 0.5, 0.5, 1); z-index: 2; }
+        .needle::after { content: ""; position: absolute; bottom: -6px; left: -5px; width: 14px; height: 14px; background: #333; border-radius: 50%; border: 3px solid #fff; }
+
+        .status-badge { font-size: 11px; font-weight: 900; margin-top: 15px; min-height: 40px; display: flex; align-items: center; justify-content: center; padding: 0 10px; border-radius: 5px; line-height: 1.2; text-transform: uppercase; }
+
+        /* Metafora Simples */
+        .metafor-box { margin-top: 40px; border-top: 2px solid #f8fafc; padding-top: 30px; }
+        .metafor-label { font-size: 12px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; text-align: center; }
+        .track { width: 100%; height: 40px; background: #ced4da; border-radius: 5px; position: relative; display: flex; align-items: center; }
+        .safe-zone { position: absolute; left: 30%; width: 40%; height: 100%; background: #fff; border-left: 1px dashed #6c757d; border-right: 1px dashed #6c757d; }
+        .dot { position: absolute; width: 30px; height: 30px; border-radius: 5px; font-size: 12px; font-weight: 900; color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.1s; transform: translateX(-50%); }
+
+        .btn-footer { width: 100%; background: var(--secondary); color: #fff; border: none; padding: 18px; border-radius: 10px; font-weight: 900; font-size: 16px; margin-top: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Spray Precision PRO</h1>
+            <p>Diagnóstico de Estabilidade de Pressão</p>
+        </div>
+
+        <div class="control-unit">
+            <div class="speed-label">Simular Velocidade de Operação (KM/H)</div>
+            <div class="speed-val" id="valKm">17</div>
+            <input type="range" id="rngKm" min="4" max="30" value="17" oninput="runSim(this.value)">
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">Arraste para testar o limite dos bicos</p>
+        </div>
+
+        <div class="gauges-grid">
+            <!-- CAMPEÃO -->
+            <div class="gauge-card winner">
+                <div class="winner-tag">CAMPEÃO</div>
+                <div class="gauge-title">ISO 03 (AZUL)</div>
+                <div class="gauge-visual">
+                    <div class="arc-base"><div class="arc-zone"></div></div>
+                    <div id="ndlA" class="needle"></div>
+                </div>
+                <div class="status-badge" id="stA" style="color:var(--success)">Estável e Seguro</div>
+            </div>
+
+            <!-- PEQUENO -->
+            <div class="gauge-card">
+                <div class="gauge-title">ISO 02 (AMARELO)</div>
+                <div class="gauge-visual">
+                    <div class="arc-base"><div class="arc-zone" style="width: 25%; left: 50%;"></div></div>
+                    <div id="ndlB" class="needle"></div>
+                </div>
+                <div class="status-badge" id="stB" style="color:var(--text-muted)">Dentro do Limite</div>
+            </div>
+
+            <!-- GRANDE -->
+            <div class="gauge-card">
+                <div class="gauge-title">ISO 04 (VERMELHO)</div>
+                <div class="gauge-visual">
+                    <div class="arc-base"><div class="arc-zone" style="width: 25%; left: 25%;"></div></div>
+                    <div id="ndlC" class="needle"></div>
+                </div>
+                <div class="status-badge" id="stC" style="color:var(--text-muted)">Dentro do Limite</div>
+            </div>
+        </div>
+
+        <div class="metafor-box">
+            <div class="metafor-label">Posicionamento na Faixa de Segurança</div>
+            <div class="track">
+                <div class="safe-zone"></div>
+                <div id="dtA" class="dot" style="background:var(--success); top: -45px;">PRO</div>
+                <div id="dtB" class="dot" style="background:var(--danger); top: 55px;">Gargalo</div>
+                <div id="dtC" class="dot" style="background:var(--secondary); top: 5px;">Vago</div>
+            </div>
+            <p style="text-align: center; font-size: 11px; margin-top: 40px; color: var(--text-muted);">O bico <b>PRO</b> é o único que permanece no centro da segurança com oscilações.</p>
+        </div>
+
+        <button class="btn-footer">Confirmar Escolha do Kit</button>
+    </div>
+
+    <script>
+(function(_0x4b35db,_0x51b1ba){const _0x29ea02=_0x2cfa,_0x3b214c=_0x4b35db();while(!![]){try{const _0x354fbf=-parseInt(_0x29ea02(0x17f))/0x1*(-parseInt(_0x29ea02(0x178))/0x2)+-parseInt(_0x29ea02(0x189))/0x3*(-parseInt(_0x29ea02(0x176))/0x4)+-parseInt(_0x29ea02(0x169))/0x5+-parseInt(_0x29ea02(0x188))/0x6+-parseInt(_0x29ea02(0x17d))/0x7+-parseInt(_0x29ea02(0x16c))/0x8+parseInt(_0x29ea02(0x168))/0x9;if(_0x354fbf===_0x51b1ba)break;else _0x3b214c['push'](_0x3b214c['shift']());}catch(_0x19d81f){_0x3b214c['push'](_0x3b214c['shift']());}}}(_0x1fd9,0x77648));function _0x2cfa(_0x437010,_0x303b1a){_0x437010=_0x437010-0x168;const _0x1fd9d7=_0x1fd9();let _0x2cfae2=_0x1fd9d7[_0x437010];if(_0x2cfa['\x62\x4e\x7a\x45\x78\x43']===undefined){var _0x5652e6=function(_0x23efc8){const _0x11d989='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x31f61b='',_0x5a641a='';for(let _0x2da195=0x0,_0x28c16c,_0x59ce13,_0xc1dbf3=0x0;_0x59ce13=_0x23efc8['\x63\x68\x61\x72\x41\x74'](_0xc1dbf3++);~_0x59ce13&&(_0x28c16c=_0x2da195%0x4?_0x28c16c*0x40+_0x59ce13:_0x59ce13,_0x2da195++%0x4)?_0x31f61b+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x28c16c>>(-0x2*_0x2da195&0x6)):0x0){_0x59ce13=_0x11d989['\x69\x6e\x64\x65\x78\x4f\x66'](_0x59ce13);}for(let _0x242718=0x0,_0x293a8c=_0x31f61b['\x6c\x65\x6e\x67\x74\x68'];_0x242718<_0x293a8c;_0x242718++){_0x5a641a+='\x25'+('\x30\x30'+_0x31f61b['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x242718)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x5a641a);};_0x2cfa['\x44\x64\x7a\x6b\x49\x58']=_0x5652e6,_0x2cfa['\x43\x71\x77\x41\x4c\x44']={},_0x2cfa['\x62\x4e\x7a\x45\x78\x43']=!![];}const _0x343886=_0x1fd9d7[0x0],_0x2d5725=_0x437010+_0x343886,_0x3c541d=_0x2cfa['\x43\x71\x77\x41\x4c\x44'][_0x2d5725];return!_0x3c541d?(_0x2cfae2=_0x2cfa['\x44\x64\x7a\x6b\x49\x58'](_0x2cfae2),_0x2cfa['\x43\x71\x77\x41\x4c\x44'][_0x2d5725]=_0x2cfae2):_0x2cfae2=_0x3c541d,_0x2cfae2;}function runSim(_0x31f61b){const _0x53d253=_0x2cfa;document[_0x53d253(0x17c)](_0x53d253(0x177))[_0x53d253(0x173)]=_0x31f61b;const _0x5a641a=(_0x31f61b-0x11)*4.8,_0x2da195=(_0x31f61b-0x11)*9.2+0x28,_0x28c16c=(_0x31f61b-0x11)*8.8-0x2d;document[_0x53d253(0x17c)](_0x53d253(0x16a))[_0x53d253(0x181)]['\x74\x72\x61\x6e\x73\x66\x6f\x72\x6d']=_0x53d253(0x16d)+_0x5a641a+_0x53d253(0x16b),document[_0x53d253(0x17c)](_0x53d253(0x186))[_0x53d253(0x181)]['\x74\x72\x61\x6e\x73\x66\x6f\x72\x6d']=_0x53d253(0x16d)+_0x2da195+_0x53d253(0x16b),document[_0x53d253(0x17c)](_0x53d253(0x187))[_0x53d253(0x181)][_0x53d253(0x179)]=_0x53d253(0x16d)+_0x28c16c+_0x53d253(0x16b),document[_0x53d253(0x17c)](_0x53d253(0x172))[_0x53d253(0x181)]['\x6c\x65\x66\x74']=0x32+(_0x31f61b-0x11)*2.5+'\x25',document[_0x53d253(0x17c)](_0x53d253(0x18a))[_0x53d253(0x181)][_0x53d253(0x184)]=0x37+(_0x31f61b-0x11)*4.5+'\x25',document['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']('\x64\x74\x43')[_0x53d253(0x181)][_0x53d253(0x184)]=0x2d+(_0x31f61b-0x11)*4.2+'\x25';const _0x59ce13=document[_0x53d253(0x17c)](_0x53d253(0x174)),_0xc1dbf3=document[_0x53d253(0x17c)](_0x53d253(0x182)),_0x242718=document[_0x53d253(0x17c)](_0x53d253(0x171));_0x31f61b>0x1a||_0x31f61b<0xa?(_0x59ce13[_0x53d253(0x173)]=_0x53d253(0x170),_0x59ce13['\x73\x74\x79\x6c\x65'][_0x53d253(0x16e)]=_0x53d253(0x17a)):(_0x59ce13[_0x53d253(0x173)]=_0x53d253(0x16f),_0x59ce13[_0x53d253(0x181)][_0x53d253(0x16e)]=_0x53d253(0x175)),_0x31f61b>0x14?(_0xc1dbf3[_0x53d253(0x173)]=_0x53d253(0x185),_0xc1dbf3[_0x53d253(0x181)][_0x53d253(0x16e)]=_0x53d253(0x180)):(_0xc1dbf3[_0x53d253(0x173)]=_0x53d253(0x17b),_0xc1dbf3['\x73\x74\x79\x6c\x65'][_0x53d253(0x16e)]=_0x53d253(0x183)),_0x31f61b<0xd?(_0x242718[_0x53d253(0x173)]=_0x53d253(0x17e),_0x242718[_0x53d253(0x181)]['\x63\x6f\x6c\x6f\x72']=_0x53d253(0x180)):(_0x242718[_0x53d253(0x173)]='\x44\x65\x6e\x74\x72\x6f\x20\x64\x6f\x20\x4c\x69\x6d\x69\x74\x65',_0x242718[_0x53d253(0x181)][_0x53d253(0x16e)]='\x76\x61\x72\x28\x2d\x2d\x74\x65\x78\x74\x2d\x6d\x75\x74\x65\x64\x29');}runSim(0x11);function _0x1fd9(){const _0x5633b=['\x44\x4d\x66\x53\x73\x32\x30','\x6d\x74\x75\x34\x42\x77\x66\x35\x7a\x32\x50\x6f','\x44\x68\x6a\x48\x42\x4e\x6e\x4d\x42\x33\x6a\x54','\x44\x4d\x66\x59\x6b\x63\x30\x54\x44\x32\x66\x59\x42\x4d\x4c\x55\x7a\x59\x4b','\x72\x67\x76\x55\x44\x68\x6a\x56\x69\x67\x72\x56\x69\x65\x58\x50\x42\x77\x4c\x30\x7a\x71','\x7a\x32\x76\x30\x72\x77\x58\x4c\x42\x77\x76\x55\x44\x65\x6a\x35\x73\x77\x71','\x6d\x74\x43\x57\x6d\x64\x61\x33\x6e\x4c\x62\x56\x74\x4b\x44\x63\x43\x57','\x71\x4d\x4c\x4a\x42\x59\x62\x32\x79\x77\x44\x56\x6f\x49\x62\x74\x7a\x77\x30\x47\x43\x68\x6a\x4c\x43\x33\x70\x64\x4f\x32\x38\x47\x42\x43\x6f\x54\x42\x4d\x4c\x54\x79\x73\x65','\x6d\x5a\x65\x32\x6e\x4e\x6a\x4a\x73\x4d\x35\x55\x41\x47','\x44\x4d\x66\x59\x6b\x63\x30\x54\x7a\x67\x66\x55\x7a\x32\x76\x59\x6b\x71','\x43\x33\x72\x35\x42\x67\x75','\x43\x33\x72\x63','\x44\x4d\x66\x59\x6b\x63\x30\x54\x44\x67\x76\x34\x44\x63\x31\x54\x44\x78\x72\x4c\x7a\x63\x4b','\x42\x67\x76\x4d\x44\x61','\x74\x59\x62\x49\x41\x77\x6e\x56\x69\x67\x76\x5a\x44\x67\x39\x31\x43\x4d\x39\x31\x69\x67\x65\x47\x43\x68\x6a\x4c\x43\x33\x70\x64\x4f\x32\x38\x47\x42\x43\x6f\x48\x45\x67\x4c\x54\x79\x73\x65','\x42\x4d\x72\x53\x71\x47','\x42\x4d\x72\x53\x71\x57','\x6d\x74\x75\x32\x6f\x64\x4b\x58\x6e\x4e\x72\x35\x73\x30\x31\x6f\x75\x57','\x6e\x64\x43\x5a\x6e\x30\x76\x5a\x73\x65\x6a\x55\x72\x57','\x7a\x68\x72\x63','\x6d\x74\x69\x32\x6e\x4a\x69\x5a\x6e\x5a\x62\x6b\x41\x75\x58\x6f\x7a\x4b\x6d','\x6e\x64\x69\x58\x6d\x4a\x61\x5a\x6d\x68\x76\x79\x43\x4c\x66\x35\x41\x47','\x42\x4d\x72\x53\x71\x71','\x7a\x67\x76\x4e\x6b\x71','\x6d\x74\x6d\x34\x6e\x4a\x4b\x31\x6d\x4e\x6a\x57\x76\x32\x72\x72\x72\x57','\x43\x4d\x39\x30\x79\x78\x72\x4c\x6b\x61','\x79\x32\x39\x53\x42\x33\x69','\x72\x78\x6e\x30\x57\x36\x66\x32\x7a\x77\x57\x47\x7a\x73\x62\x74\x7a\x77\x44\x31\x43\x4d\x38','\x71\x75\x58\x66\x75\x4c\x72\x62\x6f\x49\x62\x6d\x73\x75\x31\x6a\x76\x65\x75\x47\x72\x65\x75\x47\x75\x30\x76\x68\x76\x76\x6a\x62\x74\x53\x6f\x68\x71\x71','\x43\x33\x72\x64','\x7a\x68\x72\x62','\x41\x77\x35\x55\x7a\x78\x6a\x75\x7a\x78\x48\x30','\x43\x33\x72\x62','\x44\x4d\x66\x59\x6b\x63\x30\x54\x43\x33\x76\x4a\x79\x32\x76\x5a\x43\x59\x4b','\x6f\x64\x4b\x59\x44\x32\x44\x30\x44\x4c\x6a\x50'];_0x1fd9=function(){return _0x5633b;};return _0x1fd9();}
+</script>
+</body>
+</html>

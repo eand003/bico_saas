@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spray Precision PRO - Storyboard & Roteiro</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #070a10;
+      --panel-bg: rgba(15, 22, 36, 0.7);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #00d2ff;
+      --accent-blue-glow: rgba(0, 210, 255, 0.25);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.2);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --card-radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 5% 5%, rgba(0, 210, 255, 0.08) 0%, transparent 40%),
+                        radial-gradient(circle at 95% 95%, rgba(56, 239, 125, 0.05) 0%, transparent 45%);
+      background-attachment: fixed;
+      padding: 40px 24px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Header */
+    header {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      backdrop-filter: blur(24px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .header-info h1 {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .header-info p {
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .meta-badges {
+      display: flex;
+      gap: 12px;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--panel-border);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-green {
+      color: var(--accent-green);
+    }
+
+    /* Layout Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    @media (min-width: 992px) {
+      .content-grid {
+        grid-template-columns: 280px 1fr;
+      }
+    }
+
+    /* Sidebar Roteiro Geral */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sticky-sidebar {
+      position: sticky;
+      top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .glass-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.3);
+    }
+
+    .glass-panel h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 8px;
+      color: var(--accent-blue);
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-item a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: var(--transition);
+      background: rgba(255,255,255,0.01);
+    }
+
+    .nav-item a:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: white;
+      transform: translateX(4px);
+    }
+
+    .nav-item.active a {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .spec-item {
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      color: var(--text-muted);
+    }
+
+    .spec-item strong {
+      color: white;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Scene Card */
+    .scene-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+      scroll-margin-top: 40px;
+    }
+
+    .scene-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent-blue);
+      box-shadow: 0 0 10px var(--accent-blue-glow);
+    }
+
+    .scene-card.scene-green::before {
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green-glow);
+    }
+
+    @media (min-width: 768px) {
+      .scene-card {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .scene-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 210, 255, 0.25);
+      box-shadow: 0 24px 48px rgba(0, 210, 255, 0.06);
+    }
+
+    .scene-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .scene-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .scene-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--accent-blue);
+      letter-spacing: 1.5px;
+    }
+
+    .scene-green .scene-number {
+      color: var(--accent-green);
+    }
+
+    .scene-time {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: monospace;
+      background: rgba(255,255,255,0.03);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .scene-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .scene-desc {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .vo-block {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--accent-blue);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      margin-top: 8px;
+      position: relative;
+    }
+
+    .scene-green .vo-block {
+      border-color: var(--accent-green);
+    }
+
+    .vo-block::before {
+      content: "“";
+      position: absolute;
+      left: 6px;
+      top: -12px;
+      font-size: 48px;
+      color: rgba(255, 255, 255, 0.05);
+      font-family: serif;
+    }
+
+    .sfx-block {
+      font-size: 12px;
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    /* Scene Visual Box */
+    .scene-visual {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 1px solid var(--panel-border);
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scene-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .scene-visual:hover img {
+      transform: scale(1.05);
+    }
+
+    /* Custom CSS Logo for Scene 5 */
+    .final-logo-display {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #0e1726 0%, #070a10 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      gap: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .glowing-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(0, 210, 255, 0.1);
+      border: 2px solid var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 0 30px var(--accent-blue-glow);
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); }
+      100% { transform: scale(1.05); box-shadow: 0 0 35px rgba(0, 210, 255, 0.5); }
+    }
+
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    /* Interactive Voiceover Button */
+    .audio-btn {
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      color: var(--accent-blue);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+      width: fit-content;
+      margin-top: 4px;
+    }
+
+    .audio-btn:hover {
+      background: var(--accent-blue);
+      color: var(--bg);
+      box-shadow: 0 0 12px var(--accent-blue-glow);
+    }
+
+    .audio-btn.playing {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: var(--bg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="header-info">
+        <h1>🎬 Visualizador de Roteiro e Storyboard</h1>
+        <p>Apresentação comercial e técnica da suíte de aplicativos Spray Precision PRO</p>
+      </div>
+      <div class="meta-badges">
+        <div class="badge">⏱️ 60 Segundos</div>
+        <div class="badge badge-green">✨ Campanha SaaS</div>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <div class="content-grid">
+      
+      <!-- Sticky Sidebar -->
+      <aside class="sidebar">
+        <div class="sticky-sidebar">
+          
+          <div class="glass-panel">
+            <h3>📖 Navegação</h3>
+            <ul class="nav-list">
+              <li class="nav-item active" id="nav-cena1"><a href="#cena1"><span>Cena 1</span> <span style="font-size: 11px; opacity:0.6;">00:00</span></a></li>
+              <li class="nav-item" id="nav-cena2"><a href="#cena2"><span>Cena 2</span> <span style="font-size: 11px; opacity:0.6;">00:10</span></a></li>
+              <li class="nav-item" id="nav-cena3"><a href="#cena3"><span>Cena 3</span> <span style="font-size: 11px; opacity:0.6;">00:25</span></a></li>
+              <li class="nav-item" id="nav-cena4"><a href="#nav-cena4"><a href="#cena4"><span>Cena 4</span> <span style="font-size: 11px; opacity:0.6;">00:40</span></a></li>
+              <li class="nav-item" id="nav-cena5"><a href="#cena5"><span>Cena 5</span> <span style="font-size: 11px; opacity:0.6;">00:50</span></a></li>
+            </ul>
+          </div>
+
+          <div class="glass-panel">
+            <h3>⚙️ Especificações</h3>
+            <div class="spec-item">
+              <strong>Trilha Sonora</strong>
+              Eletrônica e futurista, estilo Synthwave (glowing & digital).
+            </div>
+            <div class="spec-item">
+              <strong>Estilo de Vídeo</strong>
+              Capturas reais combinadas com closes de aplicativos em alta definição (Neon Glow).
+            </div>
+            <div class="spec-item">
+              <strong>Objetivo Comercial</strong>
+              Captura de leads, demonstração de precisão técnica e vendas de bicos de reposição.
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Main Timeline -->
+      <main>
+
+        <!-- Cena 1 -->
+        <section class="scene-card" id="cena1">
+          <div class="scene-content">
+            <div class="scene-header">
+              <span class="scene-number">Cena 1 • O Problema</span>
+              <span class="scene-time">00:00 - 00:10</span>
+            </div>
+            <h3 class="scene-title">O Desperdício Invisível</h3>
+            <p class="scene-desc">Um pulverizador agrícola estático no campo sob iluminação dramática. A câmera foca de perto em um bico de pulverização que está gotejando de forma descontrolada, ilustrando a ineficiência.</p>
+            <div class="vo-block">
+              "No campo, cada gota conta. Mas bicos de pulverização incorretos ou gastos podem estar desperdiçando milhares de reais na sua lavoura neste exato momento."
+            </div>
+            <button class="audio-btn" onclick="speakText(this)">🔊 Ouvir Locução</button>
+            <div class="sfx-block">
+              🔊 <em>Vento suave no campo seguido de uma batida grave eletrônica marcando o ritmo da trilha.</em>
+            </div>
+          </div>
+          <div class="scene-visual">
+            <img src="./cena1_problema_1781546252736.png" alt="Desperdício no Campo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <div class="final-logo-display" style="display: none;">
+              <span style="font-size:48px;">🌾</span>
+              <p style="color:var(--text-muted);">Frame visual não carregado</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cena 2 -->
+        <section class="scene-card" id="cena2">
+          <div class="scene-content">
+            <div class="scene-header">
+              <span class="scene-number">Cena 2 • Aplicativo 1</span>
+              <span class="scene-time">00:10 - 00:25</span>
+            </div>
+            <h3 class="scene-title">Spray Precision Selector</h3>
+            <p class="scene-desc">O agrônomo opera o celular. A tela mostra o aplicativo com o Seletor de Bico ativo. O Simulador Ultra (manômetro virtual) brilha em azul neon, indicando a estabilidade da pressão e resiliência operacional.</p>
+            <div class="vo-block">
+              "Para acabar com o achismo, o Spray Precision Selector calcula instantaneamente a ponta ideal pela norma ISO. O Simulador Ultra exibe graficamente a estabilidade da pressão em tempo real, permitindo oscilações de velocidade com máxima precisão."
+            </div>
+            <button class="audio-btn" onclick="speakText(this)">🔊 Ouvir Locução</button>
+            <div class="sfx-block">
+              🔊 <em>Cliques de interface de aplicativo e som eletrônico ascendente de aceleração de motor.</em>
+            </div>
+          </div>
+          <div class="scene-visual">
+            <img src="./cena2_seletor_1781546266640.png" alt="Aplicativo Seletor de Bicos" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <div class="final-logo-display" style="display: none;">
+              <span style="font-size:48px;">📱</span>
+              <p style="color:var(--text-muted);">Frame visual não carregado</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cena 3 -->
+        <section class="scene-card" id="cena3">
+          <div class="scene-content">
+            <div class="scene-header">
+              <span class="scene-number">Cena 3 • Aplicativo 2</span>
+              <span class="scene-time">00:25 - 00:40</span>
+            </div>
+            <h3 class="scene-title">Diagnóstico de Vazão</h3>
+            <p class="scene-desc">Técnico realiza a medição manual com proveta. A tela do aplicativo de diagnóstico exibe a lista dos bicos avaliados com alertas visuais: bico desgastado é marcado com barra vermelha, bico ideal com barra verde.</p>
+            <div class="vo-block">
+              "Com o Diagnóstico Manual de Vazão, você audita bico a bico usando o método tradicional de coleta por tempo. O aplicativo calcula automaticamente o desvio exato e gera na hora um laudo técnico-comercial com as pontas que precisam de substituição."
+            </div>
+            <button class="audio-btn" onclick="speakText(this)">🔊 Ouvir Locução</button>
+            <div class="sfx-block">
+              🔊 <em>Som de pulverizador ligado em segundo plano e som digital rápido de cálculo matemático.</em>
+            </div>
+          </div>
+          <div class="scene-visual">
+            <img src="./cena3_diagnostico_1781546281570.png" alt="Diagnóstico com Proveta" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <div class="final-logo-display" style="display: none;">
+              <span style="font-size:48px;">🧪</span>
+              <p style="color:var(--text-muted);">Frame visual não carregado</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cena 4 -->
+        <section class="scene-card" id="cena4">
+          <div class="scene-content">
+            <div class="scene-header">
+              <span class="scene-number">Cena 4 • O SaaS</span>
+              <span class="scene-time">00:40 - 00:50</span>
+            </div>
+            <h3 class="scene-title">Identidade Corporativa White-Label</h3>
+            <p class="scene-desc">Um iPad na mesa de escritório exibe o sistema Spray Precision PRO rodando sob a marca de uma grande revenda de máquinas agrícolas, exibindo cores corporativas e logomarca exclusivas.</p>
+            <div class="vo-block">
+              "E o melhor: tudo isso com a cara da sua empresa. Nosso ecossistema White-Label adapta cores, logotipos e contatos de WhatsApp das revendas para fortalecer a presença de marca no campo."
+            </div>
+            <button class="audio-btn" onclick="speakText(this)">🔊 Ouvir Locução</button>
+            <div class="sfx-block">
+              🔊 <em>Trilha synthwave sobe em volume, tornando-se mais otimista e moderna.</em>
+            </div>
+          </div>
+          <div class="scene-visual">
+            <img src="./cena4_whitelabel_1781546295346.png" alt="Plataforma White-Label" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <div class="final-logo-display" style="display: none;">
+              <span style="font-size:48px;">🏢</span>
+              <p style="color:var(--text-muted);">Frame visual não carregado</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cena 5 -->
+        <section class="scene-card scene-green" id="cena5">
+          <div class="scene-content">
+            <div class="scene-header">
+              <span class="scene-number">Cena 5 • Call to Action</span>
+              <span class="scene-time">00:50 - 01:00</span>
+            </div>
+            <h3 class="scene-title">Revolucione a Aplicação</h3>
+            <p class="scene-desc">Transição rápida de tratores trabalhando, finalizando com o logotipo corporativo brilhante no centro, botões para acesso gratuito ao painel e número de suporte/vendas.</p>
+            <div class="vo-block">
+              "Reduza custos, venda mais e otimize cada hectare. Leve a Spray Precision PRO para sua fazenda ou revenda hoje mesmo. Acesse nosso portal e fale com nosso time."
+            </div>
+            <button class="audio-btn" onclick="speakText(this)">🔊 Ouvir Locução</button>
+            <div class="sfx-block">
+              🔊 <em>Som moderno de finalização eletrônica (efeito 'swoosh' e término com nota digital sustentada).</em>
+            </div>
+          </div>
+          <div class="scene-visual">
+            <div class="final-logo-display">
+              <div class="glowing-circle">👑</div>
+              <div>
+                <h4 class="logo-text">SPRAY PRECISION PRO</h4>
+                <p class="logo-subtitle">SaaS Pulverização Eficiente</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <script>
+const _0x5c3b94=_0x1927;(function(_0x2a580a,_0x2cfe8c){const _0x13e066=_0x1927,_0x4ff33e=_0x2a580a();while(!![]){try{const _0xf69937=-parseInt(_0x13e066(0x1c9))/0x1*(parseInt(_0x13e066(0x1cd))/0x2)+parseInt(_0x13e066(0x1c8))/0x3+parseInt(_0x13e066(0x1d8))/0x4+-parseInt(_0x13e066(0x1e1))/0x5*(parseInt(_0x13e066(0x1db))/0x6)+-parseInt(_0x13e066(0x1e0))/0x7+parseInt(_0x13e066(0x1ce))/0x8*(parseInt(_0x13e066(0x1d7))/0x9)+parseInt(_0x13e066(0x1c2))/0xa*(parseInt(_0x13e066(0x1d5))/0xb);if(_0xf69937===_0x2cfe8c)break;else _0x4ff33e['push'](_0x4ff33e['shift']());}catch(_0x1d56e5){_0x4ff33e['push'](_0x4ff33e['shift']());}}}(_0x174a,0x76002));const sections=document[_0x5c3b94(0x1c5)](_0x5c3b94(0x1cf)),navItems=document[_0x5c3b94(0x1c5)](_0x5c3b94(0x1df));function _0x174a(){const _0x3f205e=['\x42\x4d\x66\x32\x6c\x71','\x79\x32\x39\x55\x44\x67\x66\x50\x42\x4e\x6d','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x79\x77\x6e\x30\x41\x78\x7a\x4c','\x79\x77\x72\x4b\x72\x78\x7a\x4c\x42\x4e\x72\x6d\x41\x78\x6e\x30\x7a\x77\x35\x4c\x43\x47','\x6d\x74\x61\x32\x6d\x64\x43\x58\x6e\x4b\x6a\x77\x7a\x65\x58\x53\x42\x71','\x6e\x64\x75\x5a\x43\x4b\x6e\x59\x75\x77\x50\x35','\x42\x32\x7a\x4d\x43\x32\x76\x30\x76\x67\x39\x57','\x42\x32\x35\x4c\x42\x4d\x71','\x79\x32\x66\x55\x79\x32\x76\x53','\x6f\x67\x7a\x64\x72\x76\x76\x4a\x41\x61','\x6e\x4a\x61\x32\x6e\x67\x6a\x74\x75\x75\x6e\x79\x44\x71','\x43\x32\x76\x4a\x44\x67\x4c\x56\x42\x47','\x42\x67\x66\x55\x7a\x57','\x43\x32\x6e\x59\x42\x32\x58\x53','\x43\x33\x62\x4c\x7a\x77\x6e\x4f\x75\x33\x4c\x55\x44\x67\x48\x4c\x43\x32\x4c\x5a','\x7a\x32\x76\x30\x71\x78\x72\x30\x43\x4d\x4c\x49\x44\x78\x72\x4c','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6d\x74\x66\x75\x73\x78\x62\x41\x73\x76\x4b','\x43\x4d\x76\x54\x42\x33\x7a\x4c','\x6e\x5a\x61\x34\x6d\x31\x6a\x77\x45\x65\x31\x75\x45\x61','\x6d\x4a\x75\x57\x6d\x64\x69\x57\x71\x4d\x44\x57\x75\x77\x58\x34','\x41\x77\x35\x55\x7a\x78\x6a\x75\x7a\x78\x48\x30','\x43\x67\x58\x48\x45\x77\x4c\x55\x7a\x57','\x6d\x4a\x71\x30\x6d\x74\x69\x5a\x6f\x66\x50\x4b\x77\x4d\x54\x32\x71\x47','\x75\x32\x76\x31\x69\x67\x35\x48\x44\x4d\x76\x4e\x79\x77\x72\x56\x43\x49\x62\x55\x57\x36\x6e\x56\x69\x67\x39\x4d\x7a\x78\x6a\x4c\x79\x32\x75\x47\x43\x33\x76\x57\x42\x33\x6a\x30\x7a\x73\x62\x57\x79\x78\x6a\x48\x69\x68\x70\x64\x52\x77\x35\x30\x7a\x78\x6e\x4c\x69\x67\x72\x4c\x69\x68\x7a\x56\x45\x49\x61\x4f\x76\x67\x76\x34\x44\x63\x62\x30\x42\x59\x62\x74\x43\x67\x76\x4c\x79\x32\x47\x50\x6c\x47','\x79\x77\x72\x4b','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x6c\x4d\x35\x48\x44\x49\x31\x50\x44\x67\x76\x54','\x6e\x4a\x79\x35\x6f\x74\x6d\x35\x6d\x4d\x72\x59\x72\x67\x48\x76\x42\x71','\x6d\x74\x62\x75\x79\x4d\x39\x57\x42\x4d\x53','\x38\x6a\x2b\x75\x49\x49\x62\x70\x44\x78\x7a\x50\x43\x49\x62\x6d\x42\x32\x6e\x31\x57\x36\x46\x64\x4f\x32\x38','\x43\x4d\x66\x30\x7a\x71','\x43\x68\x71\x54\x71\x4c\x69','\x42\x32\x35\x4c\x43\x4e\x6a\x56\x43\x47','\x6c\x4d\x66\x31\x7a\x67\x4c\x56\x6c\x77\x6a\x30\x42\x47','\x43\x68\x6a\x4c\x44\x4d\x4c\x56\x44\x78\x6e\x66\x42\x67\x76\x54\x7a\x77\x35\x30\x75\x32\x4c\x49\x42\x67\x4c\x55\x7a\x57','\x6d\x74\x69\x30\x6d\x5a\x6d\x59\x6d\x74\x62\x32\x45\x77\x58\x65\x77\x4c\x47'];_0x174a=function(){return _0x3f205e;};return _0x174a();}function _0x1927(_0x1d40a3,_0x41cc2f){_0x1d40a3=_0x1d40a3-0x1c0;const _0x174abf=_0x174a();let _0x1927ca=_0x174abf[_0x1d40a3];if(_0x1927['\x48\x6c\x79\x59\x42\x4a']===undefined){var _0x2e934f=function(_0x17679b){const _0x350e3b='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x22e22f='',_0x535544='';for(let _0x261457=0x0,_0x15d316,_0x48696a,_0x1cffe8=0x0;_0x48696a=_0x17679b['\x63\x68\x61\x72\x41\x74'](_0x1cffe8++);~_0x48696a&&(_0x15d316=_0x261457%0x4?_0x15d316*0x40+_0x48696a:_0x48696a,_0x261457++%0x4)?_0x22e22f+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x15d316>>(-0x2*_0x261457&0x6)):0x0){_0x48696a=_0x350e3b['\x69\x6e\x64\x65\x78\x4f\x66'](_0x48696a);}for(let _0x143af3=0x0,_0x79c360=_0x22e22f['\x6c\x65\x6e\x67\x74\x68'];_0x143af3<_0x79c360;_0x143af3++){_0x535544+='\x25'+('\x30\x30'+_0x22e22f['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x143af3)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x535544);};_0x1927['\x53\x54\x78\x6c\x4a\x55']=_0x2e934f,_0x1927['\x6d\x5a\x6d\x46\x61\x56']={},_0x1927['\x48\x6c\x79\x59\x42\x4a']=!![];}const _0x378380=_0x174abf[0x0],_0x2ca1e0=_0x1d40a3+_0x378380,_0x53476c=_0x1927['\x6d\x5a\x6d\x46\x61\x56'][_0x2ca1e0];return!_0x53476c?(_0x1927ca=_0x1927['\x53\x54\x78\x6c\x4a\x55'](_0x1927ca),_0x1927['\x6d\x5a\x6d\x46\x61\x56'][_0x2ca1e0]=_0x1927ca):_0x1927ca=_0x53476c,_0x1927ca;}window[_0x5c3b94(0x1c7)](_0x5c3b94(0x1d1),()=>{const _0x9da484=_0x5c3b94;let _0x22e22f='';sections[_0x9da484(0x1d4)](_0x535544=>{const _0x491b81=_0x9da484,_0x261457=_0x535544[_0x491b81(0x1ca)];pageYOffset>=_0x261457-0x96&&(_0x22e22f=_0x535544[_0x491b81(0x1d3)]('\x69\x64'));}),navItems[_0x9da484(0x1d4)](_0x15d316=>{const _0xc7215c=_0x9da484;_0x15d316[_0xc7215c(0x1de)][_0xc7215c(0x1d6)](_0xc7215c(0x1c6)),_0x15d316[_0xc7215c(0x1d3)]('\x69\x64')===_0xc7215c(0x1c3)+_0x22e22f&&_0x15d316[_0xc7215c(0x1de)][_0xc7215c(0x1dd)](_0xc7215c(0x1c6));});});function speakText(_0x48696a){const _0x27fd44=_0x5c3b94,_0x1cffe8=_0x48696a[_0x27fd44(0x1c1)][_0x27fd44(0x1d9)];if(_0x27fd44(0x1d2)in window){window['\x73\x70\x65\x65\x63\x68\x53\x79\x6e\x74\x68\x65\x73\x69\x73'][_0x27fd44(0x1cc)]();if(_0x48696a[_0x27fd44(0x1de)][_0x27fd44(0x1c4)](_0x27fd44(0x1da))){_0x48696a[_0x27fd44(0x1de)][_0x27fd44(0x1d6)]('\x70\x6c\x61\x79\x69\x6e\x67'),_0x48696a[_0x27fd44(0x1d9)]=_0x27fd44(0x1e2);return;}document[_0x27fd44(0x1c5)](_0x27fd44(0x1c0))[_0x27fd44(0x1d4)](_0x79c360=>{const _0x46a352=_0x27fd44;_0x79c360[_0x46a352(0x1de)]['\x72\x65\x6d\x6f\x76\x65'](_0x46a352(0x1da)),_0x79c360['\x69\x6e\x6e\x65\x72\x54\x65\x78\x74']=_0x46a352(0x1e2);});const _0x143af3=new SpeechSynthesisUtterance(_0x1cffe8);_0x143af3[_0x27fd44(0x1d0)]=_0x27fd44(0x1e4),_0x143af3[_0x27fd44(0x1e3)]=1.05,_0x143af3[_0x27fd44(0x1cb)]=()=>{const _0x154a0a=_0x27fd44;_0x48696a['\x63\x6c\x61\x73\x73\x4c\x69\x73\x74'][_0x154a0a(0x1d6)](_0x154a0a(0x1da)),_0x48696a[_0x154a0a(0x1d9)]=_0x154a0a(0x1e2);},_0x143af3[_0x27fd44(0x1e5)]=()=>{const _0x3e9ee9=_0x27fd44;_0x48696a[_0x3e9ee9(0x1de)][_0x3e9ee9(0x1d6)]('\x70\x6c\x61\x79\x69\x6e\x67'),_0x48696a[_0x3e9ee9(0x1d9)]=_0x3e9ee9(0x1e2);},_0x48696a[_0x27fd44(0x1de)][_0x27fd44(0x1dd)](_0x27fd44(0x1da)),_0x48696a[_0x27fd44(0x1d9)]='\u23f9\ufe0f\x20\x50\x61\x72\x61\x72\x20\x4c\x6f\x63\x75\u00e7\u00e3\x6f',window[_0x27fd44(0x1d2)]['\x73\x70\x65\x61\x6b'](_0x143af3);}else alert(_0x27fd44(0x1dc));}
+</script>
+</body>
+</html>

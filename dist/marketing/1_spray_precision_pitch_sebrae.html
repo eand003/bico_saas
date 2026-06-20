@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spray Precision PRO — Pitch de Captação SEBRAE</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #03070c;
+      --bg-gradient: radial-gradient(circle at 50% 50%, #0a1420 0%, #03070c 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.3);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.25);
+      --accent-error: #ff3366;
+      --accent-error-glow: rgba(255, 51, 102, 0.25);
+      --accent-warning: #f59e0b;
+      
+      --card-bg: rgba(10, 20, 30, 0.6);
+      --card-border: rgba(255, 255, 255, 0.05);
+      --card-blur: blur(12px);
+      
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-color);
+      background-image: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: var(--font-inter);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Layout structure */
+    .layout-container {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      gap: 40px;
+      position: relative;
+    }
+
+    /* Sticky Sidebar Navigation */
+    .sidebar {
+      width: var(--sidebar-width);
+      position: sticky;
+      top: 40px;
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 5px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-green) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-outfit);
+      font-weight: 900;
+      color: #03070c;
+      font-size: 20px;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .logo-text {
+      font-family: var(--font-outfit);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .logo-text span {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      padding-right: 5px;
+      flex: 1;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 10px;
+      font-family: var(--font-outfit);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+
+    .nav-item a:hover {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .nav-item.active a {
+      background: rgba(0, 210, 255, 0.06);
+      border-color: rgba(0, 210, 255, 0.15);
+      color: var(--accent);
+      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.04);
+    }
+
+    /* Main content area */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Premium components */
+    .glass-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      backdrop-filter: var(--card-blur);
+      padding: 40px;
+      box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-panel {
+      background: linear-gradient(135deg, rgba(10, 20, 35, 0.8) 0%, rgba(5, 10, 15, 0.9) 100%);
+      border: 1px solid rgba(0, 210, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 210, 255, 0.05);
+    }
+
+    .eyebrow {
+      font-family: var(--font-outfit);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: var(--font-outfit);
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 15px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+      font-weight: 300;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: var(--font-outfit);
+      letter-spacing: 0.5px;
+    }
+
+    .tag-accent {
+      border-color: rgba(0, 210, 255, 0.2);
+      color: var(--accent);
+      background: rgba(0, 210, 255, 0.03);
+    }
+
+    h2 {
+      font-family: var(--font-outfit);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h2::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-green) 100%);
+      border-radius: 2px;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 16px;
+      font-weight: 400;
+    }
+
+    .quote-box {
+      background: rgba(0, 210, 255, 0.02);
+      border: 1px solid rgba(0, 210, 255, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 20px 24px;
+      border-radius: 12px;
+      margin: 25px 0 10px;
+    }
+
+    .quote-text {
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .quote-author {
+      font-family: var(--font-outfit);
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Grid cards */
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.025);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .card-title {
+      font-family: var(--font-outfit);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Metrics highlight */
+    .metric-val {
+      font-family: var(--font-outfit);
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--accent);
+      margin-bottom: 4px;
+      text-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .card.green .metric-val {
+      color: var(--accent-green);
+      text-shadow: 0 0 15px var(--accent-green-glow);
+    }
+
+    .card.red .metric-val {
+      color: var(--accent-error);
+      text-shadow: 0 0 15px var(--accent-error-glow);
+    }
+
+    /* Sub-cards for details */
+    .sub-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .sub-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .sub-card-title {
+      font-family: var(--font-outfit);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .sub-card.red .sub-card-title { color: var(--accent-error); }
+    .sub-card.yellow .sub-card-title { color: var(--accent-warning); }
+
+    .sub-card-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Solution cards styling */
+    .solution-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 15px;
+    }
+
+    .sol-badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-family: var(--font-outfit);
+      letter-spacing: 0.5px;
+    }
+
+    .sol-badge.active {
+      border-color: rgba(56, 239, 125, 0.2);
+      color: var(--accent-green);
+      background: rgba(56, 239, 125, 0.04);
+    }
+
+    /* Data lists and tables */
+    .lists-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .list-container {
+      background: rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.02);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .list-title {
+      font-family: var(--font-outfit);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 8px;
+    }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bullet-list li {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .bullet-list li::before {
+      content: '✔';
+      position: absolute;
+      left: 0;
+      color: var(--accent-green);
+      font-weight: bold;
+    }
+
+    .bullet-list.pending li::before {
+      content: '➔';
+      color: var(--accent);
+    }
+
+    /* Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(0, 0, 0, 0.1);
+      font-size: 13.5px;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-main);
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11.5px;
+      letter-spacing: 1px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.005);
+    }
+
+    .bold-col {
+      font-weight: bold;
+      color: var(--text-main);
+    }
+
+    .badge-status {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-family: var(--font-outfit);
+      letter-spacing: 0.5px;
+      display: inline-block;
+    }
+
+    .badge-status.active {
+      background: rgba(56, 239, 125, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(56, 239, 125, 0.2);
+    }
+
+    .badge-status.partial {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-warning);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .badge-status.none {
+      background: rgba(255, 51, 102, 0.1);
+      color: var(--accent-error);
+      border: 1px solid rgba(255, 51, 102, 0.2);
+    }
+
+    /* Subscription Tiers */
+    .tier-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--card-border);
+    }
+
+    .tier-card.accent::before {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+    }
+
+    .tier-price {
+      font-family: var(--font-outfit);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 12px 0 4px;
+    }
+
+    .tier-price span {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    /* Budget bars */
+    .budget-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 15px;
+    }
+
+    .budget-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .budget-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-outfit);
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    .budget-bar-container {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .budget-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+    }
+
+    /* Timeline styling */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      position: relative;
+    }
+
+    .timeline-dot {
+      width: 36px;
+      height: 36px;
+      background: #0a1420;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-outfit);
+      font-weight: bold;
+      color: var(--accent);
+      z-index: 2;
+      font-size: 14px;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.15);
+      flex-shrink: 0;
+    }
+
+    .timeline-item.green .timeline-dot {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      box-shadow: 0 0 10px rgba(56, 239, 125, 0.15);
+    }
+
+    .timeline-item.purple .timeline-dot {
+      border-color: #df78ef;
+      color: #df78ef;
+      box-shadow: 0 0 10px rgba(156, 39, 176, 0.15);
+    }
+
+    .timeline-content {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      padding: 20px;
+      flex: 1;
+    }
+
+    .timeline-title {
+      font-family: var(--font-outfit);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .timeline-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Outbound links */
+    .links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255,255,255,0.01);
+      border: 1px solid rgba(255,255,255,0.03);
+      padding: 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .link-item:hover {
+      background: rgba(0, 210, 255, 0.02);
+      border-color: rgba(0, 210, 255, 0.12);
+    }
+
+    .link-num {
+      width: 24px;
+      height: 24px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-outfit);
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--text-muted);
+    }
+
+    .link-text {
+      flex: 1;
+    }
+
+    .link-title {
+      font-family: var(--font-outfit);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .link-title::after {
+      content: '↗';
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .link-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Footer styles */
+    .footer-panel {
+      background: linear-gradient(135deg, rgba(10, 20, 30, 0.7) 0%, rgba(5, 10, 15, 0.8) 100%);
+      border-top: 1px solid rgba(56, 239, 125, 0.15);
+      text-align: center;
+      padding: 50px 30px;
+    }
+
+    .footer-panel h3 {
+      font-family: var(--font-outfit);
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .footer-panel h3 span {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .layout-container {
+        flex-direction: column;
+        padding: 20px 10px;
+      }
+      .sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        height: auto;
+      }
+      .nav-menu {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        height: auto;
+      }
+      .nav-item {
+        flex-shrink: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid-3col, .grid-2col, .lists-wrapper, .sub-card-grid {
+        grid-template-columns: 1fr;
+      }
+      .glass-panel {
+        padding: 24px;
+      }
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout-container">
+    
+    <!-- STICKY SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">S</div>
+        <div class="logo-text">Spray<span>Precision</span></div>
+      </div>
+      
+      <ul class="nav-menu">
+        <li class="nav-item active"><a href="#tese">💡 Tese do Projeto</a></li>
+        <li class="nav-item"><a href="#problema">🚨 O Problema</a></li>
+        <li class="nav-item"><a href="#dor-economica">💸 Dor Econômica</a></li>
+        <li class="nav-item"><a href="#solucao">🛠️ A Solução Core</a></li>
+        <li class="nav-item"><a href="#estagio-atual">📊 Estágio Atual</a></li>
+        <li class="nav-item"><a href="#mercado-alvo">🎯 Mercado & Canais</a></li>
+        <li class="nav-item"><a href="#concorrencia">⚖️ Concorrência</a></li>
+        <li class="nav-item"><a href="#modelo-negocio">💰 Modelo de Negócio</a></li>
+        <li class="nav-item"><a href="#metas">📈 Metas & Roadmap</a></li>
+        <li class="nav-item"><a href="#pedido">📢 Recursos & Pedido</a></li>
+        <li class="nav-item"><a href="#fontes">📖 Fontes Técnicas</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content-area">
+      
+      <!-- HERO PANEL -->
+      <section class="glass-panel hero-panel">
+        <div class="eyebrow">Projeto de Captação SEBRAE • Estágio de Validação</div>
+        <h1>Spray Precision <span>PRO</span></h1>
+        <p class="subtitle">Plataforma SaaS para gestão inteligente e auditoria espacial de pontas de pulverização. Unificando seleção científica, aferição offline de barra e fechamento comercial corporativo no agronegócio.</p>
+        <div class="tags">
+          <span class="tag tag-accent">AgTech / PWA</span>
+          <span class="tag">MVP Funcional Validado</span>
+          <span class="tag">White-Label Ativo</span>
+          <span class="tag">PWM & Bico Duplo</span>
+          <span class="tag">Mato Grosso / Centro-Oeste</span>
+        </div>
+      </section>
+
+      <!-- 1. TESE DO PROJETO -->
+      <section id="tese" class="glass-panel">
+        <h2>1. Tese do Projeto</h2>
+        <p>A <strong>Spray Precision PRO</strong> é um ecossistema digital projetado para eliminar o empirismo e o achismo na escolha, calibração hidráulica e auditoria física de bicos de pulverização.</p>
+        <p>A eficiência da aplicação de defensivos é determinada por decisões no balcão e verificações na barra física do trator. Nosso ecossistema digital simplifica esse fluxo complexo em uma jornada mobile-first contínua, conectando a recomendação de bicos ao diagnóstico de vazão e laudos com marca própria.</p>
+        <div class="quote-box">
+          <div class="quote-text">"Escolher a ponta matematicamente ➔ Aferir a vazão no campo ➔ Emitir laudos com marca própria do parceiro ➔ Gerar inteligência de dados que impulsiona a venda de reposição e protege a lavoura."</div>
+          <div class="quote-author">Proposta de Valor Central</div>
+        </div>
+      </section>
+
+      <!-- 2. O PROBLEMA -->
+      <section id="problema" class="glass-panel">
+        <h2>2. O Problema</h2>
+        <p>Defensivos fitossanitários representam um dos maiores componentes de custo de produção por hectare. No entanto, a precisão da aplicação de defensivos é negligenciada devido a barreiras técnicas:</p>
+        
+        <div class="grid-3col">
+          <div class="card">
+            <span class="card-icon">⚙️</span>
+            <div class="card-title">Complexidade Tecnológica</div>
+            <div class="card-desc">As novas pontas do mercado (PWM pulsadas ou bicos duplos para transições de velocidade) são complexas. Catálogos em papel são insuficientes para operadores ajustarem essas variáveis.</div>
+          </div>
+          <div class="card">
+            <span class="card-icon">🔍</span>
+            <div class="card-title">Desgaste Físico Invisível</div>
+            <div class="card-desc">Um bico desgastado em 12% ou 15% na vazão não possui deformidade visível a olho nu, mas distorce a deposição de calda, gerando desperdícios invisíveis de produto químico.</div>
+          </div>
+          <div class="card">
+            <span class="card-icon">📝</span>
+            <div class="card-title">Falta de Histórico e Auditoria</div>
+            <div class="card-desc">A medição bico a bico (jaragem) é feita em papéis rabiscados. Sem padronização digital, a revenda não prova o valor da reposição e o produtor perde a rastreabilidade.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. DOR ECONÔMICA -->
+      <section id="dor-economica" class="glass-panel">
+        <h2>3. Dor Econômica (Valor sob Risco)</h2>
+        <p>Adotamos uma modelagem de impacto financeiro extremamente conservadora, segura e amplamente defensável para editais de fomento. Não assumimos que todo bico desgastado quebra a safra, mas calculamos o **valor fitossanitário sob risco de desregulagem**.</p>
+        
+        <div class="grid-3col">
+          <div class="card">
+            <div class="metric-val">1.000 ha</div>
+            <div class="card-title" style="font-size: 14px;">Fazenda de Referência</div>
+            <div class="card-desc">Escala típica de produção graneleira de médio porte no Centro-Oeste.</div>
+          </div>
+          <div class="card">
+            <div class="metric-val">R$ 1,2 Mi</div>
+            <div class="card-title" style="font-size: 14px;">Investimento Anual</div>
+            <div class="card-desc">Custo médio estimado de defensivos por ano (R$ 1.200,00/ha).</div>
+          </div>
+          <div class="card red">
+            <div class="metric-val">R$ 60.000</div>
+            <div class="card-title" style="font-size: 14px; color: var(--accent-error);">Sob Risco por Ano</div>
+            <div class="card-desc">Valor financeiro sob risco operacional baseado em desvio hidráulico de 5%.</div>
+          </div>
+        </div>
+
+        <div class="sub-card-grid">
+          <div class="sub-card red">
+            <div class="sub-card-title">Sobredosagem (Desperdício)</div>
+            <div class="sub-card-desc">Bicos desgastados (> +10%) aplicam produto em excesso. Isto representa desperdício imediato de calda química, além de elevar os riscos de fitotoxicidade na cultura e contaminação ambiental.</div>
+          </div>
+          <div class="sub-card yellow">
+            <div class="sub-card-title">Subdosagem (Escapes de Pragas)</div>
+            <div class="sub-card-desc">Bicos entupidos ou gastos (< -10%) aplicam doses subletais. A subdosagem não atinge a eficácia biológica necessária, gerando escapes de doenças ou pragas e provocando reentradas caras.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. A SOLUÇÃO CORE -->
+      <section id="solucao" class="glass-panel">
+        <h2>4. A Solução Core (Plataforma Ativa)</h2>
+        <p>A Spray Precision PRO unifica duas etapas antes isoladas e manuais em uma plataforma PWA offline-first:</p>
+        
+        <div class="grid-2col">
+          <div class="card">
+            <span class="card-icon" style="color: var(--accent);">📊</span>
+            <div class="card-title">Spray Precision Selector</div>
+            <p style="font-size:13.5px; margin-bottom: 12px;">Seletor que calcula o bico correto pela norma ISO de acordo com a tecnologia de aplicação embarcada no pulverizador:</p>
+            <div class="solution-badges">
+              <span class="sol-badge active">Convencional</span>
+              <span class="sol-badge active">Modo Pulsado (PWM)</span>
+              <span class="sol-badge active">Bico Duplo (Estágios)</span>
+            </div>
+            <p style="font-size: 12.5px; margin-top: 10px; line-height: 1.4; color: var(--text-muted);">
+              Cálculo de Duty Cycle para sistemas PWM e determinação de pressões, transições de velocidade e zonas de sobreposição/lacunas para bicos duplos sequenciais.
+            </p>
+          </div>
+          <div class="card green">
+            <span class="card-icon" style="color: var(--accent-green);">📋</span>
+            <div class="card-title">Spray Precision Audit</div>
+            <p style="font-size:13.5px; margin-bottom: 12px;">Automatização da jaragem física bico a bico no campo com proveta, cronômetro e análise de Coeficiente de Variação (CV%):</p>
+            <div class="solution-badges">
+              <span class="sol-badge active">PWA Offline-first</span>
+              <span class="sol-badge active">Laudo Gráfico PDF</span>
+              <span class="sol-badge active">White-Label Ativo</span>
+            </div>
+            <p style="font-size: 12.5px; margin-top: 10px; line-height: 1.4; color: var(--text-muted);">
+              Mecanismo white-label que adapta o app com cores e marcas das revendas concessionárias de máquinas. Os laudos contêm links para WhatsApp de venda de peças de reposição.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ESTÁGIO ATUAL -->
+      <section id="estagio-atual" class="glass-panel">
+        <h2>5. Estágio Atual de Desenvolvimento</h2>
+        <p>A Spray Precision PRO possui o seu desenvolvimento tecnológico core concluído e validado em campo, focando seus esforços agora na validação comercial e no fit de mercado:</p>
+        
+        <div class="lists-wrapper">
+          <div class="list-container">
+            <div class="list-title">🚀 Já Realizado (Produto & Tecnologia)</div>
+            <ul class="bullet-list">
+              <li>PWA responsivo offline-first funcional.</li>
+              <li>Mecanismo de White-label automatizado via metadados.</li>
+              <li>Seletor de pontas para Convencional, PWM e Bico Duplo ativo.</li>
+              <li>Diagnóstico de vazão com laudo em tempo real estruturado.</li>
+              <li>Validações piloto iniciais realizadas em campo no MT.</li>
+            </ul>
+          </div>
+          <div class="list-container">
+            <div class="list-title">🎯 Foco da Validação (Negócios & Mercado)</div>
+            <ul class="bullet-list pending">
+              <li>Mensuração da conversão do período de trial gratuito.</li>
+              <li>Ajuste da precificação de assinaturas SaaS individuais.</li>
+              <li>Métricas de recompra e permanência de agrônomos na plataforma.</li>
+              <li>Apoio comercial na conversão de peças nas revendas White-Label.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. MERCADO E CANAIS -->
+      <section id="mercado-alvo" class="glass-panel">
+        <h2>6. Mercado-Alvo e Canais Iniciais</h2>
+        <p>Nossa estratégia de entrada e tração comercial foca em três perfis complementares do agronegócio:</p>
+        
+        <div class="grid-3col">
+          <div class="card">
+            <div class="card-icon">👤</div>
+            <div class="card-title">Consultores Independentes</div>
+            <div class="card-desc">Utilizam a ferramenta para prestar serviços técnicos de auditoria e apresentar laudos visuais com rigor técnico aos produtores clientes.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🏢</div>
+            <div class="card-title">Concessionárias & Revendas</div>
+            <div class="card-desc">Adquirem o app em modelo White-Label para que sua equipe técnica utilize em campo como alavanca de vendas para reposição física de pontas.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🚜</div>
+            <div class="card-title">Produtores e Grandes Grupos</div>
+            <div class="card-desc">Adotam o sistema para padronização interna de processos de regulagem hidráulica, gerando rastreabilidade operacional de frotas.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. CONCORRÊNCIA -->
+      <section id="concorrencia" class="glass-panel">
+        <h2>7. Diferenciais frente à Concorrência</h2>
+        <p>A Spray Precision PRO diferencia-se por cobrir toda a jornada hidráulica de pontas, integrando o cálculo matemático da escolha teórica ao diagnóstico de desgaste físico em campo, com suporte total a tecnologias avançadas (PWM e Bico Duplo) e modelo White-Label:</p>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Diferenciais Tecnológicos e de Negócio</th>
+                <th>Concorrente A (Aferidor Físico)</th>
+                <th>Concorrente B (App de Calibração)</th>
+                <th>Spray Precision PRO</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold-col">Diagnóstico Espacial de Vazão</td>
+                <td>Sim</td>
+                <td>Sim/Parcial</td>
+                <td class="bold-col">Sim (PWA Offline)</td>
+              </tr>
+              <tr>
+                <td class="bold-col">Laudo Comercial PDF Automatizado</td>
+                <td>Não</td>
+                <td>Sim/Parcial</td>
+                <td class="bold-col">Sim (Instantâneo)</td>
+              </tr>
+              <tr>
+                <td class="bold-col">Seletor de Bicos ISO Integrado</td>
+                <td>Não</td>
+                <td>Não</td>
+                <td class="bold-col">Sim (Norma ISO 10625)</td>
+              </tr>
+              <tr>
+                <td class="bold-col">Cálculo de Janela e Estabilidade PWM</td>
+                <td>Não</td>
+                <td>Não</td>
+                <td class="bold-col">Sim (Ativo)</td>
+              </tr>
+              <tr>
+                <td class="bold-col">Mapeamento de Transições Bico Duplo</td>
+                <td>Não</td>
+                <td>Não</td>
+                <td class="bold-col">Sim (Ativo)</td>
+              </tr>
+              <tr>
+                <td class="bold-col">Customização White-Label Corporativa</td>
+                <td>Não</td>
+                <td>Não</td>
+                <td class="bold-col">Sim (Ativo)</td>
+              </tr>
+              <tr>
+                <td class="bold-col">Coleta Facilitada por Voz</td>
+                <td>Não</td>
+                <td>Não</td>
+                <td class="bold-col">Sim (Hands-free)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 8. MODELO DE NEGÓCIO -->
+      <section id="modelo-negocio" class="glass-panel">
+        <h2>8. Modelo de Negócio (SaaS Recorrente)</h2>
+        <p>Cobrança escalável em formato de assinatura de software recorrente mensal, adaptada para dois mercados-alvo:</p>
+        
+        <div class="grid-3col">
+          <div class="card tier-card accent">
+            <span class="card-icon">👤</span>
+            <div class="card-title">Plano Individual PRO</div>
+            <div class="tier-price">R$ 60,00 <span>/ mês</span></div>
+            <p class="card-desc" style="font-size:12.5px; margin-top:8px;">Focado em agrônomos de campo e técnicos autônomos. Inclui seletor, auditorias de barras, exportações e histórico ilimitados.</p>
+          </div>
+          <div class="card tier-card accent">
+            <span class="card-icon">🏢</span>
+            <div class="card-title">Plano Revenda / White-Label</div>
+            <div class="tier-price">R$ 199 a 499 <span>/ mês por parceiro</span></div>
+            <p class="card-desc" style="font-size:12.5px; margin-top:8px;">Customização visual corporativa, logotipo próprio nos laudos de clientes e inserção automática de WhatsApp para venda de peças.</p>
+          </div>
+          <div class="card tier-card">
+            <span class="card-icon">⚙️</span>
+            <div class="card-title">Implantação e Treinamentos</div>
+            <div class="tier-price">Sob Consulta <span>/ taxa única</span></div>
+            <p class="card-desc" style="font-size:12.5px; margin-top:8px;">Treinamento operacional de equipes de campo e suporte para estruturação dos processos de auditoria hidráulica.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. METAS E ROADMAP -->
+      <section id="metas" class="glass-panel">
+        <h2>9. Metas de Validação e Roadmap Operacional</h2>
+        <p>Definição de metas métricas claras para os primeiros 12 meses focadas na tração e melhoria de canais:</p>
+        
+        <div class="grid-2col" style="margin-bottom: 30px;">
+          <div class="card">
+            <div class="card-title">Metas de Engajamento (12 Meses)</div>
+            <div class="table-wrapper" style="margin-top:5px; border:none;">
+              <table style="background:transparent;">
+                <tbody>
+                  <tr><td class="bold-col" style="padding: 10px 0;">Usuários Ativos em Teste:</td><td class="bold-col" style="text-align:right; padding: 10px 0;">50</td></tr>
+                  <tr><td class="bold-col" style="padding: 10px 0;">Clientes Assinantes Pagantes:</td><td class="bold-col" style="text-align:right; padding: 10px 0;">10</td></tr>
+                  <tr><td class="bold-col" style="padding: 10px 0;">Revendas/Concessionárias em Piloto:</td><td class="bold-col" style="text-align:right; padding: 10px 0;">5</td></tr>
+                  <tr><td class="bold-col" style="padding: 10px 0;">Aferições e Jaragens Registradas:</td><td class="bold-col" style="text-align:right; padding: 10px 0;">500</td></tr>
+                  <tr><td class="bold-col" style="padding: 10px 0;">Laudos Técnicos PDF Gerados:</td><td class="bold-col" style="text-align:right; padding: 10px 0;">100</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">Metas Estratégicas Core</div>
+            <ul class="bullet-list" style="margin-top:10px;">
+              <li>Testar e validar canais de aquisição digital direcionada.</li>
+              <li>Ajustar usabilidade e design da planilha de coletas móveis.</li>
+              <li>Mensurar taxa de conversão real trial ➔ plano pago.</li>
+              <li>Estruturar termos e políticas LGPD para contratos corporativos.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot">1</div>
+            <div class="timeline-content">
+              <div class="timeline-title">Fase 1 — Pilotos & Ajustes Comerciais (0 a 3 meses)</div>
+              <div class="timeline-desc">Fechamento de acordos piloto com 5 revendas locais, coleta sistemática de feedbacks de uso em smartphones e calibração de modelos comerciais.</div>
+            </div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-dot">2</div>
+            <div class="timeline-content">
+              <div class="timeline-title">Fase 2 — Automação de SaaS & Integrações (3 a 6 meses)</div>
+              <div class="timeline-desc">Integração de gateways automáticos de assinatura PRO, estruturação do painel unificado de relatórios para gerentes de concessionárias e publicação de casos de sucesso.</div>
+            </div>
+          </div>
+          <div class="timeline-item purple">
+            <div class="timeline-dot">3</div>
+            <div class="timeline-content">
+              <div class="timeline-title">Fase 3 — Expansão Comercial & Novos Editais (6 a 12 meses)</div>
+              <div class="timeline-desc">Aceleração comercial nas principais regiões de grãos do Centro-Oeste e preparação de candidatura para editais governamentais de maior escala (FINEP Startup, Embrapii, FAPEMAT).</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. RECURSOS E PEDIDO -->
+      <section id="pedido" class="glass-panel">
+        <h2>10. Uso Planejado de Recursos e Solicitação</h2>
+        <p>A solicitação de fomento visa a estruturação comercial e a governança do produto mínimo viável ativo. Não se trata de capital de risco puro, mas sim de recursos para impulsionar a validação comercial:</p>
+        
+        <div class="grid-2col" style="align-items: center; margin-bottom: 25px;">
+          <div class="card text-center" style="align-items: center; justify-content: center; height: 100%;">
+            <div class="eyebrow" style="margin: 0;">Faixa de Apoio Sugerida</div>
+            <div class="metric-val" style="font-size: 42px; margin: 10px 0;">R$ 50k a 100k</div>
+            <p class="card-desc">Fomento focado em validação comercial, tráfego de atração de canais e governança técnica do SaaS.</p>
+          </div>
+          
+          <div class="budget-list">
+            <div class="budget-item">
+              <div class="budget-header"><span>Validação Comercial e Atração de Canais</span><span>35%</span></div>
+              <div class="budget-bar-container"><div class="budget-bar-fill" style="width: 35%;"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-header"><span>Melhoria de Produto e Usabilidade Mobile</span><span>30%</span></div>
+              <div class="budget-bar-container"><div class="budget-bar-fill" style="width: 30%;"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-header"><span>Desenvolvimento e Sincronismo Offline</span><span>20%</span></div>
+              <div class="budget-bar-container"><div class="budget-bar-fill" style="width: 20%;"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-header"><span>Validação de Campo e Estudos de Caso</span><span>10%</span></div>
+              <div class="budget-bar-container"><div class="budget-bar-fill" style="width: 10%;"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-header"><span>Jurídico, LGPD e Contratos Corporativos</span><span>5%</span></div>
+              <div class="budget-bar-container"><div class="budget-bar-fill" style="width: 5%;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-box" style="margin-top: 15px;">
+          <div class="quote-text">
+            "Buscamos no Sebrae mais do que recursos de fomento: buscamos a mentoria para conexões corporativas B2B e a aceleração que pode transformar um MVP consolidado em campo em uma startup AgTech líder de calibração digital."
+          </div>
+          <div class="quote-author">Pedido de Parceria</div>
+        </div>
+      </section>
+
+      <!-- 11. FONTES TÉCNICAS -->
+      <section id="fontes" class="glass-panel">
+        <h2>11. Fontes Técnicas e Referências de Mercado</h2>
+        <p>Abaixo estão as referências regulatórias, manuais e fontes que garantem a segurança e a consistência das estimativas financeiras e regras de validação hidráulica aplicadas:</p>
+        
+        <div class="links-list">
+          <a href="https://programas.sebraestartups.com.br/" class="link-item" target="_blank">
+            <div class="link-num">1</div>
+            <div class="link-text">
+              <div class="link-title">Sebrae Startups — Plataforma Nacional</div>
+              <div class="link-desc">Iniciativas estratégicas de fomento e suporte à aceleração e escalabilidade de novos negócios inovadores.</div>
+            </div>
+          </a>
+          <a href="https://sebraeforstartups.sebraesp.com.br/startups/start/" class="link-item" target="_blank">
+            <div class="link-num">2</div>
+            <div class="link-text">
+              <div class="link-title">Sebrae For Startups — Start Digital</div>
+              <div class="link-desc">Programa para startups digitais validarem MVP, estabelecerem canais e prepararem primeiras vendas recorrentes.</div>
+            </div>
+          </a>
+          <a href="https://www.teejet.com/pt-br/-/media/dam/agricultural/usa/sales-material/product-market-bulletin/li-tj416_user-guide-to-spray-technology.pdf" class="link-item" target="_blank">
+            <div class="link-num">3</div>
+            <div class="link-text">
+              <div class="link-title">TeeJet — A User’s Guide to Spray Technology</div>
+              <div class="link-desc">Manual técnico indicando a margem de +10% de desgaste na vazão teórica como limite seguro para descarte físico de pontas.</div>
+            </div>
+          </a>
+          <a href="https://www.scielo.br/j/eagri/a/sZFHBmBN7gwjLFxfLWGGTzg/?lang=en" class="link-item" target="_blank">
+            <div class="link-num">4</div>
+            <div class="link-text">
+              <div class="link-title">Baio et al., 2024 — Nozzle wear evaluation under field conditions</div>
+              <div class="link-desc">Estudo acadêmico de engenharia agrícola sobre desgaste de bicos e limites recomendados de uniformidade hidráulica.</div>
+            </div>
+          </a>
+          <a href="https://croplifela.org/pt/novidades/o-que-voce-precisa-saber-sobre-calibracao-de-equipamentos" class="link-item" target="_blank">
+            <div class="link-num">5</div>
+            <div class="link-text">
+              <div class="link-title">CropLife Latin America — Calibração de Pulverizadores</div>
+              <div class="link-desc">Guias institucionais reforçando a importância do uso e calibração de pontas na eficácia biológica da lavoura.</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="glass-panel footer-panel">
+        <h3>Spray Precision <span>PRO</span></h3>
+        <p style="max-width: 700px; margin: 0 auto 20px; font-weight: 300;">Digitalizando a regulagem de campo para reduzir incertezas operacionais e transformar dados hidráulicos em inteligência de produtividade.</p>
+        <p class="small text-light" style="margin: 0;">© 2026 Spray Precision PRO. Todos os direitos reservados. Projeto em validação.</p>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <script>
+function _0x39f8(_0x5ba6db,_0x23b74e){_0x5ba6db=_0x5ba6db-0xc9;const _0x46270a=_0x4627();let _0x39f8b5=_0x46270a[_0x5ba6db];if(_0x39f8['\x67\x76\x6f\x67\x62\x4e']===undefined){var _0x13eb90=function(_0x15a2bc){const _0x26a2e0='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x177eed='',_0x991194='';for(let _0x3d550c=0x0,_0x3ae068,_0x300871,_0x6f1c0e=0x0;_0x300871=_0x15a2bc['\x63\x68\x61\x72\x41\x74'](_0x6f1c0e++);~_0x300871&&(_0x3ae068=_0x3d550c%0x4?_0x3ae068*0x40+_0x300871:_0x300871,_0x3d550c++%0x4)?_0x177eed+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x3ae068>>(-0x2*_0x3d550c&0x6)):0x0){_0x300871=_0x26a2e0['\x69\x6e\x64\x65\x78\x4f\x66'](_0x300871);}for(let _0x59b2f1=0x0,_0x405c0b=_0x177eed['\x6c\x65\x6e\x67\x74\x68'];_0x59b2f1<_0x405c0b;_0x59b2f1++){_0x991194+='\x25'+('\x30\x30'+_0x177eed['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x59b2f1)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x991194);};_0x39f8['\x42\x63\x48\x49\x4b\x75']=_0x13eb90,_0x39f8['\x66\x42\x54\x6b\x49\x6b']={},_0x39f8['\x67\x76\x6f\x67\x62\x4e']=!![];}const _0x315d75=_0x46270a[0x0],_0x933eff=_0x5ba6db+_0x315d75,_0x586954=_0x39f8['\x66\x42\x54\x6b\x49\x6b'][_0x933eff];return!_0x586954?(_0x39f8b5=_0x39f8['\x42\x63\x48\x49\x4b\x75'](_0x39f8b5),_0x39f8['\x66\x42\x54\x6b\x49\x6b'][_0x933eff]=_0x39f8b5):_0x39f8b5=_0x586954,_0x39f8b5;}function _0x4627(){const _0x479255=['\x6d\x74\x65\x32\x6f\x74\x62\x71\x76\x4e\x72\x68\x72\x30\x65','\x43\x32\x6e\x59\x42\x32\x58\x53\x76\x67\x39\x57','\x6f\x78\x66\x54\x42\x65\x76\x33\x73\x61','\x6c\x4d\x35\x48\x44\x49\x31\x50\x44\x67\x76\x54','\x72\x65\x39\x6e\x71\x32\x39\x55\x44\x67\x76\x55\x44\x65\x58\x56\x79\x77\x72\x4c\x7a\x61','\x43\x32\x6e\x59\x42\x32\x58\x53','\x6d\x74\x61\x57\x6e\x74\x6e\x57\x75\x4e\x7a\x55\x72\x65\x4f','\x6d\x5a\x6a\x31\x43\x75\x58\x48\x42\x67\x30','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x79\x77\x72\x4b\x72\x78\x7a\x4c\x42\x4e\x72\x6d\x41\x78\x6e\x30\x7a\x77\x35\x4c\x43\x47','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x42\x32\x7a\x4d\x43\x32\x76\x30\x76\x67\x39\x57','\x79\x77\x72\x4b','\x43\x67\x66\x4e\x7a\x76\x4c\x70\x7a\x4d\x7a\x5a\x7a\x78\x71','\x6d\x5a\x43\x5a\x6d\x5a\x75\x57\x6e\x66\x7a\x48\x42\x78\x48\x70\x44\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x47','\x43\x32\x76\x4a\x44\x67\x4c\x56\x42\x4c\x54\x50\x7a\x66\x30','\x79\x77\x6e\x30\x41\x78\x7a\x4c','\x6d\x4a\x6d\x32\x6e\x64\x6a\x59\x43\x4c\x7a\x6c\x73\x75\x75','\x6d\x4a\x65\x31\x6e\x64\x75\x30\x6d\x65\x72\x65\x76\x75\x54\x34\x76\x61','\x6d\x5a\x61\x59\x6d\x64\x79\x32\x6f\x67\x48\x65\x72\x75\x50\x66\x42\x57','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x7a\x67\x39\x4a\x44\x77\x31\x4c\x42\x4e\x72\x66\x42\x67\x76\x54\x7a\x77\x35\x30','\x6e\x4a\x47\x57\x6e\x5a\x47\x34\x42\x4d\x4c\x58\x71\x75\x44\x59','\x6d\x74\x47\x33\x6e\x64\x47\x59\x6e\x4b\x6e\x32\x45\x78\x6e\x68\x41\x61','\x7a\x32\x76\x30\x71\x78\x72\x30\x43\x4d\x4c\x49\x44\x78\x72\x4c','\x43\x4d\x76\x54\x42\x33\x7a\x4c'];_0x4627=function(){return _0x479255;};return _0x4627();}const _0x35bec5=_0x39f8;(function(_0x2677a1,_0x5d3699){const _0x5ed545=_0x39f8,_0x2b0f00=_0x2677a1();while(!![]){try{const _0x4597e7=parseInt(_0x5ed545(0xd9))/0x1*(-parseInt(_0x5ed545(0xc9))/0x2)+parseInt(_0x5ed545(0xd4))/0x3*(-parseInt(_0x5ed545(0xce))/0x4)+parseInt(_0x5ed545(0xca))/0x5+parseInt(_0x5ed545(0xcf))/0x6+-parseInt(_0x5ed545(0xcb))/0x7+-parseInt(_0x5ed545(0xe0))/0x8+parseInt(_0x5ed545(0xd8))/0x9*(parseInt(_0x5ed545(0xd2))/0xa);if(_0x4597e7===_0x5d3699)break;else _0x2b0f00['push'](_0x2b0f00['shift']());}catch(_0x19e919){_0x2b0f00['push'](_0x2b0f00['shift']());}}}(_0x4627,0x3ffbd),window[_0x35bec5(0xdb)](_0x35bec5(0xd6),()=>{const _0x34f688=_0x35bec5,_0x177eed=document[_0x34f688(0xdc)](_0x34f688(0xe2)),_0x991194=document[_0x34f688(0xdc)](_0x34f688(0xd5));window[_0x34f688(0xdb)](_0x34f688(0xd7),()=>{const _0x1f5296=_0x34f688;let _0x3d550c='';const _0x3ae068=window[_0x1f5296(0xdf)]||document[_0x1f5296(0xcd)][_0x1f5296(0xd3)];_0x177eed[_0x1f5296(0xda)](_0x300871=>{const _0x3677df=_0x1f5296,_0x6f1c0e=_0x300871[_0x3677df(0xdd)]-0x3c;_0x3ae068>=_0x6f1c0e&&(_0x3d550c=_0x300871[_0x3677df(0xd0)]('\x69\x64'));}),_0x991194[_0x1f5296(0xda)](_0x59b2f1=>{const _0x1f4b16=_0x1f5296;_0x59b2f1[_0x1f4b16(0xcc)][_0x1f4b16(0xd1)](_0x1f4b16(0xe3));const _0x405c0b=_0x59b2f1[_0x1f4b16(0xe1)]('\x61')['\x67\x65\x74\x41\x74\x74\x72\x69\x62\x75\x74\x65']('\x68\x72\x65\x66');_0x405c0b==='\x23'+_0x3d550c&&_0x59b2f1[_0x1f4b16(0xcc)][_0x1f4b16(0xde)](_0x1f4b16(0xe3));});});}));
+</script>
+</body>
+</html>

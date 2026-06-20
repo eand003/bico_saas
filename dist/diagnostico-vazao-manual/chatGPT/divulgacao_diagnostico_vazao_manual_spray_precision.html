@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0066cc" />
+  <title>Diagnóstico de Vazão Manual | Spray Precision PRO</title>
+  <meta name="description" content="Ferramenta para transformar a aferição manual com proveta em relatório técnico profissional de pulverizadores, com CV da barra, mapa de bicos, estimativa de perdas e plano de ação." />
+  <style>
+    :root {
+      --blue: #0066cc;
+      --blue-dark: #004c99;
+      --blue-soft: #eaf4ff;
+      --green: #10b981;
+      --green-soft: #dcfce7;
+      --yellow: #f59e0b;
+      --yellow-soft: #fef3c7;
+      --red: #ef4444;
+      --red-dark: #b91c1c;
+      --red-soft: #fee2e2;
+      --ink: #0f172a;
+      --muted: #475569;
+      --light: #f8fafc;
+      --line: #dbe4ef;
+      --card: #ffffff;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(0, 102, 204, 0.16), transparent 32rem),
+        linear-gradient(180deg, #ffffff 0%, #f1f5f9 48%, #ffffff 100%);
+      line-height: 1.45;
+      padding-bottom: 88px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .wrap {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 0 18px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .topbar-inner {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--blue), #2fa8ff);
+      color: #fff;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      box-shadow: 0 10px 24px rgba(0, 102, 204, 0.24);
+      flex: 0 0 auto;
+    }
+
+    .brand-title strong {
+      display: block;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .brand-title span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .top-cta {
+      background: var(--blue);
+      color: #fff;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 12px 28px rgba(0, 102, 204, 0.23);
+      white-space: nowrap;
+    }
+
+    .hero {
+      padding: 38px 0 24px;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      background: var(--blue-soft);
+      color: var(--blue-dark);
+      border: 1px solid #c7e2ff;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(36px, 6.3vw, 66px);
+      line-height: 0.96;
+      letter-spacing: -0.06em;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin: 0;
+      font-size: clamp(16px, 2.4vw, 21px);
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0 18px;
+    }
+
+    .btn {
+      min-height: 52px;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 13px 30px rgba(0, 102, 204, 0.24);
+    }
+
+    .btn.primary:hover {
+      background: var(--blue-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .proof-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .proof-item {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 13px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .proof-item strong {
+      display: block;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+
+    .proof-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .phone {
+      width: min(430px, 100%);
+      margin: 0 auto;
+      background: #0b1220;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 30px 70px rgba(2, 8, 23, 0.32);
+      transform: rotate(1.2deg);
+    }
+
+    .phone-screen {
+      background: #f8fafc;
+      min-height: 660px;
+      border-radius: 27px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .app-header {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mini-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 950;
+    }
+
+    .app-header h3 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+    }
+
+    .app-header p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .screen-content {
+      padding: 14px;
+    }
+
+    .verdict-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .verdict {
+      margin: 4px 0 6px;
+      font-size: 30px;
+      font-weight: 950;
+      color: var(--red);
+      letter-spacing: -0.04em;
+    }
+
+    .phone-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .phone-stat {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      padding: 12px;
+    }
+
+    .phone-stat strong {
+      display: block;
+      font-size: 23px;
+      letter-spacing: -0.04em;
+    }
+
+    .phone-stat span {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .bar-card,
+    .loss-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .bar-title {
+      font-weight: 950;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .nozzles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .nozzle {
+      width: 27px;
+      height: 27px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .ok { background: var(--green); }
+    .warn { background: var(--yellow); }
+    .bad { background: var(--red); }
+
+    .loss-card {
+      border-style: dashed;
+      border-color: #fb7185;
+    }
+
+    .loss-money {
+      color: var(--red);
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: -0.05em;
+      margin-top: 2px;
+    }
+
+    section {
+      padding: 36px 0;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4.4vw, 46px);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+    }
+
+    .section-sub {
+      max-width: 800px;
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 19px;
+      box-shadow: 0 8px 26px rgba(15, 23, 42, 0.06);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      letter-spacing: -0.025em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 22px;
+      margin-bottom: 13px;
+    }
+
+    .comparison {
+      background: linear-gradient(135deg, #fff 0%, #f6fbff 100%);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .case {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 23px;
+      padding: 18px;
+    }
+
+    .case.approved {
+      border-top: 7px solid var(--green);
+    }
+
+    .case.rejected {
+      border-top: 7px solid var(--red);
+    }
+
+    .case-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .case-head h3 {
+      margin: 0;
+      letter-spacing: -0.03em;
+    }
+
+    .pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .pill.green {
+      background: var(--green-soft);
+      color: #067a55;
+    }
+
+    .pill.red {
+      background: var(--red-soft);
+      color: var(--red-dark);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .steps {
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      padding-left: 64px;
+      margin-bottom: 16px;
+      min-height: 48px;
+    }
+
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 950;
+      box-shadow: 0 10px 22px rgba(0, 102, 204, 0.23);
+    }
+
+    .step h3 {
+      margin: 0 0 4px;
+      font-size: 19px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .quote {
+      background: #0f172a;
+      color: #fff;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 24px 54px rgba(15, 23, 42, 0.25);
+    }
+
+    .quote h2 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: -0.055em;
+    }
+
+    .quote p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 17px;
+    }
+
+    .audience .card {
+      min-height: 170px;
+    }
+
+    .cta-box {
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff, #eaf4ff);
+      border: 1px solid #c7e2ff;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-box .section-sub {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .disclaimer {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .sticky-cta {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 80;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      padding: 10px 14px;
+      display: none;
+    }
+
+    .sticky-cta .btn {
+      width: 100%;
+    }
+
+    footer {
+      padding: 28px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        transform: none;
+      }
+
+      .proof-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .top-cta {
+        display: none;
+      }
+
+      .sticky-cta {
+        display: block;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .wrap {
+        padding: 0 14px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      h1 {
+        font-size: 39px;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .phone-screen {
+        min-height: 620px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-title strong {
+        font-size: 14px;
+      }
+
+      .brand-title span {
+        font-size: 10px;
+      }
+
+      .topbar-inner {
+        min-height: 62px;
+      }
+    }
+
+    @media print {
+      .topbar,
+      .sticky-cta {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+        padding-bottom: 0;
+      }
+
+      .card,
+      .comparison,
+      .quote,
+      .phone,
+      .cta-box {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#top">
+        <div class="brand-mark">SP</div>
+        <div class="brand-title">
+          <strong>Spray Precision PRO</strong>
+          <span>Diagnóstico de Vazão Manual</span>
+        </div>
+      </a>
+      <a class="top-cta" href="#cta">Quero testar →</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">📄 Relatório técnico gerado direto no campo</span>
+          <h1>Sua proveta agora gera um diagnóstico profissional da barra.</h1>
+          <p class="lead">
+            Uma ferramenta para transformar a medição manual da vazão dos bicos em um relatório claro, visual e comercial: CV da barra, bicos fora da tolerância, mapa espacial, estimativa de perdas e plano de ação.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#cta">Solicitar acesso de teste</a>
+            <a class="btn secondary" href="#comparativo">Ver exemplos de relatório</a>
+          </div>
+
+          <div class="proof-strip">
+            <div class="proof-item">
+              <strong>Sem hardware dedicado</strong>
+              <span>Use proveta/copo graduado e celular.</span>
+            </div>
+            <div class="proof-item">
+              <strong>Laudo na hora</strong>
+              <span>Relatório com gráfico, tabela e recomendação.</span>
+            </div>
+            <div class="proof-item">
+              <strong>Foco no resultado</strong>
+              <span>Descubra se a máquina está pronta para aplicar.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone" aria-label="Prévia do relatório no celular">
+          <div class="phone-screen">
+            <div class="app-header">
+              <div class="mini-logo">SP</div>
+              <div>
+                <h3>Laudo Técnico de Inspeção</h3>
+                <p>Inspeção por método manual de proveta</p>
+              </div>
+            </div>
+
+            <div class="screen-content">
+              <div class="verdict-card">
+                <div class="mini-label">Veredito geral</div>
+                <div class="verdict">REPROVADO</div>
+                <p style="margin:0;color:#475569;font-size:13px;">
+                  A barra apresenta desuniformidade severa e bicos críticos que devem ser corrigidos antes da aplicação.
+                </p>
+              </div>
+
+              <div class="phone-stats">
+                <div class="phone-stat">
+                  <strong>26,6%</strong>
+                  <span>CV da barra</span>
+                </div>
+                <div class="phone-stat">
+                  <strong>5/10</strong>
+                  <span>Bicos OK</span>
+                </div>
+                <div class="phone-stat">
+                  <strong>2</strong>
+                  <span>Pontas críticas</span>
+                </div>
+                <div class="phone-stat">
+                  <strong>R$ 6.110</strong>
+                  <span>Perda estimada</span>
+                </div>
+              </div>
+
+              <div class="bar-card">
+                <div class="bar-title">Mapa espacial dos bicos</div>
+                <div class="nozzles">
+                  <span class="nozzle ok">01</span>
+                  <span class="nozzle bad">02</span>
+                  <span class="nozzle warn">03</span>
+                  <span class="nozzle ok">04</span>
+                  <span class="nozzle ok">05</span>
+                  <span class="nozzle ok">06</span>
+                  <span class="nozzle warn">07</span>
+                  <span class="nozzle warn">08</span>
+                  <span class="nozzle bad">09</span>
+                  <span class="nozzle ok">10</span>
+                </div>
+              </div>
+
+              <div class="loss-card">
+                <div class="mini-label">Prejuízo total estimado</div>
+                <div class="loss-money">R$ 6.110,00</div>
+                <p style="margin:2px 0 0;color:#475569;font-size:12px;">
+                  Desperdício por sobredosagem + risco de escape por subdosagem.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dor">
+      <div class="wrap">
+        <h2 class="section-title">A barra pode parecer normal. Os bicos, não.</h2>
+        <p class="section-sub">
+          A média da máquina pode esconder falhas importantes. Um bico abaixo da vazão pode gerar subdosagem. Um bico acima pode desperdiçar calda. Uma barra desuniforme pode comprometer a aplicação inteira.
+        </p>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">💧</div>
+            <h3>Bico abaixo da vazão</h3>
+            <p>Indica possível obstrução, filtro sujo ou restrição. Pode gerar falha de controle por dose insuficiente.</p>
+          </div>
+          <div class="card">
+            <div class="icon">⚠️</div>
+            <h3>Bico acima da vazão</h3>
+            <p>Indica possível desgaste, ponta fora do padrão ou divergência de pressão. Pode gerar desperdício e excesso.</p>
+          </div>
+          <div class="card">
+            <div class="icon">📊</div>
+            <h3>CV da barra</h3>
+            <p>O Coeficiente de Variação mostra a uniformidade da barra. Quanto maior o CV, maior a desuniformidade da aplicação.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparativo">
+      <div class="wrap">
+        <div class="comparison">
+          <h2 class="section-title">O relatório transforma dado em decisão.</h2>
+          <p class="section-sub">
+            Abaixo estão dois exemplos demonstrativos gerados pela ferramenta: uma máquina aprovada e uma máquina reprovada. A diferença visual facilita a decisão técnica e comercial no campo.
+          </p>
+
+          <div class="grid-2">
+            <div class="case approved">
+              <div class="case-head">
+                <h3>Máquina aprovada</h3>
+                <span class="pill green">APROVADO</span>
+              </div>
+              <div class="metrics">
+                <div class="metric">
+                  <b>0,7%</b>
+                  <span>CV da barra</span>
+                </div>
+                <div class="metric">
+                  <b>10/10</b>
+                  <span>Bicos OK</span>
+                </div>
+                <div class="metric">
+                  <b>0</b>
+                  <span>Pontas críticas</span>
+                </div>
+                <div class="metric">
+                  <b>R$ 0,00</b>
+                  <span>Perda estimada</span>
+                </div>
+              </div>
+              <p>
+                Equipamento liberado para pulverização uniforme, com recomendação de manter higienização e acompanhamento periódico das pontas.
+              </p>
+            </div>
+
+            <div class="case rejected">
+              <div class="case-head">
+                <h3>Máquina reprovada</h3>
+                <span class="pill red">REPROVADO</span>
+              </div>
+              <div class="metrics">
+                <div class="metric">
+                  <b>26,6%</b>
+                  <span>CV da barra</span>
+                </div>
+                <div class="metric">
+                  <b>5/10</b>
+                  <span>Bicos OK</span>
+                </div>
+                <div class="metric">
+                  <b>2</b>
+                  <span>Pontas críticas</span>
+                </div>
+                <div class="metric">
+                  <b>R$ 6.110</b>
+                  <span>Perda estimada</span>
+                </div>
+              </div>
+              <p>
+                O relatório indica quais bicos limpar, revisar ou substituir antes da próxima aplicação, reduzindo risco de desperdício e falha de controle.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona">
+      <div class="wrap grid-2">
+        <div>
+          <h2 class="section-title">Como funciona no campo</h2>
+          <p class="section-sub">
+            O operador ou consultor usa o método manual já conhecido, mas com uma entrega final muito mais profissional.
+          </p>
+        </div>
+
+        <div class="steps">
+          <div class="step">
+            <h3>Configure a aplicação</h3>
+            <p>Informe volume alvo, velocidade, espaçamento, pressão, ponta e tolerância.</p>
+          </div>
+          <div class="step">
+            <h3>Colete a vazão bico a bico</h3>
+            <p>Use proveta por 30 segundos, 60 segundos ou tempo personalizado.</p>
+          </div>
+          <div class="step">
+            <h3>Digite os volumes no celular</h3>
+            <p>O app calcula vazão real, vazão esperada, desvio percentual e taxa real.</p>
+          </div>
+          <div class="step">
+            <h3>Gere o relatório técnico</h3>
+            <p>Entregue gráfico, mapa da barra, tabela bico a bico, perda estimada e plano de ação.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="beneficios">
+      <div class="wrap">
+        <h2 class="section-title">O método é manual. A entrega é profissional.</h2>
+        <p class="section-sub">
+          O valor da ferramenta está em transformar uma coleta simples em uma leitura técnica que o produtor entende e usa para decidir.
+        </p>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">📱</div>
+            <h3>Mobile-first</h3>
+            <p>Interface otimizada para celular, uso rápido no campo e leitura visual simples.</p>
+          </div>
+          <div class="card">
+            <div class="icon">🧮</div>
+            <h3>Cálculo automático</h3>
+            <p>Vazão medida, vazão esperada, desvio percentual, taxa real e CV da barra.</p>
+          </div>
+          <div class="card">
+            <div class="icon">🗺️</div>
+            <h3>Mapa da barra</h3>
+            <p>Visualização espacial dos bicos OK, em atenção e críticos.</p>
+          </div>
+          <div class="card">
+            <div class="icon">💸</div>
+            <h3>Simulação de perdas</h3>
+            <p>Estimativa de desperdício por sobredosagem e risco de escape por subdosagem.</p>
+          </div>
+          <div class="card">
+            <div class="icon">📄</div>
+            <h3>PDF profissional</h3>
+            <p>Relatório pronto para enviar ao produtor, gerente ou equipe técnica.</p>
+          </div>
+          <div class="card">
+            <div class="icon">✅</div>
+            <h3>Plano de ação</h3>
+            <p>Recomendações práticas: manter, limpar, revisar filtro ou substituir ponta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="publico" class="audience">
+      <div class="wrap">
+        <h2 class="section-title">Para quem é essa ferramenta?</h2>
+        <p class="section-sub">
+          Ideal para quem já entende que tecnologia de aplicação começa antes do produto chegar ao alvo.
+        </p>
+
+        <div class="grid-3">
+          <div class="card">
+            <h3>Consultores agrícolas</h3>
+            <p>Valorize sua visita técnica com um relatório visual, objetivo e pronto para tomada de decisão.</p>
+          </div>
+          <div class="card">
+            <h3>Revendas e cooperativas</h3>
+            <p>Venda manutenção e troca de pontas com base em diagnóstico, não em opinião.</p>
+          </div>
+          <div class="card">
+            <h3>Fazendas e gerentes</h3>
+            <p>Crie uma rotina de auditoria de pulverizadores antes de aplicações críticas.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="quote">
+          <h2>Se a aplicação fosse medida como rendimento de colheitadeira, você aceitaria perder sem saber onde?</h2>
+          <p>
+            O diagnóstico de vazão revela perdas invisíveis na barra antes que elas virem falha de controle, desperdício de calda ou retrabalho.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta">
+      <div class="wrap">
+        <div class="cta-box">
+          <h2 class="section-title">Quer testar o Diagnóstico de Vazão Manual?</h2>
+          <p class="section-sub">
+            Use esta ferramenta para transformar uma aferição simples com proveta em relatório técnico, argumento comercial e decisão prática no campo.
+          </p>
+          <a class="btn primary" href="https://wa.me/55DDDNUMERO?text=Quero%20testar%20o%20Diagn%C3%B3stico%20de%20Vaz%C3%A3o%20Manual" target="_blank" rel="noopener">
+            Chamar no WhatsApp
+          </a>
+          <p class="disclaimer">
+            Antes de divulgar, substitua o link pelo WhatsApp oficial. A simulação financeira é uma estimativa baseada nos dados informados pelo usuário.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="sticky-cta">
+    <a class="btn primary" href="#cta">Solicitar acesso de teste</a>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <strong>Spray Precision PRO — Diagnóstico de Vazão Manual</strong><br />
+      Material de divulgação comercial. Ajuste contatos, termos e identidade visual antes da publicação oficial.
+    </div>
+  </footer>
+</body>
+</html>

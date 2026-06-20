@@ -1,0 +1,2808 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Master Admin - Spray Precision SaaS</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Supabase JS Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-dark: #05080a;
+      --glass-bg: rgba(15, 20, 24, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.35);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.3);
+      --accent-error: #ff4b4b;
+      --accent-error-glow: rgba(255, 75, 75, 0.3);
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      --card-radius: 16px;
+      --control-bg: rgba(255, 255, 255, 0.04);
+      --control-border: rgba(255, 255, 255, 0.12);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-image: radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(56, 239, 125, 0.03) 0%, transparent 40%);
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      display: none; /* Shown after login */
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Login Box */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-box {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .login-box h2 {
+      font-size: 24px;
+      font-weight: 800;
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-radius: var(--card-radius);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .header-title h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--control-border);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #05080a;
+      border-color: var(--accent);
+    }
+
+    .btn-accent:hover {
+      background: #33e0ff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .btn-danger {
+      background: rgba(255, 75, 75, 0.15);
+      color: var(--accent-error);
+      border-color: rgba(255, 75, 75, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: var(--accent-error);
+      color: white;
+      box-shadow: 0 0 15px var(--accent-error-glow);
+    }
+
+    /* Tabs System */
+    .tabs-container {
+      display: flex;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: rgba(255,255,255,0.08);
+      color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .stat-card.green::before { background: var(--accent-green); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* Main Grid Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 900px) {
+      .main-grid {
+        grid-template-columns: 320px 1fr;
+      }
+    }
+
+    /* Sidebar / Filters */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .glass-panel h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .input-field {
+      width: 100%;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    select.input-field {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+      padding-right: 36px;
+    }
+
+    .color-input-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-preview {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      cursor: pointer;
+      padding: 0;
+      background: none;
+    }
+
+    .color-suggestions-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .color-chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .color-chip {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.25);
+      transition: all 0.2s;
+    }
+
+    .color-chip:hover {
+      transform: scale(1.15);
+      border-color: white;
+      box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    }
+
+    /* Enterprise list in sidebar */
+    .enterprise-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .enterprise-item {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .enterprise-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .enterprise-item.active {
+      background: rgba(0, 210, 255, 0.1);
+      border-color: rgba(0, 210, 255, 0.2);
+      font-weight: 600;
+    }
+
+    .enterprise-badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Users Table Container */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--card-radius);
+      border: 1px solid var(--glass-border);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .admin-table th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .admin-table th[onclick] {
+      cursor: pointer;
+    }
+
+    .admin-table th[onclick]:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent) !important;
+    }
+
+    .admin-table tbody tr {
+      transition: background 0.2s;
+    }
+
+    .admin-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .user-email-cell {
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+    }
+
+    .role-select {
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      color: var(--accent);
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .role-select.gerente {
+      background: rgba(56, 239, 125, 0.1);
+      border-color: rgba(56, 239, 125, 0.2);
+      color: var(--accent-green);
+    }
+
+    .role-select.master {
+      background: rgba(255, 193, 7, 0.1);
+      border-color: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
+    /* Enterprise Grid */
+    .company-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .company-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .company-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--comp-color, var(--accent));
+      border-radius: var(--card-radius) var(--card-radius) 0 0;
+    }
+
+    .company-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .company-logo-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: contain;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+    }
+
+    .company-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .company-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 12px;
+      margin-top: 6px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--card-radius);
+      padding: 28px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0, 210, 255, 0.15);
+      position: relative;
+      color: var(--text-main);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: white;
+    }
+
+    .loader {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      padding: 48px;
+      text-align: center;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* 📱 MOBILE RESPONSIVENESS OVERRIDES */
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .header-title {
+        text-align: center;
+      }
+
+      .header-title h1 {
+        font-size: 22px;
+        justify-content: center;
+      }
+
+      .header-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 13px;
+        padding: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 12px 14px;
+      }
+
+      .stat-label {
+        font-size: 10px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      /* Stacks filters above users */
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .enterprise-list {
+        max-height: 180px;
+      }
+    }
+
+    /* Sticky E-mail Column - active whenever the table is rendered as a table */
+    @media screen and (min-width: 769px), screen and (max-width: 768px) and (orientation: landscape) {
+      .table-responsive {
+        position: relative;
+        overflow-x: auto;
+      }
+      .admin-table th:first-child,
+      .admin-table td.user-email-cell {
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        background: #0f1418; /* Solid background to prevent horizontal scroll bleed */
+        border-right: 1px solid var(--glass-border);
+      }
+      .admin-table th:first-child {
+        background: #191f26; /* Slightly lighter/darker header background */
+        z-index: 11;
+      }
+      .admin-table tbody tr:hover td.user-email-cell {
+        background: #181d22; /* Slightly lighter for hover effect matching row hover */
+      }
+    }
+
+    /* OVERHAULS THE TABLE INTO BEAUTIFUL VERTICAL GLASS CARDS FOR MOBILE SCREENSIZES ONLY IN PORTRAIT */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .admin-table thead {
+        display: none; /* Hides columns */
+      }
+
+      .admin-table tr {
+        margin-bottom: 16px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 16px;
+        position: relative;
+      }
+
+      .admin-table td {
+        border-bottom: none;
+        padding: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+      }
+
+      .admin-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 10px;
+        text-align: left;
+        display: inline-block;
+        margin-right: 12px;
+      }
+
+      .admin-table td:last-child {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 12px;
+        margin-top: 8px;
+        justify-content: flex-end;
+      }
+
+      .admin-table td:last-child::before {
+        display: none; /* Hide actions text label */
+      }
+
+      .user-email-cell {
+        font-size: 14px;
+        justify-content: flex-end;
+      }
+
+      .role-select {
+        width: 150px;
+      }
+    }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+  <!-- Screen 1: Master Login -->
+  <div class="login-container" id="loginScreen">
+    <div class="login-box">
+      <div style="text-align: center; margin-bottom: 8px;">
+        <span style="font-size: 48px;">👑</span>
+      </div>
+      <h2>Painel Master Admin</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: -10px;">Entre com suas credenciais master da nuvem</p>
+      
+      <form onsubmit="handleMasterLogin(event)">
+        <div class="form-group">
+          <label>E-mail do Administrador</label>
+          <input type="email" id="loginEmail" class="input-field" value="eand003@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="Sua senha secreta" required>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Entrar no Painel Master</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 12px;">
+        <a href="#" onclick="openCredentialsModal()" style="font-size: 11px; color: var(--accent); text-decoration: none; font-weight: 600;">⚙️ Configurar Conexão Supabase</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Admin Dashboard (Hidden initially) -->
+  <div class="container" id="adminDashboard">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <h1>🛠️ Painel Master Admin PWA</h1>
+        <p>Sessão ativa: <strong id="loggedAdminEmail">master@admin.com</strong></p>
+      </div>
+      <div class="header-actions">
+        <button class="btn" onclick="openCredentialsModal()" title="Configurações de API">⚙️ Parâmetros API</button>
+        <button class="btn btn-accent" onclick="openCreateCompanyModal()">🏢 Nova Empresa</button>
+        <button class="btn btn-accent" id="createUserBtn" onclick="openCreateUserModal()">➕ Novo Usuário</button>
+        <button class="btn btn-danger" onclick="handleLogout()">🚪 Sair</button>
+        <button class="btn btn-accent" id="open-dashboard" onclick="openHubDashboard()">📊 Dashboard Hub</button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-container">
+      <button class="tab-btn active" id="tabUsersBtn" onclick="switchTab('users')">👥 Gestão de Usuários</button>
+      <button class="tab-btn" id="tabCompaniesBtn" onclick="switchTab('companies')">🏢 Cadastro de Empresas (SaaS)</button>
+      <button class="tab-btn" id="tabConfigsBtn" onclick="switchTab('configs')">📢 Configurações do Hub</button>
+      <button class="tab-btn" id="tabCrmBtn" onclick="switchTab('crm')">📊 CRM Geral</button>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Empresas Contratantes</span>
+        <span class="stat-value" id="statsEnterprises">0</span>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-label">Usuários Ativos</span>
+        <span class="stat-value" id="statsUsers">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Clientes Cadastrados</span>
+        <span class="stat-value" id="statsClients">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Pulverizadores Registrados</span>
+        <span class="stat-value" id="statsMachines">0</span>
+      </div>
+      <div class="stat-card" style="--accent: #a78bfa;">
+        <span class="stat-label">Visitas ao Hub (3 dias)</span>
+        <span class="stat-value" id="statsHubViews3d">—</span>
+      </div>
+    </div>
+
+    <!-- Tab 1 CONTENT: Users Management -->
+    <div class="main-grid" id="tabUsersContent">
+      
+      <!-- Sidebar Filters -->
+      <aside class="sidebar">
+        
+        <div class="glass-panel">
+          <h3>🏢 Filtrar Empresas</h3>
+          <div class="enterprise-list" id="enterpriseList">
+            <div class="enterprise-item active" onclick="selectEnterprise('all')">
+              <span>Todas as Empresas</span>
+              <span class="enterprise-badge" id="badgeAll">0</span>
+            </div>
+            <!-- Dynamic entries here -->
+          </div>
+        </div>
+
+        <div class="glass-panel">
+          <h3>ℹ️ Segurança na Nuvem</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+            Sua chave `service_role` foi carregada de forma 100% segura através do banco de dados após a validação do seu login master (`eand003@gmail.com`). Nenhuma chave de administração fica exposta no código.
+          </p>
+        </div>
+
+      </aside>
+
+      <!-- Main Panel: User List -->
+      <main class="main-content">
+        
+        <div class="glass-panel" style="padding: 24px;">
+          <div class="table-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <h3 style="margin-bottom: 0;">👥 Usuários Cadastrados (<span id="userCount">0</span>)</h3>
+              <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px; height: 32px;">🔄 Recarregar</button>
+            </div>
+            
+            <div style="display: flex; gap: 12px; align-items: center; width: 100%; justify-content: space-between; flex-wrap: wrap; margin-top: 8px;">
+              <input type="text" id="userSearchInput" class="input-field" placeholder="🔍 Buscar por e-mail, empresa ou cargo..." oninput="renderUsersTable()" style="max-width: 380px; width: 100%; padding: 8px 12px; font-size: 13px; margin: 0;">
+              
+              <div style="font-size: 12px; color: var(--text-muted);">
+                💡 Clique nas colunas para ordenar
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive" style="border: none;">
+            <table class="admin-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th onclick="toggleUserSort('email')" style="min-width: 240px; user-select: none;">
+                    E-mail <span id="sortIcon-email" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
+                  <th onclick="toggleUserSort('role')" style="min-width: 130px; user-select: none;">
+                    Cargo (Role) <span id="sortIcon-role" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
+                  <th onclick="toggleUserSort('enterprise')" style="min-width: 170px; user-select: none;">
+                    Empresa / Enterprise <span id="sortIcon-enterprise" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
+                  <th onclick="toggleUserSort('created_at')" style="min-width: 110px; user-select: none;">
+                    Criado Em <span id="sortIcon-created_at" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
+                  <th onclick="toggleUserSort('subscription')" style="min-width: 160px; user-select: none;">
+                    Acesso / Assinatura <span id="sortIcon-subscription" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
+                  <th onclick="toggleUserSort('last_access')" style="min-width: 140px; user-select: none;">
+                    Atividade <span id="sortIcon-last_access" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
+                  </th>
+                  <th style="min-width: 270px; text-align: right; user-select: none;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="6">
+                    <div class="empty-state">
+                      <div class="loader"></div>
+                      <p>Aguardando login administrativo...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+    <!-- Tab 2 CONTENT: Companies Management -->
+    <div id="tabCompaniesContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px;">
+        <div class="table-header" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 0;">🏢 Empresas Cadastradas no SaaS</h3>
+          <button class="btn btn-accent" onclick="openCreateCompanyModal()">➕ Cadastrar Nova Empresa</button>
+        </div>
+
+        <div class="company-grid" id="companiesGrid">
+          <!-- Dynamic enterprise cards here -->
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <p>Carregando lista de empresas contratantes...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3 CONTENT: Global Configs / Hub Promotion -->
+    <div id="tabConfigsContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px; max-width: 800px; margin: 0 auto;">
+        <div class="table-header" style="margin-bottom: 20px;">
+          <h3 style="margin-bottom: 0;">📢 Pop-up Promocional do Hub</h3>
+          <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Gerencie o pop-up que aparece para visitantes no portal Spray Precision.</p>
+        </div>
+
+        <form id="promoConfigForm" onsubmit="savePromoConfig(event)">
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <!-- Ativo e ID da Promoção -->
+            <div class="form-group" style="flex: 1; min-width: 200px; display: flex; align-items: center; margin-bottom: 20px;">
+              <label class="checkbox-container" style="display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text-main); font-weight: 600; font-size: 14px;">
+                <input type="checkbox" id="promoEnabled" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent);">
+                Ativar Pop-up Promocional
+              </label>
+            </div>
+            
+            <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">ID único da Campanha (Reinicia a visualização para todos)</label>
+              <input type="text" id="promoId" class="input-field" placeholder="ex: promo_junho_2026" required style="margin: 0;">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Título do Pop-up</label>
+            <input type="text" id="promoTitle" class="input-field" placeholder="ex: Oferta Especial!" required style="margin: 0;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Mensagem (Suporta quebras de linha)</label>
+            <textarea id="promoMessage" class="input-field" rows="5" placeholder="Digite a mensagem promocional aqui..." required style="margin: 0; min-height: 120px; font-family: inherit; resize: vertical; padding: 12px;"></textarea>
+          </div>
+
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 220px; margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Texto do Botão de Ação (CTA)</label>
+              <input type="text" id="promoCtaText" class="input-field" placeholder="ex: Aproveitar Desconto ➔" required style="margin: 0;">
+            </div>
+
+            <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted);">Link do Botão de Ação (Deixe em branco para ocultar o botão)</label>
+              <input type="url" id="promoCtaUrl" class="input-field" placeholder="ex: https://wa.me/5565999106415?text=..." style="margin: 0;">
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <button type="submit" class="btn btn-accent" style="padding: 12px 28px; font-weight: 600;">💾 Salvar Configurações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab 4 CONTENT: CRM Geral -->
+    <div id="tabCrmContent" style="display: none; width: 100%;">
+      <div class="glass-panel" style="padding: 24px;">
+        <div class="table-header" style="flex-wrap: wrap; gap: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3 style="margin-bottom: 0;">📊 CRM Geral (Clientes e Frotas)</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Monitore todos os produtores e pulverizadores cadastrados pelos consultores das revendas.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-danger" onclick="cleanOrphanedData()" style="padding: 6px 12px; font-size: 12px; height: 32px; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.35); color: #f87171;" title="Limpar dados de consultores que foram excluídos">🧹 Limpar Órfãos</button>
+            <button class="btn" onclick="fetchDatabaseData()" style="padding: 6px 12px; font-size: 12px; height: 32px;">🔄 Recarregar</button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: center; width: 100%; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
+          <input type="text" id="crmSearchInput" class="input-field" placeholder="🔍 Buscar por produtor, fazenda ou e-mail do consultor..." oninput="renderCrmTab()" style="max-width: 450px; width: 100%; padding: 8px 12px; font-size: 13px; margin: 0;">
+          
+          <div style="font-size: 12px; color: var(--text-muted);">
+            Exibindo: <strong id="crmStatsCount" style="color: var(--accent);">0</strong> produtores
+          </div>
+        </div>
+
+        <div class="crm-records-grid" id="crmRecordsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+          <!-- Dynamic cards -->
+          <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+            <p>Carregando registros do CRM...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Connection Setup -->
+  <div id="credentialsModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('credentialsModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>⚙️ Conexão Supabase</h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Insira a URL e a Anon Key pública para permitir a autenticação do seu e-mail master.</p>
+      </div>
+      <form onsubmit="saveConnection(event)">
+        <div class="form-group">
+          <label>Supabase URL</label>
+          <input type="url" id="configUrl" class="input-field" placeholder="https://xxxx.supabase.co" required>
+        </div>
+        <div class="form-group">
+          <label>Supabase Anon Key (Chave Pública)</label>
+          <input type="password" id="configAnon" class="input-field" placeholder="eyJhbGciOi..." required>
+        </div>
+        <div class="form-group" style="opacity: 0.7;">
+          <label>Chave Service Role (Carregada Automática após Login)</label>
+          <input type="text" id="configServiceRoleDisplay" class="input-field" placeholder="Carregada dinamicamente pela Nuvem" disabled style="background: rgba(255,255,255,0.02); color: var(--accent); border-style: dashed;">
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Salvar Parâmetros</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Create/Edit Company -->
+  <div id="companyModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('companyModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3 id="companyModalTitle">🏢 Cadastrar Nova Empresa</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Defina os metadados de identidade visual que serão herdados automaticamente por todos os consultores vinculados.</p>
+      </div>
+      <form onsubmit="saveCompanyForm(event)">
+        <input type="hidden" id="companyEditMode" value="create">
+        
+        <div class="form-group">
+          <label>ID Único da Empresa (Sem acentos/espaços)</label>
+          <input type="text" id="compPartnerId" class="input-field" placeholder="ex: revenda_sol_agro" required>
+        </div>
+        <div class="form-group">
+          <label>Nome Fantasia da Empresa</label>
+          <input type="text" id="compPartnerName" class="input-field" placeholder="ex: Sol Agro Soluções" required>
+        </div>
+        
+        <!-- Logo Link with color extraction hook -->
+        <div class="form-group">
+          <label>Link do Logo (Imagem PNG)</label>
+          <input type="url" id="compPartnerLogo" class="input-field" placeholder="ex: https://imgur.com/logo.png" required onchange="handleLogoUrlChange(this.value)">
+        </div>
+
+        <div class="form-group">
+          <label>Cor da Marca (Hexadecimal)</label>
+          <div class="color-input-container">
+            <input type="color" id="compColorPicker" class="color-preview" value="#00d2ff" oninput="document.getElementById('compPartnerColor').value = this.value">
+            <input type="text" id="compPartnerColor" class="input-field" value="#00d2ff" placeholder="#00d2ff" required oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('compColorPicker').value = this.value">
+          </div>
+          
+          <!-- Smart color suggestions container -->
+          <div class="color-suggestions-container">
+            <span id="colorSuggestionLabel">Sugestões de Cor (Marcas Máquinas Líderes):</span>
+            <div class="color-chips-row" id="companyColorSuggestions">
+              <!-- Dynamically populated color chips -->
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>WhatsApp de Vendas (DDD + Número)</label>
+          <input type="tel" id="compPartnerWhatsapp" class="input-field" placeholder="ex: 5565999998888" required>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;" id="companySubmitBtn">Criar Empresa no Banco</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Create User -->
+  <div id="createUserModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('createUserModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>➕ Cadastrar Novo Usuário</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Selecione a empresa contratante. O usuário herdará o estilo visual dela automaticamente.</p>
+      </div>
+      <form onsubmit="createUser(event)">
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <div class="form-group" style="flex: 1; min-width: 200px;">
+            <label>Nome Completo <span style="color:var(--accent)">*</span></label>
+            <input type="text" id="userFullName" class="input-field" placeholder="ex: João Silva" required style="margin:0;">
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 180px;">
+            <label>Telefone / WhatsApp</label>
+            <input type="tel" id="userPhone" class="input-field" placeholder="ex: 5565999991234" style="margin:0;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>E-mail do Usuário <span style="color:var(--accent)">*</span></label>
+          <input type="email" id="userEmail" class="input-field" placeholder="ex: consultor@empresa.com" required>
+        </div>
+        <div class="form-group">
+          <label>Senha Provisória <span style="color:var(--accent)">*</span></label>
+          <input type="password" id="userPassword" class="input-field" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label>Empresa Vinculada (SaaS)</label>
+          <select id="userPartnerSelect" class="input-field" required>
+            <option value="">Carregando empresas...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nível de Acesso (Cargo)</label>
+          <select id="userRole" class="input-field" required>
+            <option value="consultor">🌾 Consultor (Apenas seus registros)</option>
+            <option value="gerente">📈 Gerente (Toda a revenda/equipe)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Criar Usuário no Supabase</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Transfer User Enterprise -->
+  <div id="transferModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('transferModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>🔄 Transferir Empresa do Usuário</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:4px;">Selecione o novo destino. O usuário herdará o logotipo, cor e whatsapp da nova empresa parceira imediatamente.</p>
+      </div>
+      <form onsubmit="executeTransferUser(event)">
+        <input type="hidden" id="transferUserId">
+        <input type="hidden" id="transferUserRole">
+        <div class="form-group">
+          <label>Nova Empresa Parceira</label>
+          <select id="transferPartnerSelect" class="input-field" required>
+            <!-- Dyn options -->
+          </select>
+        </div>
+        <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Confirmar Transferência</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Subscription and Block Control -->
+  <div id="accessModal" class="modal-overlay" onclick="if(event.target === this) this.style.display='none'">
+    <div class="modal-content">
+      <button class="modal-close" onclick="document.getElementById('accessModal').style.display='none'">&times;</button>
+      <div class="modal-header">
+        <h3>🔑 Gerenciar Acesso do Usuário</h3>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:4px;" id="accessModalUserEmail">Usuário: ...</p>
+      </div>
+      <form onsubmit="saveAccessControl(event)">
+        <input type="hidden" id="accessUserId">
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 4px;">
+          <div class="form-group" style="flex: 1; min-width: 180px;">
+            <label for="accessFullName">Nome Completo</label>
+            <input type="text" id="accessFullName" class="input-field" placeholder="ex: João Silva" style="margin:0;">
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 160px;">
+            <label for="accessPhone">Telefone / WhatsApp</label>
+            <input type="tel" id="accessPhone" class="input-field" placeholder="ex: 5565999991234" style="margin:0;">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="accessSubStart">Início do Acesso (Assinatura)</label>
+          <input type="date" id="accessSubStart" class="input-field">
+        </div>
+        
+        <div class="form-group">
+          <label for="accessSubEnd">Término do Acesso (Assinatura)</label>
+          <input type="date" id="accessSubEnd" class="input-field">
+          <p style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Deixe em branco para acesso ilimitado/livre.</p>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin: 16px 0;">
+          <input type="checkbox" id="accessIsBlocked" style="width: 18px; height: 18px; cursor: pointer; margin: 0;">
+          <label for="accessIsBlocked" style="margin: 0; cursor: pointer; font-weight: 700; color: #ef4444;">🚫 Bloquear Acesso Temporariamente</label>
+        </div>
+        
+        <button type="submit" id="accessSubmitBtn" class="btn btn-accent" style="width: 100%; margin-top: 10px; padding: 12px;">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS Logic -->
+  <script>
+    let supabasePublic = null;
+    let supabaseAdmin = null;
+    
+    let cachedUsers = [];
+    let cachedClients = [];
+    let cachedMachines = [];
+    let cachedEmpresas = [];
+    let cachedSessions = [];
+    let selectedEnterpriseId = 'all';
+    let currentTab = 'users';
+    let userSortField = 'created_at';
+    let userSortDirection = 'desc';
+
+    // Curated leading machinery brands palette
+    const machineryBrandColors = [
+      { name: 'John Deere (Verde)', hex: '#367C2B' },
+      { name: 'John Deere (Amarelo)', hex: '#FFDE00' },
+      { name: 'Jacto (Laranja)', hex: '#FF7F00' },
+      { name: 'Case IH (Vermelho)', hex: '#C41230' },
+      { name: 'New Holland (Azul)', hex: '#002D62' },
+      { name: 'Stara (Laranja)', hex: '#FF6B00' },
+      { name: 'Massey Ferguson (Rubi)', hex: '#D11919' },
+      { name: 'Valtra (Vermelho)', hex: '#A80000' }
+    ];
+
+    // Auto load credentials from localStorage on start
+    window.addEventListener('DOMContentLoaded', () => {
+      loadConnectionSettings();
+    });
+
+    function loadConnectionSettings() {
+      let url = localStorage.getItem('spray_super_supabase_url');
+      let anon = localStorage.getItem('spray_super_supabase_anon');
+
+      // Pre-fill automatically with the project's exact Supabase credentials
+      if (!url || url.includes('/rest/v1')) {
+        url = 'https://mjouahzglomvvcfpxtuq.supabase.co';
+        localStorage.setItem('spray_super_supabase_url', url);
+      }
+      if (!anon) {
+        anon = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
+        localStorage.setItem('spray_super_supabase_anon', anon);
+      }
+
+      document.getElementById('configUrl').value = url;
+      document.getElementById('configAnon').value = anon;
+
+      try {
+        supabasePublic = supabase.createClient(url, anon);
+        checkActiveSession();
+      } catch (err) {
+        alert('Erro ao inicializar conexão: ' + err.message);
+        openCredentialsModal();
+      }
+    }
+
+    function openCredentialsModal() {
+      document.getElementById('credentialsModal').style.display = 'flex';
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabUsersBtn').classList.toggle('active', tab === 'users');
+      document.getElementById('tabCompaniesBtn').classList.toggle('active', tab === 'companies');
+      document.getElementById('tabConfigsBtn').classList.toggle('active', tab === 'configs');
+      document.getElementById('tabCrmBtn').classList.toggle('active', tab === 'crm');
+      
+      document.getElementById('tabUsersContent').style.display = tab === 'users' ? 'grid' : 'none';
+      document.getElementById('tabCompaniesContent').style.display = tab === 'companies' ? 'block' : 'none';
+      document.getElementById('tabConfigsContent').style.display = tab === 'configs' ? 'block' : 'none';
+      document.getElementById('tabCrmContent').style.display = tab === 'crm' ? 'block' : 'none';
+      
+      if (tab === 'companies') {
+        renderCompaniesGrid();
+      } else if (tab === 'configs') {
+        loadGlobalConfigs();
+      } else if (tab === 'crm') {
+        renderCrmTab();
+      }
+    }
+
+    function openCreateCompanyModal() {
+      if (!supabaseAdmin) {
+        alert('Por favor, faça o login administrativo primeiro!');
+        return;
+      }
+      document.getElementById('companyEditMode').value = 'create';
+      document.getElementById('compPartnerId').disabled = false;
+      document.getElementById('compPartnerId').value = '';
+      document.getElementById('compPartnerName').value = '';
+      document.getElementById('compPartnerColor').value = '#00d2ff';
+      document.getElementById('compColorPicker').value = '#00d2ff';
+      document.getElementById('compPartnerLogo').value = '';
+      document.getElementById('compPartnerWhatsapp').value = '';
+      document.getElementById('companyModalTitle').innerText = '🏢 Cadastrar Nova Empresa';
+      document.getElementById('companySubmitBtn').innerText = 'Criar Empresa no Banco';
+      
+      // Load standard machinery suggestions initially
+      renderDefaultMachineColors();
+      
+      document.getElementById('companyModal').style.display = 'flex';
+    }
+
+    function openEditCompanyModal(pId) {
+      const company = cachedEmpresas.find(e => e.partner_id === pId);
+      if (!company) return;
+
+      document.getElementById('companyEditMode').value = 'edit';
+      document.getElementById('compPartnerId').value = company.partner_id;
+      document.getElementById('compPartnerId').disabled = true; // Cannot edit primary key ID
+      document.getElementById('compPartnerName').value = company.partner_name;
+      document.getElementById('compPartnerColor').value = company.partner_color || '#00d2ff';
+      document.getElementById('compColorPicker').value = company.partner_color || '#00d2ff';
+      document.getElementById('compPartnerLogo').value = company.partner_logo || '';
+      document.getElementById('compPartnerWhatsapp').value = company.partner_whatsapp || '';
+      document.getElementById('companyModalTitle').innerText = '✏️ Editar Empresa';
+      document.getElementById('companySubmitBtn').innerText = 'Salvar Alterações';
+      
+      // Attempt color extraction if logo URL is already set
+      if (company.partner_logo) {
+        extractColorsFromLogo(company.partner_logo);
+      } else {
+        renderDefaultMachineColors();
+      }
+
+      document.getElementById('companyModal').style.display = 'flex';
+    }
+
+    // Default palette for machinery brands
+    function renderDefaultMachineColors() {
+      document.getElementById('colorSuggestionLabel').innerText = 'Sugestões de Cor (Marcas Máquinas Líderes):';
+      const container = document.getElementById('companyColorSuggestions');
+      container.innerHTML = '';
+
+      machineryBrandColors.forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = 'color-chip';
+        chip.style.backgroundColor = item.hex;
+        chip.title = item.name;
+        chip.onclick = () => selectColor(item.hex);
+        container.appendChild(chip);
+      });
+    }
+
+    function selectColor(hex) {
+      document.getElementById('compPartnerColor').value = hex;
+      document.getElementById('compColorPicker').value = hex;
+    }
+
+    // Logo URL input change hook for real-time brand color extraction
+    function handleLogoUrlChange(url) {
+      const trimmed = url.trim();
+      if (!trimmed) {
+        renderDefaultMachineColors();
+        return;
+      }
+      extractColorsFromLogo(trimmed);
+    }
+
+    // High-tech dominant brand color extraction using HTML5 Canvas + local pixel clustering
+    function extractColorsFromLogo(url) {
+      const container = document.getElementById('companyColorSuggestions');
+      container.innerHTML = `
+        <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--accent);">
+          <div class="loader" style="width:12px; height:12px; border-width:2px;"></div>
+          <span>Extraindo cores do logotipo...</span>
+        </div>
+      `;
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = url;
+
+      img.onload = function() {
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = 40;
+          canvas.height = 40;
+          ctx.drawImage(img, 0, 0, 40, 40);
+
+          const imgData = ctx.getImageData(0, 0, 40, 40).data;
+          const colorCounts = {};
+
+          for (let i = 0; i < imgData.length; i += 4) {
+            const r = imgData[i];
+            const g = imgData[i+1];
+            const b = imgData[i+2];
+            const a = imgData[i+3];
+
+            // Skip highly transparent, pure whites, pure blacks, and desaturated grey pixels
+            if (a < 180) continue;
+            if (r > 242 && g > 242 && b > 242) continue; // White
+            if (r < 22 && g < 22 && b < 22) continue;    // Black
+            
+            // Filter greys (r, g, b are very close)
+            if (Math.abs(r - g) < 16 && Math.abs(g - b) < 16 && Math.abs(r - b) < 16) continue;
+
+            const hex = rgbToHex(r, g, b);
+            colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+          }
+
+          const sortedColors = Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a]);
+          const dominantColors = sortedColors.slice(0, 5); // top 5 vibrant colors
+
+          if (dominantColors.length > 0) {
+            document.getElementById('colorSuggestionLabel').innerText = '✨ Paleta de Cores Extraídas do Logo:';
+            container.innerHTML = '';
+            
+            dominantColors.forEach(hex => {
+              const chip = document.createElement('div');
+              chip.className = 'color-chip';
+              chip.style.backgroundColor = hex;
+              chip.title = `Cor extraída: ${hex}`;
+              chip.onclick = () => selectColor(hex);
+              container.appendChild(chip);
+            });
+
+            // Auto-select the #1 dominant color for comfort
+            selectColor(dominantColors[0]);
+          } else {
+            renderDefaultMachineColors();
+          }
+
+        } catch (e) {
+          // CORS issue or context error
+          console.warn("CORS/Canvas restriction on reading image pixels. Fallback activated.");
+          renderDefaultMachineColors();
+        }
+      };
+
+      img.onerror = function() {
+        renderDefaultMachineColors();
+      };
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    function openCreateUserModal() {
+      if (!supabaseAdmin) {
+        alert('Por favor, faça o login administrativo primeiro!');
+        return;
+      }
+      populatePartnersDropdown('userPartnerSelect');
+      document.getElementById('createUserModal').style.display = 'flex';
+    }
+
+    function openTransferModal(userId, currentPartnerId, currentRole) {
+      document.getElementById('transferUserId').value = userId;
+      document.getElementById('transferUserRole').value = currentRole;
+      populatePartnersDropdown('transferPartnerSelect', currentPartnerId);
+      document.getElementById('transferModal').style.display = 'flex';
+    }
+
+    function openAccessModal(userId, email) {
+      const user = cachedUsers.find(u => u.id === userId);
+      if (!user) return alert('Usuário não encontrado em cache.');
+
+      const metadata = user.user_metadata || {};
+      
+      document.getElementById('accessUserId').value = userId;
+      document.getElementById('accessModalUserEmail').innerText = `Usuário: ${email}`;
+
+      // Load name and phone
+      document.getElementById('accessFullName').value = metadata.full_name || '';
+      document.getElementById('accessPhone').value = metadata.phone || '';
+      
+      // Load start and end date from metadata
+      document.getElementById('accessSubStart').value = metadata.subscription_start || '';
+      document.getElementById('accessSubEnd').value = metadata.subscription_end || '';
+      
+      // Load blocked status (checkbox)
+      document.getElementById('accessIsBlocked').checked = metadata.is_blocked === true;
+
+      document.getElementById('accessModal').style.display = 'flex';
+    }
+
+    function populatePartnersDropdown(selectElementId, selectValue = '') {
+      const select = document.getElementById(selectElementId);
+      select.innerHTML = '';
+
+      // Add default Autônomo (Sem Empresa) option at the top
+      const optIndividual = document.createElement('option');
+      optIndividual.value = 'individual';
+      optIndividual.innerText = '🌾 Usuário Autônomo (Sem Empresa)';
+      if (selectValue === 'individual' || !selectValue) optIndividual.selected = true;
+      select.appendChild(optIndividual);
+
+      cachedEmpresas.forEach(comp => {
+        const opt = document.createElement('option');
+        opt.value = comp.partner_id;
+        opt.innerText = `🏢 ${comp.partner_name} (${comp.partner_id})`;
+        if (comp.partner_id === selectValue) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    // Check if eand003@gmail.com is already logged in
+    async function checkActiveSession() {
+      if (!supabasePublic) return;
+
+      const { data: { session }, error } = await supabasePublic.auth.getSession();
+      
+      if (session && session.user && session.user.email === 'eand003@gmail.com') {
+        document.getElementById('loggedAdminEmail').innerText = session.user.email;
+        await attemptLoadAdminKey();
+      } else {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminDashboard').style.display = 'none';
+        document.body.style.justifyContent = 'center';
+      }
+    }
+
+    // Sign in process
+    async function handleMasterLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!supabasePublic) {
+        alert('Por favor, configure a URL e a Anon Key do Supabase primeiro.');
+        openCredentialsModal();
+        return;
+      }
+
+      if (email !== 'eand003@gmail.com') {
+        alert('Acesso negado: Apenas o e-mail master eand003@gmail.com possui acesso a este painel.');
+        return;
+      }
+
+      const button = e.submitter;
+      const originalText = button.innerText;
+      button.innerText = 'Autenticando...';
+      button.disabled = true;
+
+      try {
+        const { data, error } = await supabasePublic.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) throw error;
+
+        document.getElementById('loggedAdminEmail').innerText = data.user.email;
+        await attemptLoadAdminKey();
+
+      } catch (err) {
+        alert('Falha no login Master Admin: ' + err.message);
+      } finally {
+        button.innerText = originalText;
+        button.disabled = false;
+      }
+    }
+
+    // Securely load the service_role key from the admin_keys table (protected by RLS)
+    async function attemptLoadAdminKey() {
+      try {
+        const { data, error } = await supabasePublic
+          .from('admin_keys')
+          .select('service_role_key')
+          .limit(1)
+          .single();
+
+        if (error) {
+          throw new Error('Não foi possível ler a chave service_role do banco.\n\nCertifique-se de executar as DDLs SQL no Supabase.\n\nErro original: ' + error.message);
+        }
+
+        const serviceKey = data.service_role_key;
+        document.getElementById('configServiceRoleDisplay').value = '••••••••••••••••••••••••';
+
+        // Initialize admin SDK in-memory
+        const url = localStorage.getItem('spray_super_supabase_url');
+        supabaseAdmin = supabase.createClient(url, serviceKey, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        });
+
+        // Toggle layout
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminDashboard').style.display = 'flex';
+        document.body.style.justifyContent = 'flex-start';
+
+        // Load stats and table
+        fetchDatabaseData();
+
+      } catch (err) {
+        alert('Atenção: ' + err.message + '\n\nPor favor, execute os comandos SQL ou insira a chave service_role manualmente para prosseguir.');
+        
+        const fallbackKey = prompt("Digite a sua Service Role Key manualmente para prosseguir:");
+        if (fallbackKey && fallbackKey.trim() !== "") {
+          const url = localStorage.getItem('spray_super_supabase_url');
+          supabaseAdmin = supabase.createClient(url, fallbackKey.trim(), {
+            auth: {
+              autoRefreshToken: false,
+              persistSession: false
+            }
+          });
+          
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('adminDashboard').style.display = 'flex';
+          document.body.style.justifyContent = 'flex-start';
+          fetchDatabaseData();
+        } else {
+          handleLogout();
+        }
+      }
+    }
+
+    async function handleLogout() {
+      if (supabasePublic) {
+        await supabasePublic.auth.signOut();
+      }
+      supabaseAdmin = null;
+      document.getElementById('configServiceRoleDisplay').value = '';
+      document.getElementById('loginPassword').value = '';
+      
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminDashboard').style.display = 'none';
+      document.body.style.justifyContent = 'center';
+    }
+
+    // Fetch database users, companies and counts using admin client
+    async function fetchDatabaseData() {
+      if (!supabaseAdmin) return;
+
+      showLoading(true);
+
+      try {
+        const { data: companies, error: compError } = await supabaseAdmin
+          .from('empresas')
+          .select('*')
+          .order('partner_name');
+        
+        if (compError) {
+          console.warn('Tabela "empresas" não foi encontrada.');
+          cachedEmpresas = [];
+        } else {
+          cachedEmpresas = companies || [];
+        }
+
+        const { data: { users }, error: authError } = await supabaseAdmin.auth.admin.listUsers();
+        if (authError) throw authError;
+        cachedUsers = users;
+
+        const { data: clients } = await supabaseAdmin.from('clientes').select('id, user_id, name, farm_name, notes, created_by_email');
+        const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, client_id, name, nozzle_count, spacing');
+        const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at, accessed_app');
+
+        cachedClients = clients || [];
+        cachedMachines = machines || [];
+        cachedSessions = sessions || [];
+
+        renderStats();
+        renderEnterpriseList();
+        
+        if (currentTab === 'users') {
+          renderUsersTable();
+        } else if (currentTab === 'companies') {
+          renderCompaniesGrid();
+        } else if (currentTab === 'configs') {
+          loadGlobalConfigs();
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao carregar dados do Supabase. Verifique se a tabela de empresas e as credenciais estão corretas.\n\nDetalhes: ' + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function showLoading(isLoading) {
+      if (isLoading) {
+        const tbody = document.getElementById('usersTableBody');
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6">
+                <div class="empty-state">
+                  <div class="loader"></div>
+                  <p>Consultando base de usuários do Supabase...</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    function renderStats() {
+      document.getElementById('statsUsers').innerText = cachedUsers.length;
+      document.getElementById('statsClients').innerText = cachedClients.length;
+      document.getElementById('statsMachines').innerText = cachedMachines.length;
+      document.getElementById('statsEnterprises').innerText = cachedEmpresas.length;
+      loadHubViews3d(); // auto-populate Hub 3-day traffic card
+    }
+
+    function renderEnterpriseList() {
+      const listContainer = document.getElementById('enterpriseList');
+      
+      listContainer.innerHTML = `
+        <div class="enterprise-item ${selectedEnterpriseId === 'all' ? 'active' : ''}" onclick="selectEnterprise('all')">
+          <span>Todas as Empresas</span>
+          <span class="enterprise-badge" id="badgeAll">${cachedUsers.length}</span>
+        </div>
+      `;
+
+      const partnersMap = {};
+      cachedUsers.forEach(u => {
+        const pId = (u.user_metadata && u.user_metadata.partner_id) || 'desconhecido';
+        const pName = (u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa';
+        
+        if (!partnersMap[pId]) {
+          partnersMap[pId] = { name: pName, count: 0 };
+        }
+        partnersMap[pId].count++;
+      });
+
+      cachedEmpresas.forEach(comp => {
+        const count = (partnersMap[comp.partner_id] && partnersMap[comp.partner_id].count) || 0;
+        const itemHtml = `
+          <div class="enterprise-item ${selectedEnterpriseId === comp.partner_id ? 'active' : ''}" onclick="selectEnterprise('${comp.partner_id}')">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">🏢 ${comp.partner_name}</span>
+            <span class="enterprise-badge">${count}</span>
+          </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+      });
+    }
+
+    function getStatusBadge(userId) {
+      const sess = cachedSessions.find(s => s.user_id === userId);
+      if (!sess) return '<span style="font-size: 10px; color: var(--text-muted); opacity: 0.6; font-style: italic;">Nunca ativo</span>';
+      
+      const now = new Date();
+      const past = new Date(sess.updated_at);
+      const diffMs = now.getTime() - past.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      
+      const appName = sess.accessed_app || 'Desconhecido';
+      
+      if (diffMins < 2) {
+        return `<div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                  <span style="background: var(--accent-green); color: black; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; width: fit-content;">🟢 Online</span>
+                  <span style="font-size: 10px; color: var(--accent); opacity: 0.85;">💻 ${appName}</span>
+                </div>`;
+      }
+      
+      let text = '';
+      if (diffMins < 60) {
+        text = `Ativo há ${diffMins}m`;
+      } else {
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) {
+          text = `Ativo há ${diffHours}h`;
+        } else {
+          const diffDays = Math.floor(diffHours / 24);
+          text = `Ativo há ${diffDays}d`;
+        }
+      }
+      return `<div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                <span style="font-size: 10px; color: var(--text-muted); opacity: 0.85;">🕒 ${text}</span>
+                <span style="font-size: 10px; color: var(--text-muted); opacity: 0.6;">💻 ${appName}</span>
+              </div>`;
+    }
+
+    function selectEnterprise(pId) {
+      selectedEnterpriseId = pId;
+      renderEnterpriseList();
+      renderUsersTable();
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+
+      let filteredUsers = selectedEnterpriseId === 'all' 
+        ? cachedUsers 
+        : cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === selectedEnterpriseId);
+
+      // Filtro de Busca
+      const searchInput = document.getElementById('userSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      if (query) {
+        filteredUsers = filteredUsers.filter(u => {
+          const email = (u.email || '').toLowerCase();
+          const role = ((u.user_metadata && u.user_metadata.role) || 'consultor').toLowerCase();
+          const partnerName = ((u.user_metadata && u.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          const fullName = ((u.user_metadata && u.user_metadata.full_name) || '').toLowerCase();
+          const phone = ((u.user_metadata && u.user_metadata.phone) || '').toLowerCase();
+          return email.includes(query) || role.includes(query) || partnerName.includes(query) || fullName.includes(query) || phone.includes(query);
+        });
+      }
+
+      document.getElementById('userCount').innerText = filteredUsers.length;
+
+      if (filteredUsers.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <p>Nenhum usuário correspondente encontrado.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Ordenação das colunas
+      filteredUsers.sort((a, b) => {
+        let valA = '';
+        let valB = '';
+
+        if (userSortField === 'email') {
+          valA = (a.email || '').toLowerCase();
+          valB = (b.email || '').toLowerCase();
+        } else if (userSortField === 'role') {
+          valA = ((a.user_metadata && a.user_metadata.role) || 'consultor').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.role) || 'consultor').toLowerCase();
+        } else if (userSortField === 'enterprise') {
+          valA = ((a.user_metadata && a.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+          valB = ((b.user_metadata && b.user_metadata.partner_name) || 'Sem Empresa').toLowerCase();
+        } else if (userSortField === 'created_at') {
+          valA = new Date(a.created_at || 0).getTime();
+          valB = new Date(b.created_at || 0).getTime();
+        } else if (userSortField === 'subscription') {
+          const blockA = (a.user_metadata && a.user_metadata.is_blocked) ? 1 : 0;
+          const blockB = (b.user_metadata && b.user_metadata.is_blocked) ? 1 : 0;
+          if (blockA !== blockB) {
+            valA = blockA;
+            valB = blockB;
+          } else {
+            valA = (a.user_metadata && a.user_metadata.subscription_end) ? new Date(a.user_metadata.subscription_end).getTime() : 9999999999999;
+            valB = (b.user_metadata && b.user_metadata.subscription_end) ? new Date(b.user_metadata.subscription_end).getTime() : 9999999999999;
+          }
+        } else if (userSortField === 'last_access') {
+          const sessA = cachedSessions.find(s => s.user_id === a.id);
+          const sessB = cachedSessions.find(s => s.user_id === b.id);
+          valA = sessA ? new Date(sessA.updated_at).getTime() : 0;
+          valB = sessB ? new Date(sessB.updated_at).getTime() : 0;
+        }
+
+        if (valA < valB) return userSortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return userSortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      // Atualiza ícones de ordenação visualmente
+      const fields = ['email', 'role', 'enterprise', 'created_at', 'subscription', 'last_access'];
+      fields.forEach(f => {
+        const iconEl = document.getElementById(`sortIcon-${f}`);
+        if (iconEl) {
+          if (userSortField === f) {
+            iconEl.innerHTML = userSortDirection === 'asc' ? '▲' : '▼';
+            iconEl.style.color = 'var(--accent)';
+          } else {
+            iconEl.innerHTML = '⇅';
+            iconEl.style.color = 'var(--text-muted)';
+          }
+        }
+      });
+
+      filteredUsers.forEach(user => {
+        const metadata = user.user_metadata || {};
+        const role = metadata.role || 'consultor';
+        const partnerName = metadata.partner_name || 'Sem Empresa';
+        const partnerId = metadata.partner_id || '-';
+        const createdDate = new Date(user.created_at).toLocaleDateString('pt-BR');
+        const badgeHtml = getStatusBadge(user.id);
+        const fullName = metadata.full_name || '';
+        const phone = metadata.phone || '';
+
+        // Assinatura & Acesso status
+        let accessHtml = '';
+        let renewalBtnHtml = '';
+        if (metadata.is_blocked === true) {
+          accessHtml = `<span style="background:#ef4444; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🚫 Bloqueado</span>`;
+        } else if (metadata.subscription_end) {
+          const end = new Date(metadata.subscription_end);
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          end.setHours(23,59,59,999);
+          const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
+          if (end < today) {
+            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">⏳ Expirou ${formattedEnd}</span>`;
+          } else {
+            accessHtml = `<span style="background:var(--accent-green); color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">💎 Ativo até ${formattedEnd}</span>`;
+          }
+          // Botão de renovação via WhatsApp (só quando tem subscription_end)
+          if (phone) {
+            const firstName = fullName ? fullName.split(' ')[0] : user.email.split('@')[0];
+            const renewMsg = encodeURIComponent(`Oi ${firstName}! Seu acesso ao Spray Precision PRO vence em ${formattedEnd}. Para continuar usando o Seletor de Bicos + Diagnóstico de Vazão ilimitado, é só fazer o PIX de R$ 60 e eu renovo por mais 30 dias na hora! 🚀`);
+            renewalBtnHtml = `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${renewMsg}" target="_blank" class="btn" style="padding: 6px 10px; font-size: 11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center;" title="Enviar mensagem de renovação no WhatsApp">📲 Renovar</a>`;
+          }
+        } else {
+          accessHtml = `<span style="background:#4b5563; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🌾 Livre</span>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="user-email-cell" data-label="Usuário">
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              ${fullName ? `<span style="font-weight:700; color:var(--text-main); font-size:13px;">👤 ${fullName}</span>` : ''}
+              <span style="font-size:${fullName ? '11px' : '13px'}; color:${fullName ? 'var(--text-muted)' : 'var(--text-main)'}">✉️ ${user.email}</span>
+              ${phone ? `<span style="font-size:10px; color:var(--accent);">📱 ${phone}</span>` : ''}
+            </div>
+          </td>
+          <td data-label="Cargo">
+            <select class="role-select ${role === 'gerente' ? 'gerente' : (role === 'master' ? 'master' : '')}" onchange="changeUserRole('${user.id}', this.value, '${partnerId}', '${partnerName.replace(/'/g, "\\'")}')">
+              <option value="consultor" ${role === 'consultor' ? 'selected' : ''}>🌾 Consultor</option>
+              <option value="gerente" ${role === 'gerente' ? 'selected' : ''}>📈 Gerente</option>
+              <option value="master" ${role === 'master' ? 'selected' : ''}>👑 Master Admin</option>
+            </select>
+          </td>
+          <td data-label="Empresa">
+            <div style="display:flex; flex-direction:column; gap:2px; align-items: flex-end;">
+              <span style="font-weight:600;">${partnerName}</span>
+              <span style="font-size:10px; color:var(--text-muted); font-family: monospace;">ID: ${partnerId}</span>
+            </div>
+          </td>
+          <td data-label="Criado em">📅 ${createdDate}</td>
+          <td data-label="Assinatura">
+            <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+              ${accessHtml}
+              ${renewalBtnHtml}
+            </div>
+          </td>
+          <td data-label="Atividade">${badgeHtml}</td>
+          <td data-label="Ações" style="text-align: right;">
+            <div style="display:flex; justify-content:flex-end; gap:6px; width: 100%; flex-wrap: wrap;">
+              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmTab('${user.email}')" title="Ver CRM deste Consultor">📊 CRM</button>
+              <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#4b5563; border-color:#4b5563; color:white;" onclick="openAccessModal('${user.id}', '${user.email}')" title="Gerenciar Acesso">🔑 Acesso</button>
+              <button class="btn btn-accent" style="padding: 6px 10px; font-size: 11px;" onclick="openTransferModal('${user.id}', '${partnerId}', '${role}')" title="Transferir Empresa">🏢 Transferir</button>
+              <button class="btn btn-danger" style="padding: 6px 10px; font-size: 11px;" onclick="deleteUser('${user.id}', '${user.email}')" title="Excluir Usuário">🗑️ Deletar</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleUserSort(field) {
+      if (userSortField === field) {
+        userSortDirection = userSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        userSortField = field;
+        userSortDirection = (field === 'last_access' || field === 'created_at') ? 'desc' : 'asc';
+      }
+      renderUsersTable();
+    }
+
+    function renderCompaniesGrid() {
+      const grid = document.getElementById('companiesGrid');
+      grid.innerHTML = '';
+
+      if (cachedEmpresas.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <p>Nenhuma empresa cadastrada no banco de dados.</p>
+            <p style="font-size:12px; color:var(--text-muted); max-width:400px; margin: 8px auto;">
+              Certifique-se de ter criado a tabela 'empresas' usando o SQL Editor no painel do Supabase antes de cadastrar.
+            </p>
+            <button class="btn btn-accent" onclick="showSqlHelp()" style="margin-top: 10px;">📋 Ver DDL SQL para Copiar</button>
+          </div>
+        `;
+        return;
+      }
+
+      cachedEmpresas.forEach(comp => {
+        const color = comp.partner_color || '#00d2ff';
+        const logo = comp.partner_logo || './logo.png';
+        const wa = comp.partner_whatsapp || '-';
+        
+        const usersCount = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === comp.partner_id).length;
+
+        const card = document.createElement('div');
+        card.className = 'company-card';
+        card.style.setProperty('--comp-color', color);
+        card.innerHTML = `
+          <div class="company-card-header">
+            <img src="${logo}" class="company-logo-img" onerror="this.src='./logo.png'">
+            <div>
+              <h4 style="font-size:16px; font-weight:700;">${comp.partner_name}</h4>
+              <span style="font-size:11px; font-family:monospace; color:var(--text-muted);">${comp.partner_id}</span>
+            </div>
+          </div>
+          <div class="company-card-body">
+            <div style="display:flex; justify-content:space-between;"><span>🎨 Cor da Marca:</span> <strong style="color:${color}; font-family:monospace;">${color}</strong></div>
+            <div style="display:flex; justify-content:space-between;"><span>💬 WhatsApp:</span> <strong>${wa}</strong></div>
+            <div style="display:flex; justify-content:space-between; margin-top: 4px; border-top: 1px dashed rgba(255,255,255,0.05); padding-top:6px;">
+              <span>🌾 Consultores/Contas:</span> <strong>${usersCount} ativos</strong>
+            </div>
+          </div>
+          <div class="company-card-actions">
+            <button class="btn" style="padding: 6px 12px; font-size:12px;" onclick="openEditCompanyModal('${comp.partner_id}')">✏️ Editar Estilo</button>
+            <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="deleteCompany('${comp.partner_id}')">🗑️ Excluir</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function showSqlHelp() {
+      alert(`Execute este comando no SQL Editor do Supabase para ativar o gerenciamento de marcas:\n\n` +
+            `create table if not exists empresas (\n` +
+            `  partner_id text primary key,\n` +
+            `  partner_name text not null,\n` +
+            `  partner_color text,\n` +
+            `  partner_logo text,\n` +
+            `  partner_whatsapp text,\n` +
+            `  created_at timestamptz default now(),\n` +
+            `  updated_at timestamptz default now()\n` +
+            `);\n\n` +
+            `alter table empresas enable row level security;\n` +
+            `create policy "Usuarios leem todas as empresas" on empresas for select using (true);\n` +
+            `create policy "Apenas Master Admin gerencia empresas" on empresas for all using (\n` +
+            `  (auth.jwt() -> 'user_metadata' ->> 'role') = 'master'\n` +
+            `  and auth.jwt() ->> 'email' = 'eand003@gmail.com'\n` +
+            `);`);
+    }
+
+    async function saveCompanyForm(e) {
+      e.preventDefault();
+      
+      const mode = document.getElementById('companyEditMode').value;
+      const partnerId = document.getElementById('compPartnerId').value.trim().toLowerCase();
+      const partnerName = document.getElementById('compPartnerName').value.trim();
+      const partnerColor = document.getElementById('compPartnerColor').value.trim();
+      const partnerLogo = document.getElementById('compPartnerLogo').value.trim();
+      const partnerWhatsapp = document.getElementById('compPartnerWhatsapp').value.trim();
+
+      if (!supabaseAdmin) return;
+
+      const submitBtn = document.getElementById('companySubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Salvando no banco...';
+
+      try {
+        const { error } = await supabaseAdmin
+          .from('empresas')
+          .upsert({
+            partner_id: partnerId,
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+            updated_at: new Date().toISOString()
+          });
+
+        if (error) throw error;
+
+        if (mode === 'edit') {
+          const confirmUpdateUsers = confirm(`Empresa "${partnerName}" atualizada com sucesso!\n\nDeseja propagar estas atualizações visuais (cor, logo, whatsapp) para todos os consultores já cadastrados nesta empresa automaticamente?`);
+          
+          if (confirmUpdateUsers) {
+            submitBtn.innerText = 'Propagando para consultores...';
+            const usersToUpdate = cachedUsers.filter(u => u.user_metadata && u.user_metadata.partner_id === partnerId);
+            
+            for (let user of usersToUpdate) {
+              const currentRole = user.user_metadata.role || 'consultor';
+              await supabaseAdmin.auth.admin.updateUserById(user.id, {
+                user_metadata: {
+                  role: currentRole,
+                  partner_id: partnerId,
+                  partner_name: partnerName,
+                  partner_color: partnerColor,
+                  partner_logo: partnerLogo,
+                  partner_whatsapp: partnerWhatsapp,
+                  is_enterprise: true
+                }
+              });
+            }
+            alert('Branding visual propagado com sucesso para toda a equipe!');
+          }
+        } else {
+          alert(`Empresa "${partnerName}" cadastrada com sucesso!`);
+        }
+
+        document.getElementById('companyModal').style.display = 'none';
+        fetchDatabaseData();
+
+      } catch (err) {
+        alert('Erro ao salvar empresa: ' + err.message + '\n\nVerifique se criou a tabela "empresas" no Supabase.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = mode === 'edit' ? 'Salvar Alterações' : 'Criar Empresa no Banco';
+      }
+    }
+
+    async function deleteCompany(partnerId) {
+      const confirmDel = confirm(`⚠️ TEM CERTEZA que deseja excluir a empresa "${partnerId}" do SaaS?\n\nIsso removerá as configurações de logotipo e cores, mas NÃO deletará as contas dos consultores vinculados.`);
+      if (!confirmDel) return;
+
+      try {
+        const { error } = await supabaseAdmin.from('empresas').delete().eq('partner_id', partnerId);
+        if (error) throw error;
+
+        alert('Empresa excluída com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao excluir empresa: ' + err.message);
+      }
+    }
+
+    async function createUser(e) {
+      e.preventDefault();
+      
+      const fullName = document.getElementById('userFullName').value.trim();
+      const phone = document.getElementById('userPhone').value.trim();
+      const email = document.getElementById('userEmail').value.trim();
+      const password = document.getElementById('userPassword').value.trim();
+      const selectedPartnerId = document.getElementById('userPartnerSelect').value;
+      const role = document.getElementById('userRole').value;
+
+      if (!supabaseAdmin) return;
+      if (!selectedPartnerId) return alert('Selecione uma opção de empresa ou autônomo.');
+
+      let partnerName = 'Autônomo';
+      let partnerColor = '#00d2ff';
+      let partnerLogo = './logo.png';
+      let partnerWhatsapp = '5565999106415';
+      let isEnterprise = false;
+
+      if (selectedPartnerId !== 'individual') {
+        const selectedCompany = cachedEmpresas.find(comp => comp.partner_id === selectedPartnerId);
+        if (!selectedCompany) return alert('Empresa não encontrada no cache.');
+        partnerName = selectedCompany.partner_name;
+        partnerColor = selectedCompany.partner_color || '#00d2ff';
+        partnerLogo = selectedCompany.partner_logo || './logo.png';
+        partnerWhatsapp = selectedCompany.partner_whatsapp || '';
+        isEnterprise = true;
+      }
+
+      try {
+        const { data, error } = await supabaseAdmin.auth.admin.createUser({
+          email: email,
+          password: password,
+          email_confirm: true,
+          user_metadata: {
+            full_name: fullName,
+            phone: phone,
+            role: role,
+            partner_id: selectedPartnerId,
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+            is_enterprise: isEnterprise
+          }
+        });
+
+        if (error) throw error;
+
+        alert(`Usuário ${fullName || email} criado com sucesso!`);
+        document.getElementById('createUserModal').style.display = 'none';
+        
+        document.getElementById('userFullName').value = '';
+        document.getElementById('userPhone').value = '';
+        document.getElementById('userEmail').value = '';
+        document.getElementById('userPassword').value = '';
+        
+        fetchDatabaseData();
+
+      } catch (err) {
+        alert('Erro ao cadastrar usuário: ' + err.message);
+      }
+    }
+
+    async function changeUserRole(userId, newRole, partnerId, partnerName) {
+      if (!supabaseAdmin) return;
+
+      const user = cachedUsers.find(u => u.id === userId) || {};
+      const currentMetadata = user.user_metadata || {};
+      const company = cachedEmpresas.find(e => e.partner_id === partnerId) || {};
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            role: newRole,
+            partner_id: partnerId,
+            partner_name: partnerName,
+            partner_color: company.partner_color || '#00d2ff',
+            partner_logo: company.partner_logo || './logo.png',
+            partner_whatsapp: company.partner_whatsapp || '',
+            is_enterprise: true
+          }
+        });
+
+        if (error) throw error;
+        
+        alert('Cargo/Permissão atualizada com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao alterar cargo: ' + err.message);
+        fetchDatabaseData();
+      }
+    }
+
+    async function executeTransferUser(e) {
+      e.preventDefault();
+      
+      const userId = document.getElementById('transferUserId').value;
+      const role = document.getElementById('transferUserRole').value;
+      const newPartnerId = document.getElementById('transferPartnerSelect').value;
+
+      if (!supabaseAdmin || !userId || !newPartnerId) return;
+
+      const user = cachedUsers.find(u => u.id === userId) || {};
+      const currentMetadata = user.user_metadata || {};
+
+      let partnerName = 'Autônomo';
+      let partnerColor = '#00d2ff';
+      let partnerLogo = './logo.png';
+      let partnerWhatsapp = '5565999106415';
+      let isEnterprise = false;
+
+      if (newPartnerId !== 'individual') {
+        const company = cachedEmpresas.find(comp => comp.partner_id === newPartnerId);
+        if (!company) return alert('Nova empresa não encontrada no cache.');
+        partnerName = company.partner_name;
+        partnerColor = company.partner_color || '#00d2ff';
+        partnerLogo = company.partner_logo || './logo.png';
+        partnerWhatsapp = company.partner_whatsapp || '';
+        isEnterprise = true;
+      }
+
+      try {
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            role: role,
+            partner_id: newPartnerId,
+            partner_name: partnerName,
+            partner_color: partnerColor,
+            partner_logo: partnerLogo,
+            partner_whatsapp: partnerWhatsapp,
+            is_enterprise: isEnterprise
+          }
+        });
+
+        if (error) throw error;
+        
+        alert('Usuário transferido com sucesso!');
+        document.getElementById('transferModal').style.display = 'none';
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao transferir: ' + err.message);
+      }
+    }
+
+    async function saveAccessControl(e) {
+      e.preventDefault();
+      
+      const userId = document.getElementById('accessUserId').value;
+      const fullName = document.getElementById('accessFullName').value.trim();
+      const phone = document.getElementById('accessPhone').value.trim();
+      const subStart = document.getElementById('accessSubStart').value;
+      const subEnd = document.getElementById('accessSubEnd').value;
+      const isBlocked = document.getElementById('accessIsBlocked').checked;
+
+      if (!supabaseAdmin || !userId) return;
+
+      const submitBtn = document.getElementById('accessSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Salvando...';
+
+      try {
+        const user = cachedUsers.find(u => u.id === userId);
+        if (!user) throw new Error('Usuário não localizado no cache local.');
+
+        const currentMetadata = user.user_metadata || {};
+        
+        const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+          user_metadata: {
+            ...currentMetadata,
+            full_name: fullName || currentMetadata.full_name || null,
+            phone: phone || currentMetadata.phone || null,
+            subscription_start: subStart ? subStart : null,
+            subscription_end: subEnd ? subEnd : null,
+            is_blocked: isBlocked
+          }
+        });
+
+        if (error) throw error;
+
+        alert('Alterações salvas com sucesso!');
+        document.getElementById('accessModal').style.display = 'none';
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao salvar: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Salvar Alterações';
+      }
+    }
+
+    async function deleteUser(userId, email) {
+      const confirmDelete = confirm(`⚠️ TEM CERTEZA que deseja deletar o usuário "${email}"?\n\nEsta ação irá remover permanentemente a conta de acesso E todos os seus dados cadastrados (clientes, pulverizadores, calibrações e histórico).`);
+      if (!confirmDelete) return;
+
+      try {
+        showLoading(true);
+
+        // Obter os clientes deste usuário (tanto por user_id quanto por email)
+        const { data: userClients } = await supabaseAdmin
+          .from('clientes')
+          .select('id')
+          .or(`user_id.eq.${userId},created_by_email.eq.${email}`);
+
+        let clientIds = [];
+        if (userClients && userClients.length > 0) {
+          clientIds = userClients.map(c => c.id);
+        }
+
+        // 1. Obter IDs das inspeções do usuário para limpar medições
+        const { data: userInspections } = await supabaseAdmin
+          .from('flow_inspections')
+          .select('id')
+          .eq('owner_id', userId);
+          
+        if (userInspections && userInspections.length > 0) {
+          const insIds = userInspections.map(i => i.id);
+          const { error: errMeas } = await supabaseAdmin
+            .from('flow_measurements')
+            .delete()
+            .in('inspection_id', insIds);
+          if (errMeas) console.warn("Erro ao deletar medições:", errMeas);
+        }
+
+        // 2. Deletar inspeções
+        const { error: errInspections } = await supabaseAdmin
+          .from('flow_inspections')
+          .delete()
+          .eq('owner_id', userId);
+        if (errInspections) console.warn("Erro ao deletar inspeções:", errInspections);
+
+        // 3. Deletar pulverizadores (por user_id ou client_id)
+        const { error: errMachines1 } = await supabaseAdmin
+          .from('maquinas')
+          .delete()
+          .eq('user_id', userId);
+        if (errMachines1) console.warn("Erro ao deletar máquinas por user_id:", errMachines1);
+
+        if (clientIds.length > 0) {
+          const { error: errMachines2 } = await supabaseAdmin
+            .from('maquinas')
+            .delete()
+            .in('client_id', clientIds);
+          if (errMachines2) console.warn("Erro ao deletar máquinas por client_id:", errMachines2);
+        }
+
+        // 4. Deletar clientes (tanto por user_id quanto por email)
+        const { error: errClients } = await supabaseAdmin
+          .from('clientes')
+          .delete()
+          .or(`user_id.eq.${userId},created_by_email.eq.${email}`);
+        if (errClients) console.warn("Erro ao deletar clientes:", errClients);
+
+        // 5. Deletar sessões de usuário
+        const { error: errSessions } = await supabaseAdmin
+          .from('user_sessions')
+          .delete()
+          .eq('user_id', userId);
+        if (errSessions) console.warn("Erro ao deletar sessões:", errSessions);
+
+        // 6. Deletar a conta de autenticação no Supabase Auth
+        const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+        if (error) throw error;
+
+        alert('Usuário e todos os seus dados associados foram deletados com sucesso!');
+        fetchDatabaseData();
+      } catch (err) {
+        alert('Erro ao deletar usuário: ' + err.message);
+        fetchDatabaseData();
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function cleanOrphanedData() {
+      if (!confirm("⚠️ Tem certeza que deseja limpar TODOS os dados órfãos?\n\nIsso removerá permanentemente todos os produtores, pulverizadores, calibrações e sessões de usuários que já foram excluídos do sistema.")) {
+        return;
+      }
+      
+      try {
+        showLoading(true);
+        
+        // 1. Identificar emails e IDs de usuários ativos
+        const activeUserIds = new Set(cachedUsers.map(u => u.id));
+        const activeUserEmails = new Set(cachedUsers.map(u => (u.email || '').toLowerCase().trim()));
+        
+        // 2. Buscar TODOS os clientes, máquinas e inspeções do banco para fazer a varredura
+        const { data: allClients, error: errClientsFetch } = await supabaseAdmin
+          .from('clientes')
+          .select('id, user_id, created_by_email, name');
+          
+        if (errClientsFetch) throw errClientsFetch;
+        
+        const { data: allMachines, error: errMachinesFetch } = await supabaseAdmin
+          .from('maquinas')
+          .select('id, user_id, client_id, name');
+          
+        if (errMachinesFetch) throw errMachinesFetch;
+        
+        const { data: allInspections, error: errInspectionsFetch } = await supabaseAdmin
+          .from('flow_inspections')
+          .select('id, owner_id, client_name');
+          
+        if (errInspectionsFetch) throw errInspectionsFetch;
+        
+        // 3. Filtrar produtores órfãos (se o user_id for órfão ou se o created_by_email for órfão)
+        const orphanedClients = allClients.filter(c => {
+          const hasNoUserId = !c.user_id;
+          const isUserIdOrphan = c.user_id && !activeUserIds.has(c.user_id);
+          const emailLower = (c.created_by_email || '').toLowerCase().trim();
+          const isEmailOrphan = emailLower && !activeUserEmails.has(emailLower);
+          
+          return hasNoUserId || isUserIdOrphan || isEmailOrphan;
+        });
+        
+        const orphanedClientIds = orphanedClients.map(c => c.id);
+        const orphanedClientUserIds = [...new Set(orphanedClients.map(c => c.user_id).filter(Boolean))];
+        
+        // 4. Filtrar máquinas órfãs (do usuário órfão ou associadas a clientes órfãos)
+        const orphanedMachines = allMachines.filter(m => {
+          const hasNoUserId = !m.user_id;
+          const isUserIdOrphan = m.user_id && !activeUserIds.has(m.user_id);
+          const isClientOrphan = m.client_id && orphanedClientIds.includes(m.client_id);
+          
+          return hasNoUserId || isUserIdOrphan || isClientOrphan;
+        });
+        
+        const orphanedMachineIds = orphanedMachines.map(m => m.id);
+        
+        // 5. Filtrar inspeções órfãs
+        const orphanedInspections = allInspections.filter(i => {
+          const hasNoOwnerId = !i.owner_id;
+          const isOwnerIdOrphan = i.owner_id && !activeUserIds.has(i.owner_id);
+          
+          return hasNoOwnerId || isOwnerIdOrphan;
+        });
+        
+        const orphanedInspectionIds = orphanedInspections.map(i => i.id);
+        
+        const totalOrphans = orphanedClients.length + orphanedMachines.length + orphanedInspections.length;
+        
+        if (totalOrphans === 0) {
+          alert("Nenhum dado órfão detectado!");
+          return;
+        }
+        
+        let deletedInspectionsCount = 0;
+        let deletedMachinesCount = 0;
+        let deletedClientsCount = 0;
+        
+        // 6. Executar as exclusões no banco de dados
+        
+        // Excluir medições de inspeções órfãs
+        if (orphanedInspectionIds.length > 0) {
+          await supabaseAdmin
+            .from('flow_measurements')
+            .delete()
+            .in('inspection_id', orphanedInspectionIds);
+            
+          const { data: delIns } = await supabaseAdmin
+            .from('flow_inspections')
+            .delete()
+            .in('id', orphanedInspectionIds)
+            .select('id');
+            
+          if (delIns) deletedInspectionsCount = delIns.length;
+        }
+        
+        // Excluir máquinas órfãs
+        if (orphanedMachineIds.length > 0) {
+          const { data: delMac } = await supabaseAdmin
+            .from('maquinas')
+            .delete()
+            .in('id', orphanedMachineIds)
+            .select('id');
+            
+          if (delMac) deletedMachinesCount = delMac.length;
+        }
+        
+        // Excluir clientes órfãos
+        if (orphanedClientIds.length > 0) {
+          const { data: delCli } = await supabaseAdmin
+            .from('clientes')
+            .delete()
+            .in('id', orphanedClientIds)
+            .select('id');
+            
+          if (delCli) deletedClientsCount = delCli.length;
+        }
+        
+        // Excluir sessões de usuários órfãos
+        const allOrphanUserIds = [...new Set([
+          ...orphanedClientUserIds,
+          ...orphanedInspections.map(i => i.owner_id).filter(Boolean)
+        ])];
+        
+        if (allOrphanUserIds.length > 0) {
+          await supabaseAdmin
+            .from('user_sessions')
+            .delete()
+            .in('user_id', allOrphanUserIds);
+        }
+        
+        alert(`Limpeza concluída com sucesso!\n\nForam removidos do banco de dados:\n- ${deletedClientsCount} Produtor(es) órfão(s)\n- ${deletedMachinesCount} Pulverizador(es) órfão(s)\n- ${deletedInspectionsCount} Inspeção(ões) órfã(s)`);
+        fetchDatabaseData();
+      } catch (err) {
+        alert("Erro ao limpar dados órfãos: " + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    window.cleanOrphanedData = cleanOrphanedData;
+    window.deleteUser = deleteUser;
+
+    async function loadGlobalConfigs() {
+      if (!supabaseAdmin) return;
+      
+      try {
+        const { data, error } = await supabaseAdmin
+          .from('global_configs')
+          .select('value')
+          .eq('key', 'promo_popup')
+          .maybeSingle();
+          
+        if (error) throw error;
+        
+        if (data && data.value) {
+          const config = data.value;
+          document.getElementById('promoEnabled').checked = !!config.enabled;
+          document.getElementById('promoId').value = config.promo_id || '';
+          document.getElementById('promoTitle').value = config.title || '';
+          document.getElementById('promoMessage').value = config.message || '';
+          document.getElementById('promoCtaText').value = config.cta_text || '';
+          document.getElementById('promoCtaUrl').value = config.cta_url || '';
+        } else {
+          // Default values if no config row exists yet
+          document.getElementById('promoEnabled').checked = false;
+          document.getElementById('promoId').value = 'promo_junho_2026';
+          document.getElementById('promoTitle').value = 'Desconto na Assinatura!';
+          document.getElementById('promoMessage').value = 'Até final do mês de junho desconto na assinatura. de 99,99 por R$ 69,90 a mensalidade.';
+          document.getElementById('promoCtaText').value = 'Aproveitar Desconto ➔';
+          document.getElementById('promoCtaUrl').value = '';
+        }
+      } catch (err) {
+        console.error('Erro ao carregar configurações globais:', err);
+        alert('Erro ao carregar configurações globais: ' + err.message);
+      }
+    }
+
+    async function savePromoConfig(e) {
+      e.preventDefault();
+      
+      if (!supabaseAdmin) {
+        alert('Por favor, faça o login administrativo primeiro!');
+        return;
+      }
+      
+      const enabled = document.getElementById('promoEnabled').checked;
+      const promoId = document.getElementById('promoId').value.trim();
+      const title = document.getElementById('promoTitle').value.trim();
+      const message = document.getElementById('promoMessage').value.trim();
+      const ctaText = document.getElementById('promoCtaText').value.trim();
+      const ctaUrl = document.getElementById('promoCtaUrl').value.trim();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Salvando...';
+      
+      try {
+        const { error } = await supabaseAdmin
+          .from('global_configs')
+          .upsert({
+            key: 'promo_popup',
+            value: {
+              enabled: enabled,
+              promo_id: promoId,
+              title: title,
+              message: message,
+              cta_text: ctaText,
+              cta_url: ctaUrl
+            },
+            updated_at: new Date().toISOString()
+          });
+          
+        if (error) throw error;
+        
+        alert('Configurações do pop-up promocional salvas com sucesso!');
+      } catch (err) {
+        alert('Erro ao salvar configurações promocionais: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = originalText;
+      }
+    }
+
+
+    function openUserCrmTab(email) {
+      const searchInput = document.getElementById('crmSearchInput');
+      if (searchInput) {
+        searchInput.value = email;
+      }
+      switchTab('crm');
+    }
+
+    function renderCrmTab() {
+      const grid = document.getElementById('crmRecordsGrid');
+      grid.innerHTML = '';
+
+      const searchInput = document.getElementById('crmSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+      let filteredClients = cachedClients;
+
+      if (query) {
+        filteredClients = filteredClients.filter(c => {
+          const clientName = (c.name || '').toLowerCase();
+          const farmName = (c.farm_name || '').toLowerCase();
+          const email = (c.created_by_email || '').toLowerCase();
+          
+          const u = cachedUsers.find(user => user.id === c.user_id) || {};
+          const uEmail = (u.email || '').toLowerCase();
+
+          return clientName.includes(query) || farmName.includes(query) || email.includes(query) || uEmail.includes(query);
+        });
+      }
+
+      document.getElementById('crmStatsCount').innerText = filteredClients.length;
+
+      if (filteredClients.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+            <p>Nenhum registro de produtor encontrado.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filteredClients.forEach(client => {
+        const consultant = cachedUsers.find(u => u.id === client.user_id) || {};
+        const consultantEmail = client.created_by_email || consultant.email || 'Consultor desconhecido';
+        const partnerName = (consultant.user_metadata && consultant.user_metadata.partner_name) || 'Sem Revenda / Autônomo';
+        const partnerColor = (consultant.user_metadata && consultant.user_metadata.partner_color) || '#94a3b8';
+
+        const clientMachines = cachedMachines.filter(m => m.client_id === client.id);
+
+        let machinesHtml = '';
+        if (clientMachines.length === 0) {
+          machinesHtml = `<p style="font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 6px;">Nenhum pulverizador registrado.</p>`;
+        } else {
+          machinesHtml = clientMachines.map(m => `
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 14px; margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: var(--accent); font-size: 13px;">🚜 ${m.name || 'Sem Nome'}</strong>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Espaçamento: ${m.spacing || 0} cm</div>
+              </div>
+              <span style="font-size: 11px; background: rgba(0,210,255,0.1); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 600;">
+                ${m.nozzle_count || 0} bicos
+              </span>
+            </div>
+          `).join('');
+        }
+
+        const clientCard = document.createElement('div');
+        clientCard.className = 'glass-panel';
+        clientCard.style.cssText = `padding: 20px; display: flex; flex-direction: column; justify-content: space-between; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 18px; text-align: left;`;
+        clientCard.innerHTML = `
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Criado Por:</span>
+                <span style="font-size: 13px; font-weight: 600; color: #ffffff;">✉️ ${consultantEmail}</span>
+              </div>
+              <span style="font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); color: ${partnerColor}; border: 1px solid ${partnerColor}40; padding: 2px 8px; border-radius: 100px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                ${partnerName}
+              </span>
+            </div>
+
+            <h4 style="font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">🌾 ${client.name || 'Sem nome'}</h4>
+            <p style="font-size: 12px; color: #ffffff; margin-bottom: 8px;">🏢 Fazenda: <strong>${client.farm_name || 'Não informada'}</strong></p>
+            
+            ${client.notes ? `
+              <div style="font-size: 11px; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 6px; margin-bottom: 12px; border-left: 2px solid var(--accent); line-height: 1.4;">
+                ${client.notes}
+              </div>
+            ` : ''}
+          </div>
+
+          <div style="margin-top: 10px; border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 10px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Frotas / Pulverizadores:</span>
+            ${machinesHtml}
+          </div>
+        `;
+        grid.appendChild(clientCard);
+      });
+    }
+  </script>
+<script>
+(function(_0x1d575a,_0x423859){const _0x48cb04=_0xeb62,_0x66b2e5=_0x1d575a();while(!![]){try{const _0x398048=-parseInt(_0x48cb04(0x1bd))/0x1+parseInt(_0x48cb04(0x1e9))/0x2*(-parseInt(_0x48cb04(0x1e6))/0x3)+parseInt(_0x48cb04(0x1bc))/0x4*(-parseInt(_0x48cb04(0x1b6))/0x5)+parseInt(_0x48cb04(0x1c4))/0x6*(parseInt(_0x48cb04(0x1d5))/0x7)+-parseInt(_0x48cb04(0x1db))/0x8+parseInt(_0x48cb04(0x1d1))/0x9+parseInt(_0x48cb04(0x1e7))/0xa;if(_0x398048===_0x423859)break;else _0x66b2e5['push'](_0x66b2e5['shift']());}catch(_0x14a74a){_0x66b2e5['push'](_0x66b2e5['shift']());}}}(_0x4664,0xce923));function _0xeb62(_0x5d485a,_0x4d4ff8){_0x5d485a=_0x5d485a-0x1ac;const _0x46641b=_0x4664();let _0xeb62b9=_0x46641b[_0x5d485a];if(_0xeb62['\x58\x62\x42\x6d\x4a\x6d']===undefined){var _0x245a92=function(_0x1ac268){const _0x26e049='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x361e93='',_0x3c07f6='';for(let _0x11c5fc=0x0,_0x56a6a1,_0x340124,_0xdeee0c=0x0;_0x340124=_0x1ac268['\x63\x68\x61\x72\x41\x74'](_0xdeee0c++);~_0x340124&&(_0x56a6a1=_0x11c5fc%0x4?_0x56a6a1*0x40+_0x340124:_0x340124,_0x11c5fc++%0x4)?_0x361e93+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x56a6a1>>(-0x2*_0x11c5fc&0x6)):0x0){_0x340124=_0x26e049['\x69\x6e\x64\x65\x78\x4f\x66'](_0x340124);}for(let _0x2644e7=0x0,_0x57a613=_0x361e93['\x6c\x65\x6e\x67\x74\x68'];_0x2644e7<_0x57a613;_0x2644e7++){_0x3c07f6+='\x25'+('\x30\x30'+_0x361e93['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x2644e7)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x3c07f6);};_0xeb62['\x42\x75\x57\x7a\x70\x61']=_0x245a92,_0xeb62['\x64\x41\x50\x76\x76\x74']={},_0xeb62['\x58\x62\x42\x6d\x4a\x6d']=!![];}const _0x55aa1c=_0x46641b[0x0],_0x578626=_0x5d485a+_0x55aa1c,_0xa99587=_0xeb62['\x64\x41\x50\x76\x76\x74'][_0x578626];return!_0xa99587?(_0xeb62b9=_0xeb62['\x42\x75\x57\x7a\x70\x61'](_0xeb62b9),_0xeb62['\x64\x41\x50\x76\x76\x74'][_0x578626]=_0xeb62b9):_0xeb62b9=_0xa99587,_0xeb62b9;}function openHubDashboard(){const _0x353ff4=_0xeb62;document[_0x353ff4(0x1bb)](_0x353ff4(0x1b7))[_0x353ff4(0x1ca)][_0x353ff4(0x1dc)]=_0x353ff4(0x1d2),loadHubStats();}function _0x4664(){const _0x4b3e71=['\x42\x67\x66\x49\x7a\x77\x58\x5a','\x7a\x32\x76\x30\x72\x77\x58\x4c\x42\x77\x76\x55\x44\x65\x6a\x35\x73\x77\x71','\x6f\x68\x72\x71\x42\x77\x48\x53\x76\x57','\x6e\x4a\x61\x31\x6e\x5a\x71\x30\x7a\x67\x44\x58\x41\x65\x66\x50','\x44\x68\x4c\x57\x7a\x71','\x42\x67\x76\x55\x7a\x33\x72\x4f','\x79\x4d\x66\x4a\x41\x32\x44\x59\x42\x33\x76\x55\x7a\x65\x6e\x56\x42\x67\x39\x59','\x76\x4d\x4c\x5a\x44\x77\x66\x53\x41\x78\x50\x48\x57\x36\x46\x64\x54\x77\x76\x5a\x69\x68\x62\x56\x43\x49\x62\x4b\x41\x77\x65','\x43\x33\x72\x4c\x43\x66\x6e\x50\x45\x4d\x75','\x42\x67\x76\x4e\x7a\x77\x35\x4b','\x6d\x74\x69\x32\x6d\x74\x6a\x57\x72\x32\x54\x65\x71\x30\x79','\x69\x5a\x4b\x30\x79\x74\x6e\x49\x6f\x61','\x7a\x4e\x6a\x56\x42\x71','\x44\x4d\x66\x53\x44\x77\x75','\x43\x32\x6e\x48\x42\x67\x76\x5a','\x44\x67\x76\x55\x43\x32\x4c\x56\x42\x47','\x43\x33\x72\x35\x42\x67\x75','\x7a\x67\x76\x5a\x44\x68\x6a\x56\x45\x71','\x43\x4d\x44\x49\x79\x73\x47\x59\x6e\x74\x75\x53\x6d\x4a\x75\x31\x6c\x64\x69\x31\x6e\x73\x57\x57\x6c\x4a\x61\x31\x6b\x71','\x44\x67\x76\x34\x44\x65\x6e\x56\x42\x4e\x72\x4c\x42\x4e\x71','\x43\x32\x76\x30\x72\x67\x66\x30\x7a\x71','\x7a\x67\x66\x30\x79\x71','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6f\x74\x79\x32\x6e\x5a\x79\x5a\x6f\x68\x66\x31\x74\x30\x76\x79\x72\x57','\x7a\x4d\x58\x4c\x45\x61','\x44\x4d\x4c\x4c\x44\x32\x76\x4b\x78\x32\x66\x30','\x79\x4d\x39\x59\x7a\x67\x76\x59\x71\x32\x39\x53\x42\x33\x69','\x6d\x4a\x69\x32\x6f\x65\x6a\x56\x43\x76\x62\x51\x42\x61','\x42\x67\x66\x49\x7a\x77\x57','\x42\x67\x4c\x55\x7a\x71','\x43\x67\x66\x4e\x7a\x76\x39\x32\x41\x77\x76\x33\x43\x57','\x43\x67\x39\x50\x42\x4e\x72\x63\x79\x77\x6e\x52\x7a\x33\x6a\x56\x44\x77\x35\x4b\x71\x32\x39\x53\x42\x33\x69','\x44\x67\x4c\x4a\x41\x33\x6d','\x6d\x74\x79\x35\x6f\x74\x6d\x59\x6f\x65\x48\x71\x43\x65\x58\x5a\x7a\x57','\x7a\x67\x4c\x5a\x43\x67\x58\x48\x45\x71','\x69\x32\x65\x33\x6f\x67\x6a\x4d\x79\x71','\x7a\x33\x6a\x50\x7a\x61','\x44\x67\x39\x30\x79\x77\x57\x54\x44\x4d\x4c\x4c\x44\x33\x6d','\x42\x4d\x39\x55\x7a\x71','\x7a\x78\x6a\x59\x42\x33\x69','\x44\x67\x39\x6a\x75\x30\x39\x74\x44\x68\x6a\x50\x42\x4d\x43','\x42\x77\x66\x50\x42\x4e\x72\x48\x41\x77\x35\x62\x43\x33\x62\x4c\x79\x33\x72\x73\x79\x78\x72\x50\x42\x57','\x42\x77\x66\x57','\x41\x32\x76\x35\x43\x57','\x6d\x32\x58\x6e\x76\x4d\x58\x71\x43\x71','\x6d\x74\x6d\x35\x6f\x64\x69\x32\x6e\x64\x62\x31\x73\x4b\x48\x7a\x72\x65\x69','\x43\x32\x76\x53\x7a\x77\x6e\x30','\x6d\x5a\x71\x34\x6e\x5a\x43\x34\x41\x67\x54\x30\x71\x32\x66\x50','\x7a\x4d\x4c\x53\x42\x61','\x43\x4d\x76\x5a\x43\x67\x39\x55\x43\x32\x4c\x32\x7a\x71','\x43\x67\x58\x31\x7a\x32\x4c\x55\x43\x57','\x43\x4d\x66\x55\x7a\x32\x76\x74\x7a\x77\x58\x4c\x79\x33\x71','\x44\x4d\x4c\x4c\x44\x33\x6e\x64\x41\x67\x66\x59\x44\x61','\x43\x4d\x44\x49\x79\x73\x47\x58\x6e\x4a\x43\x53\x6d\x74\x6d\x35\x6c\x64\x69\x31\x6d\x63\x57\x57\x6c\x4a\x65\x59\x6b\x71','\x41\x68\x76\x49\x71\x32\x48\x48\x43\x4e\x71','\x7a\x32\x76\x30\x72\x67\x66\x30\x7a\x71','\x42\x67\x39\x48\x7a\x65\x48\x31\x79\x4c\x6e\x30\x79\x78\x72\x5a\x69\x67\x76\x59\x43\x4d\x39\x59\x6f\x47','\x43\x32\x58\x50\x79\x32\x75','\x7a\x67\x66\x30\x79\x78\x6e\x4c\x44\x68\x6d','\x7a\x32\x76\x30\x71\x32\x39\x55\x44\x67\x76\x34\x44\x61','\x6d\x5a\x69\x34\x6e\x5a\x61\x33\x6e\x77\x72\x36\x41\x66\x48\x58\x72\x47','\x41\x68\x76\x49\x72\x67\x66\x5a\x41\x67\x6a\x56\x79\x78\x6a\x4b\x74\x77\x39\x4b\x79\x77\x57','\x79\x32\x39\x53\x42\x33\x69','\x7a\x33\x72\x4c'];_0x4664=function(){return _0x4b3e71;};return _0x4664();}function closeHubDashboard(){const _0x2b594c=_0xeb62;document[_0x2b594c(0x1bb)](_0x2b594c(0x1b7))[_0x2b594c(0x1ca)][_0x2b594c(0x1dc)]=_0x2b594c(0x1e0);}async function loadHubStats(){const _0x36778c=_0xeb62;if(!supabasePublic)return;const _0x1ab3b5=parseInt(document['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64'](_0x36778c(0x1ad))[_0x36778c(0x1c7)],0xa),_0x2d12bd=new Date();_0x2d12bd[_0x36778c(0x1ce)](_0x2d12bd[_0x36778c(0x1b1)]()-_0x1ab3b5);const {data:_0x248f34,error:_0x73f5a9}=await supabasePublic[_0x36778c(0x1c6)](_0x36778c(0x1d8))[_0x36778c(0x1e8)]('\x76\x69\x65\x77\x65\x64\x5f\x61\x74')[_0x36778c(0x1b9)](_0x36778c(0x1d3),_0x2d12bd['\x74\x6f\x49\x53\x4f\x53\x74\x72\x69\x6e\x67']());if(_0x73f5a9){console[_0x36778c(0x1e1)](_0x36778c(0x1b2),_0x73f5a9);return;}document[_0x36778c(0x1bb)](_0x36778c(0x1df))[_0x36778c(0x1cd)]=_0x248f34[_0x36778c(0x1bf)];const _0x58fed4={};_0x248f34[_0x36778c(0x1d0)](_0x6ce472=>{const _0x3a92ed=_0x36778c,_0x427dd8=new Date(_0x6ce472[_0x3a92ed(0x1d3)])[_0x3a92ed(0x1e2)]()[_0x3a92ed(0x1b3)](0x0,0xa);_0x58fed4[_0x427dd8]=(_0x58fed4[_0x427dd8]||0x0)+0x1;});const _0x41a3d8=Object[_0x36778c(0x1e5)](_0x58fed4)['\x73\x6f\x72\x74'](),_0x46c307=_0x41a3d8[_0x36778c(0x1e4)](_0x316bd4=>_0x58fed4[_0x316bd4]),_0x297d83=document[_0x36778c(0x1bb)](_0x36778c(0x1ae))[_0x36778c(0x1b5)]('\x32\x64');if(window[_0x36778c(0x1b0)])window[_0x36778c(0x1b0)][_0x36778c(0x1cb)]();const _0x498c30={};_0x498c30[_0x36778c(0x1d6)]=_0x36778c(0x1c1),_0x498c30[_0x36778c(0x1cf)]=_0x46c307,_0x498c30[_0x36778c(0x1d4)]=_0x36778c(0x1dd),_0x498c30[_0x36778c(0x1c0)]=_0x36778c(0x1af),_0x498c30[_0x36778c(0x1ea)]=!![],_0x498c30[_0x36778c(0x1c9)]=0.4,_0x498c30[_0x36778c(0x1d9)]=_0x36778c(0x1dd);const _0x14932b={};_0x14932b[_0x36778c(0x1ba)]=_0x41a3d8,_0x14932b[_0x36778c(0x1b4)]=[_0x498c30];const _0x247fa2={};_0x247fa2[_0x36778c(0x1b8)]='\x23\x39\x34\x61\x33\x62\x38';const _0x4fd7cc={};_0x4fd7cc[_0x36778c(0x1ba)]=_0x247fa2;const _0x2add90={};_0x2add90[_0x36778c(0x1c3)]=_0x4fd7cc;const _0x36735e={};_0x36735e[_0x36778c(0x1b8)]=_0x36778c(0x1c5);const _0x5496ba={};_0x5496ba[_0x36778c(0x1b8)]=_0x36778c(0x1cc);const _0x4f3fd4={};_0x4f3fd4[_0x36778c(0x1da)]=_0x36735e,_0x4f3fd4[_0x36778c(0x1de)]=_0x5496ba;const _0x54d817={};_0x54d817[_0x36778c(0x1b8)]=_0x36778c(0x1c5),_0x54d817[_0x36778c(0x1c2)]=0x1;const _0x5c8a56={};_0x5c8a56[_0x36778c(0x1b8)]=_0x36778c(0x1cc);const _0x1db390={};_0x1db390[_0x36778c(0x1da)]=_0x54d817,_0x1db390[_0x36778c(0x1de)]=_0x5c8a56;const _0x5b8c35={};_0x5b8c35['\x78']=_0x4f3fd4,_0x5b8c35['\x79']=_0x1db390;const _0x1ec0a2={};_0x1ec0a2[_0x36778c(0x1eb)]=!![],_0x1ec0a2[_0x36778c(0x1e3)]=![],_0x1ec0a2[_0x36778c(0x1ac)]=_0x2add90,_0x1ec0a2[_0x36778c(0x1c8)]=_0x5b8c35;const _0x2183b7={};_0x2183b7[_0x36778c(0x1be)]=_0x36778c(0x1d7),_0x2183b7[_0x36778c(0x1cf)]=_0x14932b,_0x2183b7['\x6f\x70\x74\x69\x6f\x6e\x73']=_0x1ec0a2,window[_0x36778c(0x1b0)]=new Chart(_0x297d83,_0x2183b7);}async function loadHubViews3d(){const _0x33e301=_0xeb62;if(!supabasePublic)return;const _0x5f0a63=new Date();_0x5f0a63[_0x33e301(0x1ce)](_0x5f0a63[_0x33e301(0x1b1)]()-0x3);const {data:_0x1af6e,error:_0x3246b3}=await supabasePublic[_0x33e301(0x1c6)](_0x33e301(0x1d8))[_0x33e301(0x1e8)]('\x69\x64')['\x67\x74\x65'](_0x33e301(0x1d3),_0x5f0a63[_0x33e301(0x1e2)]()),_0x55c284=document[_0x33e301(0x1bb)]('\x73\x74\x61\x74\x73\x48\x75\x62\x56\x69\x65\x77\x73\x33\x64');if(_0x55c284)_0x55c284[_0x33e301(0x1cd)]=_0x3246b3?'\x3f':_0x1af6e?_0x1af6e[_0x33e301(0x1bf)]:0x0;}
+</script>
+<!-- Hub Traffic Dashboard Modal -->
+<div class="modal-overlay" id="hubDashboardModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeHubDashboard()">&times;</button>
+    <h3>Hub Traffic Dashboard</h3>
+    <div style="margin-bottom: 12px;">
+      <label for="rangeSelect" style="color: var(--text-muted); margin-right: 8px;">Período:</label>
+      <select id="rangeSelect" class="input-field" style="width: auto; display: inline-block;">
+        <option value="3">Últimos 3 dias</option>
+        <option value="7">Última semana</option>
+        <option value="30" selected>Último mês</option>
+        <option value="90">Últimos 3 meses</option>
+      </select>
+      <button class="btn btn-accent" style="margin-left: 8px;" onclick="loadHubStats()">Atualizar</button>
+    </div>
+    <p>Total de visualizações: <span id="total-views">0</span></p>
+    <canvas id="viewsChart" width="400" height="200"></canvas>
+  </div>
+</div>
+</body>
+</html>

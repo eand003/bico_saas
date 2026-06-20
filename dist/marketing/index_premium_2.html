@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spray Precision PRO | Otimização e Diagnóstico de Pulverização</title>
+  <meta name="description" content="Escolha o bico certo, diagnostique a vazão bico a bico e gere laudos técnicos profissionais para pulverização agrícola." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Themeable variables (Modified dynamically by White-Label Simulator) */
+      --bg: #020812;
+      --panel: #07111f;
+      --panel2: #0a1728;
+      --cyan: #19c8ff;
+      --green: #a6f300;
+      --yellow: #ffdd24;
+      --white: #f7fbff;
+      --muted: #a8b5c7;
+      --danger: #ff4258;
+      --border: rgba(25, 200, 255, 0.22);
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+      --font-headers: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--white);
+      background: linear-gradient(135deg, #01050c 0%, #03101d 48%, #020812 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.8s ease;
+    }
+
+    /* Live White-Label Branding Simulator Bar */
+    .branding-bar {
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .branding-bar span {
+      font-family: var(--font-headers);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-btn:hover, .brand-btn.active {
+      background: var(--cyan);
+      color: #020812;
+      border-color: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(25, 200, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(25, 200, 255, 0.03) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent 90%);
+    }
+
+    /* Site Header */
+    .site-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px clamp(16px, 4vw, 64px);
+      background: rgba(2, 8, 18, 0.4);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--white);
+      transition: all 0.5s ease;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--cyan);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(25, 200, 255, 0.18), rgba(166, 243, 0, 0.15));
+      box-shadow: 0 0 20px var(--border);
+      font-size: 20px;
+      transition: all 0.5s ease;
+    }
+
+    .brand strong {
+      font-family: var(--font-headers);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .brand strong span {
+      color: var(--green);
+      transition: color 0.5s ease;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .16em;
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      color: #06101c !important;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(25, 200, 255, 0.2);
+    }
+
+    /* Sections */
+    .section {
+      padding: clamp(60px, 8vw, 100px) clamp(16px, 4vw, 64px);
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 60px;
+      min-height: calc(85vh - 80px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      color: var(--cyan);
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 16px;
+      font-family: var(--font-headers);
+    }
+
+    h1 {
+      font-family: var(--font-headers);
+      font-size: clamp(38px, 5.5vw, 76px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+      font-weight: 800;
+    }
+
+    h1 span {
+      display: block;
+      color: var(--green);
+      background: linear-gradient(135deg, var(--green) 0%, var(--yellow) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-family: var(--font-headers);
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: #07101a;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      box-shadow: 0 8px 25px rgba(25, 200, 255, 0.25);
+    }
+
+    .btn-secondary {
+      color: var(--white);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--cyan);
+    }
+
+    /* Proof Strip */
+    .proof-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(7, 17, 31, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .proof-strip div {
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      text-align: center;
+    }
+
+    .proof-strip strong {
+      display: block;
+      color: var(--green);
+      font-size: 22px;
+      font-family: var(--font-headers);
+      font-weight: 700;
+    }
+
+    .proof-strip span {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .hero-visual {
+      position: relative;
+    }
+
+    .hero-visual img {
+      width: 100%;
+      display: block;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.5s ease;
+    }
+
+    .hero-visual img:hover {
+      transform: scale(1.02);
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 10% -5% -5% 10%;
+      z-index: -1;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      filter: blur(50px);
+      opacity: 0.25;
+      border-radius: 36px;
+      pointer-events: none;
+    }
+
+    /* Cards Section */
+    .section-heading {
+      max-width: 800px;
+      margin-bottom: 48px;
+    }
+
+    .section-heading h2 {
+      font-family: var(--font-headers);
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .card {
+      padding: 32px;
+      border-radius: 20px;
+      background: rgba(7, 17, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--cyan);
+      box-shadow: 0 15px 35px rgba(25, 200, 255, 0.08);
+    }
+
+    .card-icon {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-family: var(--font-headers);
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Interactive Operational Simulator Section */
+    .sim-card {
+      background: rgba(10, 21, 38, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    @media (min-width: 900px) {
+      .sim-card {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    .sim-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, var(--accent-blue-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .sim-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sim-inputs h3 {
+      font-size: 24px;
+      color: var(--white);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .range-input {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      -webkit-appearance: none;
+      accent-color: var(--cyan);
+    }
+
+    .num-val {
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      min-width: 65px;
+      text-align: center;
+    }
+
+    .select-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--white);
+      font-family: var(--font-body);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .sim-outputs {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 18px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    /* Virtual Manometer Gauge styling */
+    .gauge-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .gauge-wheel {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 4px dashed rgba(255, 255, 255, 0.1);
+      background: radial-gradient(circle, rgba(15, 23, 42, 0.8) 0%, rgba(2, 8, 18, 0.95) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .gauge-needle {
+      position: absolute;
+      width: 4px;
+      height: 60px;
+      background: var(--cyan);
+      bottom: 50%;
+      transform-origin: bottom center;
+      transform: rotate(0deg);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .gauge-needle::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: -4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--white);
+    }
+
+    .gauge-center-val {
+      position: absolute;
+      bottom: 24px;
+      text-align: center;
+    }
+
+    .gauge-val-num {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: var(--font-headers);
+      color: var(--white);
+    }
+
+    .gauge-val-unit {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .status-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-light.ok {
+      background: rgba(56, 239, 125, 0.15);
+      color: #38ef7d;
+      border: 1px solid rgba(56, 239, 125, 0.3);
+    }
+
+    .status-light.warning {
+      background: rgba(255, 221, 36, 0.15);
+      color: var(--yellow);
+      border: 1px solid rgba(255, 221, 36, 0.3);
+    }
+
+    .status-light.danger {
+      background: rgba(255, 66, 88, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(255, 66, 88, 0.3);
+    }
+
+    .calc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .calc-list-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(255,255,255,0.06);
+      padding-bottom: 6px;
+    }
+
+    .calc-list-item span {
+      color: var(--muted);
+    }
+
+    .calc-list-item strong {
+      color: var(--white);
+    }
+
+    /* Modules Design */
+    .module-grid {
+      display: grid;
+      gap: 28px;
+    }
+
+    .module-card {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      gap: 40px;
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid rgba(25, 200, 255, 0.18);
+      background: linear-gradient(135deg, rgba(7, 17, 31, 0.85), rgba(6, 20, 35, 0.65));
+      box-shadow: var(--shadow);
+    }
+
+    @media (min-width: 800px) {
+      .module-card {
+        grid-template-columns: 0.9fr 1.1fr;
+      }
+    }
+
+    .module-card-green {
+      border-color: rgba(166, 243, 0, 0.18);
+    }
+
+    .module-tag {
+      display: inline-flex;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      background: rgba(25, 200, 255, 0.12);
+      color: var(--cyan);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .module-card-green .module-tag {
+      background: rgba(166, 243, 0, 0.12);
+      color: var(--green);
+    }
+
+    .module-copy h3 {
+      font-family: var(--font-headers);
+      font-size: 26px;
+      margin-bottom: 14px;
+    }
+
+    .module-copy p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .module-copy ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .module-copy li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .module-copy li::before {
+      content: "✓";
+      color: var(--cyan);
+      font-weight: 900;
+    }
+
+    .module-card-green li::before {
+      content: "✓";
+      color: var(--green);
+    }
+
+    .module-image img {
+      width: 100%;
+      display: block;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* KPIs / stats grid */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 60px clamp(16px, 4vw, 64px);
+    }
+
+    @media (min-width: 900px) {
+      .stats {
+        grid-template-columns: 0.8fr 1.2fr;
+      }
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .kpi {
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(7, 17, 31, 0.5);
+      border: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .kpi strong {
+      font-family: var(--font-headers);
+      font-size: 40px;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .kpi.warning strong { color: var(--yellow); }
+    .kpi.danger strong { color: var(--danger); }
+
+    /* Custom Layout for loss features */
+    .image-feature {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (min-width: 800px) {
+      .image-feature {
+        grid-template-columns: 0.9fr 1.1fr;
+      }
+    }
+
+    .image-feature img {
+      width: 100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .image-feature h2 {
+      font-family: var(--font-headers);
+      font-size: 36px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    /* Final CTA */
+    .cta-panel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: center;
+      padding: 48px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(25, 200, 255, 0.08), rgba(166, 243, 0, 0.08)), rgba(7, 17, 31, 0.85);
+      border: 1px solid rgba(166, 243, 0, 0.2);
+      box-shadow: var(--shadow);
+      margin-bottom: 40px;
+    }
+
+    @media (min-width: 800px) {
+      .cta-panel {
+        grid-template-columns: 1fr 240px;
+      }
+    }
+
+    .cta-panel h2 {
+      font-family: var(--font-headers);
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .qr-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      border-radius: 18px;
+      background: #ffffff;
+      color: #020812;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .qr-box img {
+      width: 100%;
+      max-width: 160px;
+      display: block;
+    }
+
+    .qr-box strong {
+      font-size: 14px;
+      font-family: var(--font-headers);
+    }
+
+    .qr-box span {
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 32px clamp(16px, 4vw, 64px);
+      color: var(--muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+
+    .footer strong {
+      color: var(--white);
+    }
+
+    /* Mobile overrides */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-actions {
+        justify-content: center;
+      }
+      .proof-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .cards-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .proof-strip, .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Live White-Label Branding Simulator Bar -->
+  <div class="branding-bar">
+    <span>Simulador B2B White-Label:</span>
+    <button class="brand-btn active" onclick="setBrandTheme('default', this)">💧 Spray Precision</button>
+    <button class="brand-btn" onclick="setBrandTheme('johndeere', this)">🚜 John Deere</button>
+    <button class="brand-btn" onclick="setBrandTheme('jacto', this)">🎯 Jacto</button>
+    <button class="brand-btn" onclick="setBrandTheme('caseih', this)">🔺 Case IH</button>
+    <button class="brand-btn" onclick="setBrandTheme('newholland', this)">🌾 New Holland</button>
+  </div>
+
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a class="brand" href="#topo" id="siteBrand">
+      <div class="brand-icon" id="brandIcon">💧</div>
+      <div>
+        <strong id="brandName">Spray Precision <span>PRO</span></strong>
+        <small id="brandSubtitle">Tecnologia que aplica resultados</small>
+      </div>
+    </a>
+
+    <nav class="nav">
+      <a href="#simulador">Simulador</a>
+      <a href="#solucao">Módulos</a>
+      <a href="#diagnostico">Diagnóstico</a>
+      <a href="#revendas">Revendas</a>
+      <a href="#demo" class="nav-cta">Demonstração</a>
+    </nav>
+  </header>
+
+  <main id="topo">
+    
+    <!-- Hero -->
+    <section class="hero section">
+      <div class="hero-copy">
+        <div class="eyebrow">Escolha de bico + diagnóstico de vazão manual</div>
+        <h1>
+          Precisão sob pressão.
+          <span>Resultado no campo.</span>
+        </h1>
+        <p class="lead">
+          Elimine o achismo da calibração agrícola. Escolha o bico ideal pela estabilidade,
+          meça a vazão real no campo e gere relatórios instantâneos para justificar a substituição de peças.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://wa.me/5565999106415" target="_blank" id="ctaPrimary">
+            Solicitar demonstração
+          </a>
+          <a class="btn btn-secondary" href="#simulador">Testar simulador online</a>
+        </div>
+
+        <div class="proof-strip">
+          <div><strong>ISO 02</strong><span>recomendado</span></div>
+          <div><strong>3.4 BAR</strong><span>pressão média</span></div>
+          <div><strong>87</strong><span>bicos avaliados</span></div>
+          <div><strong>9.5%</strong><span>CV da vazão</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <img src="assets/ecossistema.png" alt="Plataforma Spray Precision PRO" />
+      </div>
+    </section>
+
+    <!-- Problem Cards -->
+    <section class="section problem">
+      <div class="section-heading">
+        <span class="eyebrow">O perigo invisível</span>
+        <h2>A média da máquina engana. A barra revela.</h2>
+        <p class="lead">
+          Embora a vazão geral de um pulverizador pareça correta no computador de bordo, bicos individuais obstruídos ou com desgaste excessivo geram perdas catastróficas.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <article class="card">
+          <div class="card-icon">💸</div>
+          <h3>Desperdício de defensivo</h3>
+          <p>Bicos desgastados aplicam excesso de produto químico caro por hectare, elevando o custo da produção sem trazer benefício técnico.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">⚠️</div>
+          <h3>Subdosagem e falhas</h3>
+          <p>Bicos entupidos aplicam menos defensivo que o recomendado, gerando áreas sem controle que viram focos de pragas e plantas daninhas.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">📊</div>
+          <h3>Venda sem dados</h3>
+          <p>Sem um relatório visual claro, convencer o cliente a substituir pontas vira uma questão de opinião comercial. Com o laudo de desvio, torna-se uma necessidade evidente.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Interactive Simulator Component -->
+    <section id="simulador" class="section">
+      <div class="section-heading">
+        <span class="eyebrow">Estabilidade na prática</span>
+        <h2>Simulador Operacional de Pressão e Gota</h2>
+        <p class="lead">
+          Insira a velocidade e a taxa de aplicação. O motor matemático da Spray PrecisionPRO calculará a vazão necessária e apontará qual ponta operará com a melhor estabilidade operacional.
+        </p>
+      </div>
+
+      <div class="sim-card">
+        
+        <div class="sim-inputs">
+          <h3>Entradas de Campo</h3>
+          
+          <div class="control-group">
+            <label>Taxa de Aplicação Desejada (L/ha)</label>
+            <div class="range-wrap">
+              <input type="range" class="range-input" id="inputVolume" min="30" max="250" value="80" oninput="runSimulation()">
+              <span class="num-val" id="valVolume">80 L/ha</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label>Velocidade Operacional (km/h)</label>
+            <div class="range-wrap">
+              <input type="range" class="range-input" id="inputSpeed" min="6" max="25" value="14" oninput="runSimulation()">
+              <span class="num-val" id="valSpeed">14 km/h</span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <div class="control-group">
+              <label>Espaçamento entre Bicos (cm)</label>
+              <select class="select-input" id="inputSpacing" onchange="runSimulation()">
+                <option value="35">35 cm</option>
+                <option value="50" selected>50 cm</option>
+                <option value="70">70 cm</option>
+              </select>
+            </div>
+            
+            <div class="control-group">
+              <label>Bico ISO Selecionado</label>
+              <select class="select-input" id="inputNozzle" onchange="runSimulation()">
+                <option value="0.6">Green (ISO 015 - 0.60 L/min)</option>
+                <option value="0.8" selected>Yellow (ISO 02 - 0.80 L/min)</option>
+                <option value="1.2">Blue (ISO 03 - 1.20 L/min)</option>
+                <option value="1.6">Red (ISO 04 - 1.60 L/min)</option>
+                <option value="2.0">Brown (ISO 05 - 2.00 L/min)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="sim-outputs">
+          <div class="gauge-container">
+            <div class="gauge-wheel">
+              <div class="gauge-needle" id="gaugeNeedle"></div>
+              <div class="gauge-center-val">
+                <span class="gauge-val-num" id="outPressure">3.1</span><br>
+                <span class="gauge-val-unit">bar</span>
+              </div>
+            </div>
+            <span class="status-light ok" id="statusLight">🟢 Estável / Ideal</span>
+          </div>
+
+          <div class="calc-list">
+            <div class="calc-list-item">
+              <span>Vazão Teórica Requerida por Bico</span>
+              <strong id="outFlow">0.93 L/min</strong>
+            </div>
+            <div class="calc-list-item">
+              <span>Janela de Funcionamento</span>
+              <strong id="outStability">Ideal (3.0 bar Ref.)</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- App Modules -->
+    <section id="solucao" class="section modules">
+      <div class="section-heading">
+        <span class="eyebrow">Nossos Módulos Integrados</span>
+        <h2>Da escolha científica ao diagnóstico técnico.</h2>
+      </div>
+
+      <div class="module-grid">
+        <article class="module-card">
+          <div class="module-copy">
+            <span class="module-tag">Módulo 1</span>
+            <h3>Seletor Inteligente de Bicos</h3>
+            <p>
+              Elimine o método baseado em tabelas de papel. Simule vazão, velocidade e pressão operacional antes de iniciar a pulverização para garantir gotas perfeitas e zero desperdício.
+            </p>
+            <ul>
+              <li>Recomendação do modelo de bico baseado em dados</li>
+              <li>Janela operacional detalhada por velocidade mínima/máxima</li>
+              <li>Garantia contra deriva (gotas excessivamente finas)</li>
+              <li>Funciona em smartphones locais sem internet no campo</li>
+            </ul>
+          </div>
+          <div class="module-image">
+            <img src="assets/hero_selector.png" alt="Seletor de Bicos" />
+          </div>
+        </article>
+
+        <article id="diagnostico" class="module-card module-card-green">
+          <div class="module-copy">
+            <span class="module-tag">Módulo 2</span>
+            <h3>Diagnóstico de Vazão Manual</h3>
+            <p>
+              Realize testes bico a bico usando proveta. Lançando as coletas no aplicativo, o sistema processa os volumes e cria laudos com dados visuais prontos para guiar a substituição de peças.
+            </p>
+            <ul>
+              <li>Cálculo automático de coeficiente de variação (CV)</li>
+              <li>Status individual por bico (Verde / Amarelo / Vermelho)</li>
+              <li>Auditoria técnica clara que facilita as tomadas de decisão</li>
+              <li>Emissão de relatórios em PDF com a identidade corporativa do parceiro</li>
+            </ul>
+          </div>
+          <div class="module-image">
+            <img src="assets/diagnostico_vazao.png" alt="Diagnóstico de Vazão" />
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Stats and metrics -->
+    <section class="section stats">
+      <div class="stats-copy">
+        <span class="eyebrow">Diagnóstico com transparência</span>
+        <h2>Decisões baseadas em indicadores reais.</h2>
+        <p class="lead">
+          O laudo técnico resume todos os indicadores de desempenho da barra de pulverização em uma única tela, oferecendo clareza e credibilidade comercial.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <strong>87</strong>
+          <span>bicos analisados</span>
+        </div>
+        <div class="kpi">
+          <strong>83</strong>
+          <span>dentro da tolerância</span>
+        </div>
+        <div class="kpi warning">
+          <strong>2</strong>
+          <span>bicos em atenção</span>
+        </div>
+        <div class="kpi danger">
+          <strong>2</strong>
+          <span>bicos desgastados</span>
+        </div>
+        <div class="kpi">
+          <strong>9.5%</strong>
+          <span>coeficiente de variação (CV)</span>
+        </div>
+        <div class="kpi">
+          <strong>75.3</strong>
+          <span>L/ha vazão média real</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marketing Visual Section -->
+    <section class="section image-feature">
+      <div>
+        <span class="eyebrow">Segurança Operacional</span>
+        <h2>Enxergue desvios antes que eles afetem a produtividade.</h2>
+        <p class="lead">
+          Com gráficos coloridos por seção da barra e percentuais de desvio exatos, o produtor entende com facilidade os riscos operacionais a que está exposto.
+        </p>
+        <a class="btn btn-primary" href="#demo">Acessar Demonstração Gratuita</a>
+      </div>
+      <img src="assets/diagnostico_perdas.png" alt="Detecção de perdas invisíveis na pulverização" />
+    </section>
+
+    <!-- Partners / B2B Revendas -->
+    <section id="revendas" class="section partners">
+      <div class="section-heading">
+        <span class="eyebrow">White-Label para Revendas e Consultores</span>
+        <h2>Fortaleça sua marca. Aumente suas vendas de peças.</h2>
+        <p class="lead">
+          Nossa plataforma atua como um motor de auditoria técnica para a sua equipe, convertendo dados em vendas físicas de peças e bicos de reposição.
+        </p>
+      </div>
+
+      <div class="cards-3">
+        <article class="card">
+          <div class="card-icon">📄</div>
+          <h3>Laudos Automatizados</h3>
+          <p>Gere relatórios digitais personalizados com a sua identidade visual e envie por PDF diretamente no WhatsApp do cliente.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🎨</div>
+          <h3>Branding Customizado</h3>
+          <p>O aplicativo adota a sua logomarca, suas cores corporativas e o seu link direto de WhatsApp para cotação rápida de peças.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">📈</div>
+          <h3>Alinhamento Técnico</h3>
+          <p>Mapeie o desgaste no campo e justifique vendas complexas de bicos com base em dados de desvio e vazão precisos.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- CTA / Demo -->
+    <section id="demo" class="section final-cta">
+      <div class="cta-panel">
+        <div>
+          <span class="eyebrow">Experimente a plataforma</span>
+          <h2>Deseja implementar a Spray Precision PRO no seu negócio?</h2>
+          <p class="lead">
+            Escaneie o QR Code ao lado ou fale diretamente com nosso time pelo WhatsApp para agendar uma demonstração completa do sistema.
+          </p>
+          <a class="btn btn-primary" href="https://wa.me/5565999106415" target="_blank" id="ctaWhatsapp" style="margin-top: 20px;">Falar com Especialista</a>
+        </div>
+
+        <div class="qr-box">
+          <img src="assets/qr_whatsapp.png" alt="WhatsApp QR Code" />
+          <strong>Fale pelo WhatsApp</strong>
+          <span>Escaneie e tire dúvidas.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <strong id="footerBrand">Spray Precision PRO</strong>
+    <span>Eficiência em Pulverização Agrícola • Todos os direitos reservados.</span>
+  </footer>
+
+  <script>
+const _0x442478=_0x3a26;(function(_0x1a7b07,_0x2bce76){const _0x27736a=_0x3a26,_0x504591=_0x1a7b07();while(!![]){try{const _0x4edfb3=parseInt(_0x27736a(0x114))/0x1+-parseInt(_0x27736a(0x13d))/0x2+-parseInt(_0x27736a(0x141))/0x3+-parseInt(_0x27736a(0x128))/0x4*(parseInt(_0x27736a(0x121))/0x5)+-parseInt(_0x27736a(0x135))/0x6+parseInt(_0x27736a(0x149))/0x7+-parseInt(_0x27736a(0x113))/0x8*(-parseInt(_0x27736a(0x102))/0x9);if(_0x4edfb3===_0x2bce76)break;else _0x504591['push'](_0x504591['shift']());}catch(_0x4b269f){_0x504591['push'](_0x504591['shift']());}}}(_0x2b7b,0xcec33));const _0x1cb945={};_0x1cb945['\x62\x67']=_0x442478(0x123),_0x1cb945[_0x442478(0xf7)]=_0x442478(0x137),_0x1cb945[_0x442478(0x148)]=_0x442478(0x15e),_0x1cb945['\x67\x72\x65\x65\x6e']=_0x442478(0x134),_0x1cb945['\x62\x6f\x72\x64\x65\x72']=_0x442478(0xff),_0x1cb945['\x6c\x6f\x67\x6f\x49\x63\x6f\x6e']='\ud83d\udca7',_0x1cb945[_0x442478(0x143)]=_0x442478(0x115),_0x1cb945['\x6c\x6f\x67\x6f\x53\x75\x62\x74\x69\x74\x6c\x65']=_0x442478(0x107),_0x1cb945['\x77\x61']=_0x442478(0x12b);const _0x2bd02f={};function _0x3a26(_0xfba8f7,_0x3db4f5){_0xfba8f7=_0xfba8f7-0xef;const _0x2b7b38=_0x2b7b();let _0x3a26a5=_0x2b7b38[_0xfba8f7];if(_0x3a26['\x46\x76\x72\x6c\x75\x4d']===undefined){var _0x5ef530=function(_0x5e2f53){const _0x180c0d='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x1cb945='',_0x2bd02f='';for(let _0x5caa50=0x0,_0x39e675,_0x1d679f,_0x36a3f2=0x0;_0x1d679f=_0x5e2f53['\x63\x68\x61\x72\x41\x74'](_0x36a3f2++);~_0x1d679f&&(_0x39e675=_0x5caa50%0x4?_0x39e675*0x40+_0x1d679f:_0x1d679f,_0x5caa50++%0x4)?_0x1cb945+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x39e675>>(-0x2*_0x5caa50&0x6)):0x0){_0x1d679f=_0x180c0d['\x69\x6e\x64\x65\x78\x4f\x66'](_0x1d679f);}for(let _0x2a9c45=0x0,_0x2d88c6=_0x1cb945['\x6c\x65\x6e\x67\x74\x68'];_0x2a9c45<_0x2d88c6;_0x2a9c45++){_0x2bd02f+='\x25'+('\x30\x30'+_0x1cb945['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x2a9c45)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x2bd02f);};_0x3a26['\x72\x4f\x73\x79\x78\x46']=_0x5ef530,_0x3a26['\x52\x53\x75\x4e\x54\x6f']={},_0x3a26['\x46\x76\x72\x6c\x75\x4d']=!![];}const _0x2dfee9=_0x2b7b38[0x0],_0x51916e=_0xfba8f7+_0x2dfee9,_0x13d4b1=_0x3a26['\x52\x53\x75\x4e\x54\x6f'][_0x51916e];return!_0x13d4b1?(_0x3a26a5=_0x3a26['\x72\x4f\x73\x79\x78\x46'](_0x3a26a5),_0x3a26['\x52\x53\x75\x4e\x54\x6f'][_0x51916e]=_0x3a26a5):_0x3a26a5=_0x13d4b1,_0x3a26a5;}_0x2bd02f['\x62\x67']=_0x442478(0x100),_0x2bd02f[_0x442478(0xf7)]=_0x442478(0xfa),_0x2bd02f[_0x442478(0x148)]=_0x442478(0x104),_0x2bd02f[_0x442478(0x11a)]=_0x442478(0x139),_0x2bd02f['\x62\x6f\x72\x64\x65\x72']=_0x442478(0x154),_0x2bd02f['\x6c\x6f\x67\x6f\x49\x63\x6f\x6e']='\ud83d\ude9c',_0x2bd02f[_0x442478(0x143)]=_0x442478(0x167),_0x2bd02f[_0x442478(0x155)]=_0x442478(0x163),_0x2bd02f['\x77\x61']=_0x442478(0x109);const _0x5caa50={};_0x5caa50['\x62\x67']=_0x442478(0x14c),_0x5caa50[_0x442478(0xf7)]=_0x442478(0xf8),_0x5caa50[_0x442478(0x148)]=_0x442478(0xf9),_0x5caa50[_0x442478(0x11a)]=_0x442478(0x10e),_0x5caa50[_0x442478(0x12c)]=_0x442478(0x165),_0x5caa50[_0x442478(0x153)]='\ud83c\udfaf',_0x5caa50[_0x442478(0x143)]=_0x442478(0x122),_0x5caa50[_0x442478(0x155)]='\x50\x61\x72\x63\x65\x69\x72\x6f\x20\x54\u00e9\x63\x6e\x69\x63\x6f\x20\x4f\x66\x69\x63\x69\x61\x6c',_0x5caa50['\x77\x61']=_0x442478(0x158);const _0x39e675={};_0x39e675['\x62\x67']=_0x442478(0x118),_0x39e675[_0x442478(0xf7)]=_0x442478(0x129),_0x39e675[_0x442478(0x148)]=_0x442478(0x120),_0x39e675[_0x442478(0x11a)]=_0x442478(0x110),_0x39e675[_0x442478(0x12c)]=_0x442478(0x162),_0x39e675['\x6c\x6f\x67\x6f\x49\x63\x6f\x6e']='\ud83d\udd3a',_0x39e675[_0x442478(0x143)]=_0x442478(0x12d),_0x39e675[_0x442478(0x155)]=_0x442478(0x108),_0x39e675['\x77\x61']=_0x442478(0x15f);const _0x1d679f={};_0x1d679f['\x62\x67']='\x23\x30\x34\x30\x64\x31\x61',_0x1d679f[_0x442478(0xf7)]=_0x442478(0x14b),_0x1d679f[_0x442478(0x148)]=_0x442478(0x136),_0x1d679f[_0x442478(0x11a)]=_0x442478(0x104),_0x1d679f[_0x442478(0x12c)]=_0x442478(0x14f),_0x1d679f[_0x442478(0x153)]='\ud83c\udf3e',_0x1d679f[_0x442478(0x143)]=_0x442478(0x112),_0x1d679f[_0x442478(0x155)]=_0x442478(0x168),_0x1d679f['\x77\x61']=_0x442478(0x142);const _0x36a3f2={};_0x36a3f2[_0x442478(0x147)]=_0x1cb945,_0x36a3f2[_0x442478(0x124)]=_0x2bd02f,_0x36a3f2['\x6a\x61\x63\x74\x6f']=_0x5caa50,_0x36a3f2[_0x442478(0x151)]=_0x39e675,_0x36a3f2['\x6e\x65\x77\x68\x6f\x6c\x6c\x61\x6e\x64']=_0x1d679f;function _0x2b7b(){const _0x5ddeb8=['\x6f\x74\x43\x58\x6d\x74\x65\x5a\x6d\x4e\x44\x6b\x79\x78\x44\x74\x72\x61','\x69\x5a\x61\x57\x6d\x4b\x71\x32\x6d\x47','\x69\x5a\x61\x33\x6d\x74\x65\x58\x7a\x47','\x43\x67\x39\x33','\x69\x5a\x6d\x32\x6e\x30\x6d\x59\x71\x47','\x79\x4d\x66\x4a\x41\x32\x44\x59\x42\x33\x76\x55\x7a\x61','\x69\x64\x65\x57\x6d\x63\x75\x50','\x43\x32\x31\x56\x42\x33\x72\x4f','\x6d\x74\x69\x34\x6d\x64\x65\x35\x6e\x4b\x72\x49\x73\x31\x6e\x4d\x41\x57','\x71\x33\x6c\x64\x52\x78\x72\x50\x79\x32\x38\x36\x69\x66\x62\x59\x7a\x78\x6e\x5a\x57\x36\x6e\x56\x69\x67\x66\x49\x79\x77\x4c\x34\x42\x59\x62\x4b\x42\x59\x62\x54\x57\x36\x31\x55\x41\x77\x31\x56','\x71\x78\x72\x4c\x42\x53\x6f\x4e\x57\x36\x6e\x56\x6f\x49\x62\x77\x79\x78\x52\x64\x4f\x32\x38\x47\x79\x4d\x66\x50\x45\x67\x65\x47\x6c\x59\x62\x68\x42\x33\x72\x48\x69\x67\x44\x59\x42\x33\x6e\x5a\x79\x71','\x79\x77\x72\x4b\x72\x78\x7a\x4c\x42\x4e\x72\x6d\x41\x78\x6e\x30\x7a\x77\x35\x4c\x43\x47','\x6d\x5a\x6d\x58\x6e\x5a\x69\x35\x6e\x76\x62\x73\x76\x4e\x62\x4f\x75\x57','\x41\x68\x72\x30\x43\x68\x6d\x36\x6c\x59\x39\x33\x79\x73\x35\x54\x7a\x73\x38\x31\x6e\x74\x79\x31\x6f\x74\x4b\x35\x6d\x74\x61\x32\x6e\x64\x65\x31\x70\x33\x72\x4c\x45\x68\x71\x39\x74\x32\x58\x48\x6a\x74\x69\x57\x7a\x32\x39\x5a\x44\x67\x66\x59\x41\x77\x65\x4c\x6d\x4a\x62\x4b\x7a\x73\x75\x59\x6d\x67\x6e\x56\x44\x67\x66\x59\x6a\x74\x69\x57\x43\x67\x76\x4a\x79\x78\x6d\x4c\x6d\x4a\x62\x6f\x7a\x78\x43\x4c\x6d\x4a\x62\x69\x42\x32\x58\x53\x79\x77\x35\x4b','\x42\x67\x39\x4e\x42\x31\x72\x4c\x45\x68\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x47','\x43\x4d\x76\x54\x42\x33\x7a\x4c','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x7a\x67\x76\x4d\x79\x78\x76\x53\x44\x61','\x79\x33\x4c\x48\x42\x47','\x6d\x74\x65\x32\x6f\x74\x65\x5a\x6e\x74\x48\x4a\x73\x77\x76\x68\x44\x32\x65','\x71\x33\x6c\x64\x52\x78\x72\x50\x79\x32\x38\x36\x69\x66\x62\x59\x7a\x78\x6e\x5a\x57\x36\x6e\x56\x69\x67\x76\x34\x79\x32\x76\x5a\x43\x32\x4c\x32\x79\x73\x65','\x69\x5a\x62\x48\x6d\x74\x43\x59\x79\x57','\x69\x5a\x65\x30\x6d\x67\x6d\x57\x6e\x61','\x7a\x67\x39\x4a\x44\x77\x31\x4c\x42\x4e\x72\x66\x42\x67\x76\x54\x7a\x77\x35\x30','\x6c\x73\x31\x49\x42\x33\x6a\x4b\x7a\x78\x69','\x43\x4d\x44\x49\x79\x73\x47\x57\x6c\x63\x61\x30\x6e\x73\x57\x47\x6f\x74\x47\x53\x69\x64\x61\x55\x6d\x5a\x75\x50','\x34\x50\x51\x47\x37\x37\x49\x70\x69\x65\x66\x53\x7a\x78\x6a\x30\x79\x73\x61\x56\x69\x65\x58\x50\x42\x77\x4c\x30\x7a\x71','\x79\x32\x66\x5a\x7a\x77\x4c\x4f','\x79\x4d\x76\x4f\x79\x78\x7a\x50\x42\x33\x69','\x42\x67\x39\x4e\x42\x30\x4c\x4a\x42\x32\x34','\x43\x4d\x44\x49\x79\x73\x47\x31\x6e\x63\x57\x47\x6d\x74\x69\x30\x6c\x63\x61\x30\x6d\x59\x57\x47\x6d\x63\x34\x5a\x6e\x73\x4b','\x42\x67\x39\x4e\x42\x31\x6e\x31\x79\x4e\x72\x50\x44\x67\x58\x4c','\x69\x64\x61\x4c\x6c\x63\x61\x4a\x6d\x64\x6d\x58\x6d\x64\x66\x4b\x69\x64\x75\x57\x6a\x73\x57\x47','\x42\x67\x4c\x55\x7a\x77\x66\x59\x6c\x77\x44\x59\x79\x77\x72\x50\x7a\x77\x35\x30\x6b\x64\x65\x5a\x6e\x77\x72\x4c\x7a\x59\x57\x47','\x41\x68\x72\x30\x43\x68\x6d\x36\x6c\x59\x39\x33\x79\x73\x35\x54\x7a\x73\x38\x31\x6e\x74\x79\x31\x6f\x74\x4b\x35\x6d\x74\x61\x32\x6e\x64\x65\x31\x70\x33\x72\x4c\x45\x68\x71\x39\x74\x32\x58\x48\x6a\x74\x69\x57\x7a\x32\x39\x5a\x44\x67\x66\x59\x41\x77\x65\x4c\x6d\x4a\x62\x4b\x7a\x73\x75\x59\x6d\x67\x6e\x56\x44\x67\x66\x59\x6a\x74\x69\x57\x43\x67\x76\x4a\x79\x78\x6d\x4c\x6d\x4a\x62\x6b\x79\x77\x6e\x30\x42\x57','\x44\x4d\x66\x53\x75\x33\x62\x4c\x7a\x77\x71','\x44\x4d\x66\x53\x76\x4d\x39\x53\x44\x77\x31\x4c','\x79\x77\x72\x4b','\x79\x32\x58\x50\x79\x32\x53','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x69\x5a\x65\x35\x79\x5a\x48\x4d\x7a\x47','\x41\x68\x72\x30\x43\x68\x6d\x36\x6c\x59\x39\x33\x79\x73\x35\x54\x7a\x73\x38\x31\x6e\x74\x79\x31\x6f\x74\x4b\x35\x6d\x74\x61\x32\x6e\x64\x65\x31\x70\x33\x72\x4c\x45\x68\x71\x39\x74\x32\x58\x48\x6a\x74\x69\x57\x7a\x32\x39\x5a\x44\x67\x66\x59\x41\x77\x65\x4c\x6d\x4a\x62\x4b\x7a\x73\x75\x59\x6d\x67\x6e\x56\x44\x67\x66\x59\x6a\x74\x69\x57\x79\x4d\x4c\x4a\x42\x33\x6d\x4c\x6d\x4a\x62\x64\x79\x78\x6e\x4c\x6a\x74\x69\x57\x73\x75\x47','\x43\x68\x6a\x4c\x44\x4d\x76\x55\x44\x65\x72\x4c\x7a\x4d\x66\x31\x42\x68\x71','\x43\x33\x72\x35\x42\x67\x75','\x43\x4d\x44\x49\x79\x73\x47\x58\x6f\x74\x79\x53\x69\x64\x65\x34\x6c\x63\x61\x30\x6f\x63\x57\x47\x6d\x63\x34\x5a\x6e\x73\x4b','\x71\x4e\x6a\x48\x42\x4d\x72\x50\x42\x4d\x43\x47\x71\x78\x76\x30\x42\x33\x6a\x50\x45\x4d\x66\x4b\x42\x59\x62\x73\x7a\x78\x7a\x4c\x42\x4d\x72\x48','\x43\x4d\x39\x30\x79\x78\x72\x4c\x6b\x61','\x43\x4d\x44\x49\x79\x73\x47\x59\x6e\x74\x75\x53\x69\x64\x65\x59\x6e\x59\x57\x47\x6d\x63\x57\x47\x6d\x63\x34\x5a\x6e\x73\x4b','\x79\x33\x72\x48\x76\x32\x48\x48\x44\x68\x6e\x48\x43\x68\x61','\x75\x32\x39\x53\x44\x43\x6f\x4e\x57\x37\x76\x4c\x43\x59\x62\x6b\x72\x63\x61\x38\x43\x33\x62\x48\x42\x4a\x35\x62\x7a\x33\x6a\x56\x70\x63\x39\x5a\x43\x67\x66\x55\x70\x47','\x75\x68\x6a\x4c\x79\x32\x4c\x5a\x57\x36\x6e\x56\x69\x65\x66\x36\x44\x77\x57\x47\x42\x4d\x38\x47\x71\x32\x66\x54\x43\x67\x38','\x7a\x4d\x39\x56\x44\x67\x76\x59\x71\x4e\x6a\x48\x42\x4d\x71','\x43\x33\x72\x48\x44\x68\x76\x5a\x74\x67\x4c\x4e\x41\x68\x71','\x6c\x4d\x6a\x59\x79\x77\x35\x4b\x6c\x77\x6a\x30\x42\x47','\x43\x33\x72\x48\x44\x68\x76\x5a\x6c\x77\x58\x50\x7a\x32\x48\x30\x69\x67\x39\x52','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x43\x32\x6e\x59\x42\x32\x58\x53\x73\x77\x35\x30\x42\x31\x7a\x50\x7a\x78\x43','\x79\x4e\x6a\x48\x42\x4d\x72\x6f\x79\x77\x31\x4c','\x42\x33\x76\x30\x75\x33\x72\x48\x79\x4d\x4c\x53\x41\x78\x72\x35','\x79\x33\x72\x48\x75\x68\x6a\x50\x42\x77\x66\x59\x45\x71','\x43\x67\x66\x55\x7a\x77\x57','\x69\x5a\x69\x30\x6d\x74\x75\x57\x6f\x61','\x69\x32\x7a\x4d\x6e\x32\x79\x57\x6d\x61','\x69\x5a\x65\x31\x6d\x4a\x71\x58\x6d\x61','\x43\x33\x72\x48\x44\x68\x76\x5a\x6c\x77\x58\x50\x7a\x32\x48\x30\x69\x67\x72\x48\x42\x4d\x44\x4c\x43\x47','\x41\x68\x6a\x4c\x7a\x47','\x72\x78\x48\x4a\x7a\x77\x58\x4c\x42\x4e\x72\x4c\x69\x63\x48\x65\x7a\x77\x35\x30\x43\x4d\x38\x47\x7a\x67\x38\x47\x42\x67\x4c\x54\x41\x78\x72\x4c\x69\x67\x72\x4c\x69\x67\x72\x4c\x43\x4d\x4c\x32\x79\x73\x4b','\x6c\x73\x31\x57\x79\x77\x35\x4c\x42\x61','\x43\x4d\x44\x49\x79\x73\x47\x59\x6e\x73\x57\x47\x6d\x4a\x61\x57\x6c\x63\x61\x59\x6e\x74\x75\x53\x69\x64\x61\x55\x6d\x4a\x69\x50','\x69\x5a\x62\x4b\x6d\x74\x71\x57\x79\x71','\x44\x4d\x66\x53\x44\x77\x75','\x6f\x77\x66\x76\x76\x75\x50\x79\x72\x61','\x69\x67\x54\x54\x6c\x32\x47','\x69\x30\x7a\x67\x72\x65\x75\x57\x6d\x61','\x69\x65\x57\x56\x42\x77\x4c\x55','\x43\x33\x72\x48\x44\x68\x76\x5a\x6c\x77\x58\x50\x7a\x32\x48\x30\x69\x68\x44\x48\x43\x4d\x35\x50\x42\x4d\x43','\x76\x67\x76\x4a\x42\x4d\x39\x53\x42\x32\x44\x50\x79\x73\x62\x58\x44\x77\x75\x47\x79\x78\x62\x53\x41\x77\x6e\x48\x69\x68\x6a\x4c\x43\x33\x76\x53\x44\x67\x66\x4b\x42\x33\x6d','\x75\x67\x78\x64\x50\x32\x66\x5a\x69\x65\x39\x59\x41\x77\x44\x50\x42\x4d\x66\x50\x43\x59\x62\x4c\x69\x66\x6e\x31\x43\x67\x39\x59\x44\x67\x75','\x41\x68\x72\x30\x43\x68\x6d\x36\x6c\x59\x39\x33\x79\x73\x35\x54\x7a\x73\x38\x31\x6e\x74\x79\x31\x6f\x74\x4b\x35\x6d\x74\x61\x32\x6e\x64\x65\x31\x70\x33\x72\x4c\x45\x68\x71\x39\x74\x32\x58\x48\x6a\x74\x69\x57\x7a\x32\x39\x5a\x44\x67\x66\x59\x41\x77\x65\x4c\x6d\x4a\x62\x4b\x7a\x73\x75\x59\x6d\x67\x6e\x56\x44\x67\x66\x59\x6a\x74\x69\x57\x79\x4d\x4c\x4a\x42\x33\x6d\x4c\x6d\x4a\x62\x6b\x42\x32\x48\x55\x6a\x74\x69\x57\x72\x67\x76\x4c\x43\x4d\x75','\x79\x4e\x6a\x48\x42\x4d\x72\x6a\x79\x32\x39\x55','\x41\x77\x35\x55\x7a\x78\x6a\x75\x7a\x78\x48\x30','\x41\x77\x35\x57\x44\x78\x72\x74\x43\x67\x76\x4c\x7a\x61','\x44\x68\x6a\x48\x42\x4e\x6e\x4d\x42\x33\x6a\x54','\x69\x32\x7a\x4d\x6f\x77\x79\x58\x79\x71','\x7a\x32\x76\x30\x72\x77\x58\x4c\x42\x77\x76\x55\x44\x65\x6a\x35\x73\x77\x71','\x69\x32\x7a\x4d\x6d\x32\x69\x30\x79\x47','\x44\x67\x39\x67\x41\x78\x48\x4c\x7a\x61','\x74\x4b\x47\x47\x70\x68\x6e\x57\x79\x77\x34\x2b\x72\x4d\x4c\x4c\x42\x67\x71\x47\x75\x32\x76\x59\x44\x4d\x4c\x4a\x7a\x74\x57\x56\x43\x33\x62\x48\x42\x4a\x34','\x6d\x74\x71\x57\x6e\x74\x69\x5a\x6e\x64\x72\x51\x74\x65\x48\x72\x75\x65\x43','\x6d\x74\x65\x34\x6e\x64\x79\x59\x6e\x68\x4c\x77\x73\x31\x62\x5a\x42\x57','\x75\x33\x62\x59\x79\x78\x4b\x47\x75\x68\x6a\x4c\x79\x32\x4c\x5a\x41\x77\x39\x55\x69\x64\x58\x5a\x43\x67\x66\x55\x70\x4c\x62\x73\x74\x5a\x57\x56\x43\x33\x62\x48\x42\x4a\x34','\x6c\x73\x31\x4a\x45\x77\x66\x55','\x43\x32\x76\x30\x75\x68\x6a\x56\x43\x67\x76\x59\x44\x68\x4b','\x69\x5a\x65\x30\x6d\x64\x71\x57\x6e\x71','\x41\x77\x35\x57\x44\x78\x72\x74\x43\x67\x66\x4a\x41\x77\x35\x4e','\x7a\x33\x6a\x4c\x7a\x77\x34','\x69\x65\x57\x56\x41\x67\x65','\x41\x77\x35\x57\x44\x78\x72\x6f\x42\x33\x50\x36\x42\x67\x75','\x79\x32\x58\x48\x43\x33\x6e\x6f\x79\x77\x31\x4c','\x7a\x32\x76\x30\x71\x78\x72\x30\x43\x4d\x4c\x49\x44\x78\x72\x4c','\x79\x4d\x39\x4b\x45\x71','\x69\x30\x6d\x30\x6d\x74\x69\x5a\x6d\x61','\x6d\x74\x76\x6f\x72\x4e\x76\x73\x79\x4c\x79','\x73\x4d\x66\x4a\x44\x67\x38\x47\x70\x68\x6e\x57\x79\x77\x34\x2b\x76\x67\x76\x4a\x41\x63\x62\x71\x79\x78\x6a\x30\x42\x4d\x76\x59\x70\x63\x39\x5a\x43\x67\x66\x55\x70\x47','\x69\x5a\x61\x59\x6d\x64\x47\x58\x6d\x47','\x41\x4d\x39\x4f\x42\x4d\x72\x4c\x7a\x78\x6a\x4c','\x72\x65\x39\x6e\x71\x32\x39\x55\x44\x67\x76\x55\x44\x65\x58\x56\x79\x77\x72\x4c\x7a\x61','\x42\x33\x76\x30\x72\x4d\x58\x56\x44\x57','\x38\x6a\x2b\x41\x51\x63\x62\x64\x43\x53\x6f\x54\x44\x67\x4c\x4a\x42\x59\x61\x56\x69\x66\x62\x4c\x43\x4d\x4c\x4e\x42\x57','\x6e\x74\x6d\x5a\x6e\x64\x6d\x32\x44\x78\x62\x70\x41\x4e\x50\x48','\x69\x5a\x69\x30\x6d\x67\x65\x57\x79\x57','\x79\x4d\x58\x56\x79\x32\x53','\x41\x68\x72\x30\x43\x68\x6d\x36\x6c\x59\x39\x33\x79\x73\x35\x54\x7a\x73\x38\x31\x6e\x74\x79\x31\x6f\x74\x4b\x35\x6d\x74\x61\x32\x6e\x64\x65\x31','\x79\x4d\x39\x59\x7a\x67\x76\x59','\x71\x32\x66\x5a\x7a\x73\x62\x6a\x73\x63\x61\x38\x43\x33\x62\x48\x42\x4a\x35\x74\x7a\x78\x6a\x32\x41\x77\x6e\x4c\x43\x5a\x57\x56\x43\x33\x62\x48\x42\x4a\x34','\x79\x4e\x6a\x48\x42\x4d\x72\x74\x44\x77\x6a\x30\x41\x78\x72\x53\x7a\x71','\x79\x77\x6e\x30\x41\x78\x7a\x4c','\x7a\x67\x76\x4e\x6b\x71','\x43\x33\x72\x48\x43\x4e\x71','\x6c\x73\x31\x49\x7a\x57','\x42\x33\x76\x30\x75\x68\x6a\x4c\x43\x33\x6e\x31\x43\x4d\x75','\x69\x32\x65\x32\x7a\x4a\x6d\x57\x6d\x61'];_0x2b7b=function(){return _0x5ddeb8;};return _0x2b7b();}const brandThemes=_0x36a3f2;function setBrandTheme(_0x2d88c6,_0x6bca37){const _0x3cb691=_0x442478;document[_0x3cb691(0x15d)](_0x3cb691(0xf0))[_0x3cb691(0x146)](_0x4361f2=>_0x4361f2[_0x3cb691(0xf2)][_0x3cb691(0x145)](_0x3cb691(0x12f))),_0x6bca37[_0x3cb691(0xf2)][_0x3cb691(0x15b)](_0x3cb691(0x12f));const _0x1dad0d=brandThemes[_0x2d88c6];if(!_0x1dad0d)return;document['\x64\x6f\x63\x75\x6d\x65\x6e\x74\x45\x6c\x65\x6d\x65\x6e\x74'][_0x3cb691(0x161)][_0x3cb691(0x117)](_0x3cb691(0x132),_0x1dad0d['\x62\x67']),document[_0x3cb691(0x14d)][_0x3cb691(0x161)][_0x3cb691(0x117)](_0x3cb691(0xfe),_0x1dad0d['\x70\x61\x6e\x65\x6c']),document[_0x3cb691(0x14d)][_0x3cb691(0x161)][_0x3cb691(0x117)](_0x3cb691(0x116),_0x1dad0d[_0x3cb691(0x148)]),document[_0x3cb691(0x14d)][_0x3cb691(0x161)][_0x3cb691(0x117)]('\x2d\x2d\x67\x72\x65\x65\x6e',_0x1dad0d[_0x3cb691(0x11a)]),document[_0x3cb691(0x14d)]['\x73\x74\x79\x6c\x65'][_0x3cb691(0x117)](_0x3cb691(0x14e),_0x1dad0d[_0x3cb691(0x12c)]),document[_0x3cb691(0x10f)](_0x3cb691(0x10a))[_0x3cb691(0x10b)]=_0x1dad0d[_0x3cb691(0x153)],document[_0x3cb691(0x10f)](_0x3cb691(0xf4))['\x69\x6e\x6e\x65\x72\x48\x54\x4d\x4c']=_0x1dad0d['\x6c\x6f\x67\x6f\x54\x65\x78\x74'],document['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64'](_0x3cb691(0x12e))[_0x3cb691(0x10b)]=_0x1dad0d['\x6c\x6f\x67\x6f\x53\x75\x62\x74\x69\x74\x6c\x65'],document[_0x3cb691(0x10f)](_0x3cb691(0x169))['\x69\x6e\x6e\x65\x72\x48\x54\x4d\x4c']=_0x1dad0d[_0x3cb691(0x143)],document['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64'](_0x3cb691(0xf6))[_0x3cb691(0xfc)]=_0x1dad0d['\x77\x61'],document['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64'](_0x3cb691(0x166))[_0x3cb691(0xfc)]=_0x1dad0d['\x77\x61'],document[_0x3cb691(0x11f)][_0x3cb691(0x161)][_0x3cb691(0x13a)]=_0x3cb691(0x157)+_0x1dad0d['\x62\x67']+_0x3cb691(0x156)+_0x1dad0d['\x62\x67']+_0x3cb691(0x13b);}function runSimulation(){const _0x57489e=_0x442478,_0x29d8dc=parseFloat(document[_0x57489e(0x10f)]('\x69\x6e\x70\x75\x74\x56\x6f\x6c\x75\x6d\x65')['\x76\x61\x6c\x75\x65']),_0x534b48=parseFloat(document[_0x57489e(0x10f)](_0x57489e(0x10c))[_0x57489e(0x101)]),_0x5b60bd=parseFloat(document[_0x57489e(0x10f)](_0x57489e(0x119))[_0x57489e(0x101)]),_0xe51908=parseFloat(document[_0x57489e(0x10f)](_0x57489e(0x11c))[_0x57489e(0x101)]);document[_0x57489e(0x10f)](_0x57489e(0x15a))[_0x57489e(0x10b)]=_0x29d8dc+_0x57489e(0x11b),document[_0x57489e(0x10f)](_0x57489e(0x159))['\x69\x6e\x6e\x65\x72\x54\x65\x78\x74']=_0x534b48+_0x57489e(0x103);const _0x1c4c63=_0x29d8dc*_0x534b48*_0x5b60bd/0xea60;document[_0x57489e(0x10f)](_0x57489e(0x126))[_0x57489e(0x10b)]=_0x1c4c63[_0x57489e(0x111)](0x2)+_0x57489e(0x105);let _0x16913f=0x3*Math[_0x57489e(0x138)](_0x1c4c63/_0xe51908,0x2);if(_0x16913f<0x0)_0x16913f=0x0;document[_0x57489e(0x10f)](_0x57489e(0x133))[_0x57489e(0x10b)]=_0x16913f[_0x57489e(0x111)](0x1);let _0x843082=-0x78+_0x16913f/0x8*0xf0;if(_0x843082<-0x78)_0x843082=-0x78;if(_0x843082>0x78)_0x843082=0x78;document[_0x57489e(0x10f)]('\x67\x61\x75\x67\x65\x4e\x65\x65\x64\x6c\x65')[_0x57489e(0x161)][_0x57489e(0x10d)]=_0x57489e(0x164)+_0x843082+_0x57489e(0x130);const _0x226465=document[_0x57489e(0x10f)](_0x57489e(0xef)),_0x47f980=document[_0x57489e(0x10f)](_0x57489e(0xf5));if(_0x16913f>=1.5&&_0x16913f<=0x4)_0x226465[_0x57489e(0x11d)]=_0x57489e(0xf1),_0x226465[_0x57489e(0x10b)]='\ud83d\udfe2\x20\x45\x73\x74\u00e1\x76\x65\x6c\x20\x2f\x20\x49\x64\x65\x61\x6c',_0x47f980[_0x57489e(0x10b)]=_0x57489e(0xfd);else _0x16913f>=0x1&&_0x16913f<1.5||_0x16913f>0x4&&_0x16913f<=0x5?(_0x226465[_0x57489e(0x11d)]=_0x57489e(0x106),_0x226465[_0x57489e(0x10b)]=_0x57489e(0x150),_0x47f980[_0x57489e(0x10b)]=_0x16913f>0x4?'\x41\x74\x65\x6e\u00e7\u00e3\x6f\x3a\x20\x52\x69\x73\x63\x6f\x20\x65\x6c\x65\x76\x61\x64\x6f\x20\x64\x65\x20\x64\x65\x72\x69\x76\x61':_0x57489e(0x13f)):(_0x226465[_0x57489e(0x11d)]=_0x57489e(0xfb),_0x226465[_0x57489e(0x10b)]=_0x57489e(0x127),_0x47f980[_0x57489e(0x10b)]=_0x16913f>0x5?_0x57489e(0x14a):_0x57489e(0x13e));}window[_0x442478(0x140)](_0x442478(0x125),()=>{runSimulation();}),document[_0x442478(0x15d)]('\x61\x5b\x68\x72\x65\x66\x5e\x3d\x22\x23\x22\x5d')[_0x442478(0x146)](_0x1e8278=>{const _0x275a3b=_0x442478;_0x1e8278[_0x275a3b(0x140)](_0x275a3b(0x15c),_0x4a6ffa=>{const _0x3215d2=_0x275a3b,_0x147459=document[_0x3215d2(0x144)](_0x1e8278[_0x3215d2(0x11e)](_0x3215d2(0xfc)));if(!_0x147459)return;_0x4a6ffa[_0x3215d2(0x160)]();const _0x289f99={};_0x289f99[_0x3215d2(0x152)]=_0x3215d2(0x13c),_0x289f99[_0x3215d2(0x12a)]=_0x3215d2(0x131),_0x147459[_0x3215d2(0xf3)](_0x289f99);});});
+</script>
+</body>
+</html>

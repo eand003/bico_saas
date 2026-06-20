@@ -1,0 +1,14 @@
+Olá, tudo bem?
+
+Acabo de realizar a calibração bico a bico do seu pulverizador no Talhão Principal usando o sistema Spray Precision PRO.
+
+Identificamos que a barra de aplicação está operando com um Coeficiente de Variação de [X]%. Pelo padrão técnico, qualquer valor acima de 10% já causa falhas severas de controle ou desperdício de calda.
+
+Na simulação de perdas reais da área da sua propriedade, essa descalibração representa:
+🔴 R$ [Valor] jogados fora em defensivos aplicados em excesso (sobredosagem).
+🔴 R$ [Valor] em risco de quebra de faturamento por escapes de pragas na faixa subdosada.
+
+📄 Estou te enviando em anexo o Laudo Técnico Oficial gerado pelo aplicativo. Ele contém o gráfico espacial de cada bico, a identificação dos bicos críticos que precisam de substituição urgente e o plano de ação assinado para a sua segurança.
+
+Vamos programar a troca dessas pontas para garantir o máximo rendimento da próxima aplicação?
+[Anexo: Laudo_Tecnico_Pulverizador.pdf]

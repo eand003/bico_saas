@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Spray Precision PRO - Diagnóstico de Vazão e Laudos Inteligentes</title>
+  
+  <!-- Fontes Premium do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #f8fafc; /* Slate 50 Suave */
+      --accent: #0066cc; /* Azul Spray Precision */
+      --accent-hover: #0052a3;
+      --accent-glow: rgba(0, 102, 204, 0.08);
+      --accent-green: #10b981; /* Verde OK */
+      --accent-green-glow: rgba(16, 185, 129, 0.1);
+      --text-main: #0f172a; /* Slate 900 */
+      --text-muted: #475569; /* Slate 600 */
+      --text-light: #64748b; /* Slate 500 */
+      --card-radius: 20px;
+      --button-radius: 12px;
+      --shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.02);
+      --border-color: rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Container Centralizado */
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .brand-text p {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-top: -2px;
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 60px 0;
+      text-align: center;
+      background: radial-gradient(circle at top, rgba(0, 102, 204, 0.04) 0%, rgba(255,255,255,0) 70%);
+    }
+
+    .badge-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0, 102, 204, 0.12);
+    }
+
+    .hero h2 {
+      font-size: 44px;
+      line-height: 1.15;
+      max-width: 800px;
+      margin: 0 auto 20px auto;
+      color: var(--text-main);
+    }
+
+    .hero p {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 30px auto;
+    }
+
+    /* BOTÕES */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 28px;
+      border-radius: var(--button-radius);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 48px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 10px 20px -5px rgba(0, 102, 204, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -5px rgba(0, 102, 204, 0.35);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-main);
+      color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* RECURSOS GRID */
+    .features {
+      padding: 40px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .section-desc {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 15px;
+      max-width: 580px;
+      margin: 0 auto 40px auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .feature-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* COMO FUNCIONA (ACCORDION) */
+    .how-it-works {
+      padding: 60px 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .accordion-container {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    details {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      transition: all 0.3s ease;
+    }
+
+    details[open] {
+      background: #ffffff;
+      box-shadow: var(--shadow);
+    }
+
+    summary {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text-main);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    summary::after {
+      content: "➕";
+      font-size: 12px;
+    }
+
+    details[open] summary::after {
+      content: "➖";
+    }
+
+    details p {
+      margin-top: 12px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      border-top: 1px dashed var(--border-color);
+      padding-top: 12px;
+    }
+
+    /* PRICING (PLANOS DE ASSINATURA SaaS) */
+    .pricing {
+      padding: 60px 0;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .price-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 40px 30px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .price-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px -15px rgba(0, 102, 204, 0.12);
+    }
+
+    .price-card.featured::before {
+      content: "MAIS VENDIDO";
+      position: absolute;
+      top: 15px;
+      right: -30px;
+      background: var(--accent);
+      color: white;
+      font-size: 8px;
+      font-weight: 800;
+      padding: 4px 30px;
+      transform: rotate(45deg);
+      letter-spacing: 1px;
+    }
+
+    .price-card h3 {
+      font-size: 20px;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .price-card .price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 20px;
+    }
+
+    .price-card .price span {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+
+    .price-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      flex-grow: 1;
+    }
+
+    .price-card ul li::before {
+      content: "✔️ ";
+      color: var(--accent-green);
+      font-weight: bold;
+    }
+
+    /* CONTATOS & MATERIAIS RÁPIDOS */
+    .materials {
+      padding: 50px 0;
+      background: var(--accent-glow);
+      border-radius: var(--card-radius);
+      margin-bottom: 60px;
+      border: 1px solid rgba(0, 102, 204, 0.08);
+    }
+
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .material-item {
+      background: #ffffff;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);
+      transition: all 0.2s ease;
+    }
+
+    .material-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .material-item strong {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .material-item span {
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 600px) {
+      .hero h2 {
+        font-size: 28px;
+      }
+      .hero p {
+        font-size: 14px;
+      }
+      .btn {
+        width: 100%;
+      }
+      .price-card {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- APP HEADER -->
+  <header>
+    <div class="container header-nav">
+      <a href="#" class="brand">
+        <img class="logo-img" src="../logo.png" alt="Spray Precision Logo" onerror="this.src='https://placehold.co/100x100?text=SP'">
+        <div class="brand-text">
+          <h1>Spray Precision <span style="font-weight:300;">PRO</span></h1>
+          <p>Laudo de Vazão Inteligente</p>
+        </div>
+      </a>
+      <a href="../index.html" class="btn btn-secondary" style="padding: 8px 16px; min-height: 38px; font-size: 12.5px; font-weight: bold;">
+        🚜 Entrar no App
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge-hero">
+        🌱 Tecnologia Agrícola Inteligente e Offline
+      </div>
+      <h2>Laudos de Pulverização Digitais e Gráficos de Desvio na hora do teste!</h2>
+      <p>
+        Valorize sua consultoria de campo. Elimine as planilhas de papel e Excel. Dite os volumes medidos e simule o prejuízo financeiro causado por bicos descalibrados direto do celular.
+      </p>
+      <div class="btn-group">
+        <a href="../index.html" class="btn btn-primary">🚜 Acessar Aplicativo Grátis</a>
+        <a href="#planos" class="btn btn-secondary">💎 Ver Planos PRO</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECURSOS DA FERRAMENTA -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Engenharia e Velocidade no Campo</h2>
+      <p class="section-desc">Uma ferramenta profissional desenvolvida para transformar a aferição bico a bico em um processo ultra-veloz e de altíssimo valor técnico-comercial.</p>
+      
+      <div class="features-grid">
+        <!-- CARD 1 -->
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(16, 185, 129, 0.08); color: var(--accent-green);">📲</div>
+          <h3>100% Offline e PWA</h3>
+          <p>Não depende de internet. O app roda integralmente de forma offline no meio do talhão, gravando os dados com total segurança no seu aparelho.</p>
+        </div>
+        
+        <!-- CARD 2 -->
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(0, 102, 204, 0.08); color: var(--accent);">🎤</div>
+          <h3>Assistente de Voz Hands-Free</h3>
+          <p>Ligue o microfone e dite os volumes medidos em mL sem tirar as luvas ou tocar no celular. O app preenche tudo e avança automaticamente.</p>
+        </div>
+        
+        <!-- CARD 3 -->
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(245, 158, 11, 0.08); color: var(--accent-warning);">💸</div>
+          <h3>Simulação de Perdas Reais</h3>
+          <p>O app calcula automaticamente o prejuízo exato gerado por sobredosagem (desperdício de calda) e subdosagem (risco de falhas de controle).</p>
+        </div>
+        
+        <!-- CARD 4 -->
+        <div class="feature-card">
+          <div class="feature-icon" style="background: rgba(239, 68, 68, 0.08); color: var(--accent-error);">📊</div>
+          <h3>Gráfico de Desvio e Coleta</h3>
+          <p>Um gráfico automatizado mostra o perfil de vazão da barra e as linhas de tolerância, facilitando a visualização espacial de falhas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA (ACORDEÃO) -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2 class="section-title">Como funciona a calibração rápida?</h2>
+      <p class="section-desc">Siga passos práticos e obtenha relatórios em menos de 5 minutos direto no celular.</p>
+      
+      <div class="accordion-container">
+        <details open>
+          <summary>1. Preencha os Parâmetros da Barra</summary>
+          <p>Insira a velocidade do trator (km/h), o espaçamento dos bicos, a pressão da bomba e o volume de calda planejado (L/ha). O app calcula instantaneamente a vazão de catálogo esperada do bico.</p>
+        </details>
+        
+        <details>
+          <summary>2. Faça a Coleta com a Proveta</summary>
+          <p>Use o cronômetro visual integrado com beeps acústicos na tela de Coleta Guiada. Digite ou dite o volume coletado em mL de cada bico. Você também pode digitar todos em massa via tabela corrida.</p>
+        </details>
+        
+        <details>
+          <summary>3. Obtenha o Veredito Geral e Laudo Técnico</summary>
+          <p>O app gera o Coeficiente de Variação (CV%) espacial e classifica a máquina como Aprovada, Aprovada com Ressalvas ou Reprovada. Um plano de ação sugere exatamente quais bicos limpar ou trocar.</p>
+        </details>
+        
+        <details>
+          <summary>4. Apresente os Custos e Exporte em PDF</summary>
+          <p>Preencha o tamanho do talhão e o custo da calda para provar o prejuízo em dinheiro ao produtor rural. Exporte o Laudo Técnico formatado para impressão e PDF e envie na hora via WhatsApp!</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANOS DE MONETIZAÇÃO / PREÇOS -->
+  <section class="pricing" id="planos">
+    <div class="container">
+      <h2 class="section-title">Assinaturas e Planos PRO</h2>
+      <p class="section-desc">Escolha o plano ideal para a sua estrutura de consultoria agrícola ou revenda de insumos.</p>
+      
+      <div class="pricing-grid">
+        <!-- PLANO 1 -->
+        <div class="price-card">
+          <h3>Plano Grátis</h3>
+          <div class="price">R$ 0,00 <span>/ grátis</span></div>
+          <ul>
+            <li>Até 3 laudos armazenados</li>
+            <li>Coleta Guiada, Planilha e Voz</li>
+            <li>Gráfico de vazão básico</li>
+            <li>Simulador financeiro básico</li>
+            <li>Relatórios com marca d'água</li>
+          </ul>
+          <a href="../index.html" class="btn btn-secondary" style="margin-top: 20px;">Começar Grátis</a>
+        </div>
+        
+        <!-- PLANO 2 -->
+        <div class="price-card featured">
+          <h3>Consultor PRO</h3>
+          <div class="price">R$ 49,90 <span>/ mensal</span></div>
+          <ul>
+            <li>Diagnósticos <strong>Ilimitados</strong></li>
+            <li>Remoção total de marca d'água</li>
+            <li><strong>Colocar seu logotipo customizado</strong> no PDF</li>
+            <li>Sincronização na nuvem automática</li>
+            <li>Acesso ao Histórico pelo PC ou Celular</li>
+            <li>Suporte prioritário via WhatsApp</li>
+          </ul>
+          <a href="../index.html" class="btn btn-primary" style="margin-top: 20px; width: 100%;">Quero ser PRO 🚀</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINKS E ARQUIVOS RÁPIDOS PARA O USUÁRIO (LINKTREE HUB) -->
+  <section class="container" style="margin-bottom: 60px;">
+    <div class="materials">
+      <div style="padding: 0 30px; text-align: center;">
+        <h3 style="font-size: 22px; color: var(--text-main);">🗂️ Central de Divulgação e Recursos</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Copie os textos de captação e manuais rápidos salvos individualmente na pasta do seu projeto:</p>
+        
+        <div class="materials-grid">
+          <a href="mensagem_whatsapp_consultores.txt" target="_blank" class="material-item">
+            <strong>📲 Mensagem WhatsApp Consultores</strong>
+            <span>Texto curto de prospecção e atração</span>
+          </a>
+          <a href="panfleto_digital_grupos.txt" target="_blank" class="material-item">
+            <strong>🚜 Panfleto Digital para Grupos</strong>
+            <span>Texto descritivo com lista de recursos</span>
+          </a>
+          <a href="relatorio_perdas_produtor.txt" target="_blank" class="material-item">
+            <strong>💸 Relatório de Perdas ao Produtor</strong>
+            <span>Texto de fechamento com prova de prejuízo</span>
+          </a>
+          <a href="../index.html" class="material-item">
+            <strong>⚙️ Abrir o Aplicativo de Vazão</strong>
+            <span>Módulo de calibração bico a bico</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2026 Spray Precision PRO. Todos os direitos reservados.</p>
+      <p style="margin-top: 6px; font-size: 11px; color: var(--text-light);">Desenvolvido sob rígidos padrões de engenharia de aplicação e arquitetura offline-first.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

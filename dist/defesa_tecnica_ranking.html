@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossiê de Defesa Técnica: Algoritmo de Seleção Spray Precision PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #05080a;
+            --card: rgba(15, 23, 42, 0.8);
+            --accent: #00d2ff;
+            --accent-glow: rgba(0, 210, 255, 0.3);
+            --success: #38ef7d;
+            --warning: #ffb800;
+            --danger: #ff4b4b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 40px; margin: 0; line-height: 1.6; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        h1 { font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 800; color: var(--accent); margin-bottom: 10px; }
+        .badge-premium { background: var(--accent-glow); border: 1px solid var(--accent); padding: 6px 16px; border-radius: 50px; display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .card { background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 40px; position: relative; overflow: hidden; }
+        .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); opacity: 0.5; }
+        .card-num { position: absolute; top: 20px; right: 30px; font-family: 'Outfit'; font-size: 60px; font-weight: 800; opacity: 0.1; }
+        
+        h2 { font-family: 'Outfit'; font-size: 20px; margin-bottom: 15px; color: var(--accent); }
+        h3 { font-size: 16px; margin-top: 20px; color: #fff; }
+        p { color: var(--text-muted); font-size: 14px; }
+        
+        .formula { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; color: var(--success); margin: 15px 0; border-left: 3px solid var(--success); }
+        
+        .footer { margin-top: 80px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; font-size: 12px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="badge-premium">Propriedade Intelectual Requisitada</div>
+        <h1>Critérios de Seleção & Ranking</h1>
+        <p style="max-width: 700px; margin: 0 auto;">Como o <strong>Spray Precision PRO</strong> toma a decisão técnica da recomendação do bico ideal para cada cenário agronômico.</p>
+    </div>
+
+    <div class="grid">
+        <!-- Pilar 1 -->
+        <div class="card">
+            <div class="card-num">01</div>
+            <h2>Filtro de Segurança Binária</h2>
+            <p>Diferente de tabelas simples, nosso algoritmo aplica um filtro de 3 pontos de verificação (V. Mínima, V. Média e V. Máxima). Se qualquer um desses pontos exceder os limites de pressão informados pelo usuário, o bico é automaticamente desmarcado como "Atende".</p>
+            <div class="formula">
+                IF (pMin_Real >= pMin_User AND pMax_Real <= pMax_User) { status = OK }
+            </div>
+            <h3>O que isso garante?</h3>
+            <p>Previne o risco de <b>Deriva</b> (pressão alta) e <b>Falha de Cobertura</b> (pressão baixa), protegendo o investimento da aplicação.</p>
+        </div>
+
+        <!-- Pilar 2 -->
+        <div class="card">
+            <div class="card-num">02</div>
+            <h2>Otimização do Centro da Faixa</h2>
+            <p>Para o ranking (quem ganha o Top 1), priorizamos o bico que trabalha mais próximo do centro geométrico do intervalo informado. Chamamos isso de <b>Janela de Resiliência</b>.</p>
+            <div class="formula">
+                target = (pMin + pMax) / 2 <br>
+                ranking = ABS(pMedia - target)
+            </div>
+            <h3>O que isso garante?</h3>
+            <p>Dá <b>Margem de Manobra</b> para o operador. Um bico que trabalha no centro da faixa permite que a máquina acelere ou freie 20-30% sem sair da pressão técnica recomendada.</p>
+        </div>
+
+        <!-- Pilar 3 -->
+        <div class="card">
+            <div class="card-num">03</div>
+            <h2>Mitigação de Violação de Limites</h2>
+            <p>Em cenários de "Extremo Operacional" (onde o volume de calda é muito alto para bicos convencionais), o sistema não para de funcionar. Ele busca o bico com a menor <b>Violação Cumulativa</b> (Menor desvio dos limites).</p>
+            <div class="formula">
+                violation = Max(0, pMin - pVmin) + Max(0, pVmax - pMax)
+            </div>
+            <h3>O que isso garante?</h3>
+            <p>Oferece a única <b>Melhor Alternativa</b> disponível, em vez de deixar o operador sem resposta técnica. O sistema indica o bico que mais se aproxima do ideal físico.</p>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 40px; border-left: 5px solid var(--success);">
+        <h2 style="color: var(--success); font-size: 24px;">🧬 Física de Fluídos & Densidade</h2>
+        <p style="font-size: 16px; color: #fff;">O selo de autoridade técnica do sistema reside na <strong>Correção de Gravidade Específica</strong>.</p>
+        <p>A vazão de um líquido varia proporcionalmente à raiz quadrada de sua densidade. Nosso algoritmo compensa o peso da calda para garantir que o manômetro da máquina bata 100% com a vazão real.</p>
+        <div class="formula" style="font-size: 18px; border-left-color: var(--accent);">
+            V_equivalente = V_calda * √Densidade 
+        </div>
+    </div>
+
+    <div class="footer">
+        Documentação Técnica Interna - Spray Precision PRO SaaS Ecosystem <br>
+        © 2026 - Todos os Direitos Reservados.
+    </div>
+</body>
+</html>

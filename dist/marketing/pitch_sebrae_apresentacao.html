@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spray Precision PRO — Pitch de Captação SEBRAE</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #05080a;
+      --bg-gradient: radial-gradient(circle at 50% 50%, #0a141d 0%, #05080a 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.4);
+      --accent-green: #38ef7d;
+      --accent-green-glow: rgba(56, 239, 125, 0.3);
+      --accent-error: #ff3366;
+      --accent-error-glow: rgba(255, 51, 102, 0.3);
+      
+      --card-bg: rgba(255, 255, 255, 0.02);
+      --card-border: rgba(255, 255, 255, 0.05);
+      --card-blur: blur(12px);
+      
+      --font-outfit: 'Outfit', sans-serif;
+      --font-inter: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg-color);
+      background-image: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: var(--font-inter);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      z-index: 100;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+      width: 14.28%;
+      box-shadow: 0 0 10px var(--accent);
+      transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Presentation Area */
+    .presentation-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+      height: 100%;
+      max-height: 650px;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Slide Components */
+    .slide-header {
+      margin-bottom: 30px;
+    }
+
+    .slide-tag {
+      font-family: var(--font-outfit);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .slide-title {
+      font-family: var(--font-outfit);
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--text-main);
+    }
+
+    .slide-title span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* General Premium Cards */
+    .glass-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: var(--card-blur);
+      padding: 30px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    /* Slide 1: Cover Page */
+    .cover-slide {
+      text-align: center;
+      align-items: center;
+    }
+
+    .cover-badge {
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-family: var(--font-outfit);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 25px;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+    }
+
+    .cover-title {
+      font-family: var(--font-outfit);
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      max-width: 900px;
+    }
+
+    .cover-title span {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
+    }
+
+    .cover-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 650px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 30px;
+      font-family: var(--font-outfit);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .cover-meta strong {
+      color: var(--text-main);
+    }
+
+    /* Slide 2: O Problema */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .problem-item {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .problem-icon {
+      background: rgba(255, 51, 102, 0.08);
+      border: 1px solid rgba(255, 51, 102, 0.2);
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--accent-error);
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(255, 51, 102, 0.1);
+    }
+
+    .problem-text h4 {
+      font-family: var(--font-outfit);
+      font-size: 18px;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .problem-text p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .loss-box::before {
+      background: var(--accent-error);
+    }
+
+    .loss-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 15px;
+    }
+
+    .loss-header h3 {
+      font-family: var(--font-outfit);
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-error);
+    }
+
+    .loss-badge {
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-outfit);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .loss-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .loss-table td {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .loss-table tr:last-child td {
+      border: none;
+      padding-top: 15px;
+    }
+
+    .loss-val {
+      text-align: right;
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .loss-total-label {
+      font-weight: bold;
+      color: var(--accent-error);
+      font-size: 14px;
+    }
+
+    .loss-total-val {
+      text-align: right;
+      font-family: var(--font-outfit);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--accent-error);
+      text-shadow: 0 0 10px rgba(255, 51, 102, 0.2);
+    }
+
+    /* Slide 3: A Solução */
+    .grid-3col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 25px;
+    }
+
+    .solution-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .solution-icon {
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid rgba(0, 210, 255, 0.2);
+      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--accent);
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+    }
+
+    .solution-card.green .solution-icon {
+      background: rgba(56, 239, 125, 0.08);
+      border: 1px solid rgba(56, 239, 125, 0.2);
+      color: var(--accent-green);
+      box-shadow: 0 0 15px rgba(56, 239, 125, 0.1);
+    }
+
+    .solution-card.green::before {
+      background: var(--accent-green);
+    }
+
+    .solution-card.purple .solution-icon {
+      background: rgba(156, 39, 176, 0.08);
+      border: 1px solid rgba(156, 39, 176, 0.2);
+      color: #df78ef;
+      box-shadow: 0 0 15px rgba(156, 39, 176, 0.1);
+    }
+
+    .solution-card.purple::before {
+      background: #df78ef;
+    }
+
+    .solution-card h3 {
+      font-family: var(--font-outfit);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .solution-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .solution-card ul li {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .solution-card ul li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .solution-card.green ul li::before {
+      color: var(--accent-green);
+    }
+
+    .solution-card.purple ul li::before {
+      color: #df78ef;
+    }
+
+    /* Slide 4: Dimensionamento de Mercado */
+    .market-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 30px;
+    }
+
+    .market-box {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .market-box::before {
+      height: 4px;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .market-box.sam::before {
+      background: var(--accent-green);
+    }
+
+    .market-box.som::before {
+      background: #df78ef;
+    }
+
+    .market-box h3 {
+      font-family: var(--font-outfit);
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .market-val {
+      font-family: var(--font-outfit);
+      font-size: 38px;
+      font-weight: 900;
+      color: var(--accent);
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .market-box.sam .market-val {
+      color: var(--accent-green);
+      text-shadow: 0 0 20px var(--accent-green-glow);
+    }
+
+    .market-box.som .market-val {
+      color: #df78ef;
+      text-shadow: 0 0 20px rgba(156, 39, 176, 0.3);
+    }
+
+    .market-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .market-desc strong {
+      color: var(--text-main);
+    }
+
+    /* Slide 5: Funil de Vendas */
+    .funnel-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .funnel-stage {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 15px 30px;
+      width: 100%;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+
+    .funnel-stage::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      border-radius: 12px 0 0 12px;
+    }
+
+    .funnel-stage.s1 { width: 100%; }
+    .funnel-stage.s1::before { background: var(--accent); }
+    .funnel-stage.s2 { width: 85%; }
+    .funnel-stage.s2::before { background: var(--accent-green); }
+    .funnel-stage.s3 { width: 70%; }
+    .funnel-stage.s3::before { background: #df78ef; }
+
+    .funnel-name {
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .funnel-icon {
+      font-size: 18px;
+    }
+
+    .funnel-stats {
+      text-align: right;
+    }
+
+    .funnel-num {
+      font-family: var(--font-outfit);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .funnel-conv {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .funnel-stage.s2 .funnel-conv { color: var(--accent-green); }
+    .funnel-stage.s3 .funnel-conv { color: #df78ef; }
+
+    /* Slide 6: Projeções Financeiras */
+    .financial-box::before {
+      background: var(--accent-green);
+    }
+
+    .fin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .fin-table th {
+      padding: 15px 10px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .fin-table td {
+      padding: 15px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+
+    .fin-table tr:hover td {
+      background: rgba(255,255,255,0.01);
+    }
+
+    .fin-table tr:last-child td {
+      border: none;
+    }
+
+    .fin-table td strong {
+      color: var(--text-main);
+    }
+
+    .fin-table .highlight-row td {
+      border-top: 1px solid rgba(56, 239, 125, 0.15);
+      border-bottom: 1px solid rgba(56, 239, 125, 0.15);
+      background: rgba(56, 239, 125, 0.02);
+    }
+
+    .fin-table .highlight-row td:first-child {
+      color: var(--accent-green);
+      font-weight: bold;
+    }
+
+    .fin-table .val-col {
+      font-family: var(--font-outfit);
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: right;
+    }
+
+    .fin-table .highlight-row .val-col {
+      color: var(--accent-green);
+      font-size: 16px;
+      text-shadow: 0 0 10px var(--accent-green-glow);
+    }
+
+    /* Slide 7: Captação e Fechamento */
+    .invest-box::before {
+      background: var(--accent);
+    }
+
+    .invest-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .invest-request {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding-right: 30px;
+    }
+
+    .invest-request h4 {
+      font-family: var(--font-outfit);
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .invest-val {
+      font-family: var(--font-outfit);
+      font-size: 46px;
+      font-weight: 900;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--accent-glow);
+      margin-bottom: 10px;
+    }
+
+    .invest-valuation {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .invest-valuation strong {
+      color: var(--text-main);
+    }
+
+    .invest-dest {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .dest-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .dest-title {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-outfit);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .dest-title span:first-child {
+      color: var(--text-main);
+    }
+
+    .dest-title span:last-child {
+      color: var(--accent);
+    }
+
+    .dest-bar-container {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .dest-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 10px;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      height: 70px;
+      background: rgba(10, 15, 20, 0.8);
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 99;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-img {
+      height: 30px;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-family: var(--font-outfit);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: var(--text-main);
+      font-family: var(--font-outfit);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .slide-counter {
+      font-family: var(--font-outfit);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .helper-text kbd {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: monospace;
+      color: var(--accent);
+    }
+
+    @media screen and (max-height: 700px) {
+      .slide {
+        max-height: 520px;
+      }
+      .slide-title {
+        font-size: 32px;
+      }
+      .cover-title {
+        font-size: 48px;
+      }
+      .glass-card {
+        padding: 20px;
+      }
+      .market-val {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+
+  <!-- Slides Container -->
+  <div class="presentation-container">
+    
+    <!-- Slide 1: Capa -->
+    <div class="slide active cover-slide" id="slide-1">
+      <div class="cover-badge">Finep / SEBRAE Inovação</div>
+      <h1 class="cover-title">Calibração Inteligente de Pulverizadores para Eliminar o <span>Desperdício Invisível</span></h1>
+      <p class="cover-subtitle">Plataforma SaaS multi-tecnologia offline-first que tangibiliza perdas agronômicas e revoluciona o balcão de insumos e o diagnóstico de aplicação a campo.</p>
+      
+      <div class="cover-meta">
+        <div>Projeto: <strong>Spray Precision PRO</strong></div>
+        <div>Modelo: <strong>SaaS B2B / B2C</strong></div>
+        <div>Valuation: <strong>R$ 2.7M (ARR 5x)</strong></div>
+      </div>
+    </div>
+
+    <!-- Slide 2: O Problema -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <span class="slide-tag">02 / Problema de Mercado</span>
+        <h2 class="slide-title">O Desperdício Invisível no <span>Agronegócio</span></h2>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2col">
+          <div class="problem-list">
+            <div class="problem-item">
+              <div class="problem-icon">⚙️</div>
+              <div class="problem-text">
+                <h4>Desgaste Invisível de Bicos</h4>
+                <p>O fluxo contínuo de químicos abrasivos deforma milimetricamente os bicos de cerâmica, aumentando a vazão sem o conhecimento do operador.</p>
+              </div>
+            </div>
+            <div class="problem-item">
+              <div class="problem-icon">📉</div>
+              <div class="problem-text">
+                <h4>Subdosagem e Superdosagem</h4>
+                <p>A subdosagem gera escape e resistência de pragas. A superdosagem causa queima fitotóxica da cultura e escorrimento químico no solo.</p>
+              </div>
+            </div>
+            <div class="problem-item">
+              <div class="problem-icon">🌫️</div>
+              <div class="problem-text">
+                <h4>Deriva e Perda de Vento</h4>
+                <p>Configurações de velocidade fora da janela ideal de pressão causam gotas muito finas que evaporam antes de atingir a folha.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card loss-box">
+            <div class="loss-header">
+              <h3>Perda Anual Estimada</h3>
+              <span class="loss-badge">Fazenda 1.000 ha</span>
+            </div>
+            <table class="loss-table">
+              <tr>
+                <td>Desperdício Direto de Defensivos (+10%)</td>
+                <td class="loss-val">R$ 120.000,00</td>
+              </tr>
+              <tr>
+                <td>Perda Agronômica (Fitox/Deriva: -1.5 sc/ha)</td>
+                <td class="loss-val">R$ 180.000,00</td>
+              </tr>
+              <tr>
+                <td>Manutenção e Depreciação Hidráulica</td>
+                <td class="loss-val">R$ 15.000,00</td>
+              </tr>
+              <tr style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <td class="loss-total-label">Prejuízo Anual Estimado</td>
+                <td class="loss-total-val">R$ 315.000,00</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: A Solução -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <span class="slide-tag">03 / A Tecnologia</span>
+        <h2 class="slide-title">Ecossistema <span>Spray Precision PRO</span></h2>
+      </div>
+      <div class="slide-content">
+        <div class="grid-3col">
+          <div class="glass-card solution-card">
+            <div class="solution-icon">🎯</div>
+            <h3>1. Seletor Inteligente</h3>
+            <ul>
+              <li><strong>Modo Convencional</strong>: cruzamento imediato de vazões padrão ISO.</li>
+              <li><strong>Modo Pulsado PWM</strong>: cálculo de ciclo útil (Duty Cycle) ideal sem picos de pressão.</li>
+              <li><strong>Modo Bico Duplo</strong>: sequenciamento e sobreposição inteligente de estágios.</li>
+            </ul>
+          </div>
+          
+          <div class="glass-card solution-card green">
+            <div class="solution-icon">🗣️</div>
+            <h3>2. Aferição por Voz</h3>
+            <ul>
+              <li><strong>Modo Hands-Free</strong>: técnico dita as leituras e o app calcula os desvios offline.</li>
+              <li><strong>Estatística Instantânea</strong>: cálculo imediato do CV% (Coeficiente de Variação).</li>
+              <li><strong>Cálculo Financeiro</strong>: traduz o erro do bico em Reais de calda desperdiçada.</li>
+            </ul>
+          </div>
+          
+          <div class="glass-card solution-card purple">
+            <div class="solution-icon">🏢</div>
+            <h3>3. CRM & White-Label</h3>
+            <ul>
+              <li><strong>Portal Revenda</strong>: aplicativo se adapta às cores e marca da revenda parceira.</li>
+              <li><strong>WhatsApp Integrado</strong>: PDF final vincula o contato do vendedor para fechamento de bicos.</li>
+              <li><strong>Histórico Sincronizado</strong>: histórico de calibração offline sincronizado em nuvem.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Dimensionamento de Mercado -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <span class="slide-tag">04 / Mercado Agrícola</span>
+        <h2 class="slide-title">Tamanho e Potencial de <span>Mercado (TAM/SAM/SOM)</span></h2>
+      </div>
+      <div class="slide-content">
+        <div class="market-layout">
+          <div class="glass-card market-box">
+            <h3>TAM (Total)</h3>
+            <div class="market-val">R$ 645M</div>
+            <p class="market-desc"><strong>Todo o agronegócio nacional</strong>: faturamento potencial estimando 1M de fazendas profissionais e 15.000 lojas e cooperativas.</p>
+          </div>
+          
+          <div class="glass-card market-box sam">
+            <h3>SAM (Endereçável)</h3>
+            <div class="market-val">R$ 48M</div>
+            <p class="market-desc"><strong>Polo de grãos (Sul/CO)</strong>: estimativa sobre 40.000 consultores agrícolas independentes e 8.000 lojas físicas de autopeças/insumos.</p>
+          </div>
+          
+          <div class="glass-card market-box som">
+            <h3>SOM (Metas Ano 3)</h3>
+            <div class="market-val">R$ 3.3M</div>
+            <p class="market-desc"><strong>ARR recorrente projetado</strong>: captação ativa de 3.000 consultores independentes e 500 filiais de revendas/cooperativas parceiras.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Funil de Vendas -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <span class="slide-tag">05 / Máquina de Vendas</span>
+        <h2 class="slide-title">Canais de Aquisição e <span>Funil de Conversão</span></h2>
+      </div>
+      <div class="slide-content">
+        <div class="funnel-container">
+          <div class="funnel-stage s1">
+            <span class="funnel-name"><span class="funnel-icon">📢</span> Tráfego Pago & Redes Sociais (Leads)</span>
+            <div class="funnel-stats">
+              <span class="funnel-num">20.000/ano</span>
+            </div>
+          </div>
+          
+          <div class="funnel-stage s2">
+            <span class="funnel-name"><span class="funnel-icon">📥</span> Cadastro Teste Grátis 7 dias (Trial)</span>
+            <div class="funnel-stats">
+              <span class="funnel-num">2.000/ano</span>
+              <span class="funnel-conv">Conv: 10%</span>
+            </div>
+          </div>
+          
+          <div class="funnel-stage s3">
+            <span class="funnel-name"><span class="funnel-icon">💰</span> Assinantes Pagantes (Clientes Ativos)</span>
+            <div class="funnel-stats">
+              <span class="funnel-num">500 SaaS + 80 Revendas</span>
+              <span class="funnel-conv">Conv: 25% (SaaS)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Projeções Financeiras -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <span class="slide-tag">06 / Projeções Econômicas</span>
+        <h2 class="slide-title">Demonstrativo de Receitas e <span>EBITDA</span></h2>
+      </div>
+      <div class="slide-content">
+        <div class="glass-card financial-box">
+          <table class="fin-table">
+            <thead>
+              <tr>
+                <th>Métricas de Crescimento</th>
+                <th style="text-align: right;">Ano 1</th>
+                <th style="text-align: right;">Ano 2</th>
+                <th style="text-align: right;">Ano 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Assinantes Individuais ativos (R$ 49,90/mês)</td>
+                <td class="val-col">500</td>
+                <td class="val-col">1.500</td>
+                <td class="val-col">3.000</td>
+              </tr>
+              <tr>
+                <td>Lojas B2B White-Label ativas (R$ 250,00/mês)</td>
+                <td class="val-col">80</td>
+                <td class="val-col">250</td>
+                <td class="val-col">500</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>Faturamento Recorrente Anual (ARR)</td>
+                <td class="val-col">R$ 540.000,00</td>
+                <td class="val-col">R$ 1.650.000,00</td>
+                <td class="val-col">R$ 3.300.000,00</td>
+              </tr>
+              <tr>
+                <td>Custos Operacionais e Marketing (OPEX)</td>
+                <td class="val-col">R$ 180.000,00</td>
+                <td class="val-col">R$ 480.000,00</td>
+                <td class="val-col">R$ 900.000,00</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>EBITDA Projetado (Margem %)</td>
+                <td class="val-col">R$ 360.000,00 (66%)</td>
+                <td class="val-col">R$ 1.170.000,00 (70%)</td>
+                <td class="val-col">R$ 2.400.000,00 (72%)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Captação e Fechamento -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <span class="slide-tag">07 / Fechamento & Captação</span>
+        <h2 class="slide-title">Equipe, Valuation e <span>Proposta de Captação</span></h2>
+      </div>
+      <div class="slide-content">
+        <div class="glass-card invest-box">
+          <div class="invest-layout">
+            <div class="invest-request">
+              <h4>Solicitação de Fomento</h4>
+              <div class="invest-val">R$ 250.000,00</div>
+              <div class="invest-valuation">Valuation Pré-Money: <strong>R$ 2.700.000,00</strong></div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 15px; max-width: 320px; line-height: 1.5;">Captação via subvenção econômica ou rodada anjo para aceleração de engenharia e vendas.</p>
+            </div>
+            
+            <div class="invest-dest">
+              <h4 style="font-family: var(--font-outfit); text-transform: uppercase; font-size: 13px; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 5px;">Alocação dos Recursos</h4>
+              
+              <div class="dest-row">
+                <div class="dest-title">
+                  <span>P&D e Engenharia de Software</span>
+                  <span>50%</span>
+                </div>
+                <div class="dest-bar-container">
+                  <div class="dest-bar-fill" style="width: 50%;"></div>
+                </div>
+              </div>
+              
+              <div class="dest-row">
+                <div class="dest-title">
+                  <span>Comercial e Marketing Digital</span>
+                  <span>30%</span>
+                </div>
+                <div class="dest-bar-container">
+                  <div class="dest-bar-fill" style="width: 30%;"></div>
+                </div>
+              </div>
+              
+              <div class="dest-row">
+                <div class="dest-title">
+                  <span>Operações e Suporte Técnico</span>
+                  <span>20%</span>
+                </div>
+                <div class="dest-bar-container">
+                  <div class="dest-bar-fill" style="width: 20%;"></div>
+                </div>
+              </div>
+              
+              <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 5px;">
+                <strong>Equipe Executiva</strong>: Eduardo Andrade (Gestão e Engenharia Agronômica) + Time de Desenvolvimento de Software & Suporte Técnico.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="controls-bar">
+    <div class="logo-container">
+      <img src="../logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="logo-text">Spray<span>Precision</span></div>
+    </div>
+    
+    <div class="nav-buttons">
+      <button class="btn-nav" id="btnPrev" onclick="prevSlide()">◀ Anterior</button>
+      <div class="slide-counter" id="slideCounter">1 / 7</div>
+      <button class="btn-nav" id="btnNext" onclick="nextSlide()">Próximo ▶</button>
+    </div>
+    
+    <div class="helper-text">
+      Navegue com <kbd>←</kbd> <kbd>→</kbd> ou <kbd>Espaço</kbd>
+    </div>
+  </div>
+
+  <script>
+const _0x390b82=_0x2e26;(function(_0x4da1aa,_0x1f6ad5){const _0x58dec6=_0x2e26,_0x5e4bc2=_0x4da1aa();while(!![]){try{const _0x2f160c=parseInt(_0x58dec6(0x16d))/0x1+parseInt(_0x58dec6(0x155))/0x2*(-parseInt(_0x58dec6(0x15d))/0x3)+-parseInt(_0x58dec6(0x159))/0x4+-parseInt(_0x58dec6(0x16e))/0x5*(-parseInt(_0x58dec6(0x165))/0x6)+parseInt(_0x58dec6(0x171))/0x7*(parseInt(_0x58dec6(0x16f))/0x8)+parseInt(_0x58dec6(0x157))/0x9+-parseInt(_0x58dec6(0x15b))/0xa*(parseInt(_0x58dec6(0x15f))/0xb);if(_0x2f160c===_0x1f6ad5)break;else _0x5e4bc2['push'](_0x5e4bc2['shift']());}catch(_0x788056){_0x5e4bc2['push'](_0x5e4bc2['shift']());}}}(_0x1a30,0xc8e4e));const totalSlides=0x7;let currentSlide=0x1;function updateSlide(){const _0x561401=_0x2e26;document[_0x561401(0x16c)](_0x561401(0x15c))[_0x561401(0x168)](_0x42026c=>_0x42026c[_0x561401(0x167)][_0x561401(0x170)](_0x561401(0x160)));const _0x46b964=document[_0x561401(0x164)](_0x561401(0x162)+currentSlide);_0x46b964&&_0x46b964['\x63\x6c\x61\x73\x73\x4c\x69\x73\x74'][_0x561401(0x175)](_0x561401(0x160));document[_0x561401(0x164)](_0x561401(0x176))[_0x561401(0x156)]=currentSlide+_0x561401(0x161)+totalSlides;const _0x766633=currentSlide/totalSlides*0x64;document['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64'](_0x561401(0x16a))[_0x561401(0x154)][_0x561401(0x169)]=_0x766633+'\x25',document[_0x561401(0x164)](_0x561401(0x15a))[_0x561401(0x154)][_0x561401(0x174)]=currentSlide===0x1?_0x561401(0x163):'\x31',document[_0x561401(0x164)]('\x62\x74\x6e\x4e\x65\x78\x74')[_0x561401(0x156)]=currentSlide===totalSlides?_0x561401(0x15e):_0x561401(0x172);}function nextSlide(){currentSlide<totalSlides?(currentSlide++,updateSlide()):(currentSlide=0x1,updateSlide());}function prevSlide(){currentSlide>0x1&&(currentSlide--,updateSlide());}function _0x1a30(){const _0x5c9884=['\x72\x4d\x4c\x54\x69\x6f\x6b\x43\x4c\x47','\x6e\x64\x61\x33\x79\x33\x72\x69\x75\x68\x48\x31','\x79\x77\x6e\x30\x41\x78\x7a\x4c','\x69\x63\x38\x47','\x43\x32\x58\x50\x7a\x67\x75\x54','\x6d\x63\x34\x30','\x7a\x32\x76\x30\x72\x77\x58\x4c\x42\x77\x76\x55\x44\x65\x6a\x35\x73\x77\x71','\x6d\x74\x6a\x78\x74\x78\x44\x4f\x77\x67\x4f','\x71\x78\x6a\x59\x42\x33\x44\x73\x41\x77\x44\x4f\x44\x61','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x44\x32\x4c\x4b\x44\x67\x47','\x43\x68\x6a\x56\x7a\x33\x6a\x4c\x43\x33\x6e\x63\x79\x78\x69','\x43\x68\x6a\x4c\x44\x4d\x76\x55\x44\x65\x72\x4c\x7a\x4d\x66\x31\x42\x68\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6e\x74\x79\x33\x6d\x4a\x43\x35\x76\x78\x72\x4f\x79\x30\x54\x68','\x6d\x4a\x79\x31\x6e\x4a\x61\x58\x6d\x66\x76\x56\x74\x32\x76\x52\x76\x71','\x6d\x74\x79\x34\x41\x4e\x72\x79\x41\x67\x54\x56','\x43\x4d\x76\x54\x42\x33\x7a\x4c','\x6d\x74\x65\x58\x6e\x5a\x4b\x33\x42\x67\x4c\x6c\x75\x33\x4c\x6f','\x75\x68\x6c\x64\x53\x33\x48\x50\x42\x77\x38\x47\x34\x50\x41\x32','\x72\x77\x35\x30\x7a\x78\x69','\x42\x33\x62\x48\x79\x32\x4c\x30\x45\x71','\x79\x77\x72\x4b','\x43\x32\x58\x50\x7a\x67\x76\x64\x42\x33\x76\x55\x44\x67\x76\x59','\x79\x77\x72\x4b\x72\x78\x7a\x4c\x42\x4e\x72\x6d\x41\x78\x6e\x30\x7a\x77\x35\x4c\x43\x47','\x43\x33\x72\x35\x42\x67\x75','\x6d\x4e\x44\x30\x74\x75\x44\x71\x79\x71','\x41\x77\x35\x55\x7a\x78\x6a\x75\x7a\x78\x48\x30','\x6d\x74\x6d\x30\x6d\x4a\x75\x32\x6d\x74\x76\x6f\x75\x68\x72\x52\x75\x4e\x4b','\x41\x32\x76\x35','\x6d\x74\x75\x31\x6f\x74\x47\x33\x6e\x4c\x76\x50\x76\x75\x72\x50\x75\x71','\x79\x4e\x72\x55\x75\x68\x6a\x4c\x44\x47','\x6e\x4a\x61\x5a\x6d\x5a\x43\x57\x73\x68\x7a\x71\x7a\x4c\x6e\x73','\x6c\x4e\x6e\x53\x41\x77\x72\x4c','\x6d\x5a\x71\x31\x6d\x4a\x44\x7a\x44\x4b\x48\x36\x72\x75\x34'];_0x1a30=function(){return _0x5c9884;};return _0x1a30();}function _0x2e26(_0x354232,_0xd4ba56){_0x354232=_0x354232-0x154;const _0x1a301a=_0x1a30();let _0x2e2676=_0x1a301a[_0x354232];if(_0x2e26['\x6c\x56\x63\x66\x59\x4f']===undefined){var _0x4b47ab=function(_0x2af465){const _0x39f959='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x46b964='',_0x766633='';for(let _0x42026c=0x0,_0x385bac,_0x4c995a,_0x401f93=0x0;_0x4c995a=_0x2af465['\x63\x68\x61\x72\x41\x74'](_0x401f93++);~_0x4c995a&&(_0x385bac=_0x42026c%0x4?_0x385bac*0x40+_0x4c995a:_0x4c995a,_0x42026c++%0x4)?_0x46b964+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x385bac>>(-0x2*_0x42026c&0x6)):0x0){_0x4c995a=_0x39f959['\x69\x6e\x64\x65\x78\x4f\x66'](_0x4c995a);}for(let _0x2f5ae4=0x0,_0x2463fa=_0x46b964['\x6c\x65\x6e\x67\x74\x68'];_0x2f5ae4<_0x2463fa;_0x2f5ae4++){_0x766633+='\x25'+('\x30\x30'+_0x46b964['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x2f5ae4)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x766633);};_0x2e26['\x57\x5a\x4b\x7a\x5a\x65']=_0x4b47ab,_0x2e26['\x58\x50\x70\x51\x4a\x6c']={},_0x2e26['\x6c\x56\x63\x66\x59\x4f']=!![];}const _0x376725=_0x1a301a[0x0],_0x5d8a5c=_0x354232+_0x376725,_0x4ec5ce=_0x2e26['\x58\x50\x70\x51\x4a\x6c'][_0x5d8a5c];return!_0x4ec5ce?(_0x2e2676=_0x2e26['\x57\x5a\x4b\x7a\x5a\x65'](_0x2e2676),_0x2e26['\x58\x50\x70\x51\x4a\x6c'][_0x5d8a5c]=_0x2e2676):_0x2e2676=_0x4ec5ce,_0x2e2676;}document[_0x390b82(0x177)]('\x6b\x65\x79\x64\x6f\x77\x6e',_0x385bac=>{const _0x4ad6e2=_0x390b82;if(_0x385bac[_0x4ad6e2(0x158)]===_0x4ad6e2(0x166)||_0x385bac[_0x4ad6e2(0x158)]==='\x20'||_0x385bac[_0x4ad6e2(0x158)]===_0x4ad6e2(0x173))_0x385bac['\x70\x72\x65\x76\x65\x6e\x74\x44\x65\x66\x61\x75\x6c\x74'](),nextSlide();else _0x385bac[_0x4ad6e2(0x158)]==='\x41\x72\x72\x6f\x77\x4c\x65\x66\x74'&&(_0x385bac[_0x4ad6e2(0x16b)](),prevSlide());}),updateSlide();
+</script>
+</body>
+</html>

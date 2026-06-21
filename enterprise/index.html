@@ -2060,11 +2060,11 @@
                 <div id="rmTargetSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">17 km/h</div>
               </div>
               <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Janela Ideal</div>
+                <div id="rmSpeedLabel" style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Janela Ideal</div>
                 <div id="rmSpeed" style="font-weight: 700; font-size: 16px; color: var(--text-main);">12.8 - 23.5</div>
               </div>
               <div style="padding: 10px 14px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; text-align: right;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">P. Média</div>
+                <div id="rmPressLabel" style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">P. Média</div>
                 <div id="rmPress" style="font-weight: 700; font-size: 16px; color: var(--accent-green);">2.6 BAR</div>
               </div>
             </div>
@@ -3180,27 +3180,18 @@
         const rmHeader = document.getElementById('rmHeader');
         const rmStatusText = document.getElementById('rmStatusText');
 
-        document.getElementById('rmIso').innerText = 'ISO ' + r.nz.iso;
-        document.getElementById('rmQ3').innerText = r.qVavg.toFixed(2) + ' L/min';
-        
-        const pRefIso = PRESS_UNIT === 'bar' ? '3.0 bar' : '43.5 psi';
-        document.getElementById('rmQ3Iso').innerText = `${t('Referência Catálogo')}: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
-        
-        document.getElementById('rmQ3').style.color = 'var(--text-main)';
-        document.getElementById('rmSpeed').innerText = r.vAtPmin.toFixed(1) + ' - ' + r.vAtPmax.toFixed(1) + ' km/h';
-
+        // Determinar unidade e alvos
+        const pUnit = PRESS_UNIT.toUpperCase();
         const targetRate = document.getElementById('numRate').value;
         const targetSpeed = document.getElementById('numVAvg').value;
-
         document.getElementById('rmTargetRate').innerText = targetRate + ' L/ha';
         document.getElementById('rmTargetSpeed').innerText = targetSpeed + ' km/h';
 
-        const pUnit = PRESS_UNIT.toUpperCase();
-        document.getElementById('rmPress').innerText = (isNaN(r.pVavg) ? '--' : r.pVavg.toFixed(1)) + ' ' + pUnit;
-
-        rmHeader.style.background = r.nz.color;
-
-        if (r.nz.iso === '02') {
+        // Resetar cores/texto padrão do botão close
+        if (r.nz && r.nz.iso === '02') {
+          document.getElementById('rmIso').style.color = '#1E1E1E';
+          rmStatusText.style.color = 'rgba(0,0,0,0.7)';
+        } else if (r.nzA && r.nzA.iso === '02') {
           document.getElementById('rmIso').style.color = '#1E1E1E';
           rmStatusText.style.color = 'rgba(0,0,0,0.7)';
         } else {
@@ -3208,15 +3199,70 @@
           rmStatusText.style.color = 'rgba(255,255,255,0.9)';
         }
 
+        let statusText = r.statusText || r.status || '';
+
         if (isFallback) {
-          rmStatusText.innerText = '⚠️ ' + t('Rec:') + ' ' + t(r.statusText);
+          rmStatusText.innerText = '⚠️ ' + t('Rec:') + ' ' + t(statusText);
           rmStatusText.style.background = 'rgba(255,193,7,0.2)';
         } else {
-          rmStatusText.innerText = '🏆 ' + t('Sugestão:') + ' ' + t(r.statusText);
+          rmStatusText.innerText = '🏆 ' + t('Sugestão:') + ' ' + t(statusText);
           rmStatusText.style.background = 'transparent';
         }
 
-        const msg = encodeURIComponent(`Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`);
+        let msgText = '';
+
+        if (MACHINE_MODE === 'pwm') {
+          document.getElementById('rmIso').innerText = 'ISO ' + r.nz.iso;
+          document.getElementById('rmQ3Label').innerText = t('Vazão Máxima Alvo');
+          document.getElementById('rmQ3').innerText = r.qNozzle.toFixed(2) + ' L/min';
+          
+          const pRefIso = PRESS_UNIT === 'bar' ? '3.0 bar' : '43.5 psi';
+          document.getElementById('rmQ3Iso').innerText = `${t('Referência Catálogo')}: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
+          
+          document.getElementById('rmSpeedLabel').innerText = t('Janela PWM Útil');
+          document.getElementById('rmSpeed').innerText = `${r.vAtDMin.toFixed(1)} - ${r.vAtDMax.toFixed(1)} km/h`;
+          
+          document.getElementById('rmPressLabel').innerText = t('Duty Médio');
+          document.getElementById('rmPress').innerText = r.dAvg.toFixed(0) + '%';
+          
+          rmHeader.style.background = r.nz.color;
+          msgText = `Olá! O sistema Spray Precision PRO sugeriu o bico PWM ISO ${r.nz.iso} (Duty Médio: ${r.dAvg.toFixed(0)}%) para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`;
+        } 
+        else if (MACHINE_MODE === 'dual') {
+          document.getElementById('rmIso').innerText = `ISO ${r.nzA.iso} + ${r.nzB.iso}`;
+          document.getElementById('rmQ3Label').innerText = t('Cobertura de Velocidade');
+          document.getElementById('rmQ3').innerText = r.coveragePct.toFixed(0) + '%';
+          document.getElementById('rmQ3Iso').innerText = t('Bicos recomendados para estágios combinados.');
+          
+          document.getElementById('rmSpeedLabel').innerText = t('Configuração');
+          document.getElementById('rmSpeed').innerText = `${r.nzA.iso} + ${r.nzB.iso}`;
+          
+          document.getElementById('rmPressLabel').innerText = t('P. Média');
+          document.getElementById('rmPress').innerText = fromBar(r.infoAvg.pressure).toFixed(1) + ' ' + pUnit;
+          
+          rmHeader.style.background = r.nzA.color;
+          msgText = `Olá! O sistema Spray Precision PRO sugeriu a combinação de bicos duplos ISO ${r.nzA.iso} + ${r.nzB.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`;
+        } 
+        else {
+          // Conventional
+          document.getElementById('rmIso').innerText = 'ISO ' + r.nz.iso;
+          document.getElementById('rmQ3Label').innerText = t('Vazão de Calibração');
+          document.getElementById('rmQ3').innerText = r.qVavg.toFixed(2) + ' L/min';
+          
+          const pRefIso = PRESS_UNIT === 'bar' ? '3.0 bar' : '43.5 psi';
+          document.getElementById('rmQ3Iso').innerText = `${t('Referência Catálogo')}: ${r.nz.q3.toFixed(2)} L/min @ ${pRefIso}`;
+          
+          document.getElementById('rmSpeedLabel').innerText = t('Janela Ideal');
+          document.getElementById('rmSpeed').innerText = `${r.vAtPmin.toFixed(1)} - ${r.vAtPmax.toFixed(1)} km/h`;
+          
+          document.getElementById('rmPressLabel').innerText = t('P. Média');
+          document.getElementById('rmPress').innerText = (isNaN(r.pVavg) ? '--' : r.pVavg.toFixed(1)) + ' ' + pUnit;
+          
+          rmHeader.style.background = r.nz.color;
+          msgText = `Olá! O sistema Spray Precision PRO sugeriu o bico ISO ${r.nz.iso} para aplicar ${targetRate} L/ha a ${targetSpeed} km/h. Gostaria de ver opções!`;
+        }
+
+        const msg = encodeURIComponent(msgText);
         document.getElementById('rmWhatsapp').href = `https://wa.me/5565999106415?text=${msg}`;
 
         modal.style.display = 'flex';
@@ -3301,6 +3347,21 @@
           const card = document.createElement('div');
           card.className = 'nozzle-card';
           card.style.setProperty('--nz-color', r.nz.color);
+          card.style.cursor = 'pointer';
+          card.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
+
+          card.addEventListener('mouseenter', () => { 
+            card.style.transform = 'translateY(-3px)'; 
+            card.style.boxShadow = '0 12px 28px rgba(0,0,0,0.25)'; 
+          });
+          card.addEventListener('mouseleave', () => { 
+            card.style.transform = ''; 
+            card.style.boxShadow = ''; 
+          });
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.status-badge')) return;
+            openResultModal(r, r.status !== 'Ideal PWM' && r.status !== 'Aceitável');
+          });
 
           const badgeClass = (r.status === 'Ideal PWM') ? 'ok' : ((r.status === 'Aceitável') ? 'warning' : 'bad');
           const pUnit = PRESS_UNIT.toUpperCase();
@@ -3416,6 +3477,21 @@
           const card = document.createElement('div');
           card.className = 'nozzle-card';
           card.style.setProperty('--nz-color', c.nzA.color);
+          card.style.cursor = 'pointer';
+          card.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
+
+          card.addEventListener('mouseenter', () => { 
+            card.style.transform = 'translateY(-3px)'; 
+            card.style.boxShadow = '0 12px 28px rgba(0,0,0,0.25)'; 
+          });
+          card.addEventListener('mouseleave', () => { 
+            card.style.transform = ''; 
+            card.style.boxShadow = ''; 
+          });
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.status-badge')) return;
+            openResultModal(c, c.status !== 'Cobertura Total' && c.status !== 'Cobertura Parcial');
+          });
 
           const badgeClass = (c.status === 'Cobertura Total') ? 'ok' : ((c.status === 'Cobertura Parcial') ? 'warning' : 'bad');
 
@@ -3491,10 +3567,10 @@
 
         if (totals.length > 0) {
           alerts.push({ type: 'ok', icon: '✅', text: `A combinação ISO ${totals[0].nzA.iso} + ${totals[0].nzB.iso} garante 100% de cobertura operacional para velocidades entre ${inp.vMin} e ${inp.vMax} km/h dentro da pressão segura.` });
-          window.topNozzle = { nz: { iso: `${totals[0].nzA.iso} + ${totals[0].nzB.iso}`, color: totals[0].nzA.color }, statusText: totals[0].status, qVavg: (totals[0].nzA.q3 + totals[0].nzB.q3) / 2, pVavg: (totals[0].infoAvg.pressure) };
+          window.topNozzle = totals[0];
           window.topNozzleFallback = false;
         } else if (combos.length > 0) {
-          window.topNozzle = { nz: { iso: `${combos[0].nzA.iso} + ${combos[0].nzB.iso}`, color: combos[0].nzA.color }, statusText: combos[0].status, qVavg: (combos[0].nzA.q3 + combos[0].nzB.q3) / 2, pVavg: (combos[0].infoAvg.pressure) };
+          window.topNozzle = combos[0];
           window.topNozzleFallback = true;
         }
 

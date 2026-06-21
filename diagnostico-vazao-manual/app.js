@@ -24,6 +24,21 @@ let timerInterval = null;
 let timerTimeLeft = 30; // segundos
 let timerDuration = 30;
 
+// Usuário logado atual
+window.currentUser = null;
+
+function getLoggedInUserName() {
+  if (window.currentUser) {
+    const meta = window.currentUser.user_metadata || {};
+    return meta.name || meta.full_name || window.currentUser.email.split('@')[0].toUpperCase();
+  }
+  const emailSpan = document.getElementById('logged-user-email');
+  if (emailSpan && emailSpan.textContent && emailSpan.textContent !== '--') {
+    return emailSpan.textContent.split('@')[0].toUpperCase();
+  }
+  return '';
+}
+
 function formatCurrency(value) {
   const lang = localStorage.getItem('spray_language') || 'pt';
   if (lang === 'pt') {
@@ -264,8 +279,9 @@ function applyPartnerBranding(meta) {
   if (responsavelInput) {
     responsavelInput.placeholder = `Consultor Técnico (${name})`;
     const currentVal = responsavelInput.value.trim();
-    if (!currentVal || currentVal === 'CONSULTOR' || currentVal.includes('Spray Precision')) {
-      responsavelInput.value = `Consultor Técnico (${name})`;
+    const userDisplayName = getLoggedInUserName();
+    if (!currentVal || currentVal === 'CONSULTOR' || currentVal.includes('Spray Precision') || currentVal.startsWith('Consultor Técnico (')) {
+      responsavelInput.value = userDisplayName || `Consultor Técnico (${name})`;
     }
   }
 
@@ -486,6 +502,7 @@ async function verifySessionIntegrity(userId) {
 }
 
 async function handleUserLoggedIn(user) {
+  window.currentUser = user;
   // Validação inicial de acesso e bloqueio
   const metadata = user.user_metadata || {};
   if (metadata.is_blocked === true) {
@@ -558,11 +575,14 @@ async function handleUserLoggedIn(user) {
   }
   if (badgeOffline) badgeOffline.style.display = 'none';
   
-  // Auto-preencher o Inspetor Técnico se estiver em branco
+  // Auto-preencher o Inspetor Técnico
   const responsavel = document.getElementById('input-responsavel');
-  if (responsavel && !responsavel.value) {
-    // Extrai o nome de exibição do e-mail
-    responsavel.value = user.email.split('@')[0].toUpperCase();
+  if (responsavel) {
+    const currentVal = responsavel.value.trim();
+    const userDisplayName = getLoggedInUserName();
+    if (!currentVal || currentVal === 'CONSULTOR' || currentVal.includes('Spray Precision') || currentVal.includes('Consultor Técnico')) {
+      responsavel.value = userDisplayName || 'CONSULTOR';
+    }
   }
 
   // VERIFY TERMS OF USE ACCEPTANCE
@@ -1961,15 +1981,9 @@ async function loadInspectionIntoApp(id) {
     
     // Recuperar Responsável Técnico (ou auto-preencher se vazio para evitar bloqueios de validação)
     let inspectorVal = notesArray[1] ? notesArray[1].trim() : '';
-    if (window.partnerName && (!inspectorVal || inspectorVal === 'CONSULTOR' || inspectorVal.includes('Spray Precision'))) {
-      inspectorVal = `Consultor Técnico (${window.partnerName})`;
-    } else if (!inspectorVal) {
-      const emailSpan = document.getElementById('logged-user-email');
-      if (emailSpan && emailSpan.textContent && emailSpan.textContent !== '--') {
-        inspectorVal = emailSpan.textContent.split('@')[0].toUpperCase();
-      } else {
-        inspectorVal = 'CONSULTOR';
-      }
+    const userDisplayName = getLoggedInUserName();
+    if (!inspectorVal || inspectorVal === 'CONSULTOR' || inspectorVal.includes('Spray Precision') || inspectorVal.includes('Consultor Técnico')) {
+      inspectorVal = userDisplayName || inspectorVal || (window.partnerName ? `Consultor Técnico (${window.partnerName})` : 'CONSULTOR');
     }
     document.getElementById('input-responsavel').value = inspectorVal;
 
@@ -2467,15 +2481,13 @@ function createNewInspectionWorkflow() {
   document.getElementById('input-talhao').value = '';
   document.getElementById('input-cultura').value = '';
   document.getElementById('input-operacao').selectedIndex = 3; // fungicida default
-  if (window.partnerName) {
+  const userDisplayName = getLoggedInUserName();
+  if (userDisplayName) {
+    document.getElementById('input-responsavel').value = userDisplayName;
+  } else if (window.partnerName) {
     document.getElementById('input-responsavel').value = `Consultor Técnico (${window.partnerName})`;
   } else {
-    const emailSpan = document.getElementById('logged-user-email');
-    if (emailSpan && emailSpan.textContent && emailSpan.textContent !== '--') {
-      document.getElementById('input-responsavel').value = emailSpan.textContent.split('@')[0].toUpperCase();
-    } else {
-      document.getElementById('input-responsavel').value = '';
-    }
+    document.getElementById('input-responsavel').value = '';
   }
   document.getElementById('input-notas-identificacao').value = '';
   

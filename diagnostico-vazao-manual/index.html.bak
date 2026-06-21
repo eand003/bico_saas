@@ -319,12 +319,12 @@
           <button onclick="changeLanguage('en')">🇺🇸 English</button>
         </div>
       </div>
-      <div class="login-brand" style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 8px; margin-bottom: 2px;">
-        <img src="../logo.png" alt="Spray Precision Logo" style="width: 28px; height: 28px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 210, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.15); object-fit: cover;">
-        <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; margin: 0; background: linear-gradient(135deg, #ffffff 40%, #a5f3fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Spray Precision <span style="color: var(--accent);">PRO</span></h2>
+      <div style="text-align: center; margin-bottom: 8px;">
+        <img class="app-logo" src="../logo.png" alt="Spray Precision PRO Logo" onerror="this.src='https://placehold.co/100x100?text=SP'" style="width: 64px; height: 64px; border-radius: 12px; margin: 0 auto; display: block;">
       </div>
-      <p style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 2px; margin-bottom: 8px; line-height: 1.4;">
-        Entre com suas credenciais ou use o modo local offline.
+      <h2>Acesso ao Sistema</h2>
+      <p style="text-align: center; color: var(--text-muted); font-size: 12.5px; margin-top: -10px; margin-bottom: 12px; line-height: 1.4;">
+        Digite suas credenciais unificadas do Spray Precision para sincronizar seus relatórios e histórico na nuvem.
       </p>
       
       <form id="login-form" style="display: flex; flex-direction: column; gap: 14px;">

@@ -1135,3 +1135,16 @@ h1, h2, h3, h4, .font-display {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* Mobile Login Box compact override */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 20px 16px !important;
+    gap: 12px !important;
+    border-radius: 16px !important;
+  }
+  .login-box h2 {
+    font-size: 1.25rem !important;
+  }
+}

@@ -1570,6 +1570,7 @@
                 <button class="info-btn" onclick="generateReport()" title="Gerar Relatório Técnico" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">📄</button>
                 <button class="info-btn" onclick="toggleTheme()" title="Modo Claro/Escuro" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">🌓</button>
                 <button class="info-btn" onclick="document.getElementById('helpModal').style.display='flex'" title="Como Usar o Simulador" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px;">?</button>
+                <button class="info-btn" onclick="logout()" title="Sair da Conta" style="width: 34px; height: 34px; font-size: 18px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171;">🚪</button>
               </div>
             </div>
           </div>
@@ -3934,9 +3935,27 @@
           Chart.defaults.animation = false;
           
           document.documentElement.setAttribute('data-theme', 'light');
+          
+          // Force landscape aspect ratio on the canvas for the PDF
+          const chartCanvas = document.getElementById('mainChart');
+          const originalWidth = chartCanvas.style.width;
+          const originalHeight = chartCanvas.style.height;
+          
+          // Set temporary fixed size
+          chartCanvas.style.width = '800px';
+          chartCanvas.style.height = '400px';
+          
+          // Resize chart instance
+          myChart.resize();
+          
           update(); // re-draws calculations and chart dynamically in light mode ticks/gridlines
           
           chartImgUrl = myChart.toBase64Image();
+          
+          // Restore original size and theme
+          chartCanvas.style.width = originalWidth;
+          chartCanvas.style.height = originalHeight;
+          myChart.resize();
           
           document.documentElement.setAttribute('data-theme', originalTheme);
           

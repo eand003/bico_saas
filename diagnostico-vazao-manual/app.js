@@ -79,6 +79,10 @@ if (document.readyState === 'loading') {
 function checkOfflinePreAuthorization() {
   try {
     if (typeof window !== 'undefined' && window.localStorage) {
+      if (window.localStorage.getItem('spray_has_authenticated_before') !== 'true') {
+        window.localStorage.removeItem('spray_offline_authorized');
+        return false;
+      }
       return window.localStorage.getItem('spray_offline_authorized') === 'true';
     }
   } catch (e) {
@@ -92,6 +96,7 @@ function setOfflinePreAuthorization(status) {
     if (typeof window !== 'undefined' && window.localStorage) {
       if (status) {
         window.localStorage.setItem('spray_offline_authorized', 'true');
+        window.localStorage.setItem('spray_has_authenticated_before', 'true');
       } else {
         window.localStorage.removeItem('spray_offline_authorized');
       }

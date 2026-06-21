@@ -1354,6 +1354,123 @@
       display: block;
     }
 
+    /* Mini Hub Grid & Cards */
+    .mini-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto 20px auto;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+
+    .hub-card-mini {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .hub-card-mini::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: transparent;
+      transition: background 0.3s ease;
+    }
+
+    .hub-card-mini.card-selector::before {
+      background: linear-gradient(180deg, #00d2ff, #0066cc);
+    }
+    .hub-card-mini.card-selector:hover {
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 10px 25px rgba(0, 210, 255, 0.15), var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .hub-card-mini.card-calibration::before {
+      background: linear-gradient(180deg, #38ef7d, #11998e);
+    }
+    .hub-card-mini.card-calibration:hover {
+      border-color: rgba(56, 239, 125, 0.3);
+      box-shadow: 0 10px 25px rgba(56, 239, 125, 0.15), var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .card-mini-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .card-mini-icon {
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+    
+    .hub-card-mini:hover .card-mini-icon {
+      transform: scale(1.08) rotate(3deg);
+    }
+
+    .card-mini-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: left;
+    }
+
+    .card-mini-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .card-mini-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .card-mini-arrow {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.8;
+    }
+
+    .hub-card-mini:hover .card-mini-arrow {
+      transform: translateX(4px);
+      opacity: 1;
+    }
+
     @media (max-width: 480px) {
       .main-content {
         padding: 16px 12px;
@@ -1484,38 +1601,41 @@
         <button class="cta-close-btn" onclick="dismissCTA()" title="Fechar">&times;</button>
       </div>
 
-      <div class="hub-grid">
+      <!-- Welcome Banner -->
+      <div class="welcome-container" id="hub-welcome" style="text-align: center; margin-bottom: 24px; animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;">
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; color: #ffffff;">
+          👋 Bem-vindo, <span id="user-display-name" style="color: var(--accent);">Usuário</span>
+        </h2>
+      </div>
+
+      <div class="mini-hub-grid">
         <!-- Card: Seletor de Bicos ISO -->
-        <a href="./enterprise/" class="hub-card card-selector" id="link-seletor">
-          <div class="card-header-info">
-            <span class="badge badge-blue">Simulador PRO</span>
-            <span class="card-icon">🎯</span>
-            <h2 class="card-title">Seletor de Bicos ISO</h2>
-            <p class="card-desc">Recomendação de pontas ideais, simulador de pressão por velocidade, fator de densidade de calda e relatórios em PDF.</p>
+        <a href="./enterprise/" class="hub-card-mini card-selector" id="link-seletor">
+          <div class="card-mini-content">
+            <span class="card-mini-icon">🎯</span>
+            <div class="card-mini-text">
+              <h3 class="card-mini-title">Seletor de Bicos ISO</h3>
+              <p class="card-mini-desc">Simulador & Recomendação</p>
+            </div>
           </div>
-          <div class="card-button btn-blue">
-            <span>Acessar Simulador</span>
-            <span class="arrow-icon">➡️</span>
-          </div>
+          <span class="card-mini-arrow">➡️</span>
         </a>
 
         <!-- Card: Diagnóstico de Vazão Manual -->
-        <a href="./diagnostico-vazao-manual/" class="hub-card card-calibration" id="link-diagnostico">
-          <div class="card-header-info">
-            <span class="badge badge-green">Aferição & Relatórios</span>
-            <span class="card-icon">🚜</span>
-            <h2 class="card-title">Diagnóstico de Vazão</h2>
-            <p class="card-desc">Leitura bico a bico, Coeficiente de Variação (CV%), indicação de desgaste crítico e emissão de laudo técnico em PDF.</p>
+        <a href="./diagnostico-vazao-manual/" class="hub-card-mini card-calibration" id="link-diagnostico">
+          <div class="card-mini-content">
+            <span class="card-mini-icon">🚜</span>
+            <div class="card-mini-text">
+              <h3 class="card-mini-title">Diagnóstico de Vazão</h3>
+              <p class="card-mini-desc">Aferição & Laudos em PDF</p>
+            </div>
           </div>
-          <div class="card-button btn-green">
-            <span>Acessar Diagnóstico</span>
-            <span class="arrow-icon">➡️</span>
-          </div>
+          <span class="card-mini-arrow">➡️</span>
         </a>
       </div>
 
       <!-- Trial CTA Section below the cards -->
-      <div class="trial-cta-container">
+      <div class="trial-cta-container" style="display: none;">
         <div class="trial-cta-text">
           <h3>🧪 Teste Gratuito por 5 Dias</h3>
           <p>Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.</p>
@@ -1986,13 +2106,18 @@
 
       const isOfflineAuthorized = localStorage.getItem('spray_offline_authorized') === 'true';
       if (isOfflineAuthorized) {
-        showHubView(null);
-        return;
+        if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
+          showHubView(null);
+          return;
+        } else {
+          localStorage.removeItem('spray_offline_authorized');
+        }
       }
 
       try {
         const { data: { session }, error } = await clienteSupabase.auth.getSession();
         if (session) {
+          localStorage.setItem('spray_has_authenticated_before', 'true');
           showHubView(session.user);
         } else {
           showLoginView();
@@ -2026,6 +2151,18 @@
       const trialCta = document.querySelector('.trial-cta-container');
       if (trialCta) {
         trialCta.style.display = 'none';
+      }
+
+      // Dynamic Greeting Name
+      const displayNameEl = document.getElementById('user-display-name');
+      if (displayNameEl) {
+        if (user) {
+          const metadata = user.user_metadata || {};
+          const nome = metadata.nome || metadata.full_name || user.email || 'Usuário';
+          displayNameEl.innerText = nome;
+        } else {
+          displayNameEl.innerText = 'Consultor Offline';
+        }
       }
 
       // Implement role-based module visibility check
@@ -2132,6 +2269,7 @@
             throw new Error('Acesso suspenso: Esta conta foi bloqueada temporariamente.');
           }
 
+          localStorage.setItem('spray_has_authenticated_before', 'true');
           msgEl.innerText = 'Acesso autorizado! Carregando...';
           msgEl.className = 'login-message success';
           msgEl.style.display = 'block';
@@ -2157,6 +2295,10 @@
     }
 
     function handleOfflineLogin() {
+      if (localStorage.getItem('spray_has_authenticated_before') !== 'true') {
+        alert("Acesso offline indisponível. É necessário realizar pelo menos um login com internet neste dispositivo antes de usar o modo offline.");
+        return;
+      }
       localStorage.setItem('spray_offline_authorized', 'true');
       showHubView(null);
     }

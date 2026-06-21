@@ -5887,8 +5887,12 @@
 
         // Check offline pre-authorization first
         if (localStorage.getItem('spray_offline_authorized') === 'true') {
-          handleOfflineBypass();
-          return;
+          if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
+            handleOfflineBypass();
+            return;
+          } else {
+            localStorage.removeItem('spray_offline_authorized');
+          }
         }
 
         clienteSupabase.auth.getSession().then(({ data: { session } }) => {
@@ -5995,7 +5999,10 @@
         } else {
           const { data, error } = await clienteSupabase.auth.signInWithPassword({ email, password });
           if (error) throw error;
-          if (data.session) showApp();
+          if (data.session) {
+            localStorage.setItem('spray_has_authenticated_before', 'true');
+            showApp();
+          }
         }
       } catch (err) {
         let msg = err.message;
@@ -6163,6 +6170,7 @@
         const { data: { user }, error } = await clienteSupabase.auth.getUser();
 
         if (user) {
+          localStorage.setItem('spray_has_authenticated_before', 'true');
           // Validação inicial de acesso e bloqueio
           const metadata = user.user_metadata || {};
           if (metadata.is_blocked === true) {

@@ -678,35 +678,8 @@ async function forceUserLogout() {
 }
 
 async function handleUserLogout() {
-  if (!confirm("Tem certeza que deseja sair do aplicativo? Suas credenciais de sincronização serão limpas.")) {
-    return;
-  }
-  
-  resetPartnerBranding();
   if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
-  localStorage.removeItem('spray_active_session_token');
-  localStorage.removeItem('spray_offline_authorized');
-  
-  const supabase = window.supabaseClient;
-  try {
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
-    
-    // Limpar exibição de perfil
-    const badge = document.getElementById('user-profile-badge');
-    if (badge) badge.style.display = 'none';
-    
-    // Limpar formulário de login
-    document.getElementById('login-password').value = '';
-    
-    playBeep('success');
-    speak("Sessão encerrada.");
-    window.location.href = '../';
-  } catch (err) {
-    console.error("Erro ao efetuar logout:", err);
-    alert("Erro ao desconectar: " + err.message);
-  }
+  window.location.href = '../';
 }
 
 // ==========================================

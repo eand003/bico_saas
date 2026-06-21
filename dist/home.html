@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spray Precision PRO – Calibração de Bicos com Precisão Técnica</title>
+  <meta name="description" content="Selecione o bico ideal pela norma ISO e diagnostique sua barra bico a bico. Laudo técnico em segundos. Para agrônomos, técnicos e revendas.">
+  <meta property="og:title" content="Spray Precision PRO">
+  <meta property="og:description" content="Tecnologia de calibração para quem precisa de resultado no campo.">
+  <meta property="og:image" content="./imagem_1.jpeg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── TOKENS ────────────────────────────────────────── */
+    :root {
+      --bg:           #05080a;
+      --bg-elevated:  #0c1116;
+      --bg-card:      #0b0f14;
+      --blue:         #00d2ff;
+      --blue-glow:    rgba(0, 210, 255, 0.15);
+      --green:        #38ef7d;
+      --green-glow:   rgba(56, 239, 125, 0.15);
+      --yellow:       #ffe600;
+      --yellow-glow:  rgba(255, 230, 0, 0.15);
+      --red:          #ff4f4f;
+      --text:         #f8fafc;
+      --muted:        #8ea3b8;
+      --border:       rgba(255, 255, 255, 0.05);
+      --border-hover: rgba(255, 255, 255, 0.12);
+      --radius-lg:    24px;
+      --radius-md:    16px;
+      --radius-sm:    10px;
+    }
+
+    /* ─── BASE RESET ────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; background: var(--bg); }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+    
+    /* Background grid and ambient glowing blobs */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .ambient-glows {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(160px);
+      opacity: 0.12;
+      mix-blend-mode: screen;
+    }
+    .glow-orb-1 { top: 5%; left: 15%; width: 450px; height: 450px; background: var(--blue); }
+    .glow-orb-2 { top: 30%; right: 10%; width: 500px; height: 500px; background: var(--green); }
+    .glow-orb-3 { top: 60%; left: 10%; width: 450px; height: 450px; background: var(--yellow); }
+    .glow-orb-4 { top: 85%; right: 15%; width: 550px; height: 550px; background: var(--blue); }
+
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; height: auto; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+    /* ─── LAYOUT WRAPPER ────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ─── SCROLL REVEAL ──────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────────── */
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 16px;
+    }
+    .label.yellow { color: var(--yellow); }
+    .label.green { color: var(--green); }
+
+    h2.section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--green) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gradient-text-yellow {
+      background: linear-gradient(135deg, var(--yellow) 0%, #ff8800 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.sub {
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      background: rgba(5, 8, 10, 0.75);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.3s ease;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.3px;
+      cursor: pointer;
+    }
+    .nav-logo img {
+      height: 36px;
+      width: auto;
+      transition: filter 0.3s ease, transform 0.3s ease;
+    }
+    .nav-logo:hover img {
+      filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.5));
+      transform: scale(1.05);
+    }
+    .nav-logo-text span { color: var(--blue); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #25D366, #1ca04d);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+    }
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
+    }
+    .nav-cta svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .hero {
+      padding: 160px 0 100px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 230, 0, 0.08);
+      border: 1px solid rgba(255, 230, 0, 0.2);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--yellow);
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 0 0 10px var(--yellow);
+      animation: pulseGlowYellow 2s infinite ease-in-out;
+    }
+    @keyframes pulseGlowYellow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.8rem, 6.5vw, 4.8rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      max-width: 900px;
+      margin: 0 auto 24px auto;
+    }
+    .hero-sub {
+      font-size: clamp(1.1rem, 2vw, 1.25rem);
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+      line-height: 1.65;
+    }
+    
+    /* Hero Buttons */
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--blue) 0%, #0088ff 100%);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 16px 36px;
+      border-radius: var(--radius-md);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 20px rgba(0, 210, 255, 0.25);
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 210, 255, 0.45);
+    }
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 16px 36px;
+      border-radius: var(--radius-md);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-hero-secondary:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-hover);
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+    .meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .meta-item svg {
+      width: 16px; height: 16px;
+      color: var(--green);
+    }
+    .meta-sep {
+      color: rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-visual {
+      margin-top: 64px;
+      position: relative;
+    }
+    
+    /* Browser & Application Mockup */
+    .window-mockup {
+      background: #090d10;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: 
+        0 40px 100px rgba(0, 0, 0, 0.8),
+        0 0 80px rgba(0, 210, 255, 0.08);
+      overflow: hidden;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+    }
+    .window-mockup:hover {
+      transform: translateY(-4px) scale(1.002);
+      box-shadow: 
+        0 50px 120px rgba(0, 0, 0, 0.9),
+        0 0 100px rgba(0, 210, 255, 0.12);
+    }
+    .window-header {
+      height: 44px;
+      background: #06090c;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      position: relative;
+    }
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .window-dots span {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+    .window-address {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 11.5px;
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 5px 28px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      letter-spacing: 0.3px;
+    }
+    .window-body img {
+      width: 100%;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    /* ─── PROBLEMA ───────────────────────────────────────── */
+    .problem-section {
+      padding: 100px 0;
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: stretch;
+      margin-top: 56px;
+    }
+    .problem-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    .problem-card {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 79, 79, 0.1);
+      border-radius: var(--radius-md);
+      padding: 24px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      transition: all 0.3s ease;
+    }
+    .problem-card:hover {
+      border-color: rgba(255, 79, 79, 0.25);
+      background: rgba(255, 79, 79, 0.03);
+      transform: translateX(4px);
+    }
+    .problem-card-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .problem-card:nth-child(1) .problem-card-icon { background: rgba(255, 79, 79, 0.08); color: var(--red); }
+    .problem-card:nth-child(2) .problem-card-icon { background: rgba(255, 230, 0, 0.08); color: var(--yellow); }
+    .problem-card:nth-child(3) .problem-card-icon { background: rgba(0, 210, 255, 0.08); color: var(--blue); }
+    
+    .problem-card h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .problem-card p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Stats card with red glow */
+    .problem-stat-block {
+      background: linear-gradient(180deg, rgba(255, 79, 79, 0.03) 0%, rgba(9, 13, 16, 0.6) 100%);
+      border: 1px solid rgba(255, 79, 79, 0.15);
+      border-radius: var(--radius-lg);
+      padding: 48px 36px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 79, 79, 0.02);
+    }
+    .problem-stat-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--yellow), var(--red));
+    }
+    .stat-big {
+      font-family: 'Outfit', sans-serif;
+      font-size: 5rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--yellow) 0%, var(--red) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 300px;
+      margin: 0 auto 24px auto;
+    }
+    .stat-source {
+      font-size: 11px;
+      color: rgba(142, 163, 184, 0.5);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .problem-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      margin: 24px 0;
+    }
+    .stat-secondary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .stat-sec-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--yellow);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-sec-txt {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ─── MODULES (1 & 2) ────────────────────────────────── */
+    .module-section {
+      padding: 100px 0;
+    }
+    .module-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .module-inner.reverse {
+      grid-template-columns: 1.1fr 1fr;
+    }
+    .module-content {
+      position: relative;
+      z-index: 2;
+    }
+    .module-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+    }
+    .module-tag.blue { background: rgba(0, 210, 255, 0.06); color: var(--blue); border-color: rgba(0, 210, 255, 0.15); }
+    .module-tag.green { background: rgba(56, 239, 125, 0.06); color: var(--green); border-color: rgba(56, 239, 125, 0.15); }
+
+    .module-content h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 3.5vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+    .module-content > p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      margin-bottom: 32px;
+    }
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 1rem;
+      color: #e2e8f0;
+    }
+    .feature-list li svg {
+      width: 20px; height: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .feature-list li svg.text-blue { color: var(--blue); }
+    .feature-list li svg.text-green { color: var(--green); }
+
+    .module-visual {
+      position: relative;
+      z-index: 2;
+    }
+    .module-visual .window-mockup {
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.7),
+        0 0 60px rgba(0, 210, 255, 0.02);
+    }
+    .module-visual.green-glow .window-mockup {
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.7),
+        0 0 60px rgba(56, 239, 125, 0.02);
+    }
+
+    /* ─── PROOF ──────────────────────────────────────────── */
+    .proof-section {
+      padding: 100px 0;
+    }
+    .proof-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    
+    /* Device Mockup iPhone */
+    .phone-mockup {
+      width: 250px;
+      margin: 0 auto;
+      background: #000;
+      border: 11px solid #1e2329;
+      border-radius: 40px;
+      box-shadow: 
+        0 30px 60px -15px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(0, 210, 255, 0.1);
+      position: relative;
+      aspect-ratio: 9 / 19.5;
+      overflow: hidden;
+      animation: float 4s ease-in-out infinite;
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #05080a;
+    }
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .phone-island {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 76px; height: 18px;
+      background: #000;
+      border-radius: 12px;
+      z-index: 10;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .proof-phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .proof-phone-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .proof-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(56, 239, 125, 0.08);
+      border: 1px solid rgba(56, 239, 125, 0.2);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+    }
+    .proof-badge svg {
+      width: 14px; height: 14px;
+    }
+
+    /* ─── AUDIÊNCIAS ─────────────────────────────────────── */
+    .audience-section {
+      padding: 100px 0;
+    }
+    .audience-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .audience-card {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .audience-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      opacity: 0.7;
+    }
+    .audience-card.blue-card::before { background: linear-gradient(90deg, var(--blue), transparent); }
+    .audience-card.green-card::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .audience-card.yellow-card::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+
+    .audience-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .audience-card.blue-card:hover { border-color: rgba(0, 210, 255, 0.25); }
+    .audience-card.green-card:hover { border-color: rgba(56, 239, 125, 0.25); }
+    .audience-card.yellow-card:hover { border-color: rgba(255, 230, 0, 0.25); }
+
+    .audience-icon {
+      width: 50px; height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .blue-card .audience-icon { background: rgba(0, 210, 255, 0.08); color: var(--blue); }
+    .green-card .audience-icon { background: rgba(56, 239, 125, 0.08); color: var(--green); }
+    .yellow-card .audience-icon { background: rgba(255, 230, 0, 0.08); color: var(--yellow); }
+
+    .audience-icon svg { width: 26px; height: 26px; }
+
+    .audience-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .audience-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+    .audience-benefit {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      margin-top: auto;
+    }
+    .blue-card .audience-benefit { background: rgba(0, 210, 255, 0.06); color: var(--blue); border-color: rgba(0, 210, 255, 0.15); }
+    .green-card .audience-benefit { background: rgba(56, 239, 125, 0.06); color: var(--green); border-color: rgba(56, 239, 125, 0.15); }
+    .yellow-card .audience-benefit { background: rgba(255, 230, 0, 0.06); color: var(--yellow); border-color: rgba(255, 230, 0, 0.15); }
+
+    /* ─── PRICING ────────────────────────────────────────── */
+    .cta-section {
+      padding: 120px 0;
+      position: relative;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      align-items: stretch;
+      margin-top: 56px;
+      margin-bottom: 40px;
+    }
+    .pricing-card {
+      background: rgba(12, 17, 22, 0.65);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px 32px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(0, 210, 255, 0.25);
+      background: rgba(12, 17, 22, 0.85);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(0, 210, 255, 0.03);
+    }
+    
+    /* Highlight Recommended Card */
+    .pricing-card.recommended {
+      background: linear-gradient(180deg, rgba(56, 239, 125, 0.02) 0%, rgba(9, 13, 16, 0.85) 100%);
+      border: 1px solid rgba(56, 239, 125, 0.35);
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.65),
+        0 0 40px rgba(56, 239, 125, 0.04);
+    }
+    .pricing-card.recommended:hover {
+      border-color: var(--green);
+      box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.75),
+        0 0 60px rgba(56, 239, 125, 0.12);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 16px;
+      border-radius: 100px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+    .pricing-card.recommended .pricing-badge {
+      background: linear-gradient(135deg, var(--green) 0%, #1ba84f 100%);
+      color: #05080a;
+      box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);
+    }
+    .plan-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 12px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    
+    /* Fixed height pricing elements for absolute vertical alignment alignment */
+    .plan-price-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 108px;
+      margin: 20px 0 28px 0;
+      position: relative;
+    }
+    .plan-price-wrapper {
+      position: relative;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      height: 48px;
+    }
+    .plan-price-original {
+      font-size: 13.5px;
+      text-decoration: line-through;
+      color: var(--muted);
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 500;
+    }
+    .plan-price-currency {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+    .plan-price-value {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1;
+      font-family: 'Outfit', sans-serif;
+    }
+    .plan-price-period {
+      font-size: 13.5px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .plan-price-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.4;
+      max-width: 220px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .plan-price-subtitle.highlight {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .plan-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 32px;
+      flex-grow: 1;
+    }
+    .plan-features-list li {
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+    .plan-features-list li svg.check-plan {
+      width: 18px; height: 18px;
+      color: var(--green);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .plan-features-list li.restricted svg.check-plan {
+      color: var(--red);
+    }
+    .plan-features-list li.restricted span {
+      color: rgba(255, 79, 79, 0.7);
+    }
+
+    /* Pricing buttons */
+    .plan-btn {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      width: 100%;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .plan-btn:hover {
+      background: white;
+      color: var(--bg);
+      border-color: white;
+      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+    }
+    .pricing-card.recommended .plan-btn {
+      background: linear-gradient(135deg, var(--green) 0%, #1ba84f 100%);
+      border: none;
+      color: #05080a;
+      box-shadow: 0 6px 20px rgba(56, 239, 125, 0.25);
+      font-weight: 800;
+    }
+    .pricing-card.recommended .plan-btn:hover {
+      box-shadow: 0 10px 30px rgba(56, 239, 125, 0.45);
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #5eff95 0%, var(--green) 100%);
+    }
+
+    .cta-perks {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+    .cta-perk {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .cta-perk svg {
+      width: 16px; height: 16px;
+      color: var(--green);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-brand img { height: 28px; width: auto; }
+    .footer-brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .footer-brand-name span { color: var(--blue); }
+    .footer-copy {
+      font-size: 13.5px;
+      color: rgba(142, 163, 184, 0.6);
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      font-size: 13.5px;
+      color: var(--muted);
+      transition: color 0.2s ease;
+      font-weight: 500;
+    }
+    .footer-links a:hover { color: var(--blue); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+    }
+    @media (max-width: 900px) {
+      .problem-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .problem-stat-block {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
+      .module-inner, .module-inner.reverse {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .proof-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .audience-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+    }
+    @media (max-width: 640px) {
+      .hero h1 { letter-spacing: -1px; }
+      nav { padding: 12px 20px; }
+      .nav-logo-text { display: none; }
+      .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 40px auto 0 auto;
+      }
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto 24px auto;
+      }
+      .btn-hero-primary, .btn-hero-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Glowing background elements -->
+  <div class="ambient-glows">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+    <div class="glow-orb glow-orb-4"></div>
+  </div>
+
+  <!-- ══ NAV ═════════════════════════════════════════════════ -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="./logo.png" alt="Spray Precision PRO Logo">
+      <div class="nav-logo-text">Spray Precision <span>PRO</span></div>
+    </a>
+    <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO."
+       target="_blank" class="nav-cta" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.557-5.338 11.897-12.001 11.897-2.006-.002-3.978-.5-5.753-1.455L0 24zm6.305-1.655c1.72.934 3.508 1.428 5.69 1.43 5.485 0 9.948-4.466 9.952-9.953.002-2.658-1.03-5.155-2.906-7.03C17.222 4.917 14.73 3.882 12.07 3.88 6.586 3.88 2.126 8.342 2.122 13.829c-.002 1.996.52 3.94 1.512 5.666l-.991 3.616 3.714-.974zm12.302-7.234c-.266-.134-1.579-.78-1.821-.867-.243-.087-.42-.13-.596.135-.176.265-.682.866-.837 1.04-.154.175-.308.196-.574.062-.266-.134-1.124-.414-2.141-1.323-.791-.707-1.326-1.58-1.482-1.847-.155-.266-.017-.41.117-.543.12-.12.266-.31.399-.464.133-.155.177-.265.265-.443.089-.177.044-.332-.022-.464-.067-.133-.596-1.436-.817-1.967-.215-.518-.452-.447-.621-.456-.16-.008-.344-.01-.527-.01-.183 0-.482.068-.735.343-.253.275-.966.945-.966 2.304s.988 2.674 1.12 2.851c.133.177 1.944 2.97 4.71 4.164.658.284 1.172.453 1.571.58.66.21 1.26.162 1.733.092.528-.078 1.579-.646 1.801-1.272.22-.625.22-1.16.154-1.27-.066-.112-.243-.178-.51-.311z"/>
+      </svg>
+      Quero Acesso
+    </a>
+  </nav>
+
+  <!-- ══ HERO ═════════════════════════════════════════════════ -->
+  <section class="hero container">
+    <div class="hero-eyebrow">
+      <div class="dot"></div>
+      Plataforma SaaS para calibração de pulverização
+    </div>
+
+    <h1>
+      Bico inadequado ou desgastado<br>
+      está jogando seu defensivo<br>
+      <span class="gradient-text">direto no ralo.</span>
+    </h1>
+
+    <p class="hero-sub">
+      O Spray Precision PRO elimina o achismo na escolha de bicos e transforma a aferição de vazão em um laudo técnico completo e pronto em segundos.
+    </p>
+
+    <div class="hero-cta-wrap">
+      <div class="hero-buttons">
+        <a href="#planos" class="btn-hero-primary">
+          Ver Planos & Preços
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO."
+           target="_blank" class="btn-hero-secondary" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Iniciar 5 Dias Grátis
+        </a>
+      </div>
+      
+      <div class="hero-meta">
+        <div class="meta-item">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span>5 dias grátis</span>
+        </div>
+        <div class="meta-sep">·</div>
+        <div class="meta-item">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span>Funciona offline</span>
+        </div>
+        <div class="meta-sep">·</div>
+        <div class="meta-item">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span>Sem contrato ou fidelidade</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Screenshot as an elegant web application window mockup -->
+    <div class="hero-visual">
+      <div class="window-mockup">
+        <div class="window-header">
+          <div class="window-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="window-address">app.sprayprecision.pro</div>
+        </div>
+        <div class="window-body">
+          <img src="./imagem_1.jpeg" alt="Visão geral da plataforma Spray Precision PRO – Módulos de Seleção e Vazão de Bicos">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PROBLEMA ══════════════════════════════════════════════ -->
+  <section class="problem-section container">
+    <div class="reveal">
+      <div class="label yellow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/>
+        </svg>
+        O Problema
+      </div>
+      <h2 class="section-title">
+        O desperdício invisível que<br>
+        <span class="gradient-text-yellow">consome sua margem de lucro.</span>
+      </h2>
+    </div>
+
+    <div class="problem-grid">
+      <div class="problem-cards reveal reveal-delay-1">
+        <!-- Problem 1 -->
+        <div class="problem-card">
+          <div class="problem-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-11-7-11S5 10.7 5 15a7 7 0 0 0 7 7z"/>
+              <path d="M12 11v4M12 18h.01"/>
+            </svg>
+          </div>
+          <div>
+            <h4>Bicos desgastados aplicam defensivo em excesso</h4>
+            <p>A norma ISO define tolerância máxima de ±10% de desvio. Na prática, bicos com 2 anos de uso chegam a 20–35% de desvio — sem que você note qualquer alteração visual.</p>
+          </div>
+        </div>
+        <!-- Problem 2 -->
+        <div class="problem-card">
+          <div class="problem-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="22" y1="12" x2="2" y2="12"/>
+              <line x1="12" y1="2" x2="12" y2="22"/>
+              <circle cx="12" cy="12" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h4>Decisão de bico feita no "olhômetro"</h4>
+            <p>Sem a ferramenta adequada, o bico é escolhido apenas pelo catálogo. Velocidade de campo, vazão ideal em L/ha e janelas físicas de pressão raramente são calculadas em conjunto.</p>
+          </div>
+        </div>
+        <!-- Problem 3 -->
+        <div class="problem-card">
+          <div class="problem-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <div>
+            <h4>Falta de clareza comercial nas revendas</h4>
+            <p>Sem um relatório objetivo de cores e números, a substituição de bicos vira opinião. A equipe comercial perde a venda por falta de um laudo técnico e irrefutável.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Block -->
+      <div class="problem-stat-block reveal reveal-delay-2">
+        <div>
+          <div class="stat-big">+15%</div>
+          <p class="stat-label">
+            de desperdício de defensivos agrícolas quando as pontas operam desgastadas e fora da tolerância exigida pela norma ISO 10625.
+          </p>
+          <p class="stat-source">* Norma ISO 10625: Tolerância de desvio individual limitada a ±10%</p>
+        </div>
+        
+        <div class="problem-divider"></div>
+        
+        <div class="stat-secondary">
+          <div>
+            <div class="stat-sec-val">30s</div>
+            <div class="stat-sec-txt">Para gerar e enviar o laudo técnico por WhatsApp</div>
+          </div>
+          <div>
+            <div class="stat-sec-val">100%</div>
+            <div class="stat-sec-txt">Offline: opere no campo mesmo sem qualquer sinal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MÓDULO 1 ═══════════════════════════════════════════════ -->
+  <section class="module-section container">
+    <div class="module-inner reveal">
+      <div class="module-content">
+        <div class="module-tag blue">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Módulo 1 · Seletor Inteligente
+        </div>
+        <h3>Escolha o bico certo.<br><span class="gradient-text">Com dados, não com palpites.</span></h3>
+        <p>Insira a velocidade pretendida, a taxa de aplicação esperada (L/ha) e a densidade da calda. O sistema analisa a tabela ISO e indica com precisão a ponta de pulverização ideal, garantindo que o defensivo trabalhe dentro da faixa de pressão ideal.</p>
+        
+        <ul class="feature-list">
+          <li>
+            <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Recomendação automatizada fundamentada na norma técnica ISO 10625
+          </li>
+          <li>
+            <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Simulador de Pressão Ultra: manômetro neon que exibe a janela de estabilidade do bico
+          </li>
+          <li>
+            <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Instalação PWA: salve o app no seu celular e execute 100% offline
+          </li>
+          <li>
+            <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Laudos instantâneos em PDF formatados para impressão ou envio por WhatsApp
+          </li>
+        </ul>
+      </div>
+
+      <div class="module-visual">
+        <div class="window-mockup">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <div class="window-address">app.sprayprecision.pro/seletor</div>
+          </div>
+          <div class="window-body">
+            <img src="./imagem_2.jpeg" alt="Módulo 1 – Seletor Inteligente de Bicos com Simulador Ultra e manômetro digital">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MÓDULO 2 ═══════════════════════════════════════════════ -->
+  <section class="module-section container">
+    <div class="module-inner reverse reveal">
+      <div class="module-visual green-glow">
+        <div class="window-mockup">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <div class="window-address">app.sprayprecision.pro/vazao</div>
+          </div>
+          <div class="window-body">
+            <img src="./imagem_3.jpeg" alt="Módulo 2 – Diagnóstico de Vazão com gráfico de CV% e mapa colorido da barra">
+          </div>
+        </div>
+      </div>
+
+      <div class="module-content">
+        <div class="module-tag green">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Módulo 2 · Diagnóstico de Vazão
+        </div>
+        <h3>Aferição bico a bico.<br><span style="background: linear-gradient(135deg, var(--green) 0%, #a8ffcc 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Laudo estruturado na hora.</span></h3>
+        <p>Cronometre a coleta de água de cada bico na proveta. O app calcula automaticamente o desvio percentual individual e destaca o status de cada ponta com cores — verde (ok), amarelo (atenção) e vermelho (substituir), gerando o laudo com o mapa colorido da barra.</p>
+        
+        <ul class="feature-list">
+          <li>
+            <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Cálculo instantâneo do CV% (Coeficiente de Variação) global da barra de aplicação
+          </li>
+          <li>
+            <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Mapa visual de posições: identifique rapidamente os bicos com desvio crítico
+          </li>
+          <li>
+            <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Laudo técnico White-label personalizado com a logomarca da sua empresa
+          </li>
+          <li>
+            <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Botão de fechamento rápido: envie o relatório final diretamente no celular do produtor
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PROVA VISUAL ═══════════════════════════════════════════ -->
+  <section class="proof-section">
+    <div class="container">
+      <div class="proof-header reveal">
+        <div class="label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Prova Real
+        </div>
+        <h2 class="section-title" style="text-align:center;">
+          O aplicativo rodando<br>
+          <span class="gradient-text">na realidade do campo.</span>
+        </h2>
+        <p class="sub" style="margin: 16px auto 0; text-align:center;">
+          Sem simulações fictícias. Esta é a interface real do Spray Precision PRO calculando a calibração física de bicos ISO.
+        </p>
+      </div>
+
+      <div class="proof-grid reveal reveal-delay-1">
+        <!-- Desktop Window Mockup -->
+        <div class="window-mockup">
+          <div class="window-header">
+            <div class="window-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <div class="window-address">app.sprayprecision.pro/dashboard</div>
+          </div>
+          <div class="window-body">
+            <img src="./imagem_1.jpeg" alt="Visão geral dos dois módulos do Spray Precision PRO lado a lado">
+          </div>
+        </div>
+
+        <!-- Phone Mockup -->
+        <div class="proof-phone-wrap">
+          <div class="proof-phone-label">Interface Mobile</div>
+          
+          <div class="phone-mockup">
+            <div class="phone-island"></div>
+            <div class="phone-screen">
+              <img src="./exemplo_resultado_app.jpeg" alt="Interface Mobile do Spray Precision PRO">
+            </div>
+          </div>
+
+          <div class="proof-badge">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+            </svg>
+            Screenshot em produção real
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PARA QUEM É ════════════════════════════════════════════ -->
+  <section class="audience-section container">
+    <div class="audience-header reveal">
+      <div class="label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Público Alvo
+      </div>
+      <h2 class="section-title" style="text-align:center;">
+        Desenvolvido sob medida para quem<br>
+        <span class="gradient-text">precisa de respaldo técnico.</span>
+      </h2>
+    </div>
+
+    <div class="audience-grid">
+      <!-- Card 1 -->
+      <div class="audience-card blue-card reveal reveal-delay-1">
+        <div class="audience-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>Agrônomos e Técnicos</h3>
+        <p>
+          Otimize suas visitas técnicas e elimine planilhas complexas. Calcule a estabilidade de pulverização e envie o laudo estruturado de forma prática.
+        </p>
+        <div class="audience-benefit">🎯 Respaldo técnico científico</div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="audience-card green-card reveal reveal-delay-2">
+        <div class="audience-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+        </div>
+        <h3>Revendas Agrícolas</h3>
+        <p>
+          Utilize o laudo de cores como uma eficiente ferramenta comercial. Demonstre ao produtor os bicos ineficazes e realize vendas com prova técnica.
+        </p>
+        <div class="audience-benefit">🤝 Fechamentos apoiados em dados</div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="audience-card yellow-card reveal reveal-delay-3">
+        <div class="audience-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3>Cooperativas e Equipes</h3>
+        <p>
+          Padronize as calibrações efetuadas pela equipe técnica. Imprima a identidade e a logomarca da sua cooperativa em todos os laudos expedidos.
+        </p>
+        <div class="audience-benefit">🏢 Relatórios White-label inclusos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CTA PRICING SECTION ════════════════════════════════════════ -->
+  <section class="cta-section" id="planos">
+    <div class="container reveal">
+      <h2 style="text-align: center;" class="section-title">
+        Planos e Preços<br>
+        <span class="gradient-text">sob medida para sua operação.</span>
+      </h2>
+      <p class="sub" style="text-align: center; margin-bottom: 56px;">
+        Seja você um consultor independente ou uma grande corporação agrícola, temos o plano ideal para sua produtividade.
+      </p>
+
+      <div class="pricing-grid">
+        <!-- Card 1: Teste 5 Dias Grátis -->
+        <div class="pricing-card">
+          <div class="pricing-badge" style="background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.25); color: var(--blue);">
+            Sem Risco
+          </div>
+          <h3 class="plan-title">Avaliação</h3>
+          <div class="plan-price-box">
+            <div class="plan-price-wrapper">
+              <span class="plan-price-value">Grátis</span>
+              <span class="plan-price-period">/5 dias</span>
+            </div>
+            <p class="plan-price-subtitle">Experimente os recursos e avalie no campo.</p>
+          </div>
+          <ul class="plan-features-list">
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Acesso a ambos os módulos</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Calibrações ilimitadas no período</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Manômetro digital interativo</span>
+            </li>
+            <li class="restricted">
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Geração de laudos PDF bloqueada</span>
+            </li>
+          </ul>
+          <a href="./index.html?trial=true" class="plan-btn">
+            Começar Teste
+          </a>
+        </div>
+
+        <!-- Card 2: Plano Mensal -->
+        <div class="pricing-card">
+          <h3 class="plan-title">Mensal</h3>
+          <div class="plan-price-box">
+            <div class="plan-price-wrapper">
+              <span class="plan-price-currency">R$</span>
+              <span class="plan-price-value">69</span>
+              <span class="plan-price-period">/mês</span>
+            </div>
+            <p class="plan-price-subtitle">Assinatura recorrente, cancele quando desejar.</p>
+          </div>
+          <ul class="plan-features-list">
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Acesso completo aos 2 módulos</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Laudo técnico ilimitado com sua logo</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Execução 100% offline (App PWA)</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Suporte técnico via WhatsApp</span>
+            </li>
+          </ul>
+          <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20assinar%20o%20plano%20MENSAL%20do%20Spray%20Precision%20por%20R$%2069/mês." target="_blank" class="plan-btn" rel="noopener">
+            Assinar Mensal
+          </a>
+        </div>
+
+        <!-- Card 3: Plano Anual (Destaque) -->
+        <div class="pricing-card recommended">
+          <div class="pricing-badge">★ Economize 30%</div>
+          <h3 class="plan-title">Anual</h3>
+          <div class="plan-price-box">
+            <div class="plan-price-wrapper">
+              <span class="plan-price-original">R$ 828</span>
+              <span class="plan-price-currency">R$</span>
+              <span class="plan-price-value">574</span>
+              <span class="plan-price-period">/ano</span>
+            </div>
+            <p class="plan-price-subtitle highlight">Equivale a R$ 47,83/mês. 4 meses gratuitos!</p>
+          </div>
+          <ul class="plan-features-list">
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Acesso completo aos 2 módulos</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Laudo técnico ilimitado com sua logo</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Execução 100% offline (App PWA)</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Suporte prioritário via WhatsApp</span>
+            </li>
+          </ul>
+          <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20assinar%20o%20plano%20ANUAL%20do%20Spray%20Precision%20por%20R$%20574/ano." target="_blank" class="plan-btn" rel="noopener">
+            Assinar Anual
+          </a>
+        </div>
+
+        <!-- Card 4: Plano Empresas -->
+        <div class="pricing-card">
+          <h3 class="plan-title">Corporativo</h3>
+          <div class="plan-price-box">
+            <div class="plan-price-wrapper">
+              <span class="plan-price-value" style="font-size: 26px; letter-spacing: -0.5px;">Customizado</span>
+            </div>
+            <p class="plan-price-subtitle">Solução sob medida para equipes comerciais e revendas.</p>
+          </div>
+          <ul class="plan-features-list">
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Painel administrativo corporativo</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>White-label: Marca própria da empresa</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Gestão centralizada de consultores</span>
+            </li>
+            <li>
+              <svg class="check-plan" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <span>Treinamento e suporte 24/7 dedicados</span>
+            </li>
+          </ul>
+          <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20um%20plano%20corporativo%20personalizado%20para%20minha%20empresa." target="_blank" class="plan-btn" style="background: linear-gradient(135deg, var(--blue) 0%, #0066cc 100%); border: none; color: #ffffff;" rel="noopener">
+            Fale Conosco
+          </a>
+        </div>
+      </div>
+
+      <div class="cta-perks">
+        <div class="cta-perk">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Dois módulos completos
+        </div>
+        <div class="cta-perk">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Suporte via WhatsApp
+        </div>
+        <div class="cta-perk">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Funciona 100% sem internet
+        </div>
+        <div class="cta-perk">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Marca própria disponível
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ═══════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="./logo.png" alt="Spray Precision PRO Logo">
+        <div class="footer-brand-name">Spray Precision <span>PRO</span></div>
+      </div>
+      <div class="footer-copy">
+        © 2026 Spray Precision PRO · Todos os direitos reservados.
+      </div>
+      <div class="footer-links">
+        <a href="https://wa.me/5565999106415" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Solicitar Acesso</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══ SCROLL REVEAL SCRIPT ════════════════════════════════════ -->
+  <script>
+function _0x4e72(_0x246b48,_0x2be0fc){_0x246b48=_0x246b48-0x14f;var _0x413463=_0x4134();var _0x4e728f=_0x413463[_0x246b48];if(_0x4e72['\x47\x50\x6c\x46\x75\x6c']===undefined){var _0x573997=function(_0x4899bf){var _0xe3925e='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x194078='',_0x244bb1='';for(var _0x456333=0x0,_0x548b1e,_0x384bf5,_0x256dbf=0x0;_0x384bf5=_0x4899bf['\x63\x68\x61\x72\x41\x74'](_0x256dbf++);~_0x384bf5&&(_0x548b1e=_0x456333%0x4?_0x548b1e*0x40+_0x384bf5:_0x384bf5,_0x456333++%0x4)?_0x194078+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x548b1e>>(-0x2*_0x456333&0x6)):0x0){_0x384bf5=_0xe3925e['\x69\x6e\x64\x65\x78\x4f\x66'](_0x384bf5);}for(var _0x166bf4=0x0,_0x152aff=_0x194078['\x6c\x65\x6e\x67\x74\x68'];_0x166bf4<_0x152aff;_0x166bf4++){_0x244bb1+='\x25'+('\x30\x30'+_0x194078['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x166bf4)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x244bb1);};_0x4e72['\x48\x66\x4a\x73\x46\x6d']=_0x573997,_0x4e72['\x43\x64\x4a\x72\x51\x49']={},_0x4e72['\x47\x50\x6c\x46\x75\x6c']=!![];}var _0x5ef55d=_0x413463[0x0],_0x4fc614=_0x246b48+_0x5ef55d,_0x53deb0=_0x4e72['\x43\x64\x4a\x72\x51\x49'][_0x4fc614];return!_0x53deb0?(_0x4e728f=_0x4e72['\x48\x66\x4a\x73\x46\x6d'](_0x4e728f),_0x4e72['\x43\x64\x4a\x72\x51\x49'][_0x4fc614]=_0x4e728f):_0x4e728f=_0x53deb0,_0x4e728f;}function _0x4134(){var _0x4265dc=['\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6d\x4a\x69\x31\x6e\x74\x47\x5a\x6e\x78\x48\x66\x76\x4d\x58\x72\x73\x71','\x6d\x74\x47\x33\x6e\x5a\x6d\x58\x44\x33\x6a\x65\x44\x66\x48\x59','\x6d\x74\x71\x31\x6e\x5a\x6d\x32\x6e\x68\x6a\x6d\x44\x66\x50\x66\x41\x71','\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b','\x6e\x64\x47\x32\x6d\x5a\x69\x34\x6d\x67\x6e\x73\x7a\x65\x44\x30\x42\x47','\x6d\x5a\x71\x32\x6e\x74\x79\x31\x42\x33\x62\x68\x72\x66\x44\x4d','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61','\x6d\x74\x72\x32\x75\x65\x7a\x33\x41\x30\x47','\x79\x77\x72\x4b','\x6d\x5a\x61\x57\x6e\x64\x43\x33\x6d\x75\x54\x4b\x75\x4e\x6a\x30\x72\x61','\x44\x67\x66\x59\x7a\x32\x76\x30','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x6e\x4d\x6e\x75\x79\x32\x48\x67\x76\x61','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47','\x6e\x5a\x62\x6f\x72\x65\x44\x6d\x41\x4b\x4b','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6f\x74\x6d\x34\x6f\x74\x6d\x30\x72\x65\x66\x6c\x79\x78\x62\x75'];_0x4134=function(){return _0x4265dc;};return _0x4134();}(function(_0x29e545,_0x56ac70){var _0x5d4bdd=_0x4e72,_0x2e3a36=_0x29e545();while(!![]){try{var _0x540a0c=-parseInt(_0x5d4bdd(0x15a))/0x1+-parseInt(_0x5d4bdd(0x15c))/0x2*(-parseInt(_0x5d4bdd(0x156))/0x3)+parseInt(_0x5d4bdd(0x157))/0x4+-parseInt(_0x5d4bdd(0x155))/0x5*(parseInt(_0x5d4bdd(0x14f))/0x6)+parseInt(_0x5d4bdd(0x15e))/0x7+parseInt(_0x5d4bdd(0x159))/0x8+parseInt(_0x5d4bdd(0x153))/0x9*(-parseInt(_0x5d4bdd(0x151))/0xa);if(_0x540a0c===_0x56ac70)break;else _0x2e3a36['push'](_0x2e3a36['shift']());}catch(_0x39aab9){_0x2e3a36['push'](_0x2e3a36['shift']());}}}(_0x4134,0x4c0e9),(function(){var _0x462a13=_0x4e72,_0x244bb1={};_0x244bb1[_0x462a13(0x158)]=0.12,_0x244bb1[_0x462a13(0x150)]='\x30\x70\x78\x20\x30\x70\x78\x20\x2d\x34\x30\x70\x78\x20\x30\x70\x78';var _0x456333=new IntersectionObserver(function(_0x548b1e){_0x548b1e['\x66\x6f\x72\x45\x61\x63\x68'](function(_0x384bf5){var _0x4803d2=_0x4e72;_0x384bf5['\x69\x73\x49\x6e\x74\x65\x72\x73\x65\x63\x74\x69\x6e\x67']&&_0x384bf5[_0x4803d2(0x15f)]['\x63\x6c\x61\x73\x73\x4c\x69\x73\x74'][_0x4803d2(0x15d)]('\x76\x69\x73\x69\x62\x6c\x65');});},_0x244bb1);document[_0x462a13(0x154)](_0x462a13(0x15b))[_0x462a13(0x152)](function(_0x256dbf){var _0x35cfea=_0x462a13;_0x456333[_0x35cfea(0x160)](_0x256dbf);});}()));
+</script>
+
+</body>
+</html>

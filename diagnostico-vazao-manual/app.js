@@ -386,6 +386,11 @@ async function verifySessionIntegrity(userId) {
         await forceUserLogout();
         return;
       }
+      if (metadata.has_diagnostico === false) {
+        alert(t("⚠️ Seu acesso ao módulo Diagnóstico de Vazão não está ativo. Redirecionando para o Portal..."));
+        window.location.href = '../';
+        return;
+      }
       window.isTrialActive = (metadata.is_trial === true);
       if (metadata.subscription_end) {
         const end = new Date(metadata.subscription_end);
@@ -472,6 +477,11 @@ async function handleUserLoggedIn(user) {
   if (metadata.is_blocked === true) {
     alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
     await forceUserLogout();
+    return;
+  }
+  if (metadata.has_diagnostico === false) {
+    alert(t("⚠️ Seu acesso ao módulo Diagnóstico de Vazão não está ativo. Redirecionando para o Portal..."));
+    window.location.href = '../';
     return;
   }
   window.isTrialActive = (metadata.is_trial === true);
@@ -597,6 +607,7 @@ async function forceUserLogout() {
   resetPartnerBranding();
   if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
   localStorage.removeItem('spray_active_session_token');
+  localStorage.removeItem('spray_offline_authorized');
   
   const supabase = window.supabaseClient;
   try {
@@ -623,6 +634,7 @@ async function handleUserLogout() {
   resetPartnerBranding();
   if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
   localStorage.removeItem('spray_active_session_token');
+  localStorage.removeItem('spray_offline_authorized');
   
   const supabase = window.supabaseClient;
   try {

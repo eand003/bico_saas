@@ -5857,12 +5857,35 @@
       }
     }
 
+    function handleOfflineBypass() {
+      console.log("Enterprise: Iniciando em modo offline pré-autorizado");
+      window.isOfflineBypass = true;
+      window.currentUserEmail = 'offline@local';
+      migrateCrmStorage('offline@local');
+      
+      const loginScreen = document.getElementById('loginScreen');
+      if (loginScreen) loginScreen.style.display = 'none';
+      
+      const mainApp = document.getElementById('mainApp');
+      if (mainApp) mainApp.style.display = 'flex';
+      
+      if (window._updateApp) {
+        window._updateApp();
+      }
+    }
+
     function initAuth() {
       try {
         clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const mainApp = document.getElementById('mainApp');
         if (mainApp) mainApp.style.display = 'none';
+
+        // Check offline pre-authorization first
+        if (localStorage.getItem('spray_offline_authorized') === 'true') {
+          handleOfflineBypass();
+          return;
+        }
 
         clienteSupabase.auth.getSession().then(({ data: { session } }) => {
           if (session) showApp(); else showLogin();
@@ -6048,6 +6071,11 @@
             await logout();
             return;
           }
+          if (metadata.has_seletor === false) {
+            alert(t("⚠️ Seu acesso ao módulo Seletor de Bicos não está ativo. Redirecionando para o Portal..."));
+            window.location.href = '../';
+            return;
+          }
           if (metadata.subscription_end) {
             const end = new Date(metadata.subscription_end);
             const today = new Date();
@@ -6114,7 +6142,12 @@
     async function logout() {
       if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
       localStorage.removeItem('spray_active_session_token');
-      await clienteSupabase.auth.signOut();
+      localStorage.removeItem('spray_offline_authorized');
+      if (clienteSupabase) {
+        try {
+          await clienteSupabase.auth.signOut();
+        } catch (e) {}
+      }
       document.getElementById('mainApp').style.display = 'none';
       window.location.href = '../';
     }
@@ -6131,6 +6164,11 @@
           if (metadata.is_blocked === true) {
             alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
             await logout();
+            return;
+          }
+          if (metadata.has_seletor === false) {
+            alert(t("⚠️ Seu acesso ao módulo Seletor de Bicos não está ativo. Redirecionando para o Portal..."));
+            window.location.href = '../';
             return;
           }
           window.isTrialActive = (metadata.is_trial === true);

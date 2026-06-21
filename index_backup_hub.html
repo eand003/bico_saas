@@ -1179,161 +1179,6 @@
       color: #4ade80;
       display: block;
     }
-
-    /* ─── UNIFIED LOGIN SCREEN ───────────────────────────── */
-    .login-container {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--card-radius);
-      padding: 40px;
-      width: 100%;
-      max-width: 420px;
-      margin: 0 auto 40px auto;
-      box-shadow: var(--shadow);
-      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    
-    .login-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 800;
-      text-align: center;
-      background: linear-gradient(135deg, #ffffff 40%, #a5f3fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .login-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.5;
-      margin-bottom: 8px;
-    }
-    
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .login-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      text-align: left;
-    }
-    
-    .login-input-group label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    
-    .login-input {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 14px;
-      color: #ffffff;
-      font-size: 0.95rem;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.3s;
-      outline: none;
-    }
-    
-    .login-input:focus {
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-    
-    .login-submit-btn {
-      background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%);
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      font-weight: 800;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 210, 255, 0.25);
-    }
-    
-    .login-submit-btn:hover {
-      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
-      transform: translateY(-1px);
-    }
-    
-    .login-offline-btn {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 14px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .login-offline-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--accent-green);
-    }
-
-    .login-links {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      margin-top: 10px;
-      gap: 12px;
-    }
-
-    .login-link {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s;
-    }
-
-    .login-link:hover {
-      color: #ffffff;
-    }
-    
-    .login-message {
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      line-height: 1.45;
-      display: none;
-      text-align: center;
-    }
-    .login-message.error {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.20);
-      color: #f87171;
-      display: block;
-    }
-    .login-message.success {
-      background: rgba(56, 239, 125, 0.1);
-      border: 1px solid rgba(56, 239, 125, 0.20);
-      color: #4ade80;
-      display: block;
-    }
   </style>
 </head>
 <body>
@@ -1358,98 +1203,59 @@
         <img src="./logo.png" alt="Spray Precision Logo" class="brand-logo">
       </div>
       <h1 class="brand-title">Spray Precision</h1>
-      <p class="brand-subtitle" id="brand-subtitle">Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.</p>
-      <button onclick="openPricingModal()" class="btn-pricing-highlight" id="btn-pricing-header">
+      <p class="brand-subtitle">Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.</p>
+      <button onclick="openPricingModal()" class="btn-pricing-highlight">
         <span>💳 Planos e Preços</span>
-      </button>
-      <button onclick="handleLogout()" id="btn-logout" class="btn-pricing-highlight" style="margin-left: 12px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; display: none;">
-        <span>🚪 Sair da Conta</span>
       </button>
     </header>
 
-    <!-- UNIFIED LOGIN VIEW -->
-    <div id="login-view" style="display: none; width: 100%;">
-      <div class="login-container">
-        <div class="login-title">Acesso ao Sistema</div>
-        <p class="login-subtitle">Entre com suas credenciais para acessar os módulos ou use o modo local offline.</p>
-        
-        <form id="loginForm" onsubmit="handleLogin(event)" class="login-form">
-          <div class="login-input-group">
-            <label for="loginEmail">E-mail</label>
-            <input type="email" id="loginEmail" class="login-input" placeholder="seuemail@provedor.com" required>
-          </div>
-          
-          <div class="login-input-group">
-            <label for="loginPassword">Senha</label>
-            <input type="password" id="loginPassword" class="login-input" placeholder="Sua senha de acesso" required>
-          </div>
-
-          <button type="submit" id="loginSubmitBtn" class="login-submit-btn">Entrar no Sistema</button>
-        </form>
-
-        <button onclick="handleOfflineLogin()" class="login-offline-btn">
-          📶 Usar em Modo Local (Offline)
-        </button>
-
-        <div id="loginMessage" class="login-message"></div>
-
-        <div class="login-links">
-          <a href="#" onclick="openTrialModal(); return false;" class="login-link">Criar conta de teste (5 dias)</a>
-          <a href="https://wa.me/5565999106415?text=Olá!%20Esqueci%20minha%20senha%20de%20acesso%20ao%20Spray%20Precision." target="_blank" class="login-link">Esqueceu a senha?</a>
-        </div>
-      </div>
+    <div class="quick-cta-banner" id="quick-cta" style="display: none;">
+      <span class="cta-pulse"></span>
+      <span>Novo por aqui? Conheça nossos <a href="#" onclick="openPricingModal(); return false;" style="color: var(--accent); font-weight: 700; text-decoration: underline; margin-right: 4px;">Planos e Preços</a> ou solicite seu acesso pelo WhatsApp! <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20acesso%20às%20plataformas%20do%20Spray%20Precision." target="_blank" class="cta-link" style="margin-left: 4px;">Solicitar Acesso ➔</a></span>
+      <button class="cta-close-btn" onclick="dismissCTA()" title="Fechar">&times;</button>
     </div>
 
-    <!-- HUB VIEW -->
-    <div id="hub-view" style="display: none; width: 100%;">
-      <div class="quick-cta-banner" id="quick-cta" style="display: none;">
-        <span class="cta-pulse"></span>
-        <span>Novo por aqui? Conheça nossos <a href="#" onclick="openPricingModal(); return false;" style="color: var(--accent); font-weight: 700; text-decoration: underline; margin-right: 4px;">Planos e Preços</a> ou solicite seu acesso pelo WhatsApp! <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20acesso%20às%20plataformas%20do%20Spray%20Precision." target="_blank" class="cta-link" style="margin-left: 4px;">Solicitar Acesso ➔</a></span>
-        <button class="cta-close-btn" onclick="dismissCTA()" title="Fechar">&times;</button>
-      </div>
-
-      <div class="hub-grid">
-        <!-- Card: Seletor de Bicos ISO -->
-        <a href="./enterprise/" class="hub-card card-selector" id="link-seletor">
-          <div class="card-header-info">
-            <span class="badge badge-blue">Simulador PRO</span>
-            <span class="card-icon">🎯</span>
-            <h2 class="card-title">Seletor de Bicos ISO</h2>
-            <p class="card-desc">Recomendação de pontas ideais, simulador de pressão por velocidade, fator de densidade de calda e relatórios em PDF.</p>
-          </div>
-          <div class="card-button btn-blue">
-            <span>Acessar Simulador</span>
-            <span class="arrow-icon">➡️</span>
-          </div>
-        </a>
-
-        <!-- Card: Diagnóstico de Vazão Manual -->
-        <a href="./diagnostico-vazao-manual/" class="hub-card card-calibration" id="link-diagnostico">
-          <div class="card-header-info">
-            <span class="badge badge-green">Aferição & Relatórios</span>
-            <span class="card-icon">🚜</span>
-            <h2 class="card-title">Diagnóstico de Vazão</h2>
-            <p class="card-desc">Leitura bico a bico, Coeficiente de Variação (CV%), indicação de desgaste crítico e emissão de laudo técnico em PDF.</p>
-          </div>
-          <div class="card-button btn-green">
-            <span>Acessar Diagnóstico</span>
-            <span class="arrow-icon">➡️</span>
-          </div>
-        </a>
-      </div>
-
-      <!-- Trial CTA Section below the cards -->
-      <div class="trial-cta-container">
-        <div class="trial-cta-text">
-          <h3>🧪 Teste Gratuito por 5 Dias</h3>
-          <p>Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.</p>
+    <div class="hub-grid">
+      <!-- Card: Seletor de Bicos ISO -->
+      <a href="./enterprise/" class="hub-card card-selector" id="link-seletor">
+        <div class="card-header-info">
+          <span class="badge badge-blue">Simulador PRO</span>
+          <span class="card-icon">🎯</span>
+          <h2 class="card-title">Seletor de Bicos ISO</h2>
+          <p class="card-desc">Recomendação de pontas ideais, simulador de pressão por velocidade, fator de densidade de calda e relatórios em PDF.</p>
         </div>
-        <button onclick="openTrialModal(); return false;" class="trial-cta-btn">Começar Teste Grátis ➔</button>
+        <div class="card-button btn-blue">
+          <span>Acessar Simulador</span>
+          <span class="arrow-icon">➡️</span>
+        </div>
+      </a>
+
+      <!-- Card: Diagnóstico de Vazão Manual -->
+      <a href="./diagnostico-vazao-manual/" class="hub-card card-calibration" id="link-diagnostico">
+        <div class="card-header-info">
+          <span class="badge badge-green">Aferição & Relatórios</span>
+          <span class="card-icon">🚜</span>
+          <h2 class="card-title">Diagnóstico de Vazão</h2>
+          <p class="card-desc">Leitura bico a bico, Coeficiente de Variação (CV%), indicação de desgaste crítico e emissão de laudo técnico em PDF.</p>
+        </div>
+        <div class="card-button btn-green">
+          <span>Acessar Diagnóstico</span>
+          <span class="arrow-icon">➡️</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Trial CTA Section below the cards -->
+    <div class="trial-cta-container">
+      <div class="trial-cta-text">
+        <h3>🧪 Teste Gratuito por 5 Dias</h3>
+        <p>Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.</p>
       </div>
+      <button onclick="openTrialModal(); return false;" class="trial-cta-btn">Começar Teste Grátis ➔</button>
     </div>
   </main>
 
-  <footer id="hub-footer" style="display: none;">
+  <footer>
     <div class="footer-links">
       <a href="https://wa.me/5565999106415?text=Bom%20dia!%20Preciso%20de%20suporte%20no%20portal%20Spray%20Precision." target="_blank" class="footer-link" id="link-suporte">
         💬 Suporte Técnico (WhatsApp)
@@ -1856,29 +1662,28 @@
 
         msgEl.className = 'trial-message success';
         msgEl.style.display = 'block';
-        msgEl.innerHTML = `
-          <strong>✅ Conta de teste criada com sucesso!</strong><br>
-          <span style="font-size: 13px; opacity: 0.95; display: block; margin-top: 5px;">
-            Redirecionando para a tela de login...
-          </span>
-        `;
         
-        // Pre-fill email in login form
-        const loginEmailField = document.getElementById('loginEmail');
-        if (loginEmailField) {
-          loginEmailField.value = email;
+        if (data.session) {
+          msgEl.innerHTML = `
+            <strong>✅ Teste de 5 dias ativado com sucesso!</strong><br>
+            Sua conta está liberada. Você já pode fazer login e usar as ferramentas.<br><br>
+            <button onclick="closeTrialModal(); document.getElementById('link-seletor').scrollIntoView({behavior: 'smooth'});" class="trial-submit-btn" style="margin-top: 5px; width: 100%;">Acessar Plataforma ➔</button>
+          `;
+          localStorage.setItem('spray_trial_registered', 'true');
+        } else {
+          msgEl.innerHTML = `
+            <strong>✅ Cadastro realizado com sucesso!</strong><br>
+            <span style="font-size: 13px; opacity: 0.95; display: block; margin-top: 5px; margin-bottom: 10px;">
+              Enviamos um link de confirmação para <strong>${email}</strong>.<br>
+              Acesse seu e-mail e clique no link para ativar seu teste de 5 dias.<br>
+              Depois, retorne aqui para acessar as ferramentas.
+            </span>
+            <button onclick="closeTrialModal(); document.getElementById('link-seletor').scrollIntoView({behavior: 'smooth'});" class="trial-submit-btn" style="width: 100%;">Acessar Plataforma ➔</button>
+          `;
         }
         
         document.getElementById('trialForm').style.display = 'none';
         submitBtn.style.display = 'none';
-        
-        // Close modal and switch view after 2.5 seconds
-        setTimeout(() => {
-          closeTrialModal();
-          showLoginView();
-          const loginPasswordField = document.getElementById('loginPassword');
-          if (loginPasswordField) loginPasswordField.focus();
-        }, 2500);
 
       } catch (err) {
         msgEl.innerText = err.message || 'Erro inesperado ao criar conta de teste.';
@@ -1889,211 +1694,10 @@
       }
     }
 
-    // ==== UNIFIED AUTHENTICATION FLOW ====
-    let clienteSupabase = null;
-
-    async function checkAuthSession() {
-      clienteSupabase = getSupabaseClient();
-      if (!clienteSupabase) {
-        console.warn("Supabase client not loaded yet.");
-        showLoginView();
-        return;
-      }
-
-      // Check url query params for trial=true
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('trial') === 'true') {
-        // Clean search params and open trial modal
-        window.history.replaceState({}, document.title, window.location.pathname);
-        openTrialModal();
-      }
-
-      const isOfflineAuthorized = localStorage.getItem('spray_offline_authorized') === 'true';
-      if (isOfflineAuthorized) {
-        showHubView(null);
-        return;
-      }
-
-      try {
-        const { data: { session }, error } = await clienteSupabase.auth.getSession();
-        if (session) {
-          showHubView(session.user);
-        } else {
-          showLoginView();
-        }
-      } catch (e) {
-        console.error("Erro ao verificar sessão:", e);
-        showLoginView();
-      }
-    }
-
-    function showHubView(user) {
-      document.getElementById('login-view').style.display = 'none';
-      document.getElementById('hub-view').style.display = 'block';
-      document.getElementById('hub-footer').style.display = 'none'; // Keep hidden for ultra-simplistic view
-      
-      const pricingBtn = document.getElementById('btn-pricing-header');
-      if (pricingBtn) pricingBtn.style.display = 'none';
-      
-      const brandSubtitle = document.getElementById('brand-subtitle');
-      if (brandSubtitle) brandSubtitle.style.display = 'none';
-      
-      const logoutBtn = document.getElementById('btn-logout');
-      if (logoutBtn) {
-        logoutBtn.style.display = 'inline-flex';
-      }
-
-      // Hide trial banner / CTA completely when logged in
-      const trialCta = document.querySelector('.trial-cta-container');
-      if (trialCta) {
-        trialCta.style.display = 'none';
-      }
-
-      // Implement role-based module visibility check
-      if (user) {
-        const metadata = user.user_metadata || {};
-        const showSeletor = metadata.has_seletor !== false;
-        const showDiagnostico = metadata.has_diagnostico !== false;
-        
-        const seletorCard = document.getElementById('link-seletor');
-        if (seletorCard) seletorCard.style.display = showSeletor ? 'flex' : 'none';
-        
-        const diagnosticoCard = document.getElementById('link-diagnostico');
-        if (diagnosticoCard) diagnosticoCard.style.display = showDiagnostico ? 'flex' : 'none';
-
-        // Check subscription expiration on root too to warn the user
-        if (metadata.subscription_end) {
-          const end = new Date(metadata.subscription_end);
-          const today = new Date();
-          today.setHours(0,0,0,0);
-          end.setHours(23,59,59,999);
-          if (end < today) {
-            const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-            alert("⚠️ Sua assinatura expirou em " + formattedEnd + ". Para reativar seu acesso, entre em contato com o suporte.");
-            handleLogout();
-            return;
-          }
-        }
-
-        // Auto-redirect if only one module is enabled
-        if (showSeletor && !showDiagnostico) {
-          window.location.href = './enterprise/';
-          return;
-        } else if (!showSeletor && showDiagnostico) {
-          window.location.href = './diagnostico-vazao-manual/';
-          return;
-        } else if (!showSeletor && !showDiagnostico) {
-          alert("⚠️ Sua conta não possui acesso a nenhum módulo ativo. Entre em contato com o suporte.");
-          handleLogout();
-          return;
-        }
-      } else {
-        // Offline bypass mode: show both modules
-        const seletorCard = document.getElementById('link-seletor');
-        if (seletorCard) seletorCard.style.display = 'flex';
-        
-        const diagnosticoCard = document.getElementById('link-diagnostico');
-        if (diagnosticoCard) diagnosticoCard.style.display = 'flex';
-      }
-    }
-
-    function showLoginView() {
-      document.getElementById('hub-view').style.display = 'none';
-      document.getElementById('hub-footer').style.display = 'none';
-      document.getElementById('login-view').style.display = 'block';
-      
-      const pricingBtn = document.getElementById('btn-pricing-header');
-      if (pricingBtn) pricingBtn.style.display = 'inline-flex';
-      
-      const brandSubtitle = document.getElementById('brand-subtitle');
-      if (brandSubtitle) brandSubtitle.style.display = 'block';
-      
-      const trialCta = document.querySelector('.trial-cta-container');
-      if (trialCta) {
-        trialCta.style.display = 'flex';
-      }
-      
-      const logoutBtn = document.getElementById('btn-logout');
-      if (logoutBtn) {
-        logoutBtn.style.display = 'none';
-      }
-    }
-
-    async function handleLogin(e) {
-      if (e) e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value.trim();
-      const submitBtn = document.getElementById('loginSubmitBtn');
-      const msgEl = document.getElementById('loginMessage');
-
-      if (!email || !password) {
-        msgEl.innerText = 'Preencha o e-mail e a senha.';
-        msgEl.className = 'login-message error';
-        msgEl.style.display = 'block';
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Entrando...';
-      msgEl.style.display = 'none';
-
-      try {
-        clienteSupabase = getSupabaseClient();
-        const { data, error } = await clienteSupabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-
-        if (data.session) {
-          // Check if blocked
-          const user = data.session.user;
-          const metadata = user.user_metadata || {};
-          if (metadata.is_blocked === true) {
-            throw new Error('Acesso suspenso: Esta conta foi bloqueada temporariamente.');
-          }
-
-          msgEl.innerText = 'Acesso autorizado! Carregando...';
-          msgEl.className = 'login-message success';
-          msgEl.style.display = 'block';
-          
-          setTimeout(() => {
-            showHubView(user);
-            // Clear form
-            document.getElementById('loginForm').reset();
-            msgEl.style.display = 'none';
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'Entrar no Sistema';
-          }, 800);
-        }
-      } catch (err) {
-        let msg = err.message;
-        if (msg.includes('Invalid login')) msg = 'E-mail ou senha incorretos.';
-        msgEl.innerText = msg;
-        msgEl.className = 'login-message error';
-        msgEl.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Entrar no Sistema';
-      }
-    }
-
-    function handleOfflineLogin() {
-      localStorage.setItem('spray_offline_authorized', 'true');
-      showHubView(null);
-    }
-
-    async function handleLogout() {
-      localStorage.removeItem('spray_offline_authorized');
-      if (clienteSupabase) {
-        try {
-          await clienteSupabase.auth.signOut();
-        } catch (e) {}
-      }
-      showLoginView();
-    }
-
     // Run initializations
     window.addEventListener('DOMContentLoaded', () => {
       initLanguage();
       checkPromoPopup();
-      checkAuthSession();
     });
   </script>
 

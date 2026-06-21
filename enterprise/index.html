@@ -3936,25 +3936,43 @@
           
           document.documentElement.setAttribute('data-theme', 'light');
           
-          // Force landscape aspect ratio on the canvas for the PDF
+          // Force landscape aspect ratio on the parent container for the PDF
           const chartCanvas = document.getElementById('mainChart');
-          const originalWidth = chartCanvas.style.width;
-          const originalHeight = chartCanvas.style.height;
+          const chartContainer = chartCanvas.parentElement;
           
-          // Set temporary fixed size
-          chartCanvas.style.width = '800px';
-          chartCanvas.style.height = '400px';
+          const originalContainerWidth = chartContainer.style.width;
+          const originalContainerHeight = chartContainer.style.height;
+          const originalContainerMaxWidth = chartContainer.style.maxWidth;
           
-          // Resize chart instance
+          // Set temporary fixed size on parent container to override responsive behavior
+          chartContainer.style.setProperty('width', '800px', 'important');
+          chartContainer.style.setProperty('height', '400px', 'important');
+          chartContainer.style.setProperty('max-width', 'none', 'important');
+          
+          // Resize chart instance to fit the new parent dimensions
           myChart.resize();
           
           update(); // re-draws calculations and chart dynamically in light mode ticks/gridlines
           
           chartImgUrl = myChart.toBase64Image();
           
-          // Restore original size and theme
-          chartCanvas.style.width = originalWidth;
-          chartCanvas.style.height = originalHeight;
+          // Restore container size
+          if (originalContainerWidth) {
+            chartContainer.style.width = originalContainerWidth;
+          } else {
+            chartContainer.style.removeProperty('width');
+          }
+          if (originalContainerHeight) {
+            chartContainer.style.height = originalContainerHeight;
+          } else {
+            chartContainer.style.removeProperty('height');
+          }
+          if (originalContainerMaxWidth) {
+            chartContainer.style.maxWidth = originalContainerMaxWidth;
+          } else {
+            chartContainer.style.removeProperty('max-width');
+          }
+          
           myChart.resize();
           
           document.documentElement.setAttribute('data-theme', originalTheme);

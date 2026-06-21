@@ -6031,30 +6031,39 @@
         const mainApp = document.getElementById('mainApp');
         if (mainApp) mainApp.style.display = 'none';
 
-        // Check offline pre-authorization first
-        if (localStorage.getItem('spray_offline_authorized') === 'true') {
-          if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
-            const subEnd = localStorage.getItem('spray_subscription_end');
-            if (subEnd) {
-              const end = new Date(subEnd + 'T23:59:59');
-              const today = new Date();
-              if (end < today) {
-                alert(t("⚠️ Sua assinatura expirou! Conecte-se à internet para atualizar seu acesso."));
-                localStorage.removeItem('spray_offline_authorized');
-                window.location.href = '../';
-                return;
-              }
-            }
-            handleOfflineBypass();
-            return;
-          } else {
-            localStorage.removeItem('spray_offline_authorized');
-          }
-        }
-
         clienteSupabase.auth.getSession().then(({ data: { session } }) => {
-          if (session) showApp(); else showLogin();
-        }).catch(err => alert("Erro ao checar sessão: " + err));
+          if (session) {
+            showApp();
+          } else {
+            showLogin();
+          }
+        }).catch(err => {
+          console.warn("Erro ao checar sessão online, tentando contingência offline:", err);
+          
+          // Check offline pre-authorization
+          if (localStorage.getItem('spray_offline_authorized') === 'true') {
+            if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
+              const subEnd = localStorage.getItem('spray_subscription_end');
+              if (subEnd) {
+                const end = new Date(subEnd + 'T23:59:59');
+                const today = new Date();
+                if (end < today) {
+                  alert(t("⚠️ Sua assinatura expirou! Conecte-se à internet para atualizar seu acesso."));
+                  localStorage.removeItem('spray_offline_authorized');
+                  window.location.href = '../';
+                  return;
+                }
+              }
+              handleOfflineBypass();
+              return;
+            } else {
+              localStorage.removeItem('spray_offline_authorized');
+              showLogin();
+            }
+          } else {
+            showLogin();
+          }
+        });
 
         const btnSubmit = document.getElementById('btnSubmit');
         if (btnSubmit) {

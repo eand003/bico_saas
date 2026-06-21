@@ -2128,6 +2128,23 @@
         openTrialModal();
       }
 
+      try {
+        const { data: { session }, error } = await clienteSupabase.auth.getSession();
+        if (session) {
+          localStorage.setItem('spray_has_authenticated_before', 'true');
+          const metadata = session.user.user_metadata || {};
+          if (metadata.subscription_end) {
+            localStorage.setItem('spray_subscription_end', metadata.subscription_end);
+          } else {
+            localStorage.removeItem('spray_subscription_end');
+          }
+          showHubView(session.user);
+          return;
+        }
+      } catch (e) {
+        console.warn("Erro ao verificar sessão online, tentando contingência offline:", e);
+      }
+
       const isOfflineAuthorized = localStorage.getItem('spray_offline_authorized') === 'true';
       if (isOfflineAuthorized) {
         if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
@@ -2149,24 +2166,7 @@
         }
       }
 
-      try {
-        const { data: { session }, error } = await clienteSupabase.auth.getSession();
-        if (session) {
-          localStorage.setItem('spray_has_authenticated_before', 'true');
-          const metadata = session.user.user_metadata || {};
-          if (metadata.subscription_end) {
-            localStorage.setItem('spray_subscription_end', metadata.subscription_end);
-          } else {
-            localStorage.removeItem('spray_subscription_end');
-          }
-          showHubView(session.user);
-        } else {
-          showLoginView();
-        }
-      } catch (e) {
-        console.error("Erro ao verificar sessão:", e);
-        showLoginView();
-      }
+      showLoginView();
     }
 
     function showHubView(user) {

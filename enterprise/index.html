@@ -5888,6 +5888,17 @@
         // Check offline pre-authorization first
         if (localStorage.getItem('spray_offline_authorized') === 'true') {
           if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
+            const subEnd = localStorage.getItem('spray_subscription_end');
+            if (subEnd) {
+              const end = new Date(subEnd + 'T23:59:59');
+              const today = new Date();
+              if (end < today) {
+                alert(t("⚠️ Sua assinatura expirou! Conecte-se à internet para atualizar seu acesso."));
+                localStorage.removeItem('spray_offline_authorized');
+                window.location.href = '../';
+                return;
+              }
+            }
             handleOfflineBypass();
             return;
           } else {
@@ -6171,8 +6182,13 @@
 
         if (user) {
           localStorage.setItem('spray_has_authenticated_before', 'true');
-          // Validação inicial de acesso e bloqueio
           const metadata = user.user_metadata || {};
+          if (metadata.subscription_end) {
+            localStorage.setItem('spray_subscription_end', metadata.subscription_end);
+          } else {
+            localStorage.removeItem('spray_subscription_end');
+          }
+          // Validação inicial de acesso e bloqueio
           if (metadata.is_blocked === true) {
             alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
             await logout();

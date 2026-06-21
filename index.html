@@ -1471,6 +1471,32 @@
       opacity: 1;
     }
 
+    .btn-logout-hub {
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 10px 24px;
+      border-radius: 99px;
+      background: rgba(239, 68, 68, 0.05);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
+      font-size: 0.9rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      gap: 8px;
+      outline: none;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.05);
+    }
+    .btn-logout-hub:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.15);
+    }
+
     @media (max-width: 480px) {
       .main-content {
         padding: 16px 12px;
@@ -1547,13 +1573,10 @@
       <div class="brand-logo-container">
         <img src="./logo.png" alt="Spray Precision Logo" class="brand-logo">
       </div>
-      <h1 class="brand-title">Spray Precision</h1>
+      <h1 class="brand-title">Spray Precision <span style="color: var(--accent);">PRO</span></h1>
       <p class="brand-subtitle" id="brand-subtitle">Ecossistema digital inteligente para pulverização e calibração agrícola de alta precisão.</p>
       <button onclick="openPricingModal()" class="btn-pricing-highlight" id="btn-pricing-header">
         <span>💳 Planos e Preços</span>
-      </button>
-      <button onclick="handleLogout()" id="btn-logout" class="btn-pricing-highlight" style="margin-left: 12px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; display: none;">
-        <span>🚪 Sair da Conta</span>
       </button>
     </header>
 
@@ -1595,12 +1618,6 @@
 
     <!-- HUB VIEW -->
     <div id="hub-view" style="display: none; width: 100%;">
-      <div class="quick-cta-banner" id="quick-cta" style="display: none;">
-        <span class="cta-pulse"></span>
-        <span>Novo por aqui? Conheça nossos <a href="#" onclick="openPricingModal(); return false;" style="color: var(--accent); font-weight: 700; text-decoration: underline; margin-right: 4px;">Planos e Preços</a> ou solicite seu acesso pelo WhatsApp! <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20acesso%20às%20plataformas%20do%20Spray%20Precision." target="_blank" class="cta-link" style="margin-left: 4px;">Solicitar Acesso ➔</a></span>
-        <button class="cta-close-btn" onclick="dismissCTA()" title="Fechar">&times;</button>
-      </div>
-
       <!-- Welcome Banner -->
       <div class="welcome-container" id="hub-welcome" style="text-align: center; margin-bottom: 24px; animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;">
         <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; color: #ffffff;">
@@ -1632,6 +1649,13 @@
           </div>
           <span class="card-mini-arrow">➡️</span>
         </a>
+      </div>
+
+      <!-- Logout Button below cards -->
+      <div class="hub-logout-container" style="text-align: center; margin-top: 32px; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;">
+        <button onclick="handleLogout()" id="btn-logout" class="btn-logout-hub">
+          <span>🚪 Sair da Conta</span>
+        </button>
       </div>
 
       <!-- Trial CTA Section below the cards -->
@@ -2107,6 +2131,17 @@
       const isOfflineAuthorized = localStorage.getItem('spray_offline_authorized') === 'true';
       if (isOfflineAuthorized) {
         if (localStorage.getItem('spray_has_authenticated_before') === 'true') {
+          const subEnd = localStorage.getItem('spray_subscription_end');
+          if (subEnd) {
+            const end = new Date(subEnd + 'T23:59:59');
+            const today = new Date();
+            if (end < today) {
+              alert("Sua assinatura expirou. Conecte-se à internet para reativar seu acesso.");
+              localStorage.removeItem('spray_offline_authorized');
+              showLoginView();
+              return;
+            }
+          }
           showHubView(null);
           return;
         } else {
@@ -2118,6 +2153,12 @@
         const { data: { session }, error } = await clienteSupabase.auth.getSession();
         if (session) {
           localStorage.setItem('spray_has_authenticated_before', 'true');
+          const metadata = session.user.user_metadata || {};
+          if (metadata.subscription_end) {
+            localStorage.setItem('spray_subscription_end', metadata.subscription_end);
+          } else {
+            localStorage.removeItem('spray_subscription_end');
+          }
           showHubView(session.user);
         } else {
           showLoginView();
@@ -2270,6 +2311,11 @@
           }
 
           localStorage.setItem('spray_has_authenticated_before', 'true');
+          if (metadata.subscription_end) {
+            localStorage.setItem('spray_subscription_end', metadata.subscription_end);
+          } else {
+            localStorage.removeItem('spray_subscription_end');
+          }
           msgEl.innerText = 'Acesso autorizado! Carregando...';
           msgEl.className = 'login-message success';
           msgEl.style.display = 'block';
@@ -2298,6 +2344,16 @@
       if (localStorage.getItem('spray_has_authenticated_before') !== 'true') {
         alert("Acesso offline indisponível. É necessário realizar pelo menos um login com internet neste dispositivo antes de usar o modo offline.");
         return;
+      }
+      const subEnd = localStorage.getItem('spray_subscription_end');
+      if (subEnd) {
+        const end = new Date(subEnd + 'T23:59:59');
+        const today = new Date();
+        if (end < today) {
+          alert("Sua assinatura expirou em " + new Date(subEnd + 'T12:00:00').toLocaleDateString('pt-BR') + ". Conecte-se à internet para atualizar seu acesso.");
+          localStorage.removeItem('spray_offline_authorized');
+          return;
+        }
       }
       localStorage.setItem('spray_offline_authorized', 'true');
       showHubView(null);

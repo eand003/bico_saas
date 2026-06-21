@@ -83,6 +83,15 @@ function checkOfflinePreAuthorization() {
         window.localStorage.removeItem('spray_offline_authorized');
         return false;
       }
+      const subEnd = window.localStorage.getItem('spray_subscription_end');
+      if (subEnd) {
+        const end = new Date(subEnd + 'T23:59:59');
+        const today = new Date();
+        if (end < today) {
+          window.localStorage.removeItem('spray_offline_authorized');
+          return false;
+        }
+      }
       return window.localStorage.getItem('spray_offline_authorized') === 'true';
     }
   } catch (e) {
@@ -517,6 +526,12 @@ async function handleUserLoggedIn(user) {
       banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs e exportação de CSV estão desativadas.`;
       banner.style.display = 'flex';
     }
+  }
+
+  if (metadata.subscription_end) {
+    window.localStorage.setItem('spray_subscription_end', metadata.subscription_end);
+  } else {
+    window.localStorage.removeItem('spray_subscription_end');
   }
 
   // Salvar pré-autorização offline bem sucedida no dispositivo

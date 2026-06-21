@@ -1538,8 +1538,11 @@
           <p style="color:var(--text-muted); font-size: 14px; margin-top: 4px; margin-bottom: 8px;">Simulador de Bicos ISO para Aplicação Agro</p>
 
           <div class="header-info-card" style="margin-top: 8px; padding: 6px 10px;">
-            <div class="header-info-content" style="justify-content: space-between; gap: 10px;">
-              <span></span>
+            <div class="header-info-content" style="justify-content: space-between; gap: 10px; align-items: center;">
+              <div id="user-profile-badge" style="display: none; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; font-size: 11px; font-family: 'Inter', sans-serif; color: var(--text); font-weight: 500; user-select: none;">
+                <span style="opacity: 0.7;">👤</span> <span id="logged-user-email">--</span>
+              </div>
+              <span id="offline-profile-badge" style="font-size: 11px; font-family: 'Inter', sans-serif; color: var(--text-muted); font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">👤 Offline</span>
 
               <div id="header-social-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 <!-- Language Selector Widget (Main App) -->
@@ -4763,6 +4766,7 @@
             farm_name: c.farmName || null,
             notes: c.notes || null,
             created_by_email: c.created_by_email || null,
+            partner_id: c.partner_id || window.partnerId || null,
             is_deleted: c.is_deleted || false,
             updated_at: c.updated_at || new Date().toISOString()
           });
@@ -4777,6 +4781,7 @@
                 spacing: m.spacing || null,
                 boom_size: m.boomSize || null,
                 last_simulation: m.lastSimulation || null,
+                partner_id: m.partner_id || window.partnerId || null,
                 is_deleted: m.is_deleted || false,
                 updated_at: m.updated_at || new Date().toISOString()
               });
@@ -4795,6 +4800,7 @@
             farmName: c.farm_name,
             notes: c.notes,
             created_by_email: c.created_by_email,
+            partner_id: c.partner_id || null,
             is_deleted: c.is_deleted,
             updated_at: c.updated_at,
             machines: []
@@ -4810,6 +4816,7 @@
               spacing: m.spacing,
               boomSize: m.boom_size,
               lastSimulation: m.last_simulation,
+              partner_id: m.partner_id || null,
               is_deleted: m.is_deleted,
               updated_at: m.updated_at
             });
@@ -4846,7 +4853,7 @@
           if (!scopedIds.has(c.id)) {
             if (!c.created_by_email || c.created_by_email.toLowerCase() === userEmail.toLowerCase()) {
               c.created_by_email = userEmail;
-              scopedData.push(c);
+                scopedData.push(c);
               migratedAny = true;
             } else {
               const otherCleanEmail = c.created_by_email.toLowerCase().replace(/[^a-z0-9]/g, '_');
@@ -4900,7 +4907,7 @@
           updateSyncStatus('offline');
           return;
         }
-        
+
         const { data: { session } } = await clienteSupabase.auth.getSession().catch(() => ({ data: { session: null } }));
         if (!session || !session.user) {
           updateSyncStatus('');
@@ -4914,15 +4921,35 @@
 
         updateSyncStatus('syncing');
         const user = session.user;
+        const role = user.user_metadata?.role || 'consultor';
+        const partnerId = user.user_metadata?.partner_id || null;
 
         try {
           const localData = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
           const { clients: localClients, machines: localMachines } = flattenCRMData(localData);
 
-          const { data: dbClients, error: cErr } = await clienteSupabase.from('clientes').select('*').eq('user_id', user.id);
-          if (cErr) throw cErr;
+          let dbClients, cErr;
+          let dbMachines, mErr;
 
-          const { data: dbMachines, error: mErr } = await clienteSupabase.from('maquinas').select('*').eq('user_id', user.id);
+          if (role === 'gerente' && partnerId && partnerId !== 'individual') {
+            const resC = await clienteSupabase.from('clientes').select('*').eq('partner_id', partnerId);
+            dbClients = resC.data;
+            cErr = resC.error;
+
+            const resM = await clienteSupabase.from('maquinas').select('*').eq('partner_id', partnerId);
+            dbMachines = resM.data;
+            mErr = resM.error;
+          } else {
+            const resC = await clienteSupabase.from('clientes').select('*').eq('user_id', user.id);
+            dbClients = resC.data;
+            cErr = resC.error;
+
+            const resM = await clienteSupabase.from('maquinas').select('*').eq('user_id', user.id);
+            dbMachines = resM.data;
+            mErr = resM.error;
+          }
+
+          if (cErr) throw cErr;
           if (mErr) throw mErr;
 
           const mergedClients = {};
@@ -4935,6 +4962,7 @@
             if (!dbC) {
               c.user_id = user.id;
               if (!c.created_by_email) c.created_by_email = user.email;
+              c.partner_id = partnerId;
               mergedClients[c.id] = c;
               c._needsUpload = true;
             } else {
@@ -4943,6 +4971,7 @@
               if (localTime > dbTime) {
                 c.user_id = dbC.user_id;
                 c.created_by_email = dbC.created_by_email;
+                c.partner_id = dbC.partner_id || partnerId;
                 mergedClients[c.id] = c;
                 c._needsUpload = true;
               }
@@ -4958,6 +4987,7 @@
             const dbM = mergedMachines[m.id];
             if (!dbM) {
               m.user_id = user.id;
+              m.partner_id = partnerId;
               mergedMachines[m.id] = m;
               m._needsUpload = true;
             } else {
@@ -4965,6 +4995,7 @@
               const dbTime = new Date(dbM.updated_at).getTime();
               if (localTime > dbTime) {
                 m.user_id = dbM.user_id;
+                m.partner_id = dbM.partner_id || partnerId;
                 mergedMachines[m.id] = m;
                 m._needsUpload = true;
               }
@@ -5195,7 +5226,7 @@
           // Editando
           clients = clients.map(c => {
             if (c.id === id) {
-              return { ...c, name, farmName, notes, updated_at: now, is_deleted: false };
+              return { ...c, name, farmName, notes, updated_at: now, is_deleted: false, partner_id: c.partner_id || window.partnerId || null };
             }
             return c;
           });
@@ -5208,6 +5239,7 @@
             farmName,
             notes,
             created_by_email: window.currentUserEmail || null,
+            partner_id: window.partnerId || null,
             is_deleted: false,
             created_at: now,
             updated_at: now,
@@ -5278,7 +5310,7 @@
               document.getElementById('machineName').value = m.name;
               document.getElementById('machineNozzleCount').value = m.nozzleCount || '';
               document.getElementById('machineSpacing').value = m.spacing || '';
-              document.getElementById('machineBoomSize').value = m.boomSize || ''; // Carrega o tamanho da barra manual
+              document.getElementById('machineBoomSize').value = m.boomSize || ''; 
             }
           }
         } else {
@@ -5297,7 +5329,7 @@
         const name = document.getElementById('machineName').value;
         const nozzleCount = parseInt(document.getElementById('machineNozzleCount').value);
         const spacing = parseFloat(document.getElementById('machineSpacing').value);
-        const boomSize = parseFloat(document.getElementById('machineBoomSize').value); // Lê o tamanho da barra manual
+        const boomSize = parseFloat(document.getElementById('machineBoomSize').value); 
         const now = new Date().toISOString();
 
         let clients = JSON.parse(localStorage.getItem(getCrmStorageKey()) || '[]');
@@ -5310,7 +5342,7 @@
             // Editando máquina
             machines = machines.map(m => {
               if (m.id === id) {
-                return { ...m, name, nozzleCount, spacing, boomSize, updated_at: now, is_deleted: false };
+                return { ...m, name, nozzleCount, spacing, boomSize, updated_at: now, is_deleted: false, partner_id: m.partner_id || window.partnerId || null };
               }
               return m;
             });
@@ -5324,6 +5356,7 @@
               spacing,
               boomSize, // Salva o tamanho da barra manual
               lastSimulation: null,
+              partner_id: window.partnerId || null,
               is_deleted: false,
               created_at: now,
               updated_at: now
@@ -6202,6 +6235,12 @@
       if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
       localStorage.removeItem('spray_active_session_token');
       localStorage.removeItem('spray_offline_authorized');
+
+      const badgeOnline = document.getElementById('user-profile-badge');
+      const badgeOffline = document.getElementById('offline-profile-badge');
+      if (badgeOnline) badgeOnline.style.display = 'none';
+      if (badgeOffline) badgeOffline.style.display = 'inline-flex';
+
       if (clienteSupabase) {
         try {
           await clienteSupabase.auth.signOut();
@@ -6227,12 +6266,12 @@
           }
           // Validação inicial de acesso e bloqueio
           if (metadata.is_blocked === true) {
-            alert(t("⚠️ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
+            alert(t("❌ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
             await logout();
             return;
           }
           if (metadata.has_seletor === false) {
-            alert(t("⚠️ Seu acesso ao módulo Seletor de Bicos não está ativo. Redirecionando para o Portal..."));
+            alert(t("❌ Seu acesso ao módulo Seletor de Bicos não está ativo. Redirecionando para o Portal..."));
             window.location.href = '../';
             return;
           }
@@ -6250,7 +6289,7 @@
                 const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
                 window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
               } else {
-                alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
+                alert(t("❌ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
               }
               await logout();
               return;
@@ -6261,21 +6300,31 @@
             if (banner) {
               const end = new Date(metadata.subscription_end + 'T12:00:00');
               const formattedEnd = end.toLocaleDateString('pt-BR');
-              banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs está desativada.`;
+              banner.innerHTML = `⚠️ <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs está desativada.`;
               banner.style.display = 'flex';
             }
           }
 
           window.currentUserEmail = user.email;
           migrateCrmStorage(user.email);
-          
+
+          // Update user badge
+          const badgeOnline = document.getElementById('user-profile-badge');
+          const badgeOffline = document.getElementById('offline-profile-badge');
+          if (badgeOnline) {
+            badgeOnline.style.display = 'inline-flex';
+            const loggedEmail = document.getElementById('logged-user-email');
+            if (loggedEmail) loggedEmail.textContent = user.email.toUpperCase();
+          }
+          if (badgeOffline) badgeOffline.style.display = 'none';
+
           // Registrar nova sessão ativa
           await registerActiveSession(user.id);
           if (window.sessionCheckInterval) clearInterval(window.sessionCheckInterval);
           window.sessionCheckInterval = setInterval(async () => {
             await verifySessionIntegrity(user.id);
           }, 30000); // Checagem a cada 30 segundos
-          
+
           if (user.user_metadata) {
             const meta = user.user_metadata;
             if (meta.partner_name || meta.partner_color) {

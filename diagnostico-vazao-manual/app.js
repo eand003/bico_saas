@@ -564,6 +564,17 @@ async function handleUserLoggedIn(user) {
     // Extrai o nome de exibição do e-mail
     responsavel.value = user.email.split('@')[0].toUpperCase();
   }
+
+  // VERIFY TERMS OF USE ACCEPTANCE
+  const termsAccepted = (metadata.terms_accepted === true) || (localStorage.getItem('spray_terms_accepted_' + user.id) === 'true');
+  if (!termsAccepted) {
+    const modalTerms = document.getElementById('modal-terms-acceptance');
+    if (modalTerms) {
+      modalTerms.style.display = 'flex';
+      setTimeout(() => modalTerms.classList.add('show'), 10);
+    }
+    window.tempTermsUser = user;
+  }
   
   // Carregar histórico de inspeções sincronizadas da nuvem
   renderHistoryList();
@@ -1678,7 +1689,8 @@ async function saveInspectionToDatabase(summary) {
     collection_time_seconds: tempoColeta,
     status: 'completed',
     summary: summary,
-    notes: `${notes}\nInspetor: ${inspetor}`
+    notes: `${notes}\nInspetor: ${inspetor}`,
+    partner_id: window.partnerId || null
   };
 
   try {
@@ -1864,6 +1876,10 @@ async function renderHistoryList() {
       const evaluatedNozzlesVal = summaryObj?.evaluatedNozzles || 0;
       const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString(locale) : '';
 
+      const notesArray = item.notes ? item.notes.split('\nInspetor:') : ['', ''];
+      const inspectorVal = notesArray[1] ? notesArray[1].trim() : '';
+      const inspectorHtml = inspectorVal ? `<div>👤 Inspetor: <strong>${inspectorVal}</strong></div>` : '';
+
       card.innerHTML = `
         <div style="font-weight:bold; font-size:16px; color:var(--text-main); font-family:'Outfit'; display:flex; align-items:center; justify-content:space-between;">
           <span>${displayName}</span>
@@ -1876,6 +1892,7 @@ async function renderHistoryList() {
           <div>🚜 ${t('Pulverizador:')} **${item.sprayer_brand || ''} ${item.sprayer_model || ''}**</div>
           <div>🎨 ${t('Bico:')} **${item.nozzle_model || t('Não informado')}**</div>
           <div>⏱️ ${t('CV da Barra:')} **${cvVal.toFixed(1)}%** (${evaluatedNozzlesVal} ${t('bicos aferidos')})</div>
+          ${inspectorHtml}
         </div>
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
@@ -2784,3 +2801,50 @@ function showTrialPremiumModal() {
     modal.style.display = 'flex';
   }
 }
+
+function toggleTermsButton() {
+  const chk = document.getElementById('chk-accept-terms');
+  const btn = document.getElementById('btn-accept-terms');
+  if (chk && btn) {
+    btn.disabled = !chk.checked;
+  }
+}
+
+async function acceptTerms() {
+  const btn = document.getElementById('btn-accept-terms');
+  if (!btn) return;
+  btn.disabled = true;
+  const originalText = btn.innerHTML;
+  btn.innerText = 'Processando...';
+
+  try {
+    const supabase = window.supabaseClient;
+    const user = window.tempTermsUser || (await supabase.auth.getUser()).data.user;
+    if (!user) throw new Error("Usuário não detectado!");
+
+    const { error } = await supabase.auth.updateUser({
+      data: {
+        terms_accepted: true,
+        terms_accepted_at: new Date().toISOString()
+      }
+    });
+    if (error) throw error;
+
+    localStorage.setItem('spray_terms_accepted_' + user.id, 'true');
+
+    const modalTerms = document.getElementById('modal-terms-acceptance');
+    if (modalTerms) {
+      modalTerms.classList.remove('show');
+      setTimeout(() => {
+        modalTerms.style.display = 'none';
+      }, 400);
+    }
+  } catch (err) {
+    alert("Erro ao aceitar os termos: " + err.message);
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+}
+
+window.toggleTermsButton = toggleTermsButton;
+window.acceptTerms = acceptTerms;

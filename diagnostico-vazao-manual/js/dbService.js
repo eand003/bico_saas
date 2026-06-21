@@ -218,6 +218,7 @@ async function saveInspection(inspection, measurements) {
       ...inspection,
       id: inspection.id || generateUUID(),
       owner_id: user.id,
+      partner_id: inspection.partner_id || user.user_metadata?.partner_id || null,
       updated_at: new Date().toISOString()
     };
 
@@ -648,6 +649,7 @@ async function syncOfflineInspections() {
       const inspectionToUpload = {
         ...inspection,
         owner_id: user.id,
+        partner_id: inspection.partner_id || user.user_metadata?.partner_id || null,
         updated_at: new Date().toISOString()
       };
 

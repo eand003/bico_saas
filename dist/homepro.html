@@ -97,6 +97,11 @@
       position: relative;
       z-index: 2;
     }
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 20px;
+      }
+    }
 
     /* ─── SCROLL REVEAL ──────────────────────────────────── */
     .reveal {
@@ -223,6 +228,12 @@
       text-align: center;
       position: relative;
       z-index: 2;
+      background: #f8fafc;
+    }
+    @media (max-width: 768px) {
+      .hero {
+        padding: 120px 0 60px 0;
+      }
     }
     .hero-eyebrow {
       display: inline-flex;
@@ -418,6 +429,14 @@
     /* ─── PROBLEMA ───────────────────────────────────────── */
     .problem-section {
       padding: 100px 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .problem-section {
+        padding: 60px 0;
+      }
     }
     .problem-grid {
       display: grid;
@@ -548,6 +567,19 @@
     .module-section {
       padding: 100px 0;
     }
+    @media (max-width: 768px) {
+      .module-section {
+        padding: 60px 0;
+      }
+    }
+    .m1-bg {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .m2-bg {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
     .module-inner {
       display: grid;
       grid-template-columns: 1fr 1.1fr;
@@ -630,6 +662,13 @@
     /* ─── PROOF ──────────────────────────────────────────── */
     .proof-section {
       padding: 100px 0;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .proof-section {
+        padding: 60px 0;
+      }
     }
     .proof-header {
       text-align: center;
@@ -714,6 +753,13 @@
     /* ─── AUDIÊNCIAS ─────────────────────────────────────── */
     .audience-section {
       padding: 100px 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .audience-section {
+        padding: 60px 0;
+      }
     }
     .audience-header {
       text-align: center;
@@ -804,6 +850,12 @@
     .cta-section {
       padding: 120px 0;
       position: relative;
+      background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
+    }
+    @media (max-width: 768px) {
+      .cta-section {
+        padding: 80px 0;
+      }
     }
     .cta-section::before {
       content: '';
@@ -1160,7 +1212,8 @@
   </nav>
 
   <!-- ══ HERO ═════════════════════════════════════════════════ -->
-  <section class="hero container">
+  <section class="hero">
+    <div class="container">
     <div class="hero-eyebrow">
       <div class="dot"></div>
       Plataforma SaaS para calibração de pulverização
@@ -1234,10 +1287,12 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ══ PROBLEMA ══════════════════════════════════════════════ -->
-  <section class="problem-section container">
+  <section class="problem-section">
+    <div class="container">
     <div class="reveal">
       <div class="label yellow">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -1323,10 +1378,12 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ══ MÓDULO 1 ═══════════════════════════════════════════════ -->
-  <section class="module-section container">
+  <section class="module-section m1-bg">
+    <div class="container">
     <div class="module-inner reveal">
       <div class="module-content">
         <div class="module-tag blue">
@@ -1341,25 +1398,25 @@
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Recomendação automatizada de pontas baseada na norma ISO 10625
+            <span>Recomendação automatizada de pontas baseada na norma ISO 10625</span>
           </li>
           <li>
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            <strong>Simulador PWM Inteligente:</strong> Calcule o Duty Cycle% ideal para evitar sub/sobredosagem e deriva
+            <span><strong>Simulador PWM Inteligente:</strong> Calcule o Duty Cycle% ideal para evitar sub/sobredosagem e deriva</span>
           </li>
           <li>
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            <strong>Modo Bico Duplo:</strong> Combine duas pontas diferentes para atingir grandes vazões sem estourar a pressão
+            <span><strong>Modo Bico Duplo:</strong> Combine duas pontas diferentes para atingir grandes vazões sem estourar a pressão</span>
           </li>
           <li>
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Laudos técnicos instantâneos em PDF prontos para enviar via WhatsApp
+            <span>Laudos técnicos instantâneos em PDF prontos para enviar via WhatsApp</span>
           </li>
         </ul>
       </div>
@@ -1380,10 +1437,12 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ══ MÓDULO 2 ═══════════════════════════════════════════════ -->
-  <section class="module-section container">
+  <section class="module-section m2-bg">
+    <div class="container">
     <div class="module-inner reverse reveal">
       <div class="module-visual green-glow">
         <div class="window-mockup">
@@ -1414,28 +1473,29 @@
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Cálculo instantâneo do CV% (Coeficiente de Variação) global da barra de aplicação
+            <span>Cálculo instantâneo do CV% (Coeficiente de Variação) global da barra de aplicação</span>
           </li>
           <li>
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Mapa visual de posições: identifique rapidamente os bicos com desvio crítico
+            <span>Mapa visual de posições: identifique rapidamente os bicos com desvio crítico</span>
           </li>
           <li>
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Laudo técnico White-label personalizado com a logomarca da sua empresa
+            <span>Laudo técnico White-label personalizado com a logomarca da sua empresa</span>
           </li>
           <li>
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Botão de fechamento rápido: envie o relatório final diretamente no celular do produtor
+            <span>Botão de fechamento rápido: envie o relatório final diretamente no celular do produtor</span>
           </li>
         </ul>
       </div>
+    </div>
     </div>
   </section>
 
@@ -1496,7 +1556,8 @@
   </section>
 
   <!-- ══ PARA QUEM É ════════════════════════════════════════════ -->
-  <section class="audience-section container">
+  <section class="audience-section">
+    <div class="container">
     <div class="audience-header reveal">
       <div class="label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -1554,6 +1615,7 @@
         </p>
         <div class="audience-benefit">🏢 Relatórios White-label inclusos</div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -1789,7 +1851,7 @@
 
   <!-- ══ SCROLL REVEAL SCRIPT ════════════════════════════════════ -->
   <script>
-function _0x33a1(_0x4d68e9,_0x47ae14){_0x4d68e9=_0x4d68e9-0xd2;var _0x5bafc1=_0x5baf();var _0x33a1b7=_0x5bafc1[_0x4d68e9];if(_0x33a1['\x56\x6d\x78\x49\x66\x46']===undefined){var _0x5d430c=function(_0xef9345){var _0x2579ce='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x3e1f2f='',_0x2041ba='';for(var _0x2d200d=0x0,_0x378240,_0x2af793,_0x25b355=0x0;_0x2af793=_0xef9345['\x63\x68\x61\x72\x41\x74'](_0x25b355++);~_0x2af793&&(_0x378240=_0x2d200d%0x4?_0x378240*0x40+_0x2af793:_0x2af793,_0x2d200d++%0x4)?_0x3e1f2f+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x378240>>(-0x2*_0x2d200d&0x6)):0x0){_0x2af793=_0x2579ce['\x69\x6e\x64\x65\x78\x4f\x66'](_0x2af793);}for(var _0x1729e3=0x0,_0x5284e8=_0x3e1f2f['\x6c\x65\x6e\x67\x74\x68'];_0x1729e3<_0x5284e8;_0x1729e3++){_0x2041ba+='\x25'+('\x30\x30'+_0x3e1f2f['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x1729e3)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x2041ba);};_0x33a1['\x77\x55\x51\x42\x75\x43']=_0x5d430c,_0x33a1['\x49\x74\x56\x41\x6c\x4d']={},_0x33a1['\x56\x6d\x78\x49\x66\x46']=!![];}var _0x46abcd=_0x5bafc1[0x0],_0x341bc2=_0x4d68e9+_0x46abcd,_0x20297d=_0x33a1['\x49\x74\x56\x41\x6c\x4d'][_0x341bc2];return!_0x20297d?(_0x33a1b7=_0x33a1['\x77\x55\x51\x42\x75\x43'](_0x33a1b7),_0x33a1['\x49\x74\x56\x41\x6c\x4d'][_0x341bc2]=_0x33a1b7):_0x33a1b7=_0x20297d,_0x33a1b7;}function _0x5baf(){var _0x4dbd93=['\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6d\x74\x75\x59\x6e\x64\x43\x31\x71\x76\x76\x4a\x74\x65\x72\x41','\x6d\x74\x4b\x33\x6d\x74\x71\x34\x6e\x32\x6e\x79\x43\x33\x50\x71\x41\x47','\x44\x67\x66\x59\x7a\x32\x76\x30','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x6d\x5a\x65\x57\x6d\x4a\x79\x57\x73\x68\x7a\x5a\x73\x78\x50\x74','\x6e\x64\x71\x33\x6d\x74\x6d\x59\x43\x67\x6a\x6c\x71\x32\x35\x7a','\x79\x77\x72\x4b','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6d\x4a\x65\x32\x6e\x74\x79\x59\x6e\x65\x4c\x67\x44\x65\x72\x71\x44\x61','\x6d\x4a\x62\x4d\x73\x30\x39\x4d\x73\x33\x61','\x6d\x5a\x6d\x30\x6d\x64\x4b\x31\x6d\x67\x35\x7a\x77\x78\x50\x73\x75\x57','\x6f\x75\x58\x52\x73\x32\x66\x52\x75\x47','\x6d\x31\x6e\x4a\x76\x33\x7a\x32\x44\x47','\x6d\x74\x61\x5a\x6e\x5a\x69\x57\x6d\x4b\x50\x34\x72\x76\x62\x6d\x43\x47','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47'];_0x5baf=function(){return _0x4dbd93;};return _0x5baf();}(function(_0x319690,_0x4c2b81){var _0x469c22=_0x33a1,_0x47f3c1=_0x319690();while(!![]){try{var _0x201efe=-parseInt(_0x469c22(0xd8))/0x1*(-parseInt(_0x469c22(0xe3))/0x2)+-parseInt(_0x469c22(0xe4))/0x3+-parseInt(_0x469c22(0xd5))/0x4*(-parseInt(_0x469c22(0xdf))/0x5)+parseInt(_0x469c22(0xd9))/0x6+parseInt(_0x469c22(0xe0))/0x7+-parseInt(_0x469c22(0xd4))/0x8*(parseInt(_0x469c22(0xd7))/0x9)+-parseInt(_0x469c22(0xd6))/0xa;if(_0x201efe===_0x4c2b81)break;else _0x47f3c1['push'](_0x47f3c1['shift']());}catch(_0x311ff3){_0x47f3c1['push'](_0x47f3c1['shift']());}}}(_0x5baf,0x4dc43),(function(){var _0x9576bb=_0x33a1,_0x2041ba={};_0x2041ba[_0x9576bb(0xdd)]=0.12,_0x2041ba[_0x9576bb(0xdc)]='\x30\x70\x78\x20\x30\x70\x78\x20\x2d\x34\x30\x70\x78\x20\x30\x70\x78';var _0x2d200d=new IntersectionObserver(function(_0x378240){_0x378240['\x66\x6f\x72\x45\x61\x63\x68'](function(_0x2af793){var _0x247a20=_0x33a1;_0x2af793[_0x247a20(0xdb)]&&_0x2af793[_0x247a20(0xe1)][_0x247a20(0xe6)][_0x247a20(0xe5)](_0x247a20(0xd2));});},_0x2041ba);document[_0x9576bb(0xd3)](_0x9576bb(0xda))[_0x9576bb(0xde)](function(_0x25b355){var _0x2d2929=_0x9576bb;_0x2d200d[_0x2d2929(0xe2)](_0x25b355);});}()));
+function _0x1f78(_0x5522d0,_0x48a526){_0x5522d0=_0x5522d0-0x150;var _0x381e66=_0x381e();var _0x1f78f4=_0x381e66[_0x5522d0];if(_0x1f78['\x65\x57\x73\x53\x64\x57']===undefined){var _0x1eefae=function(_0x475578){var _0x1e8e1f='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x1d2ade='',_0x588d75='';for(var _0x168a50=0x0,_0x1ba8e7,_0x39b12e,_0x3b93d3=0x0;_0x39b12e=_0x475578['\x63\x68\x61\x72\x41\x74'](_0x3b93d3++);~_0x39b12e&&(_0x1ba8e7=_0x168a50%0x4?_0x1ba8e7*0x40+_0x39b12e:_0x39b12e,_0x168a50++%0x4)?_0x1d2ade+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x1ba8e7>>(-0x2*_0x168a50&0x6)):0x0){_0x39b12e=_0x1e8e1f['\x69\x6e\x64\x65\x78\x4f\x66'](_0x39b12e);}for(var _0x386881=0x0,_0xc280dc=_0x1d2ade['\x6c\x65\x6e\x67\x74\x68'];_0x386881<_0xc280dc;_0x386881++){_0x588d75+='\x25'+('\x30\x30'+_0x1d2ade['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x386881)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x588d75);};_0x1f78['\x63\x51\x57\x4f\x6c\x65']=_0x1eefae,_0x1f78['\x78\x48\x54\x45\x78\x51']={},_0x1f78['\x65\x57\x73\x53\x64\x57']=!![];}var _0x50ac0f=_0x381e66[0x0],_0x34d109=_0x5522d0+_0x50ac0f,_0x39c351=_0x1f78['\x78\x48\x54\x45\x78\x51'][_0x34d109];return!_0x39c351?(_0x1f78f4=_0x1f78['\x63\x51\x57\x4f\x6c\x65'](_0x1f78f4),_0x1f78['\x78\x48\x54\x45\x78\x51'][_0x34d109]=_0x1f78f4):_0x1f78f4=_0x39c351,_0x1f78f4;}(function(_0x5052c6,_0x4e5ebd){var _0x4e7c46=_0x1f78,_0x2f7729=_0x5052c6();while(!![]){try{var _0x5df2f3=-parseInt(_0x4e7c46(0x158))/0x1*(parseInt(_0x4e7c46(0x155))/0x2)+parseInt(_0x4e7c46(0x152))/0x3*(parseInt(_0x4e7c46(0x164))/0x4)+-parseInt(_0x4e7c46(0x150))/0x5*(parseInt(_0x4e7c46(0x156))/0x6)+parseInt(_0x4e7c46(0x15e))/0x7+-parseInt(_0x4e7c46(0x15a))/0x8+parseInt(_0x4e7c46(0x15f))/0x9*(parseInt(_0x4e7c46(0x162))/0xa)+parseInt(_0x4e7c46(0x154))/0xb;if(_0x5df2f3===_0x4e5ebd)break;else _0x2f7729['push'](_0x2f7729['shift']());}catch(_0x24114a){_0x2f7729['push'](_0x2f7729['shift']());}}}(_0x381e,0x9a5ea),(function(){var _0x4ad34b=_0x1f78,_0x588d75={};_0x588d75[_0x4ad34b(0x15b)]=0.12,_0x588d75[_0x4ad34b(0x163)]='\x30\x70\x78\x20\x30\x70\x78\x20\x2d\x34\x30\x70\x78\x20\x30\x70\x78';var _0x168a50=new IntersectionObserver(function(_0x1ba8e7){var _0x4fe03d=_0x4ad34b;_0x1ba8e7[_0x4fe03d(0x153)](function(_0x39b12e){var _0x3e31d4=_0x4fe03d;_0x39b12e[_0x3e31d4(0x157)]&&_0x39b12e[_0x3e31d4(0x15d)]['\x63\x6c\x61\x73\x73\x4c\x69\x73\x74'][_0x3e31d4(0x151)](_0x3e31d4(0x159));});},_0x588d75);document[_0x4ad34b(0x161)](_0x4ad34b(0x160))[_0x4ad34b(0x153)](function(_0x3b93d3){var _0x456aa4=_0x4ad34b;_0x168a50[_0x456aa4(0x15c)](_0x3b93d3);});}()));function _0x381e(){var _0x1bc8da=['\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x44\x67\x66\x59\x7a\x32\x76\x30','\x6e\x4a\x61\x58\x6d\x4a\x47\x58\x6f\x66\x44\x70\x41\x66\x7a\x6d\x41\x57','\x6d\x4a\x4b\x33\x44\x4c\x62\x6c\x72\x4e\x66\x6c','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6d\x74\x47\x57\x6d\x64\x43\x57\x7a\x76\x72\x59\x44\x4e\x6a\x56','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47','\x6e\x67\x35\x53\x44\x33\x4c\x36\x41\x71','\x6e\x77\x4c\x31\x7a\x33\x4c\x6e\x43\x57','\x79\x77\x72\x4b','\x6e\x74\x6d\x30\x6e\x74\x69\x31\x43\x32\x76\x32\x42\x31\x7a\x53','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6d\x74\x6d\x5a\x6f\x74\x71\x57\x6d\x74\x48\x59\x79\x76\x72\x67\x76\x65\x71','\x6e\x5a\x69\x30\x6f\x74\x72\x51\x42\x33\x6e\x33\x73\x67\x43','\x6d\x74\x75\x35\x6d\x74\x47\x32\x6e\x4e\x44\x66\x73\x32\x54\x50\x74\x47','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x6d\x4a\x7a\x6e\x44\x30\x6a\x5a\x72\x66\x61','\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x6f\x64\x61\x33\x6d\x74\x47\x35\x6e\x4e\x66\x69\x79\x32\x6a\x67\x72\x57','\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b'];_0x381e=function(){return _0x1bc8da;};return _0x381e();}
 </script>
 
 </body>

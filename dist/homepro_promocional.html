@@ -110,6 +110,200 @@
       background:linear-gradient(180deg,#ffffff 0%,#f7fbff 100%);
     }
 
+
+    .promo-strip{
+      background:
+        radial-gradient(circle at 15% 20%,rgba(255,255,255,.20),transparent 18rem),
+        linear-gradient(135deg,#061121 0%,#0277b5 48%,#16a34a 100%);
+      color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.18);
+      box-shadow:0 12px 28px rgba(7,24,47,.16);
+    }
+    .promo-strip-inner{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding-top:10px;
+      padding-bottom:10px;
+    }
+    .promo-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:4px;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:#d9f99d;
+    }
+    .promo-kicker::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:#d9f99d;
+      box-shadow:0 0 0 6px rgba(217,249,157,.18);
+    }
+    .promo-copy strong{
+      display:block;
+      font-family:Outfit,Inter,sans-serif;
+      color:#fff;
+      font-size:clamp(1rem,2.2vw,1.28rem);
+      line-height:1.15;
+      letter-spacing:-.03em;
+    }
+    .promo-copy small{
+      display:block;
+      color:rgba(255,255,255,.82);
+      font-weight:800;
+      margin-top:2px;
+      line-height:1.35;
+    }
+    .promo-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:12px 18px;
+      border-radius:14px;
+      background:#fff;
+      color:var(--navy);
+      font-family:Outfit,Inter,sans-serif;
+      font-weight:900;
+      white-space:nowrap;
+      box-shadow:0 12px 26px rgba(0,0,0,.16);
+      transition:transform .2s ease,box-shadow .2s ease;
+    }
+    .promo-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(0,0,0,.20)}
+
+    .promo-hero-note{
+      margin:22px 0 4px;
+      max-width:720px;
+      background:#fff;
+      border:1px solid rgba(22,163,74,.28);
+      border-left:6px solid var(--green-dark);
+      border-radius:18px;
+      padding:16px 18px;
+      box-shadow:0 12px 30px rgba(22,163,74,.10);
+      color:var(--muted);
+      font-weight:800;
+    }
+    .promo-hero-note strong{
+      display:block;
+      color:var(--navy);
+      font-family:Outfit,Inter,sans-serif;
+      font-size:1.10rem;
+      letter-spacing:-.03em;
+      margin-bottom:3px;
+    }
+    .promo-hero-note span{
+      display:block;
+      line-height:1.45;
+    }
+
+    .founder-offer{
+      margin:38px auto 0;
+      max-width:980px;
+      border-radius:28px;
+      padding:clamp(24px,4vw,34px);
+      background:
+        radial-gradient(circle at 88% 12%,rgba(133,197,31,.18),transparent 18rem),
+        linear-gradient(135deg,#061121 0%,#075985 52%,#16a34a 100%);
+      color:#fff;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .founder-offer::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,rgba(255,255,255,.12),transparent 42%);
+      pointer-events:none;
+    }
+    .founder-offer-content{
+      position:relative;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:24px;
+      align-items:center;
+    }
+    .founder-offer h3{
+      color:#fff;
+      font-size:clamp(1.6rem,3vw,2.35rem);
+      margin-bottom:10px;
+    }
+    .founder-offer p{
+      color:rgba(255,255,255,.84);
+      font-weight:700;
+      line-height:1.62;
+      max-width:650px;
+    }
+    .founder-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+    .founder-tags span{
+      display:inline-flex;
+      border:1px solid rgba(255,255,255,.24);
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      border-radius:999px;
+      padding:8px 11px;
+      font-size:12px;
+      font-weight:900;
+    }
+    .founder-price-box{
+      background:#fff;
+      color:var(--navy);
+      border-radius:24px;
+      padding:24px;
+      text-align:center;
+      box-shadow:0 16px 34px rgba(0,0,0,.18);
+    }
+    .founder-price-box small{
+      display:block;
+      color:var(--muted);
+      font-weight:900;
+      margin-bottom:4px;
+    }
+    .founder-price-box strong{
+      display:block;
+      font-family:Outfit,Inter,sans-serif;
+      font-size:clamp(3.2rem,7vw,4.6rem);
+      line-height:.92;
+      letter-spacing:-.07em;
+      color:var(--green-dark);
+    }
+    .founder-price-box span{
+      display:block;
+      color:var(--muted);
+      font-weight:900;
+      margin:6px 0 16px;
+    }
+    .founder-price-box .btn{
+      width:100%;
+    }
+    .price-alert{
+      background:#f0fdf4;
+      border:1px solid #bbf7d0;
+      border-radius:16px;
+      padding:12px 14px;
+      color:#166534;
+      font-size:13px;
+      font-weight:900;
+      text-align:center;
+      line-height:1.35;
+      margin-top:-4px;
+    }
+    .price-alert strong{color:#166534}
+
+
     .topline{
       height:4px;
       background:linear-gradient(90deg,var(--blue),var(--green));
@@ -429,8 +623,18 @@
       .module-two-band .grid-2 .module-image-frame{order:2}
       .module-two-band .grid-2 .module-copy{order:1}
     }
+
+    @media (max-width:900px){
+      .founder-offer-content{grid-template-columns:1fr;text-align:center}
+      .founder-offer p{margin-inline:auto}
+      .founder-tags{justify-content:center}
+    }
     @media (max-width:640px){
       body{padding-bottom:76px}
+      .promo-strip-inner{flex-direction:column;text-align:center;align-items:stretch}
+      .promo-btn{width:100%;white-space:normal}
+      .promo-hero-note{text-align:left;margin-inline:auto}
+
       .wrap{padding-inline:18px}
       .section{padding:58px 0}
       nav .brand div{display:none}
@@ -472,10 +676,21 @@
         <a href="#modulos">Módulos</a>
         <a href="#como-funciona">Como funciona</a>
         <a href="#planos">Planos</a>
-        <a class="btn btn-green nav-cta" href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Quero acesso</a>
+        <a class="btn btn-green nav-cta" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Garantir promoção</a>
       </div>
     </div>
   </nav>
+
+  <div class="promo-strip" role="banner" aria-label="Oferta de lançamento">
+    <div class="wrap promo-strip-inner">
+      <div class="promo-copy">
+        <span class="promo-kicker">Lote fundador</span>
+        <strong>R$ 35,90/mês no plano anual via Pix</strong>
+        <small>R$ 430,80/ano para os primeiros 30 clientes pagantes. Depois, o plano volta para R$ 574/ano.</small>
+      </div>
+      <a class="promo-btn" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Garantir preço fundador</a>
+    </div>
+  </div>
 
   <main id="topo">
     <section class="section hero-band">
@@ -484,8 +699,9 @@
           <div class="pill"><span class="dot"></span> Plataforma para venda técnica no campo</div>
           <h1>Duas ferramentas. <span class="grad">Mais precisão</span> no campo.</h1>
           <p class="lead">Escolha melhor, diagnostique melhor e venda com mais base técnica. O Spray Precision PRO transforma a recomendação de bicos e a aferição de vazão em uma experiência visual, simples e confiável para o produtor.</p>
+          <div class="promo-hero-note"><strong>Oferta para validação dos primeiros clientes pagantes</strong><span>Plano Fundador por R$ 430,80 no Pix, equivalente a R$ 35,90/mês no anual. Vagas limitadas para manter suporte próximo no início.</span></div>
           <div class="hero-actions">
-            <a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Quero%20testar%20o%20Spray%20Precision%20PRO%20por%205%20dias." target="_blank" rel="noopener">Iniciar 5 dias grátis</a>
+            <a class="btn btn-green" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Garantir plano fundador</a>
             <a class="btn btn-secondary" href="#modulos">Ver como funciona</a>
           </div>
           <div class="trust-row" aria-label="Diferenciais principais">
@@ -653,6 +869,29 @@
           <p class="lead centered">A estrutura abaixo coloca o plano anual como melhor escolha, mas mantém opção mensal, avaliação e corporativo.</p>
         </div>
 
+
+        <div class="founder-offer reveal" aria-label="Plano fundador promocional">
+          <div class="founder-offer-content">
+            <div>
+              <span class="promo-kicker">Primeiros 30 clientes</span>
+              <h3>Entre como cliente fundador e pague menos para validar junto com a Spray Precision.</h3>
+              <p>Oferta especial para quem quer usar os 2 módulos agora, ajudar a evoluir a plataforma e receber suporte próximo via WhatsApp. Condição exclusiva no Pix para a primeira anuidade.</p>
+              <div class="founder-tags">
+                <span>2 módulos completos</span>
+                <span>Laudo técnico ilimitado</span>
+                <span>PWA offline</span>
+                <span>Suporte direto</span>
+              </div>
+            </div>
+            <div class="founder-price-box">
+              <small>equivalente a</small>
+              <strong>R$ 35,90</strong>
+              <span>/mês no plano anual<br>R$ 430,80 no Pix</span>
+              <a class="btn btn-green" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Quero ser cliente fundador</a>
+            </div>
+          </div>
+        </div>
+
         <div class="pricing-grid">
           <div class="card price-card reveal">
             <div class="badge blue">Sem risco</div>
@@ -683,13 +922,14 @@
             <div class="badge">Melhor escolha</div>
             <div class="plan-title">Anual</div>
             <div class="price"><div><small><s>R$ 828</s></small><br><small>R$</small> <strong>574</strong><br><small>/ano • R$ 47,83/mês</small></div></div>
+            <div class="price-alert">Oferta Pix: <strong>R$ 430,80/ano</strong><br>equivalente a R$ 35,90/mês para o lote fundador</div>
             <ul class="features">
               <li>Acesso completo aos 2 módulos</li>
               <li>Laudo ilimitado com sua logo</li>
               <li>Funciona como PWA offline</li>
               <li>Suporte prioritário via WhatsApp</li>
             </ul>
-            <a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20assinar%20o%20plano%20ANUAL%20do%20Spray%20Precision%20por%20R$%20574/ano." target="_blank" rel="noopener">Assinar anual</a>
+            <a class="btn btn-green" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Assinar anual fundador</a>
           </div>
 
           <div class="card price-card reveal">
@@ -720,7 +960,7 @@
           <h2>Transforme aferição em argumento técnico de venda.</h2>
           <p class="lead">Use o Spray Precision PRO para mostrar o problema, orientar a troca correta e entregar um laudo profissional ao produtor.</p>
           <div class="hero-actions">
-            <a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Quero acesso agora</a>
+            <a class="btn btn-green" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Garantir preço fundador</a>
             <a class="btn btn-secondary" href="#planos">Comparar planos</a>
           </div>
         </div>
@@ -740,11 +980,11 @@
   </footer>
 
   <div class="sticky-mobile" aria-label="Chamada fixa mobile">
-    <a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Quero%20testar%20o%20Spray%20Precision%20PRO%20por%205%20dias." target="_blank" rel="noopener">Testar 5 dias grátis</a>
+    <a class="btn btn-green" href="https://wa.me/5565999106415?text=Ol%C3%A1%21%20Quero%20garantir%20o%20PLANO%20FUNDADOR%20do%20Spray%20Precision%20PRO%20por%20R%24%20430%2C80/ano%20no%20Pix%20%28equivalente%20a%20R%24%2035%2C90/m%C3%AAs%29." target="_blank" rel="noopener">Garantir plano fundador</a>
   </div>
 
   <script>
-function _0x39e2(_0x6d5112,_0x457291){_0x6d5112=_0x6d5112-0x1e3;const _0x182361=_0x1823();let _0x39e2b6=_0x182361[_0x6d5112];if(_0x39e2['\x7a\x6c\x55\x51\x47\x52']===undefined){var _0x4f3daa=function(_0x1b44f4){const _0x45b948='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x32f3e5='',_0x26164b='';for(let _0x3303ef=0x0,_0x17c285,_0x32d42b,_0x1a29f9=0x0;_0x32d42b=_0x1b44f4['\x63\x68\x61\x72\x41\x74'](_0x1a29f9++);~_0x32d42b&&(_0x17c285=_0x3303ef%0x4?_0x17c285*0x40+_0x32d42b:_0x32d42b,_0x3303ef++%0x4)?_0x32f3e5+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x17c285>>(-0x2*_0x3303ef&0x6)):0x0){_0x32d42b=_0x45b948['\x69\x6e\x64\x65\x78\x4f\x66'](_0x32d42b);}for(let _0x453832=0x0,_0x53c5dd=_0x32f3e5['\x6c\x65\x6e\x67\x74\x68'];_0x453832<_0x53c5dd;_0x453832++){_0x26164b+='\x25'+('\x30\x30'+_0x32f3e5['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x453832)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x26164b);};_0x39e2['\x47\x5a\x66\x6a\x4e\x72']=_0x4f3daa,_0x39e2['\x61\x75\x78\x74\x53\x66']={},_0x39e2['\x7a\x6c\x55\x51\x47\x52']=!![];}const _0x2df573=_0x182361[0x0],_0x3048a9=_0x6d5112+_0x2df573,_0x5a280c=_0x39e2['\x61\x75\x78\x74\x53\x66'][_0x3048a9];return!_0x5a280c?(_0x39e2b6=_0x39e2['\x47\x5a\x66\x6a\x4e\x72'](_0x39e2b6),_0x39e2['\x61\x75\x78\x74\x53\x66'][_0x3048a9]=_0x39e2b6):_0x39e2b6=_0x5a280c,_0x39e2b6;}function _0x1823(){const _0xf684c6=['\x6d\x33\x50\x68\x77\x4d\x4c\x63\x45\x71','\x79\x77\x72\x4b','\x6d\x74\x7a\x65\x42\x75\x48\x56\x74\x67\x57','\x44\x77\x35\x56\x79\x4e\x6e\x4c\x43\x4e\x7a\x4c','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x41\x78\x6d\x54\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47','\x6d\x5a\x65\x30\x6d\x5a\x43\x57\x6e\x32\x6e\x6c\x41\x31\x48\x6d\x71\x57','\x6d\x4a\x65\x57\x6d\x74\x47\x34\x6e\x67\x44\x49\x72\x76\x50\x65\x77\x61','\x6d\x4a\x71\x5a\x6e\x74\x4b\x32\x42\x33\x48\x73\x79\x4e\x50\x59','\x6d\x74\x61\x32\x6d\x5a\x61\x32\x6d\x74\x66\x6f\x7a\x31\x50\x5a\x74\x4b\x6d','\x6d\x5a\x62\x73\x74\x67\x35\x59\x45\x4e\x4b','\x6e\x74\x65\x5a\x6e\x64\x69\x32\x6d\x66\x4c\x48\x75\x33\x62\x33\x79\x71','\x6d\x68\x62\x34\x69\x64\x62\x57\x45\x63\x61\x54\x6e\x64\x76\x57\x45\x63\x61\x57\x43\x68\x47','\x6d\x74\x65\x30\x6d\x64\x61\x35\x6e\x77\x76\x6c\x79\x75\x39\x32\x72\x71','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x44\x67\x66\x59\x7a\x32\x76\x30','\x6d\x5a\x4b\x33\x6e\x74\x71\x59\x74\x33\x4c\x4e\x41\x4e\x76\x6c','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x6d\x4a\x6a\x6f\x72\x31\x4c\x51\x77\x65\x69','\x6d\x74\x62\x6f\x73\x4e\x4c\x77\x72\x77\x34','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43'];_0x1823=function(){return _0xf684c6;};return _0x1823();}(function(_0x4ff5dc,_0x110b8c){const _0x4cd164=_0x39e2,_0x633e45=_0x4ff5dc();while(!![]){try{const _0x200f1c=parseInt(_0x4cd164(0x1e8))/0x1+-parseInt(_0x4cd164(0x1f8))/0x2*(-parseInt(_0x4cd164(0x1f0))/0x3)+parseInt(_0x4cd164(0x1e3))/0x4*(-parseInt(_0x4cd164(0x1e5))/0x5)+parseInt(_0x4cd164(0x1eb))/0x6+parseInt(_0x4cd164(0x1f7))/0x7*(parseInt(_0x4cd164(0x1f2))/0x8)+-parseInt(_0x4cd164(0x1e4))/0x9*(parseInt(_0x4cd164(0x1ee))/0xa)+-parseInt(_0x4cd164(0x1ed))/0xb*(parseInt(_0x4cd164(0x1e6))/0xc);if(_0x200f1c===_0x110b8c)break;else _0x633e45['push'](_0x633e45['shift']());}catch(_0x307b96){_0x633e45['push'](_0x633e45['shift']());}}}(_0x1823,0xb7e3d),(function(){const _0x19ce16=_0x39e2,_0x26164b={};_0x26164b['\x74\x68\x72\x65\x73\x68\x6f\x6c\x64']=0.12,_0x26164b[_0x19ce16(0x1f6)]=_0x19ce16(0x1e7);const _0x3303ef=new IntersectionObserver(_0x17c285=>{const _0x4aa0c8=_0x19ce16;_0x17c285[_0x4aa0c8(0x1f4)](_0x32d42b=>{const _0xef945f=_0x4aa0c8;_0x32d42b[_0xef945f(0x1ef)]&&(_0x32d42b[_0xef945f(0x1ea)][_0xef945f(0x1ec)][_0xef945f(0x1f1)](_0xef945f(0x1f5)),_0x3303ef[_0xef945f(0x1f3)](_0x32d42b[_0xef945f(0x1ea)]));});},_0x26164b);document['\x71\x75\x65\x72\x79\x53\x65\x6c\x65\x63\x74\x6f\x72\x41\x6c\x6c']('\x2e\x72\x65\x76\x65\x61\x6c')[_0x19ce16(0x1f4)](_0x1a29f9=>_0x3303ef[_0x19ce16(0x1e9)](_0x1a29f9));}()));
+function _0x4b39(_0x15830c,_0xb25475){_0x15830c=_0x15830c-0x1bc;const _0x40cda3=_0x40cd();let _0x4b398f=_0x40cda3[_0x15830c];if(_0x4b39['\x53\x67\x4f\x49\x53\x76']===undefined){var _0x38bb77=function(_0x2d2469){const _0x5e9064='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x13a649='',_0xdcd04d='';for(let _0x52c836=0x0,_0x5d7ee8,_0x5c82f2,_0x32dfd6=0x0;_0x5c82f2=_0x2d2469['\x63\x68\x61\x72\x41\x74'](_0x32dfd6++);~_0x5c82f2&&(_0x5d7ee8=_0x52c836%0x4?_0x5d7ee8*0x40+_0x5c82f2:_0x5c82f2,_0x52c836++%0x4)?_0x13a649+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x5d7ee8>>(-0x2*_0x52c836&0x6)):0x0){_0x5c82f2=_0x5e9064['\x69\x6e\x64\x65\x78\x4f\x66'](_0x5c82f2);}for(let _0x2a8e1e=0x0,_0x47df70=_0x13a649['\x6c\x65\x6e\x67\x74\x68'];_0x2a8e1e<_0x47df70;_0x2a8e1e++){_0xdcd04d+='\x25'+('\x30\x30'+_0x13a649['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x2a8e1e)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0xdcd04d);};_0x4b39['\x77\x6b\x61\x54\x71\x7a']=_0x38bb77,_0x4b39['\x66\x58\x43\x79\x61\x70']={},_0x4b39['\x53\x67\x4f\x49\x53\x76']=!![];}const _0x335dd4=_0x40cda3[0x0],_0x4ccf07=_0x15830c+_0x335dd4,_0xf59c95=_0x4b39['\x66\x58\x43\x79\x61\x70'][_0x4ccf07];return!_0xf59c95?(_0x4b398f=_0x4b39['\x77\x6b\x61\x54\x71\x7a'](_0x4b398f),_0x4b39['\x66\x58\x43\x79\x61\x70'][_0x4ccf07]=_0x4b398f):_0x4b398f=_0xf59c95,_0x4b398f;}(function(_0x792e5a,_0x3c4a92){const _0x5a7428=_0x4b39,_0x1a9418=_0x792e5a();while(!![]){try{const _0xde340a=-parseInt(_0x5a7428(0x1c5))/0x1*(-parseInt(_0x5a7428(0x1c8))/0x2)+parseInt(_0x5a7428(0x1ce))/0x3*(parseInt(_0x5a7428(0x1c1))/0x4)+-parseInt(_0x5a7428(0x1cb))/0x5*(-parseInt(_0x5a7428(0x1bd))/0x6)+parseInt(_0x5a7428(0x1cf))/0x7+parseInt(_0x5a7428(0x1ca))/0x8*(-parseInt(_0x5a7428(0x1d0))/0x9)+parseInt(_0x5a7428(0x1c3))/0xa+-parseInt(_0x5a7428(0x1c4))/0xb;if(_0xde340a===_0x3c4a92)break;else _0x1a9418['push'](_0x1a9418['shift']());}catch(_0x347c5c){_0x1a9418['push'](_0x1a9418['shift']());}}}(_0x40cd,0x7a72f),(function(){const _0xac9458=_0x4b39,_0xdcd04d={};_0xdcd04d[_0xac9458(0x1cc)]=0.12,_0xdcd04d['\x72\x6f\x6f\x74\x4d\x61\x72\x67\x69\x6e']=_0xac9458(0x1c6);const _0x52c836=new IntersectionObserver(_0x5d7ee8=>{const _0x524cd4=_0xac9458;_0x5d7ee8[_0x524cd4(0x1d1)](_0x5c82f2=>{const _0x4c8ccf=_0x524cd4;_0x5c82f2[_0x4c8ccf(0x1be)]&&(_0x5c82f2[_0x4c8ccf(0x1c0)][_0x4c8ccf(0x1cd)][_0x4c8ccf(0x1c9)](_0x4c8ccf(0x1c2)),_0x52c836['\x75\x6e\x6f\x62\x73\x65\x72\x76\x65'](_0x5c82f2[_0x4c8ccf(0x1c0)]));});},_0xdcd04d);document[_0xac9458(0x1bf)](_0xac9458(0x1c7))[_0xac9458(0x1d1)](_0x32dfd6=>_0x52c836[_0xac9458(0x1bc)](_0x32dfd6));}()));function _0x40cd(){const _0x2239c7=['\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x6d\x5a\x4c\x36\x79\x32\x4c\x57\x75\x75\x38','\x6e\x5a\x61\x58\x6f\x64\x79\x30\x6f\x67\x39\x65\x44\x33\x50\x41\x7a\x71','\x6d\x74\x71\x58\x6d\x32\x44\x54\x76\x67\x4c\x69\x43\x47','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x6e\x4b\x39\x36\x41\x65\x44\x55\x44\x57','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x44\x67\x66\x59\x7a\x32\x76\x30','\x6d\x4a\x75\x30\x6e\x5a\x65\x59\x76\x4d\x7a\x33\x71\x78\x44\x35','\x41\x78\x6d\x54\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x6e\x64\x71\x33\x6d\x74\x79\x58\x6d\x66\x50\x72\x74\x66\x4c\x56\x41\x57','\x6d\x4a\x65\x34\x6e\x74\x4b\x33\x6d\x74\x44\x5a\x71\x4b\x54\x72\x71\x4d\x69','\x6e\x74\x79\x31\x6d\x5a\x72\x32\x7a\x32\x58\x57\x74\x66\x65','\x6d\x68\x62\x34\x69\x64\x62\x57\x45\x63\x61\x54\x6e\x64\x76\x57\x45\x63\x61\x57\x43\x68\x47','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61','\x6d\x74\x48\x64\x77\x77\x58\x58\x77\x67\x69','\x79\x77\x72\x4b','\x6d\x5a\x4b\x32\x6f\x64\x62\x73\x43\x4b\x35\x6c\x41\x30\x34','\x6d\x4a\x71\x57\x6e\x74\x6d\x32\x6e\x77\x50\x59\x79\x76\x7a\x59\x41\x47','\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b'];_0x40cd=function(){return _0x2239c7;};return _0x40cd();}
 </script>
 </body>
 </html>

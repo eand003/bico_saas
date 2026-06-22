@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spray Precision PRO – Calibração de Bicos com Precisão Técnica</title>
+  <title>Spray Precision PRO - Calibração de Bicos (Edição Light)</title>
   <meta name="description" content="Selecione o bico ideal pela norma ISO e diagnostique sua barra bico a bico. Laudo técnico em segundos. Para agrônomos, técnicos e revendas.">
   <meta property="og:title" content="Spray Precision PRO">
   <meta property="og:description" content="Tecnologia de calibração para quem precisa de resultado no campo.">
@@ -16,20 +16,20 @@
   <style>
     /* ─── TOKENS ────────────────────────────────────────── */
     :root {
-      --bg:           #05080a;
-      --bg-elevated:  #0c1116;
-      --bg-card:      #0b0f14;
-      --blue:         #00d2ff;
-      --blue-glow:    rgba(0, 210, 255, 0.15);
-      --green:        #38ef7d;
-      --green-glow:   rgba(56, 239, 125, 0.15);
-      --yellow:       #ffe600;
-      --yellow-glow:  rgba(255, 230, 0, 0.15);
-      --red:          #ff4f4f;
-      --text:         #f8fafc;
-      --muted:        #8ea3b8;
-      --border:       rgba(255, 255, 255, 0.05);
-      --border-hover: rgba(255, 255, 255, 0.12);
+      --bg:           #f8fafc;
+      --bg-elevated:  #ffffff;
+      --bg-card:      #ffffff;
+      --blue:         #0284c7;
+      --blue-glow:    rgba(2, 132, 199, 0.08);
+      --green:        #16a34a;
+      --green-glow:   rgba(22, 163, 74, 0.08);
+      --yellow:       #b45309;
+      --yellow-glow:  rgba(180, 83, 9, 0.08);
+      --red:          #dc2626;
+      --text:         #0f172a;
+      --muted:        #475569;
+      --border:       #e2e8f0;
+      --border-hover: #cbd5e1;
       --radius-lg:    24px;
       --radius-md:    16px;
       --radius-sm:    10px;
@@ -53,8 +53,8 @@
       position: fixed;
       inset: 0;
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+        linear-gradient(rgba(15, 23, 42, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.02) 1px, transparent 1px);
       background-size: 64px 64px;
       pointer-events: none;
       z-index: 1;
@@ -71,8 +71,8 @@
       position: absolute;
       border-radius: 50%;
       filter: blur(160px);
-      opacity: 0.12;
-      mix-blend-mode: screen;
+      opacity: 0.07;
+      mix-blend-mode: multiply;
     }
     .glow-orb-1 { top: 5%; left: 15%; width: 450px; height: 450px; background: var(--blue); }
     .glow-orb-2 { top: 30%; right: 10%; width: 500px; height: 500px; background: var(--green); }
@@ -85,8 +85,8 @@
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); }
 
     /* ─── LAYOUT WRAPPER ────────────────────────────────── */
     .container {
@@ -96,6 +96,11 @@
       padding: 0 24px;
       position: relative;
       z-index: 2;
+    }
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 20px;
+      }
     }
 
     /* ─── SCROLL REVEAL ──────────────────────────────────── */
@@ -164,7 +169,7 @@
       top: 0; left: 0; right: 0;
       z-index: 100;
       padding: 16px 24px;
-      background: rgba(5, 8, 10, 0.75);
+      background: rgba(248, 250, 252, 0.85);
       backdrop-filter: blur(16px) saturate(180%);
       -webkit-backdrop-filter: blur(16px) saturate(180%);
       border-bottom: 1px solid var(--border);
@@ -223,13 +228,19 @@
       text-align: center;
       position: relative;
       z-index: 2;
+      background: #f8fafc;
+    }
+    @media (max-width: 768px) {
+      .hero {
+        padding: 120px 0 60px 0;
+      }
     }
     .hero-eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 230, 0, 0.08);
-      border: 1px solid rgba(255, 230, 0, 0.2);
+      background: rgba(180, 83, 9, 0.08);
+      border: 1px solid rgba(180, 83, 9, 0.18);
       border-radius: 100px;
       padding: 6px 18px;
       font-size: 12px;
@@ -298,7 +309,7 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      background: rgba(255, 255, 255, 0.04);
+      background: #ffffff;
       color: var(--text);
       border: 1px solid var(--border);
       font-family: 'Outfit', sans-serif;
@@ -307,11 +318,13 @@
       padding: 16px 36px;
       border-radius: var(--radius-md);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
     }
     .btn-hero-secondary:hover {
       transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.08);
+      background: #f1f5f9;
       border-color: var(--border-hover);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     }
 
     .hero-meta {
@@ -333,7 +346,7 @@
       color: var(--green);
     }
     .meta-sep {
-      color: rgba(255, 255, 255, 0.1);
+      color: rgba(15, 23, 42, 0.15);
     }
 
     .hero-visual {
@@ -359,24 +372,24 @@
     
     /* Browser & Application Mockup */
     .window-mockup {
-      background: #090d10;
+      background: #ffffff;
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       box-shadow: 
-        0 40px 100px rgba(0, 0, 0, 0.8),
-        0 0 80px rgba(0, 210, 255, 0.08);
+        0 20px 50px rgba(15, 23, 42, 0.06),
+        0 0 40px rgba(2, 132, 199, 0.02);
       overflow: hidden;
       transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
     }
     .window-mockup:hover {
       transform: translateY(-4px) scale(1.002);
       box-shadow: 
-        0 50px 120px rgba(0, 0, 0, 0.9),
-        0 0 100px rgba(0, 210, 255, 0.12);
+        0 30px 70px rgba(15, 23, 42, 0.1),
+        0 0 60px rgba(2, 132, 199, 0.04);
     }
     .window-header {
       height: 44px;
-      background: #06090c;
+      background: #f1f5f9;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -402,10 +415,10 @@
       color: var(--muted);
       font-size: 11.5px;
       font-family: monospace;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(0, 0, 0, 0.04);
       padding: 5px 28px;
       border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.04);
       letter-spacing: 0.3px;
     }
     .window-body img {
@@ -416,6 +429,14 @@
     /* ─── PROBLEMA ───────────────────────────────────────── */
     .problem-section {
       padding: 100px 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .problem-section {
+        padding: 60px 0;
+      }
     }
     .problem-grid {
       display: grid;
@@ -431,19 +452,21 @@
       justify-content: space-between;
     }
     .problem-card {
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px solid rgba(255, 79, 79, 0.1);
+      background: #ffffff;
+      border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 24px 28px;
       display: flex;
       align-items: flex-start;
       gap: 20px;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
     }
     .problem-card:hover {
-      border-color: rgba(255, 79, 79, 0.25);
-      background: rgba(255, 79, 79, 0.03);
+      border-color: rgba(220, 38, 38, 0.25);
+      background: rgba(220, 38, 38, 0.01);
       transform: translateX(4px);
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
     }
     .problem-card-icon {
       width: 44px; height: 44px;
@@ -472,8 +495,8 @@
 
     /* Stats card with red glow */
     .problem-stat-block {
-      background: linear-gradient(180deg, rgba(255, 79, 79, 0.03) 0%, rgba(9, 13, 16, 0.6) 100%);
-      border: 1px solid rgba(255, 79, 79, 0.15);
+      background: linear-gradient(180deg, rgba(220, 38, 38, 0.02) 0%, #ffffff 100%);
+      border: 1px solid rgba(220, 38, 38, 0.15);
       border-radius: var(--radius-lg);
       padding: 48px 36px;
       text-align: center;
@@ -483,8 +506,8 @@
       position: relative;
       overflow: hidden;
       box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(255, 79, 79, 0.02);
+        0 15px 35px rgba(15, 23, 42, 0.04),
+        0 0 20px rgba(220, 38, 38, 0.01);
     }
     .problem-stat-block::before {
       content: '';
@@ -518,7 +541,7 @@
     }
     .problem-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.08), transparent);
       margin: 24px 0;
     }
     .stat-secondary {
@@ -543,6 +566,19 @@
     /* ─── MODULES (1 & 2) ────────────────────────────────── */
     .module-section {
       padding: 100px 0;
+    }
+    @media (max-width: 768px) {
+      .module-section {
+        padding: 60px 0;
+      }
+    }
+    .m1-bg {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .m2-bg {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
     }
     .module-inner {
       display: grid;
@@ -598,7 +634,7 @@
       align-items: flex-start;
       gap: 12px;
       font-size: 1rem;
-      color: #e2e8f0;
+      color: var(--text);
     }
     .feature-list li svg {
       width: 20px; height: 20px;
@@ -614,18 +650,25 @@
     }
     .module-visual .window-mockup {
       box-shadow: 
-        0 30px 80px rgba(0, 0, 0, 0.7),
-        0 0 60px rgba(0, 210, 255, 0.02);
+        0 20px 50px rgba(15, 23, 42, 0.06),
+        0 0 40px rgba(2, 132, 199, 0.02);
     }
     .module-visual.green-glow .window-mockup {
       box-shadow: 
-        0 30px 80px rgba(0, 0, 0, 0.7),
-        0 0 60px rgba(56, 239, 125, 0.02);
+        0 20px 50px rgba(15, 23, 42, 0.06),
+        0 0 40px rgba(22, 163, 74, 0.02);
     }
 
     /* ─── PROOF ──────────────────────────────────────────── */
     .proof-section {
       padding: 100px 0;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .proof-section {
+        padding: 60px 0;
+      }
     }
     .proof-header {
       text-align: center;
@@ -646,8 +689,8 @@
       border: 11px solid #1e2329;
       border-radius: 40px;
       box-shadow: 
-        0 30px 60px -15px rgba(0, 0, 0, 0.8),
-        0 0 40px rgba(0, 210, 255, 0.1);
+        0 20px 50px rgba(15, 23, 42, 0.15),
+        0 0 40px rgba(2, 132, 199, 0.05);
       position: relative;
       aspect-ratio: 9 / 19.5;
       overflow: hidden;
@@ -656,7 +699,7 @@
     .phone-screen {
       width: 100%;
       height: 100%;
-      background: #05080a;
+      background: #f8fafc;
     }
     .phone-screen img {
       width: 100%;
@@ -710,6 +753,13 @@
     /* ─── AUDIÊNCIAS ─────────────────────────────────────── */
     .audience-section {
       padding: 100px 0;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 768px) {
+      .audience-section {
+        padding: 60px 0;
+      }
     }
     .audience-header {
       text-align: center;
@@ -721,7 +771,7 @@
       gap: 24px;
     }
     .audience-card {
-      background: rgba(255, 255, 255, 0.01);
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 36px 30px;
@@ -730,6 +780,7 @@
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
     }
     .audience-card::before {
       content: '';
@@ -743,7 +794,10 @@
 
     .audience-card:hover {
       transform: translateY(-6px);
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--bg-card);
+      box-shadow: 
+        0 15px 35px rgba(15, 23, 42, 0.06),
+        0 0 20px rgba(15, 23, 42, 0.01);
     }
     .audience-card.blue-card:hover { border-color: rgba(0, 210, 255, 0.25); }
     .audience-card.green-card:hover { border-color: rgba(56, 239, 125, 0.25); }
@@ -796,6 +850,12 @@
     .cta-section {
       padding: 120px 0;
       position: relative;
+      background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 100%);
+    }
+    @media (max-width: 768px) {
+      .cta-section {
+        padding: 80px 0;
+      }
     }
     .cta-section::before {
       content: '';
@@ -812,7 +872,7 @@
       margin-bottom: 40px;
     }
     .pricing-card {
-      background: rgba(12, 17, 22, 0.65);
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 40px 24px 32px 24px;
@@ -820,29 +880,30 @@
       flex-direction: column;
       position: relative;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
     }
     .pricing-card:hover {
       transform: translateY(-8px);
-      border-color: rgba(0, 210, 255, 0.25);
-      background: rgba(12, 17, 22, 0.85);
+      border-color: rgba(2, 132, 199, 0.25);
+      background: var(--bg-card);
       box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(0, 210, 255, 0.03);
+        0 15px 35px rgba(15, 23, 42, 0.06),
+        0 0 20px rgba(2, 132, 199, 0.02);
     }
     
     /* Highlight Recommended Card */
     .pricing-card.recommended {
-      background: linear-gradient(180deg, rgba(56, 239, 125, 0.02) 0%, rgba(9, 13, 16, 0.85) 100%);
-      border: 1px solid rgba(56, 239, 125, 0.35);
+      background: linear-gradient(180deg, rgba(22, 163, 74, 0.02) 0%, #ffffff 100%);
+      border: 1px solid rgba(22, 163, 74, 0.35);
       box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.65),
-        0 0 40px rgba(56, 239, 125, 0.04);
+        0 20px 45px rgba(15, 23, 42, 0.06),
+        0 0 30px rgba(22, 163, 74, 0.03);
     }
     .pricing-card.recommended:hover {
       border-color: var(--green);
       box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.75),
-        0 0 60px rgba(56, 239, 125, 0.12);
+        0 25px 55px rgba(15, 23, 42, 0.12),
+        0 0 50px rgba(22, 163, 74, 0.08);
     }
 
     .pricing-badge {
@@ -858,12 +919,12 @@
       letter-spacing: 0.5px;
       text-transform: uppercase;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
     }
     .pricing-card.recommended .pricing-badge {
-      background: linear-gradient(135deg, var(--green) 0%, #1ba84f 100%);
-      color: #05080a;
-      box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);
+      background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
     }
     .plan-title {
       font-family: 'Outfit', sans-serif;
@@ -965,12 +1026,12 @@
       color: var(--red);
     }
     .plan-features-list li.restricted span {
-      color: rgba(255, 79, 79, 0.7);
+      color: rgba(220, 38, 38, 0.8);
     }
 
     /* Pricing buttons */
     .plan-btn {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(15, 23, 42, 0.04);
       color: var(--text);
       border: 1px solid var(--border);
       padding: 14px 20px;
@@ -987,22 +1048,22 @@
       margin-top: auto;
     }
     .plan-btn:hover {
-      background: white;
-      color: var(--bg);
-      border-color: white;
-      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+      background: var(--text);
+      color: #ffffff;
+      border-color: var(--text);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
     }
     .pricing-card.recommended .plan-btn {
-      background: linear-gradient(135deg, var(--green) 0%, #1ba84f 100%);
+      background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
       border: none;
-      color: #05080a;
-      box-shadow: 0 6px 20px rgba(56, 239, 125, 0.25);
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.2);
       font-weight: 800;
     }
     .pricing-card.recommended .plan-btn:hover {
-      box-shadow: 0 10px 30px rgba(56, 239, 125, 0.45);
+      box-shadow: 0 10px 30px rgba(22, 163, 74, 0.35);
       transform: translateY(-2px);
-      background: linear-gradient(135deg, #5eff95 0%, var(--green) 100%);
+      background: linear-gradient(135deg, #22c55e 0%, var(--green) 100%);
     }
 
     .cta-perks {
@@ -1028,6 +1089,7 @@
 
     /* ─── FOOTER ─────────────────────────────────────────── */
     footer {
+      background: #f1f5f9;
       border-top: 1px solid var(--border);
       padding: 48px 24px;
       position: relative;
@@ -1150,7 +1212,8 @@
   </nav>
 
   <!-- ══ HERO ═════════════════════════════════════════════════ -->
-  <section class="hero container">
+  <section class="hero">
+    <div class="container">
     <div class="hero-eyebrow">
       <div class="dot"></div>
       Plataforma SaaS para calibração de pulverização
@@ -1224,10 +1287,12 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ══ PROBLEMA ══════════════════════════════════════════════ -->
-  <section class="problem-section container">
+  <section class="problem-section">
+    <div class="container">
     <div class="reveal">
       <div class="label yellow">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -1313,10 +1378,12 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ══ MÓDULO 1 ═══════════════════════════════════════════════ -->
-  <section class="module-section container">
+  <section class="module-section m1-bg">
+    <div class="container">
     <div class="module-inner reveal">
       <div class="module-content">
         <div class="module-tag blue">
@@ -1331,25 +1398,25 @@
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Recomendação automatizada de pontas baseada na norma ISO 10625
+            <span>Recomendação automatizada de pontas baseada na norma ISO 10625</span>
           </li>
           <li>
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            <strong>Simulador PWM Inteligente:</strong> Calcule o Duty Cycle% ideal para evitar sub/sobredosagem e deriva
+            <span><strong>Simulador PWM Inteligente:</strong> Calcule o Duty Cycle% ideal para evitar sub/sobredosagem e deriva</span>
           </li>
           <li>
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            <strong>Modo Bico Duplo:</strong> Combine duas pontas diferentes para atingir grandes vazões sem estourar a pressão
+            <span><strong>Modo Bico Duplo:</strong> Combine duas pontas diferentes para atingir grandes vazões sem estourar a pressão</span>
           </li>
           <li>
             <svg class="text-blue" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Laudos técnicos instantâneos em PDF prontos para enviar via WhatsApp
+            <span>Laudos técnicos instantâneos em PDF prontos para enviar via WhatsApp</span>
           </li>
         </ul>
       </div>
@@ -1370,10 +1437,12 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- ══ MÓDULO 2 ═══════════════════════════════════════════════ -->
-  <section class="module-section container">
+  <section class="module-section m2-bg">
+    <div class="container">
     <div class="module-inner reverse reveal">
       <div class="module-visual green-glow">
         <div class="window-mockup">
@@ -1404,28 +1473,29 @@
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Cálculo instantâneo do CV% (Coeficiente de Variação) global da barra de aplicação
+            <span>Cálculo instantâneo do CV% (Coeficiente de Variação) global da barra de aplicação</span>
           </li>
           <li>
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Mapa visual de posições: identifique rapidamente os bicos com desvio crítico
+            <span>Mapa visual de posições: identifique rapidamente os bicos com desvio crítico</span>
           </li>
           <li>
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Laudo técnico White-label personalizado com a logomarca da sua empresa
+            <span>Laudo técnico White-label personalizado com a logomarca da sua empresa</span>
           </li>
           <li>
             <svg class="text-green" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            Botão de fechamento rápido: envie o relatório final diretamente no celular do produtor
+            <span>Botão de fechamento rápido: envie o relatório final diretamente no celular do produtor</span>
           </li>
         </ul>
       </div>
+    </div>
     </div>
   </section>
 
@@ -1486,7 +1556,8 @@
   </section>
 
   <!-- ══ PARA QUEM É ════════════════════════════════════════════ -->
-  <section class="audience-section container">
+  <section class="audience-section">
+    <div class="container">
     <div class="audience-header reveal">
       <div class="label">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -1544,6 +1615,7 @@
         </p>
         <div class="audience-benefit">🏢 Relatórios White-label inclusos</div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -1779,7 +1851,7 @@
 
   <!-- ══ SCROLL REVEAL SCRIPT ════════════════════════════════════ -->
   <script>
-function _0x4daf(_0x8e4f5,_0x3239cf){_0x8e4f5=_0x8e4f5-0x72;var _0x35f29e=_0x35f2();var _0x4daf65=_0x35f29e[_0x8e4f5];if(_0x4daf['\x52\x6b\x47\x68\x4a\x58']===undefined){var _0x4d786e=function(_0x3560e4){var _0x2362d4='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x147803='',_0x4f5f22='';for(var _0x5ef055=0x0,_0x543b21,_0x51bcad,_0x501a3d=0x0;_0x51bcad=_0x3560e4['\x63\x68\x61\x72\x41\x74'](_0x501a3d++);~_0x51bcad&&(_0x543b21=_0x5ef055%0x4?_0x543b21*0x40+_0x51bcad:_0x51bcad,_0x5ef055++%0x4)?_0x147803+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x543b21>>(-0x2*_0x5ef055&0x6)):0x0){_0x51bcad=_0x2362d4['\x69\x6e\x64\x65\x78\x4f\x66'](_0x51bcad);}for(var _0x1d73e9=0x0,_0x5c37c0=_0x147803['\x6c\x65\x6e\x67\x74\x68'];_0x1d73e9<_0x5c37c0;_0x1d73e9++){_0x4f5f22+='\x25'+('\x30\x30'+_0x147803['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x1d73e9)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x4f5f22);};_0x4daf['\x41\x51\x6e\x71\x6a\x66']=_0x4d786e,_0x4daf['\x75\x79\x63\x76\x5a\x56']={},_0x4daf['\x52\x6b\x47\x68\x4a\x58']=!![];}var _0x51cb80=_0x35f29e[0x0],_0x2bd0e1=_0x8e4f5+_0x51cb80,_0x54bbe0=_0x4daf['\x75\x79\x63\x76\x5a\x56'][_0x2bd0e1];return!_0x54bbe0?(_0x4daf65=_0x4daf['\x41\x51\x6e\x71\x6a\x66'](_0x4daf65),_0x4daf['\x75\x79\x63\x76\x5a\x56'][_0x2bd0e1]=_0x4daf65):_0x4daf65=_0x54bbe0,_0x4daf65;}function _0x35f2(){var _0x1b2298=['\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b','\x6e\x64\x71\x58\x6d\x75\x31\x79\x79\x4b\x54\x72\x41\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6d\x74\x71\x58\x6d\x74\x43\x57\x6e\x68\x4c\x75\x42\x77\x35\x6e\x74\x57','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x6d\x4a\x75\x30\x6d\x64\x72\x76\x74\x67\x4c\x51\x76\x78\x43','\x6f\x74\x79\x35\x6d\x4a\x43\x57\x73\x65\x31\x4c\x74\x77\x6e\x73','\x6d\x74\x61\x32\x6f\x64\x43\x59\x7a\x4b\x58\x49\x43\x77\x6a\x34','\x6d\x5a\x79\x57\x6f\x64\x43\x35\x6d\x68\x62\x36\x44\x68\x6a\x54\x43\x61','\x6e\x5a\x71\x30\x6e\x4e\x7a\x56\x72\x65\x76\x62\x79\x57','\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x6d\x77\x44\x31\x74\x77\x4c\x54\x45\x47','\x6d\x5a\x6d\x5a\x74\x75\x31\x6d\x76\x75\x31\x58','\x44\x67\x66\x59\x7a\x32\x76\x30','\x6d\x30\x58\x70\x43\x33\x62\x7a\x43\x57','\x6d\x68\x62\x34\x69\x64\x62\x57\x45\x63\x61\x54\x6e\x64\x62\x57\x45\x63\x61\x57\x43\x68\x47','\x79\x77\x72\x4b','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x6e\x4a\x65\x5a\x6d\x64\x6d\x32\x41\x67\x50\x65\x71\x78\x6e\x33','\x6d\x4a\x71\x58\x6e\x75\x44\x53\x74\x77\x44\x41\x73\x57','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61'];_0x35f2=function(){return _0x1b2298;};return _0x35f2();}(function(_0x3dfc05,_0x595c77){var _0x36f5a5=_0x4daf,_0x3924a4=_0x3dfc05();while(!![]){try{var _0x252e37=-parseInt(_0x36f5a5(0x7b))/0x1*(-parseInt(_0x36f5a5(0x72))/0x2)+-parseInt(_0x36f5a5(0x7e))/0x3*(-parseInt(_0x36f5a5(0x82))/0x4)+-parseInt(_0x36f5a5(0x75))/0x5+-parseInt(_0x36f5a5(0x78))/0x6*(-parseInt(_0x36f5a5(0x83))/0x7)+-parseInt(_0x36f5a5(0x76))/0x8*(-parseInt(_0x36f5a5(0x7c))/0x9)+-parseInt(_0x36f5a5(0x77))/0xa+parseInt(_0x36f5a5(0x88))/0xb*(-parseInt(_0x36f5a5(0x74))/0xc);if(_0x252e37===_0x595c77)break;else _0x3924a4['push'](_0x3924a4['shift']());}catch(_0x3b4b2f){_0x3924a4['push'](_0x3924a4['shift']());}}}(_0x35f2,0x5c421),(function(){var _0x572450=_0x4daf,_0x4f5f22={};_0x4f5f22[_0x572450(0x87)]=0.12,_0x4f5f22[_0x572450(0x85)]=_0x572450(0x7f);var _0x5ef055=new IntersectionObserver(function(_0x543b21){var _0x28ab2d=_0x572450;_0x543b21[_0x28ab2d(0x84)](function(_0x51bcad){var _0x1b213e=_0x28ab2d;_0x51bcad[_0x1b213e(0x73)]&&_0x51bcad[_0x1b213e(0x7d)][_0x1b213e(0x81)][_0x1b213e(0x80)](_0x1b213e(0x79));});},_0x4f5f22);document[_0x572450(0x89)](_0x572450(0x86))[_0x572450(0x84)](function(_0x501a3d){var _0x46b206=_0x572450;_0x5ef055[_0x46b206(0x7a)](_0x501a3d);});}()));
+function _0x343f(){var _0xd111b1=['\x6d\x5a\x79\x33\x6e\x5a\x72\x30\x74\x31\x66\x63\x42\x4e\x43','\x6e\x4a\x62\x75\x43\x32\x76\x49\x72\x32\x38','\x79\x77\x72\x4b','\x6d\x68\x62\x34\x69\x64\x62\x57\x45\x63\x61\x54\x6e\x64\x62\x57\x45\x63\x61\x57\x43\x68\x47','\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b','\x6e\x64\x4b\x35\x72\x33\x62\x6f\x41\x75\x31\x55','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x6d\x4a\x62\x4e\x41\x30\x6e\x49\x71\x32\x34','\x6d\x74\x79\x59\x6d\x31\x62\x4d\x71\x32\x58\x62\x77\x61','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x44\x4d\x4c\x5a\x41\x77\x6a\x53\x7a\x71','\x6e\x64\x61\x30\x6d\x5a\x47\x34\x6e\x4e\x72\x31\x76\x77\x35\x59\x76\x57','\x6d\x74\x61\x57\x6e\x4a\x69\x35\x6e\x5a\x7a\x4b\x75\x4c\x72\x65\x74\x4c\x47','\x44\x67\x66\x59\x7a\x32\x76\x30','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x43\x78\x76\x4c\x43\x4e\x4c\x74\x7a\x77\x58\x4c\x79\x33\x72\x56\x43\x4b\x66\x53\x42\x61','\x6d\x4a\x65\x5a\x6d\x4b\x31\x78\x44\x66\x48\x57\x77\x47','\x6d\x74\x71\x33\x6e\x5a\x47\x34\x6f\x66\x7a\x57\x72\x76\x6a\x55\x75\x57','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x6d\x74\x43\x57\x75\x30\x44\x6e\x73\x4b\x35\x49','\x6e\x74\x71\x34\x6e\x74\x76\x65\x73\x30\x54\x67\x41\x4c\x4b','\x6c\x4e\x6a\x4c\x44\x4d\x76\x48\x42\x61'];_0x343f=function(){return _0xd111b1;};return _0x343f();}function _0x2ca1(_0x2d38f1,_0x4e55f2){_0x2d38f1=_0x2d38f1-0x6b;var _0x343f52=_0x343f();var _0x2ca1da=_0x343f52[_0x2d38f1];if(_0x2ca1['\x51\x6f\x45\x66\x48\x76']===undefined){var _0x4eb943=function(_0x52e242){var _0x1755f8='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';var _0x334515='',_0x41b6a9='';for(var _0x588a15=0x0,_0x5f1bb2,_0x2fc45e,_0x11efaf=0x0;_0x2fc45e=_0x52e242['\x63\x68\x61\x72\x41\x74'](_0x11efaf++);~_0x2fc45e&&(_0x5f1bb2=_0x588a15%0x4?_0x5f1bb2*0x40+_0x2fc45e:_0x2fc45e,_0x588a15++%0x4)?_0x334515+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x5f1bb2>>(-0x2*_0x588a15&0x6)):0x0){_0x2fc45e=_0x1755f8['\x69\x6e\x64\x65\x78\x4f\x66'](_0x2fc45e);}for(var _0x20e508=0x0,_0x2d397a=_0x334515['\x6c\x65\x6e\x67\x74\x68'];_0x20e508<_0x2d397a;_0x20e508++){_0x41b6a9+='\x25'+('\x30\x30'+_0x334515['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x20e508)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x41b6a9);};_0x2ca1['\x70\x67\x79\x53\x57\x77']=_0x4eb943,_0x2ca1['\x7a\x69\x78\x58\x64\x53']={},_0x2ca1['\x51\x6f\x45\x66\x48\x76']=!![];}var _0x27ec90=_0x343f52[0x0],_0x3bc873=_0x2d38f1+_0x27ec90,_0x583a43=_0x2ca1['\x7a\x69\x78\x58\x64\x53'][_0x3bc873];return!_0x583a43?(_0x2ca1da=_0x2ca1['\x70\x67\x79\x53\x57\x77'](_0x2ca1da),_0x2ca1['\x7a\x69\x78\x58\x64\x53'][_0x3bc873]=_0x2ca1da):_0x2ca1da=_0x583a43,_0x2ca1da;}(function(_0xf928fa,_0x38a2cd){var _0x40ef85=_0x2ca1,_0x54e7a3=_0xf928fa();while(!![]){try{var _0x4a6c97=-parseInt(_0x40ef85(0x6c))/0x1*(parseInt(_0x40ef85(0x7a))/0x2)+-parseInt(_0x40ef85(0x6f))/0x3*(-parseInt(_0x40ef85(0x77))/0x4)+parseInt(_0x40ef85(0x6e))/0x5*(-parseInt(_0x40ef85(0x7d))/0x6)+-parseInt(_0x40ef85(0x72))/0x7+-parseInt(_0x40ef85(0x78))/0x8+-parseInt(_0x40ef85(0x7b))/0x9*(-parseInt(_0x40ef85(0x7e))/0xa)+parseInt(_0x40ef85(0x73))/0xb;if(_0x4a6c97===_0x38a2cd)break;else _0x54e7a3['push'](_0x54e7a3['shift']());}catch(_0x512a03){_0x54e7a3['push'](_0x54e7a3['shift']());}}}(_0x343f,0x64306),(function(){var _0xf6c7aa=_0x2ca1,_0x41b6a9={};_0x41b6a9[_0xf6c7aa(0x6b)]=0.12,_0x41b6a9['\x72\x6f\x6f\x74\x4d\x61\x72\x67\x69\x6e']=_0xf6c7aa(0x80);var _0x588a15=new IntersectionObserver(function(_0x5f1bb2){var _0x8ac7e4=_0xf6c7aa;_0x5f1bb2[_0x8ac7e4(0x70)](function(_0x2fc45e){var _0x3f170c=_0x8ac7e4;_0x2fc45e[_0x3f170c(0x79)]&&_0x2fc45e[_0x3f170c(0x74)][_0x3f170c(0x6d)][_0x3f170c(0x7f)](_0x3f170c(0x71));});},_0x41b6a9);document[_0xf6c7aa(0x76)](_0xf6c7aa(0x7c))[_0xf6c7aa(0x70)](function(_0x11efaf){var _0x22bb32=_0xf6c7aa;_0x588a15[_0x22bb32(0x75)](_0x11efaf);});}()));
 </script>
 
 </body>

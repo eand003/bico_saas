@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Spray Precision PRO | Calibração e diagnóstico de bicos</title>
+  <meta name="description" content="Escolha o bico ideal, diagnostique a vazão da barra e gere laudos técnicos em segundos. Spray Precision PRO para agrônomos, técnicos, revendas e cooperativas." />
+  <meta property="og:title" content="Spray Precision PRO" />
+  <meta property="og:description" content="Seletor de bicos, diagnóstico de vazão e laudo técnico para pulverização agrícola." />
+  <meta property="og:image" content="./imagem_1.jpeg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f7fafc; --card:#ffffff; --text:#102033; --muted:#5b6b80;
+      --line:#dfe7ef; --soft:#eef6fb; --blue:#0284c7; --blue2:#075985;
+      --green:#16a34a; --green2:#0f7a39; --amber:#b45309; --red:#dc2626;
+      --shadow:0 20px 55px rgba(15,35,55,.10); --shadow2:0 10px 30px rgba(15,35,55,.08);
+      --r:24px; --r2:16px; --wrap:1160px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{font-family:Inter,system-ui,sans-serif;color:var(--text);background:
+      radial-gradient(circle at top left,rgba(2,132,199,.12),transparent 34rem),
+      radial-gradient(circle at 90% 20%,rgba(22,163,74,.10),transparent 30rem),
+      linear-gradient(180deg,#fbfdff 0%,#f7fafc 42%,#ffffff 100%);line-height:1.55;overflow-x:hidden}
+    img{display:block;max-width:100%;height:auto} a{color:inherit;text-decoration:none}
+    .wrap{width:min(var(--wrap),100%);margin:auto;padding-inline:clamp(18px,4vw,34px)}
+    .section{padding:clamp(64px,8vw,104px) 0}.center{text-align:center}.muted{color:var(--muted)}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border:1px solid rgba(2,132,199,.18);background:#fff;border-radius:999px;color:var(--blue2);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.08em;box-shadow:0 8px 24px rgba(2,132,199,.06)}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 6px rgba(22,163,74,.13)}
+    h1,h2,h3{font-family:Outfit,Inter,sans-serif;letter-spacing:-.04em;line-height:1.05}
+    h1{font-size:clamp(2.45rem,8vw,5.35rem);max-width:980px;margin:22px auto 20px;font-weight:900}
+    h2{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;margin:14px 0 16px} h3{font-size:clamp(1.45rem,3vw,2.2rem);font-weight:900;margin-bottom:14px}
+    .lead{font-size:clamp(1.05rem,2.1vw,1.25rem);max-width:760px;margin:auto;color:var(--muted)}
+    .grad{background:linear-gradient(135deg,var(--blue),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}.amber{color:var(--amber)}
+
+    nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .nav-in{height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-family:Outfit,sans-serif}.brand img{height:38px}.brand span{color:var(--blue)}
+    .nav-links{display:flex;align-items:center;gap:20px;font-size:14px;font-weight:700;color:var(--muted)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:14px;padding:14px 22px;font-weight:900;border:1px solid transparent;transition:.2s ease;cursor:pointer;text-align:center}
+    .btn:hover{transform:translateY(-2px)}.btn-blue{background:linear-gradient(135deg,var(--blue),#0ea5e9);color:white;box-shadow:0 14px 28px rgba(2,132,199,.22)}.btn-green{background:linear-gradient(135deg,#25d366,var(--green));color:white;box-shadow:0 14px 28px rgba(22,163,74,.22)}.btn-ghost{background:#fff;border-color:var(--line);box-shadow:var(--shadow2)}
+
+    .hero{padding:clamp(70px,10vw,118px) 0 48px;text-align:center}.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:30px auto 18px}.trust{display:flex;gap:10px 18px;justify-content:center;flex-wrap:wrap;color:var(--muted);font-size:14px;font-weight:700}.trust b{color:var(--green)}
+    .visual-card{margin:48px auto 0;max-width:980px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:10px;box-shadow:var(--shadow)}
+    .window{overflow:hidden;border-radius:22px;border:1px solid var(--line);background:#fff}.bar{height:42px;background:#f2f6fa;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;gap:7px}.bar i{width:10px;height:10px;border-radius:50%;background:#ef4444}.bar i:nth-child(2){background:#f59e0b}.bar i:nth-child(3){background:#22c55e}.addr{margin-left:auto;margin-right:auto;font-family:monospace;font-size:12px;color:#64748b;background:#e9eff5;border-radius:8px;padding:5px 16px}.window img{width:100%}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,60px);align-items:center}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(22px,3vw,34px);box-shadow:0 10px 30px rgba(15,35,55,.045)}
+    .problem-list{display:grid;gap:16px}.problem-item{display:grid;grid-template-columns:46px 1fr;gap:16px;align-items:start}.ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--soft);font-weight:900;color:var(--blue)}.problem-item:nth-child(1) .ico{background:#fff1f2;color:var(--red)}.problem-item:nth-child(2) .ico{background:#fff7ed;color:var(--amber)}
+    .stat{background:linear-gradient(180deg,#fff7ed,#fff);border-color:#fed7aa;text-align:center}.big{font-family:Outfit,sans-serif;font-weight:900;font-size:clamp(4rem,9vw,6rem);line-height:1;color:var(--amber)}.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.mini{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:18px}.mini b{display:block;font-size:1.8rem;font-family:Outfit;color:var(--blue)}
+    .feature{display:flex;gap:12px;margin-top:14px;color:var(--muted);font-weight:600}.check{width:22px;height:22px;min-width:22px;border-radius:50%;display:grid;place-items:center;background:#dcfce7;color:var(--green);font-weight:900}.module-copy p{color:var(--muted);font-size:1.05rem}.module-img{box-shadow:var(--shadow);border-radius:26px;background:#fff;padding:8px;border:1px solid var(--line)}
+    .aud-card{min-height:100%}.aud-card .ico{margin-bottom:20px}.aud-card p{color:var(--muted);margin-top:8px}.tag{margin-top:22px;display:inline-flex;background:#f0f9ff;color:var(--blue2);border:1px solid #bae6fd;border-radius:12px;padding:10px 12px;font-weight:800;font-size:13px}
+    .pricing{align-items:stretch}.price-card{position:relative;display:flex;flex-direction:column;gap:18px}.price-card.recommended{border:2px solid rgba(22,163,74,.55);box-shadow:0 22px 60px rgba(22,163,74,.14);transform:translateY(-8px)}.badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--green);color:#fff;border-radius:999px;padding:7px 14px;font-size:11px;font-weight:900;text-transform:uppercase;box-shadow:0 10px 22px rgba(22,163,74,.25)}
+    .plan-title{font-family:Outfit;font-weight:900;font-size:1.35rem;text-align:center}.price{text-align:center;min-height:82px;display:grid;place-items:center}.price strong{font-family:Outfit;font-size:2.7rem;letter-spacing:-.05em}.price small{color:var(--muted);font-weight:700}.features{list-style:none;display:grid;gap:12px;margin:4px 0 8px;flex:1}.features li{display:flex;gap:10px;color:var(--muted);font-size:14px}.features li:before{content:'✓';color:var(--green);font-weight:900}.features li.no:before{content:'×';color:var(--red)}
+    .final-cta{background:linear-gradient(135deg,#075985,#0284c7 55%,#16a34a);color:#fff;border-radius:32px;padding:clamp(30px,5vw,56px);box-shadow:var(--shadow);text-align:center}.final-cta .lead{color:rgba(255,255,255,.86)}
+    footer{border-top:1px solid var(--line);padding:34px 0;background:#fff;color:var(--muted);font-size:14px}.foot{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}.foot-links{display:flex;gap:16px;flex-wrap:wrap;font-weight:700}
+    .reveal{opacity:0;transform:translateY(22px);transition:.7s cubic-bezier(.16,1,.3,1)}.reveal.on{opacity:1;transform:none}
+
+
+    /* CONTRASTE ENTRE SEÇÕES */
+    main{position:relative;z-index:1}
+    .section-band{position:relative;isolation:isolate;overflow:hidden}
+    .section-band::before{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none}
+    .section-band::after{content:"";position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);width:min(980px,88%);height:1px;background:linear-gradient(90deg,transparent,rgba(15,35,55,.16),transparent);z-index:-1}
+    .hero-band{background:linear-gradient(180deg,#fbfdff 0%,#f7fbff 72%,#eef7ff 100%)}
+    .problem-band{background:linear-gradient(180deg,#fff7ed 0%,#fffaf4 46%,#ffffff 100%)}
+    .problem-band::before{background:radial-gradient(circle at 8% 15%,rgba(180,83,9,.12),transparent 32rem),radial-gradient(circle at 92% 70%,rgba(220,38,38,.08),transparent 28rem)}
+    .modules-band{background:linear-gradient(180deg,#f8fafc 0%,#ffffff 42%,#eefcf4 100%)}
+    .modules-band::before{background:radial-gradient(circle at 8% 22%,rgba(2,132,199,.12),transparent 34rem),radial-gradient(circle at 92% 78%,rgba(22,163,74,.11),transparent 31rem)}
+    .proof-band{background:linear-gradient(180deg,#eaf6ff 0%,#f8fcff 55%,#ffffff 100%)}
+    .proof-band::before{background:radial-gradient(circle at 18% 40%,rgba(2,132,199,.16),transparent 34rem)}
+    .audience-band{background:linear-gradient(180deg,#ffffff 0%,#f7fafc 100%)}
+    .pricing-band{background:linear-gradient(180deg,#f0fdf4 0%,#ffffff 50%,#f8fafc 100%)}
+    .pricing-band::before{background:radial-gradient(circle at 50% 8%,rgba(22,163,74,.12),transparent 34rem)}
+    .final-band{background:linear-gradient(180deg,#f8fafc 0%,#eaf6ff 100%)}
+    .section-kicker{position:absolute;top:0;left:0;right:0;height:14px;background:linear-gradient(90deg,var(--blue),var(--green));opacity:.8}
+    .problem-band .section-kicker{background:linear-gradient(90deg,var(--amber),var(--red))}.proof-band .section-kicker{background:linear-gradient(90deg,#075985,#38bdf8)}.pricing-band .section-kicker{background:linear-gradient(90deg,var(--green),#84cc16)}
+    .section-band .wrap{position:relative}.problem-band .card,.modules-band .card,.audience-band .card,.pricing-band .card{background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
+    .module-block{padding:clamp(34px,5vw,56px);border-radius:34px;border:1px solid rgba(2,132,199,.12);background:rgba(255,255,255,.62);box-shadow:0 18px 50px rgba(15,35,55,.055)}
+    .module-block + .module-block{margin-top:28px;background:rgba(240,253,244,.72);border-color:rgba(22,163,74,.16)}
+
+
+    @media(max-width:980px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.nav-links{display:none}.price-card.recommended{transform:none}.visual-card{margin-top:34px}.section{padding:58px 0}}
+    @media(max-width:640px){
+      .wrap{padding-inline:20px}.section-band{margin:0}.section-band::after{width:92%}.section-kicker{height:8px}.module-block{padding:24px 18px;border-radius:24px}.nav-in{height:64px}.brand img{height:32px}.brand div{font-size:15px}.nav-in .btn{padding:11px 13px;font-size:13px;border-radius:12px}
+      .hero{padding-top:48px}.hero-actions{flex-direction:column}.hero-actions .btn{width:100%;padding:16px 18px}.trust{justify-content:flex-start;text-align:left;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 8px 20px rgba(15,35,55,.04)}
+      h1{font-size:clamp(2.25rem,12vw,3.35rem);letter-spacing:-.055em}.lead{font-size:1rem}.pill{font-size:10.5px;padding:7px 11px}.card{border-radius:20px;padding:22px}.visual-card{border-radius:22px;padding:6px}.window{border-radius:17px}.bar{height:34px}.addr{display:none}.problem-item{grid-template-columns:1fr}.ico{width:42px;height:42px}.mini-stats{grid-template-columns:1fr}.grid-4{gap:22px}.price-card{padding:26px}.final-cta{border-radius:24px}.foot{flex-direction:column;text-align:center}.foot-links{justify-content:center}.module-img{padding:6px;border-radius:20px}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap nav-in">
+      <a class="brand" href="#top"><img src="./logo.png" alt="Spray Precision PRO"><div>Spray Precision <span>PRO</span></div></a>
+      <div class="nav-links"><a href="#modulos">Módulos</a><a href="#publico">Para quem é</a><a href="#planos">Planos</a></div>
+      <a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Quero acesso</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="section-band hero-band">
+      <div class="hero wrap">
+      <div class="pill"><span class="dot"></span> SaaS para calibração de pulverização</div>
+      <h1>Bico errado ou desgastado transforma defensivo em <span class="grad">prejuízo invisível.</span></h1>
+      <p class="lead">O Spray Precision PRO ajuda a escolher a ponta correta, aferir a vazão bico a bico e gerar laudo técnico em segundos — inclusive no campo, mesmo sem internet.</p>
+      <div class="hero-actions">
+        <a class="btn btn-blue" href="#planos">Ver planos e preços</a>
+        <a class="btn btn-ghost" href="https://wa.me/5565999106415?text=Olá!%20Quero%20testar%205%20dias%20o%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Iniciar 5 dias grátis</a>
+      </div>
+      <div class="trust"><span><b>✓</b> 5 dias grátis</span><span><b>✓</b> PWA offline</span><span><b>✓</b> Laudo técnico</span><span><b>✓</b> Sem fidelidade</span></div>
+      <div class="visual-card reveal">
+        <div class="window"><div class="bar"><i></i><i></i><i></i><span class="addr">app.sprayprecision.pro</span></div><img src="./hub-acesso.png" alt="Tela de acesso do Spray Precision PRO"></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="section-band problem-band">
+      <div class="section-kicker"></div>
+      <div class="section wrap">
+        <div class="grid-2">
+        <div class="reveal">
+          <div class="pill"><span class="dot"></span> O problema</div>
+          <h2>O produtor perde dinheiro antes mesmo de perceber.</h2>
+          <div class="problem-list">
+            <div class="card problem-item"><div class="ico">!</div><div><h3>Bicos desgastados</h3><p class="muted">Pontas fora da tolerância aplicam defensivo em excesso ou deixam falhas de cobertura. Visualmente, muitas vezes parecem normais.</p></div></div>
+            <div class="card problem-item"><div class="ico">?</div><div><h3>Escolha no olhômetro</h3><p class="muted">Velocidade, L/ha, pressão, espaçamento e tipo de sistema precisam ser calculados juntos — não apenas conferidos em catálogo.</p></div></div>
+            <div class="card problem-item"><div class="ico">PDF</div><div><h3>Venda sem prova técnica</h3><p class="muted">Sem laudo, a recomendação vira opinião. Com dados, a revenda e o técnico mostram exatamente quais pontas devem ser substituídas.</p></div></div>
+          </div>
+        </div>
+        <div class="card stat reveal">
+          <div class="big">±10%</div>
+          <h3>é a tolerância individual usada como referência no diagnóstico.</h3>
+          <p class="muted">O app classifica cada bico por desvio percentual, calcula o CV% da barra e transforma o diagnóstico em relatório visual.</p>
+          <div class="mini-stats"><div class="mini"><b>30s</b><span>para compartilhar o laudo</span></div><div class="mini"><b>100%</b><span>operacional offline</span></div></div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-band modules-band" id="modulos">
+      <div class="section-kicker"></div>
+      <div class="section wrap">
+      <div class="center reveal"><div class="pill"><span class="dot"></span> Dois módulos</div><h2>Da escolha do bico ao laudo final.</h2><p class="lead">Uma página de venda mais direta: mostra a dor, a solução, a prova visual e o plano certo.</p></div>
+      <div class="grid-2 module-block" style="margin-top:44px">
+        <div class="module-copy reveal"><h3>1. Seletor Inteligente de Bicos</h3><p>Simule a ponta ideal considerando taxa de aplicação, velocidade, espaçamento, pressão e densidade da calda. Também comunica o diferencial do seu app: convencional, PWM e bico duplo.</p><div class="feature"><span class="check">✓</span><span>Recomendação baseada na vazão ISO da ponta</span></div><div class="feature"><span class="check">✓</span><span>Simulação PWM com Duty Cycle</span></div><div class="feature"><span class="check">✓</span><span>Modo Bico Duplo para grandes vazões</span></div></div>
+        <div class="module-img reveal"><div class="window"><div class="bar"><i></i><i></i><i></i><span class="addr">/seletor</span></div><img src="./imagem_2.jpeg" alt="Seletor inteligente de bicos"></div></div>
+      </div>
+      <div class="grid-2 module-block">
+        <div class="module-img reveal"><div class="window"><div class="bar"><i></i><i></i><i></i><span class="addr">/diagnostico</span></div><img src="./imagem_3.jpeg" alt="Diagnóstico de vazão bico a bico"></div></div>
+        <div class="module-copy reveal"><h3>2. Diagnóstico de Vazão</h3><p>Informe a coleta de cada bico e deixe o app calcular desvio individual, CV% e status por cor. O resultado vira laudo técnico para enviar ao produtor.</p><div class="feature"><span class="check">✓</span><span>Mapa visual da barra com bicos OK, atenção e substituir</span></div><div class="feature"><span class="check">✓</span><span>Laudo com identidade da empresa</span></div><div class="feature"><span class="check">✓</span><span>Argumento técnico para vender substituição de pontas</span></div></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="section-band proof-band">
+      <div class="section-kicker"></div>
+      <div class="section wrap">
+        <div class="grid-2">
+        <div class="module-img reveal"><div class="window"><div class="bar"><i></i><i></i><i></i><span class="addr">/dashboard</span></div><img src="./imagem_1.jpeg" alt="Visão geral da plataforma"></div></div>
+        <div class="module-img reveal" style="max-width:330px;margin:auto"><div class="window"><img src="./exemplo_resultado_app.jpeg" alt="Exemplo mobile do aplicativo"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-band audience-band" id="publico">
+      <div class="section wrap">
+      <div class="center reveal"><div class="pill"><span class="dot"></span> Público-alvo</div><h2>Feito para quem precisa provar tecnicamente.</h2></div>
+      <div class="grid-3" style="margin-top:34px">
+        <div class="card aud-card reveal"><div class="ico">AG</div><h3>Agrônomos e técnicos</h3><p>Reduza planilhas e entregue diagnóstico com aparência profissional em cada visita.</p><span class="tag">Mais respaldo técnico</span></div>
+        <div class="card aud-card reveal"><div class="ico">RV</div><h3>Revendas agrícolas</h3><p>Mostre ao produtor o motivo da troca de bicos com cores, números e laudo.</p><span class="tag">Venda apoiada em dados</span></div>
+        <div class="card aud-card reveal"><div class="ico">CO</div><h3>Cooperativas e equipes</h3><p>Padronize aferições, relatórios e identidade visual em diferentes técnicos.</p><span class="tag">Padronização da operação</span></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="section-band pricing-band" id="planos">
+      <div class="section-kicker"></div>
+      <div class="section wrap">
+      <div class="center reveal"><div class="pill"><span class="dot"></span> Planos</div><h2>Comece simples e evolua conforme sua operação.</h2><p class="lead">Mantive seus valores atuais, mas organizei a área para converter melhor no mobile.</p></div>
+      <div class="grid-4 pricing" style="margin-top:44px">
+        <div class="card price-card reveal"><div class="badge" style="background:var(--blue)">Sem risco</div><div class="plan-title">Avaliação</div><div class="price"><div><strong>Grátis</strong><br><small>por 5 dias</small></div></div><ul class="features"><li>Ambos os módulos</li><li>Calibrações no período</li><li>Manômetro digital</li><li class="no">PDF bloqueado no teste</li></ul><a class="btn btn-ghost" href="./index.html?trial=true">Começar teste</a></div>
+        <div class="card price-card reveal"><div class="plan-title">Mensal</div><div class="price"><div><small>R$</small> <strong>69</strong><br><small>/mês</small></div></div><ul class="features"><li>Acesso completo</li><li>Laudo técnico ilimitado</li><li>Funciona offline</li><li>Suporte via WhatsApp</li></ul><a class="btn btn-ghost" href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20assinar%20o%20plano%20MENSAL%20do%20Spray%20Precision%20por%20R$%2069/mês." target="_blank" rel="noopener">Assinar mensal</a></div>
+        <div class="card price-card recommended reveal"><div class="badge">Melhor escolha</div><div class="plan-title">Anual</div><div class="price"><div><small><s>R$ 828</s></small><br><small>R$</small> <strong>574</strong><br><small>/ano • R$ 47,83/mês</small></div></div><ul class="features"><li>Acesso completo</li><li>Laudo ilimitado com logo</li><li>Funciona offline</li><li>Suporte prioritário</li></ul><a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20assinar%20o%20plano%20ANUAL%20do%20Spray%20Precision%20por%20R$%20574/ano." target="_blank" rel="noopener">Assinar anual</a></div>
+        <div class="card price-card reveal"><div class="plan-title">Corporativo</div><div class="price"><div><strong style="font-size:2rem">Sob medida</strong><br><small>para equipes e revendas</small></div></div><ul class="features"><li>Painel administrativo</li><li>White-label</li><li>Gestão de consultores</li><li>Treinamento dedicado</li></ul><a class="btn btn-blue" href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20um%20plano%20corporativo%20personalizado%20para%20minha%20empresa." target="_blank" rel="noopener">Falar no WhatsApp</a></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="section-band final-band">
+      <div class="section wrap">
+        <div class="final-cta reveal"><h2>Transforme aferição em argumento técnico de venda.</h2><p class="lead">Use o Spray Precision PRO para mostrar o problema, orientar a troca correta e entregar um laudo profissional ao produtor.</p><div class="hero-actions"><a class="btn btn-green" href="https://wa.me/5565999106415?text=Olá!%20Quero%20acesso%20ao%20Spray%20Precision%20PRO." target="_blank" rel="noopener">Quero acesso agora</a><a class="btn btn-ghost" href="#planos">Comparar planos</a></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap foot"><div class="brand"><img src="./logo.png" alt="Spray Precision PRO"><div>Spray Precision <span>PRO</span></div></div><div>© 2026 Spray Precision PRO · Todos os direitos reservados.</div><div class="foot-links"><a href="./termos_uso.html">Termos</a><a href="https://wa.me/5565999106415" target="_blank" rel="noopener">WhatsApp</a></div></div></footer>
+
+  <script>
+(function(_0x2cba9b,_0x4480d0){const _0x305302=_0x4a6c,_0x3db70e=_0x2cba9b();while(!![]){try{const _0x536422=-parseInt(_0x305302(0x183))/0x1*(-parseInt(_0x305302(0x17e))/0x2)+parseInt(_0x305302(0x177))/0x3*(-parseInt(_0x305302(0x179))/0x4)+-parseInt(_0x305302(0x178))/0x5+-parseInt(_0x305302(0x181))/0x6*(-parseInt(_0x305302(0x17a))/0x7)+-parseInt(_0x305302(0x170))/0x8+parseInt(_0x305302(0x174))/0x9+-parseInt(_0x305302(0x176))/0xa*(-parseInt(_0x305302(0x17c))/0xb);if(_0x536422===_0x4480d0)break;else _0x3db70e['push'](_0x3db70e['shift']());}catch(_0x26f15b){_0x3db70e['push'](_0x3db70e['shift']());}}}(_0x3671,0xe3643),((()=>{const _0x235198=_0x4a6c,_0x349f98={};_0x349f98[_0x235198(0x173)]=0.12,_0x349f98[_0x235198(0x17d)]=_0x235198(0x182);const _0x4874bc=new IntersectionObserver(_0x363eab=>_0x363eab['\x66\x6f\x72\x45\x61\x63\x68'](_0x36d515=>{const _0x37249a=_0x235198;if(_0x36d515[_0x37249a(0x175)])_0x36d515[_0x37249a(0x180)][_0x37249a(0x171)][_0x37249a(0x17f)]('\x6f\x6e');}),_0x349f98);document['\x71\x75\x65\x72\x79\x53\x65\x6c\x65\x63\x74\x6f\x72\x41\x6c\x6c']('\x2e\x72\x65\x76\x65\x61\x6c')[_0x235198(0x17b)](_0x42fcb7=>_0x4874bc[_0x235198(0x172)](_0x42fcb7));})()));function _0x4a6c(_0x2e362e,_0x2220cd){_0x2e362e=_0x2e362e-0x170;const _0x367106=_0x3671();let _0x4a6ca2=_0x367106[_0x2e362e];if(_0x4a6c['\x43\x4c\x78\x45\x55\x6c']===undefined){var _0x33ef02=function(_0x200504){const _0x190730='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let _0x155413='',_0x349f98='';for(let _0x4874bc=0x0,_0x363eab,_0x36d515,_0x42fcb7=0x0;_0x36d515=_0x200504['\x63\x68\x61\x72\x41\x74'](_0x42fcb7++);~_0x36d515&&(_0x363eab=_0x4874bc%0x4?_0x363eab*0x40+_0x36d515:_0x36d515,_0x4874bc++%0x4)?_0x155413+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](0xff&_0x363eab>>(-0x2*_0x4874bc&0x6)):0x0){_0x36d515=_0x190730['\x69\x6e\x64\x65\x78\x4f\x66'](_0x36d515);}for(let _0x581933=0x0,_0x588eff=_0x155413['\x6c\x65\x6e\x67\x74\x68'];_0x581933<_0x588eff;_0x581933++){_0x349f98+='\x25'+('\x30\x30'+_0x155413['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](_0x581933)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](0x10))['\x73\x6c\x69\x63\x65'](-0x2);}return decodeURIComponent(_0x349f98);};_0x4a6c['\x43\x6e\x62\x43\x64\x51']=_0x33ef02,_0x4a6c['\x70\x74\x72\x6f\x53\x58']={},_0x4a6c['\x43\x4c\x78\x45\x55\x6c']=!![];}const _0x6ae2c2=_0x367106[0x0],_0xe2fc05=_0x2e362e+_0x6ae2c2,_0x20eb94=_0x4a6c['\x70\x74\x72\x6f\x53\x58'][_0xe2fc05];return!_0x20eb94?(_0x4a6ca2=_0x4a6c['\x43\x6e\x62\x43\x64\x51'](_0x4a6ca2),_0x4a6c['\x70\x74\x72\x6f\x53\x58'][_0xe2fc05]=_0x4a6ca2):_0x4a6ca2=_0x20eb94,_0x4a6ca2;}function _0x3671(){const _0x46c57d=['\x6e\x5a\x69\x30\x6f\x64\x72\x35\x75\x75\x76\x6d\x45\x77\x34','\x6d\x74\x65\x5a\x6e\x74\x71\x33\x76\x32\x58\x65\x76\x78\x62\x74','\x7a\x4d\x39\x59\x72\x77\x66\x4a\x41\x61','\x6d\x4a\x71\x31\x6e\x64\x43\x32\x72\x30\x35\x41\x75\x65\x76\x66','\x43\x4d\x39\x56\x44\x65\x31\x48\x43\x4d\x44\x50\x42\x47','\x6d\x4d\x50\x70\x45\x68\x44\x70\x43\x57','\x79\x77\x72\x4b','\x44\x67\x66\x59\x7a\x32\x76\x30','\x6e\x5a\x6a\x70\x72\x31\x48\x72\x45\x65\x71','\x6d\x68\x62\x34\x69\x64\x62\x57\x45\x63\x61\x54\x6e\x64\x62\x57\x45\x61','\x6d\x74\x75\x35\x6e\x4a\x43\x33\x6d\x32\x66\x74\x75\x4b\x54\x64\x41\x47','\x6d\x4a\x65\x35\x6d\x64\x65\x35\x6d\x4d\x50\x36\x42\x4d\x58\x69\x43\x71','\x79\x32\x58\x48\x43\x33\x6e\x6d\x41\x78\x6e\x30','\x42\x32\x6a\x5a\x7a\x78\x6a\x32\x7a\x71','\x44\x67\x48\x59\x7a\x78\x6e\x4f\x42\x32\x58\x4b','\x6e\x64\x4b\x32\x6f\x64\x69\x31\x6d\x4b\x66\x69\x74\x32\x48\x49\x43\x61','\x41\x78\x6e\x6a\x42\x4e\x72\x4c\x43\x4e\x6e\x4c\x79\x33\x72\x50\x42\x4d\x43','\x6e\x5a\x71\x57\x43\x4b\x58\x34\x76\x78\x72\x4b','\x6d\x74\x47\x5a\x79\x76\x48\x4d\x41\x4d\x7a\x4c','\x6f\x64\x71\x59\x6d\x74\x71\x5a\x6e\x75\x76\x49\x45\x75\x50\x6b\x76\x61'];_0x3671=function(){return _0x46c57d;};return _0x3671();}
+</script>
+</body>
+</html>

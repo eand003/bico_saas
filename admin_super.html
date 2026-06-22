@@ -3036,7 +3036,10 @@ function populateBiPartnerSelect() {
   if (!select) return;
   
   const currentSelection = select.value || 'all';
-  select.innerHTML = '<option value="all">Todas as Empresas</option>';
+  select.innerHTML = `
+    <option value="all">Todas as Empresas</option>
+    <option value="individual">🌾 Usuários Autônomos (Sem Empresa)</option>
+  `;
   
   cachedEmpresas.forEach(comp => {
     const opt = document.createElement('option');
@@ -3059,9 +3062,16 @@ async function fetchBiData() {
     let telemetryQuery = supabaseAdmin.from('user_telemetry').select('*');
     
     // If filtering by partner, find all user IDs belonging to this partner
+    let partnerUserIds = [];
     if (selectedPartner !== 'all') {
-      const partnerUserIds = cachedUsers
-        .filter(u => u.user_metadata && u.user_metadata.partner_id === selectedPartner)
+      partnerUserIds = cachedUsers
+        .filter(u => {
+          const uPartner = u.user_metadata && u.user_metadata.partner_id;
+          if (selectedPartner === 'individual') {
+            return !uPartner || uPartner === 'individual';
+          }
+          return uPartner === selectedPartner;
+        })
         .map(u => u.id);
       
       if (partnerUserIds.length > 0) {
@@ -3075,14 +3085,82 @@ async function fetchBiData() {
     const { data: telemetryData, error: telError } = await telemetryQuery;
     if (telError) throw telError;
     
-    // 2. Fetch anonymous_inspections_stats
-    let statsQuery = supabaseAdmin.from('anonymous_inspections_stats').select('*');
+    // 2. Fetch flow_inspections (primary source of calibrations)
+    let statsQuery = supabaseAdmin.from('flow_inspections').select('*');
     if (selectedPartner !== 'all') {
-      statsQuery = statsQuery.eq('partner_id', selectedPartner);
+      if (selectedPartner === 'individual') {
+        if (partnerUserIds.length > 0) {
+          statsQuery = statsQuery.or(`partner_id.is.null,partner_id.eq.individual,owner_id.in.(${partnerUserIds.join(',')})`);
+        } else {
+          statsQuery = statsQuery.or(`partner_id.is.null,partner_id.eq.individual`);
+        }
+      } else {
+        if (partnerUserIds.length > 0) {
+          statsQuery = statsQuery.or(`partner_id.eq.${selectedPartner},owner_id.in.(${partnerUserIds.join(',')})`);
+        } else {
+          statsQuery = statsQuery.eq('partner_id', selectedPartner);
+        }
+      }
     }
     
-    const { data: statsData, error: statsError } = await statsQuery;
+    const { data: rawStatsData, error: statsError } = await statsQuery;
     if (statsError) throw statsError;
+
+    // Transform flow_inspections rows to the format expected by the BI dashboard
+    const statsData = (rawStatsData || []).map(row => {
+      // Defensive parsing of row.summary (jsonb) if it comes back as string
+      let summaryObj = null;
+      if (row.summary) {
+        if (typeof row.summary === 'string') {
+          try {
+            summaryObj = JSON.parse(row.summary);
+          } catch (e) {
+            console.error("Erro ao fazer parse de row.summary:", e, row.summary);
+          }
+        } else {
+          summaryObj = row.summary;
+        }
+      }
+
+      let cv = null;
+      if (summaryObj && typeof summaryObj.coefficientOfVariationPercent !== 'undefined') {
+        cv = summaryObj.coefficientOfVariationPercent;
+      } else if (summaryObj && typeof summaryObj.cv_percent !== 'undefined') {
+        cv = summaryObj.cv_percent;
+      }
+      
+      let veredito = 'APROVADO';
+      if (summaryObj && summaryObj.generalClassification) {
+        const cls = summaryObj.generalClassification.toLowerCase();
+        if (cls === 'aprovado_com_ressalvas' || cls === 'ressalva') {
+          veredito = 'RESSALVA';
+        } else if (cls === 'reprovado') {
+          veredito = 'REPROVADO';
+        }
+      } else if (summaryObj) {
+        const reprovados = summaryObj.red_nozzles_count || summaryObj.criticalBelowCount || summaryObj.criticalAboveCount || 0;
+        const atencao = summaryObj.yellow_nozzles_count || summaryObj.belowCount || summaryObj.aboveCount || 0;
+        veredito = reprovados > 0 ? 'REPROVADO' : (atencao > 0 ? 'RESSALVA' : 'APROVADO');
+      }
+      
+      const nozzlesEvaluated = summaryObj ? (summaryObj.evaluatedNozzles || row.total_nozzles || 0) : (row.total_nozzles || 0);
+      const nozzlesAbove10 = summaryObj ? (summaryObj.aboveCount || 0) : 0;
+      const nozzlesBelow10 = summaryObj ? (summaryObj.belowCount || 0) : 0;
+      const nozzlesAbove15 = summaryObj ? ((summaryObj.criticalBelowCount || 0) + (summaryObj.criticalAboveCount || 0)) : 0;
+      
+      return {
+        ...row,
+        cv_percentage: cv,
+        culture: row.crop || null,
+        veredito: veredito,
+        nozzle_iso_code: row.nozzle_model || 'N/A',
+        nozzles_evaluated: nozzlesEvaluated,
+        nozzles_above_10: nozzlesAbove10,
+        nozzles_below_10: nozzlesBelow10,
+        nozzles_above_15: nozzlesAbove15,
+        machine_mode: 'manual_boom'
+      };
+    });
     
     // 3. Process indicators for mini stats
     document.getElementById('biStatsActions').textContent = telemetryData.length;

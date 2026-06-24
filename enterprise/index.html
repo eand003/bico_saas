@@ -6612,6 +6612,13 @@
           };
           console.log('🔒 Spray Precision PRO — Permissões carregadas:', window.userPermissions);
 
+          // ── Salvar para acesso offline futuro ──
+          try {
+            localStorage.setItem('spray_offline_authorized', 'true');
+            localStorage.setItem('spray_user_permissions', JSON.stringify(window.userPermissions));
+            localStorage.setItem('spray_is_trial', window.isTrialActive ? 'true' : 'false');
+          } catch(e) { console.warn('Não foi possível salvar permissões offline:', e); }
+
           // Update user badge
           const badgeOnline = document.getElementById('user-profile-badge');
           const badgeOffline = document.getElementById('offline-profile-badge');

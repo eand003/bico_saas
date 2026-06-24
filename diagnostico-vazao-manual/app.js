@@ -814,11 +814,9 @@ function validateTabPulverizador() {
   // ── FASE 3: Limitar número de bicos pelo plano do usuário ──
   const perms = window.userPermissions || {};
   const maxNozzles = perms.max_nozzles_per_report || 999;
-  if (bicos > maxNozzles && window.currentUser) {
+  if (maxNozzles < 999 && bicos > maxNozzles) {
     const planLabel = perms.plan_type === 'demo' ? 'Demo' : 'seu plano';
-    alert(`⚠️ Limite do plano ${planLabel}: máximo de ${maxNozzles} bicos por diagnóstico.
-
-Sua conta está configurada para até ${maxNozzles} bicos. Contate o suporte para ampliar o limite ou faça upgrade para o plano PRO.`);
+    alert(`⚠️ Limite do plano ${planLabel}: máximo de ${maxNozzles} bicos por diagnóstico.\n\nSua conta está configurada para até ${maxNozzles} bicos. Faça upgrade para o plano PRO para diagnósticos maiores.`);
     document.getElementById('input-total-bicos').value = maxNozzles;
     return false;
   }

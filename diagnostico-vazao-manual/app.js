@@ -51,27 +51,8 @@ function formatCurrency(value) {
 }
 
 function initApp() {
-  // ── AUTH PRIMEIRO: inicia ANTES de qualquer setup de UI ──
-  // Qualquer erro no setup abaixo não deve bloquear a verificação de acesso
-  const authTimeout = setTimeout(() => {
-    const appEl = document.querySelector('.app-container');
-    const appVisible = appEl && appEl.style.display !== 'none';
-    if (!appVisible) {
-      console.warn('Auth timeout — redirecionando ao hub');
-      window.location.href = '../';
-    }
-  }, 6000);
-
-  checkAuthSession()
-    .then(() => clearTimeout(authTimeout))
-    .catch(err => {
-      clearTimeout(authTimeout);
-      console.error('Erro em checkAuthSession:', err);
-      const isPreAuth = localStorage.getItem('spray_offline_authorized') === 'true';
-      if (isPreAuth) { handleOfflineBypass(); } else { window.location.href = '../'; }
-    });
-
-  // ── SETUP DE UI (em try-catch para não bloquear auth) ──
+  // ── SETUP DE UI ──
+  // A autenticação é tratada pelo script inline no index.html (auth gate)
   try {
     setupNavigation();
     setupNozzleIsoCatalog();
@@ -83,7 +64,7 @@ function initApp() {
     setupVoiceAssistant();
     loadSavedCredentials();
   } catch(setupErr) {
-    console.error('Erro no setup de UI (não afeta auth):', setupErr);
+    console.error('Erro no setup de UI:', setupErr);
   }
   
   // Registrar data atual na identificação

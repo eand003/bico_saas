@@ -1128,6 +1128,99 @@
   <script src="./js/voiceService.js?v=2.0.4"></script>
   <script src="./app.js?v=2.0.4"></script>
 
+  <!-- AUTH GATE: mesma abordagem .then() do enterprise (evita problemas de async/await na obfuscação) -->
+  <script>
+  (function() {
+    var SUPA_URL = 'https://mjouahzglomvvcfpxtuq.supabase.co';
+    var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb3VhaHpnbG9tdnZjZnB4dHVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzU3OTIsImV4cCI6MjA5MDIxMTc5Mn0.6SgPDABbRknn42mx1CnM67_P8O3Z7tqIGmQ7tn-M_bo';
+
+    function hideLoading() {
+      var el = document.getElementById('app-auth-loading');
+      if (el) el.style.display = 'none';
+    }
+    function redirectHub() {
+      window.location.href = '../';
+    }
+    function showAppNow(user) {
+      clearTimeout(authGateTimeout);
+      if (user && typeof handleUserLoggedIn === 'function') {
+        // handleUserLoggedIn cuida de showAppContainer internamente
+        Promise.resolve(handleUserLoggedIn(user)).catch(redirectHub);
+      } else if (typeof handleOfflineBypass === 'function') {
+        handleOfflineBypass();
+      } else {
+        hideLoading();
+        var app = document.querySelector('.app-container');
+        if (app) app.style.display = 'flex';
+      }
+    }
+    function tryOfflineOrHub() {
+      clearTimeout(authGateTimeout);
+      var isPreAuth = localStorage.getItem('spray_offline_authorized') === 'true';
+      if (isPreAuth && typeof handleOfflineBypass === 'function') {
+        handleOfflineBypass();
+      } else {
+        redirectHub();
+      }
+    }
+    function tryGetSession(client) {
+      client.auth.getSession().then(function(res) {
+        var session = res && res.data && res.data.session;
+        if (session) {
+          client.auth.getUser().then(function(r) {
+            var user = (r && r.data && r.data.user) || session.user;
+            if (user) { showAppNow(user); } else { redirectHub(); }
+          }).catch(function() {
+            if (session.user) { showAppNow(session.user); } else { redirectHub(); }
+          });
+        } else {
+          tryOfflineOrHub();
+        }
+      }).catch(tryOfflineOrHub);
+    }
+
+    // Timeout de segurança de 8s
+    var authGateTimeout = setTimeout(function() {
+      var app = document.querySelector('.app-container');
+      if (!app || app.style.display === 'none') {
+        console.warn('Auth gate timeout — redirecionando ao hub');
+        redirectHub();
+      }
+    }, 8000);
+
+    // Garante cliente Supabase
+    var client = window.supabaseClient;
+    if (!client && window.supabase) {
+      try { client = window.supabase.createClient(SUPA_URL, SUPA_KEY); window.supabaseClient = client; } catch(e) {}
+    }
+    if (!client) { tryOfflineOrHub(); return; }
+
+    // Tenta SSO bridge primeiro
+    var ssoBridge = sessionStorage.getItem('sso_bridge');
+    if (ssoBridge) {
+      sessionStorage.removeItem('sso_bridge');
+      try {
+        var tokens = JSON.parse(ssoBridge);
+        client.auth.setSession(tokens).then(function(res) {
+          var session = res && res.data && res.data.session;
+          if (session) {
+            client.auth.getUser().then(function(r) {
+              var user = (r && r.data && r.data.user) || session.user;
+              if (user) { showAppNow(user); } else { tryGetSession(client); }
+            }).catch(function() {
+              if (session.user) { showAppNow(session.user); } else { tryGetSession(client); }
+            });
+          } else {
+            tryGetSession(client);
+          }
+        }).catch(function() { tryGetSession(client); });
+      } catch(e) { tryGetSession(client); }
+    } else {
+      tryGetSession(client);
+    }
+  })();
+  </script>
+
   <!-- === MULTI-LANGUAGE SYSTEM === -->
   <script>
     const translationDict = {

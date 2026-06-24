@@ -6236,7 +6236,8 @@
           if (session) {
             showApp();
           } else {
-            showLogin();
+            // Sem sessão → redireciona para o hub (login centralizado)
+            window.location.href = '../';
           }
         }).catch(err => {
           console.warn("Erro ao checar sessão online, tentando contingência offline:", err);
@@ -6259,10 +6260,10 @@
               return;
             } else {
               localStorage.removeItem('spray_offline_authorized');
-              showLogin();
+              window.location.href = '../'; // sem sessão prévia → hub
             }
           } else {
-            showLogin();
+            window.location.href = '../'; // sem pre-autorização → hub
           }
         });
 

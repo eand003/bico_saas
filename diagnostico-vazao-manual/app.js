@@ -177,14 +177,19 @@ async function checkAuthSession() {
       const { data: { user: freshUser } } = await supabase.auth.getUser();
       handleUserLoggedIn(freshUser || session.user);
     } else {
-      showLoginScreen();
+      // Sem sessão: offline pré-autorizado → bypass; caso contrário → hub
+      if (isPreAuthorized) {
+        handleOfflineBypass();
+      } else {
+        window.location.href = '../';
+      }
     }
   } catch (e) {
     console.error("Erro ao verificar sessão do usuário:", e);
     if (isPreAuthorized) {
       handleOfflineBypass();
     } else {
-      showLoginScreen({ noNetwork: true });
+      window.location.href = '../'; // sem rede e sem pré-autorização → hub
     }
   }
 }

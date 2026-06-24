@@ -153,12 +153,27 @@ async function checkAuthSession() {
     }
     return;
   }
+
+  // ── SSO Bridge: sessão passada pelo hub via sessionStorage ──
+  const ssoBridge = sessionStorage.getItem('sso_bridge');
+  if (ssoBridge) {
+    sessionStorage.removeItem('sso_bridge');
+    try {
+      const { access_token, refresh_token } = JSON.parse(ssoBridge);
+      const { data: { session: bridgeSession }, error: bridgeErr } = await supabase.auth.setSession({ access_token, refresh_token });
+      if (bridgeSession && !bridgeErr) {
+        const { data: { user: freshUser } } = await supabase.auth.getUser();
+        handleUserLoggedIn(freshUser || bridgeSession.user);
+        return;
+      }
+    } catch(e) {
+      console.warn('SSO bridge setSession failed:', e);
+    }
+  }
   
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      // Forçar refresh do token para obter user_metadata atualizado pelo admin
-      try { await supabase.auth.refreshSession(); } catch(e) {}
       const { data: { user: freshUser } } = await supabase.auth.getUser();
       handleUserLoggedIn(freshUser || session.user);
     } else {

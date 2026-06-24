@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -2419,6 +2419,41 @@
         
         const diagnosticoCard = document.getElementById('link-diagnostico');
         if (diagnosticoCard) diagnosticoCard.style.display = 'flex';
+      }
+
+      // ── SSO Bridge: salva sessão no sessionStorage antes de navegar ──
+      async function _ssoStore() {
+        try {
+          const sb = getSupabaseClient();
+          if (!sb) return;
+          const { data: { session } } = await sb.auth.getSession();
+          if (session) {
+            sessionStorage.setItem('sso_bridge', JSON.stringify({
+              access_token:  session.access_token,
+              refresh_token: session.refresh_token
+            }));
+          }
+        } catch(e) { console.warn('SSO bridge store failed:', e); }
+      }
+
+      const linkS = document.getElementById('link-seletor');
+      if (linkS && !linkS.dataset.ssoWired) {
+        linkS.dataset.ssoWired = '1';
+        linkS.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await _ssoStore();
+          window.location.href = linkS.href;
+        });
+      }
+
+      const linkD = document.getElementById('link-diagnostico');
+      if (linkD && !linkD.dataset.ssoWired) {
+        linkD.dataset.ssoWired = '1';
+        linkD.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await _ssoStore();
+          window.location.href = linkD.href;
+        });
       }
     }
 

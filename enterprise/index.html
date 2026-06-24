@@ -6208,10 +6208,32 @@
         const mainApp = document.getElementById('mainApp');
         if (mainApp) mainApp.style.display = 'none';
 
+        // ── SSO Bridge: sessão passada pelo hub via sessionStorage ──
+        const ssoBridge = sessionStorage.getItem('sso_bridge');
+        if (ssoBridge) {
+          sessionStorage.removeItem('sso_bridge');
+          try {
+            const { access_token, refresh_token } = JSON.parse(ssoBridge);
+            clienteSupabase.auth.setSession({ access_token, refresh_token })
+              .then(({ data: { session }, error }) => {
+                if (session && !error) {
+                  showApp();
+                } else {
+                  // Fallback: tenta getSession normal
+                  clienteSupabase.auth.getSession().then(({ data: { session: s } }) => {
+                    if (s) showApp(); else showLogin();
+                  }).catch(() => showLogin());
+                }
+              })
+              .catch(() => showLogin());
+            return; // sai do initAuth normal
+          } catch(e) {
+            console.warn('SSO bridge parse error:', e);
+          }
+        }
+
         clienteSupabase.auth.getSession().then(async ({ data: { session } }) => {
           if (session) {
-            // Forçar refresh para obter user_metadata atualizado pelo admin
-            try { await clienteSupabase.auth.refreshSession(); } catch(e) {}
             showApp();
           } else {
             showLogin();

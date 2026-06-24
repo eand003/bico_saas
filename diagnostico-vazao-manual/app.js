@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Spray Precision PRO - Controlador Dinâmico da SPA
  * Gerencia a navegação, eventos de formulário, cronômetro, gráficos Chart.js,
  * assistente de voz e integração com o dbService.
@@ -1792,6 +1792,18 @@ async function saveInspectionToDatabase(summary) {
 }
 
 async function handleSaveInspectionWorkflow() {
+  // ── FASE 4: Bloquear salvamento para conta Demo ──
+  if (window.isTrialActive || (window.userPermissions && window.userPermissions.can_generate_pdf === false && window.userPermissions.plan_type !== 'single_report')) {
+    const modal = document.getElementById('trial-premium-modal');
+    if (modal) {
+      document.getElementById('trial-modal-text').innerText = 'Salvar diagnósticos no histórico e sincronizar com a nuvem é exclusivo para planos pagos. Faça o upgrade para guardar seus laudos e acessá-los a qualquer momento!';
+      const waMsg = encodeURIComponent('Olá! Quero fazer upgrade do Spray Precision PRO para salvar meus diagnósticos no histórico.');
+      document.getElementById('trial-modal-whatsapp').href = `https://wa.me/5565999106415?text=${waMsg}`;
+      modal.style.display = 'flex';
+    }
+    return;
+  }
+
   const cliente = document.getElementById('input-cliente').value.trim();
   const fazenda = document.getElementById('input-fazenda').value.trim();
   
@@ -2272,13 +2284,9 @@ function setupEventListeners() {
   document.getElementById('btn-save-report').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-save-report-bottom').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-print').addEventListener('click', async () => {
-    // ── FASE 3: Bloquear PDF sem permissão ──
+    // ── FASE 3+4: Bloquear PDF para demo / sem permissão ──
     const perms = window.userPermissions || {};
-    if (window.currentUser && perms.can_generate_pdf === false) {
-      alert('🔒 Geração de laudo PDF é exclusiva para planos PRO, Fundador e Laudo Avulso.\n\nEntre em contato via WhatsApp para fazer o upgrade: wa.me/5565999106415');
-      return;
-    }
-    if (window.isTrialActive) {
+    if (window.isTrialActive || (window.currentUser && perms.can_generate_pdf === false)) {
       showTrialPremiumModal();
       return;
     }

@@ -51,37 +51,40 @@ function formatCurrency(value) {
 }
 
 function initApp() {
-  setupNavigation();
-  setupNozzleIsoCatalog();
-  setupEventListeners();
-  
-  // Tentar restaurar rascunho anterior de calibração em andamento
-  const restored = restoreActiveDraft();
-  if (!restored) {
-    initMeasurements();
-  }
-  
-  setupVoiceAssistant();
-  loadSavedCredentials();
-  
-  // Executar autenticação Supabase online
-  // Timeout de segurança: se auth demorar mais de 8s, redireciona ao hub
+  // ── AUTH PRIMEIRO: inicia ANTES de qualquer setup de UI ──
+  // Qualquer erro no setup abaixo não deve bloquear a verificação de acesso
   const authTimeout = setTimeout(() => {
-    const loading = document.getElementById('app-auth-loading');
     const appEl = document.querySelector('.app-container');
     const appVisible = appEl && appEl.style.display !== 'none';
     if (!appVisible) {
       console.warn('Auth timeout — redirecionando ao hub');
       window.location.href = '../';
     }
-  }, 8000);
+  }, 6000);
 
-  checkAuthSession().then(() => clearTimeout(authTimeout)).catch(err => {
-    clearTimeout(authTimeout);
-    console.error('Erro não capturado em checkAuthSession:', err);
-    const isPreAuth = localStorage.getItem('spray_offline_authorized') === 'true';
-    if (isPreAuth) { handleOfflineBypass(); } else { window.location.href = '../'; }
-  });
+  checkAuthSession()
+    .then(() => clearTimeout(authTimeout))
+    .catch(err => {
+      clearTimeout(authTimeout);
+      console.error('Erro em checkAuthSession:', err);
+      const isPreAuth = localStorage.getItem('spray_offline_authorized') === 'true';
+      if (isPreAuth) { handleOfflineBypass(); } else { window.location.href = '../'; }
+    });
+
+  // ── SETUP DE UI (em try-catch para não bloquear auth) ──
+  try {
+    setupNavigation();
+    setupNozzleIsoCatalog();
+    setupEventListeners();
+    const restored = restoreActiveDraft();
+    if (!restored) {
+      initMeasurements();
+    }
+    setupVoiceAssistant();
+    loadSavedCredentials();
+  } catch(setupErr) {
+    console.error('Erro no setup de UI (não afeta auth):', setupErr);
+  }
   
   // Registrar data atual na identificação
   const today = new Date().toLocaleDateString('pt-BR');

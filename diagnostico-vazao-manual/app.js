@@ -65,7 +65,11 @@ function initApp() {
   loadSavedCredentials();
   
   // Executar autenticação Supabase online
-  checkAuthSession();
+  checkAuthSession().catch(err => {
+    console.error('Erro não capturado em checkAuthSession:', err);
+    const isPreAuth = localStorage.getItem('spray_offline_authorized') === 'true';
+    if (isPreAuth) { handleOfflineBypass(); } else { window.location.href = '../'; }
+  });
   
   // Registrar data atual na identificação
   const today = new Date().toLocaleDateString('pt-BR');
@@ -149,7 +153,7 @@ async function checkAuthSession() {
     if (isPreAuthorized) {
       handleOfflineBypass();
     } else {
-      showLoginScreen({ noNetwork: true });
+      window.location.href = '../'; // sem Supabase e sem pré-autorização → hub
     }
     return;
   }
@@ -160,11 +164,15 @@ async function checkAuthSession() {
     sessionStorage.removeItem('sso_bridge');
     try {
       const { access_token, refresh_token } = JSON.parse(ssoBridge);
-      const { data: { session: bridgeSession }, error: bridgeErr } = await supabase.auth.setSession({ access_token, refresh_token });
+      const { data: bridgeData, error: bridgeErr } = await supabase.auth.setSession({ access_token, refresh_token });
+      const bridgeSession = bridgeData?.session;
       if (bridgeSession && !bridgeErr) {
-        const { data: { user: freshUser } } = await supabase.auth.getUser();
-        handleUserLoggedIn(freshUser || bridgeSession.user);
-        return;
+        const { data: userData } = await supabase.auth.getUser();
+        const resolvedUser = userData?.user || bridgeSession.user;
+        if (resolvedUser) {
+          handleUserLoggedIn(resolvedUser);
+          return;
+        }
       }
     } catch(e) {
       console.warn('SSO bridge setSession failed:', e);
@@ -172,10 +180,17 @@ async function checkAuthSession() {
   }
   
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData?.session;
     if (session) {
-      const { data: { user: freshUser } } = await supabase.auth.getUser();
-      handleUserLoggedIn(freshUser || session.user);
+      const { data: userData } = await supabase.auth.getUser();
+      const resolvedUser = userData?.user || session.user;
+      if (resolvedUser) {
+        handleUserLoggedIn(resolvedUser);
+      } else {
+        // sessão existe mas usuário não resolve → hub
+        window.location.href = '../';
+      }
     } else {
       // Sem sessão: offline pré-autorizado → bypass; caso contrário → hub
       if (isPreAuthorized) {
@@ -545,6 +560,12 @@ async function verifySessionIntegrity(userId) {
 }
 
 async function handleUserLoggedIn(user) {
+  // Guarda nula: não deve acontecer, mas evita TypeError crítico
+  if (!user) {
+    console.error('handleUserLoggedIn chamado com user=null — redirecionando para o hub');
+    window.location.href = '../';
+    return;
+  }
   window.currentUser = user;
   // Validação inicial de acesso e bloqueio
   const metadata = user.user_metadata || {};

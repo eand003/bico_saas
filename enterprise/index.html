@@ -6232,7 +6232,8 @@
           }
         }
 
-        clienteSupabase.auth.getSession().then(async ({ data: { session } }) => {
+        clienteSupabase.auth.getSession().then(async ({ data: sessionData }) => {
+          const session = sessionData?.session;
           if (session) {
             showApp();
           } else {

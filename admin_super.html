@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -2323,6 +2323,19 @@
             const renewMsg = encodeURIComponent(`Oi ${firstName}! Seu acesso ao Spray Precision PRO vence em ${formattedEnd}. Para continuar usando o Seletor de Bicos + Diagnóstico de Vazão ilimitado, é só fazer o PIX de R$ 60 e eu renovo por mais 30 dias na hora! 🚀`);
             renewalBtnHtml = `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${renewMsg}" target="_blank" class="btn" style="padding: 6px 10px; font-size: 11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center;" title="Enviar mensagem de renovação no WhatsApp">📲 Renovar</a>`;
           }
+        } else if (metadata.plan_type && metadata.plan_type !== 'demo' && !metadata.is_trial) {
+          // Plano ativo sem data de fim (ex: PRO sem validade definida)
+          const planLabels = {
+            pro_monthly: '📅 PRO Mensal',
+            pro_annual:  '🏆 PRO Anual',
+            pro_founder: '⭐ Fundador',
+            single_report: '🧾 Laudo Avulso',
+            corporate: '🏢 Corporativo'
+          };
+          const label = planLabels[metadata.plan_type] || ('🔑 ' + metadata.plan_type);
+          accessHtml = `<span style="background:#2563eb; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">${label}</span>`;
+        } else if (metadata.is_trial) {
+          accessHtml = `<span style="background:#eab308; color:black; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🧪 Demo</span>`;
         } else {
           accessHtml = `<span style="background:#4b5563; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🌾 Livre</span>`;
         }
@@ -2791,9 +2804,19 @@
 
         if (error) throw error;
 
+        // Atualiza imediatamente o cachedUsers local para a tabela re-renderizar na hora
+        const idx = cachedUsers.findIndex(u => u.id === userId);
+        if (idx !== -1) {
+          cachedUsers[idx] = {
+            ...cachedUsers[idx],
+            user_metadata: { ...cachedUsers[idx].user_metadata, ...updatePayload.user_metadata }
+          };
+        }
+
         alert('Alterações salvas com sucesso!');
         document.getElementById('accessModal').style.display = 'none';
-        fetchDatabaseData();
+        renderUsersTable(); // re-renderiza imediatamente com dados locais
+        fetchDatabaseData(); // atualiza do servidor em background
       } catch (err) {
         alert('Erro ao salvar: ' + err.message);
       } finally {

@@ -157,7 +157,10 @@ async function checkAuthSession() {
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      handleUserLoggedIn(session.user);
+      // Forçar refresh do token para obter user_metadata atualizado pelo admin
+      try { await supabase.auth.refreshSession(); } catch(e) {}
+      const { data: { user: freshUser } } = await supabase.auth.getUser();
+      handleUserLoggedIn(freshUser || session.user);
     } else {
       showLoginScreen();
     }

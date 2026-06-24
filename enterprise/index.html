@@ -5843,16 +5843,21 @@
 
               if (m.lastSimulation && m.lastSimulation.recommendation) {
                 const sim = m.lastSimulation;
-                recColor = sim.recommendation.color;
+                recColor = sim.recommendation.color || 'var(--accent)';
                 
-                const totalFlow = (m.nozzleCount * sim.recommendation.qVavg).toFixed(1);
+                const qVavg = sim.recommendation.qVavg ?? null;
+                const pVavg = sim.recommendation.pVavg ?? null;
+                const vAtPmin = sim.recommendation.vAtPmin ?? null;
+                const vAtPmax = sim.recommendation.vAtPmax ?? null;
+
+                const totalFlow = qVavg != null ? (m.nozzleCount * qVavg).toFixed(1) : '--';
                 flowSpecsHtml += ` | <span>${t('Vazão Barra:')} <b>${totalFlow} L/min</b></span>`;
 
                 simHtml = `
                   <div class="machine-sim-data">
-                    🏆 <b>ISO ${sim.recommendation.iso}</b> | ${t('Vazão Bico:')} <b>${sim.recommendation.qVavg.toFixed(2)} L/min</b><br>
-                    ${t('Alvo:')} <b>${sim.config.rate} L/ha</b> | ${t('Pressão Méd:')} <b>${sim.recommendation.pVavg.toFixed(1)} ${sim.config.unit.toUpperCase()}</b><br>
-                    ${t('Janela Ideal:')} <b>${sim.recommendation.vAtPmin.toFixed(1)} - ${sim.recommendation.vAtPmax.toFixed(1)} km/h</b> <span style="opacity: 0.6; font-size:10px;">(${sim.date})</span>
+                    🏆 <b>ISO ${sim.recommendation.iso}</b> | ${t('Vazão Bico:')} <b>${qVavg != null ? qVavg.toFixed(2) : '--'} L/min</b><br>
+                    ${t('Alvo:')} <b>${sim.config.rate} L/ha</b> | ${t('Pressão Méd:')} <b>${pVavg != null ? pVavg.toFixed(1) : '--'} ${(sim.config.unit || 'bar').toUpperCase()}</b><br>
+                    ${t('Janela Ideal:')} <b>${vAtPmin != null ? vAtPmin.toFixed(1) : '--'} - ${vAtPmax != null ? vAtPmax.toFixed(1) : '--'} km/h</b> <span style="opacity: 0.6; font-size:10px;">(${sim.date})</span>
                   </div>
                 `;
               } else {
@@ -6203,8 +6208,10 @@
         const mainApp = document.getElementById('mainApp');
         if (mainApp) mainApp.style.display = 'none';
 
-        clienteSupabase.auth.getSession().then(({ data: { session } }) => {
+        clienteSupabase.auth.getSession().then(async ({ data: { session } }) => {
           if (session) {
+            // Forçar refresh para obter user_metadata atualizado pelo admin
+            try { await clienteSupabase.auth.refreshSession(); } catch(e) {}
             showApp();
           } else {
             showLogin();

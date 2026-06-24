@@ -1539,8 +1539,8 @@
 
           <div class="header-info-card" style="margin-top: 8px; padding: 6px 10px;">
             <div class="header-info-content" style="justify-content: space-between; gap: 10px; align-items: center;">
-              <div id="user-profile-badge" style="display: none; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; font-size: 11px; font-family: 'Inter', sans-serif; color: var(--text); font-weight: 500; user-select: none;">
-                <span style="opacity: 0.7;">👤</span> <span id="logged-user-email">--</span>
+              <div id="user-profile-badge" onclick="openAccountDrawer()" style="display: none; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; font-size: 11px; font-family: 'Inter', sans-serif; color: var(--text); font-weight: 500; user-select: none; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='rgba(255,255,255,0.1)'" onmouseleave="this.style.background='rgba(255,255,255,0.05)'">
+                <span style="opacity: 0.7;">👤</span> <span id="logged-user-email">--</span> <span style="opacity:0.5; font-size:9px;">▼</span>
               </div>
               <span id="offline-profile-badge" style="font-size: 11px; font-family: 'Inter', sans-serif; color: var(--text-muted); font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">👤 Offline</span>
 
@@ -6940,6 +6940,136 @@
     }
     
   </style>
+  <!-- ═══ ACCOUNT DRAWER ═══ -->
+  <div id="account-drawer-overlay" onclick="closeAccountDrawer()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9998; backdrop-filter:blur(3px); transition:opacity .3s;"></div>
+  <div id="account-drawer" style="display:none; position:fixed; top:0; right:0; width:320px; max-width:95vw; height:100%; background:var(--surface,#0f172a); border-left:1px solid rgba(255,255,255,0.08); z-index:9999; flex-direction:column; box-shadow:-8px 0 40px rgba(0,0,0,0.5); transform:translateX(100%); transition:transform .32s cubic-bezier(.4,0,.2,1); overflow-y:auto;">
+
+    <!-- Header -->
+    <div style="padding:24px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; gap:14px;">
+      <div id="acct-avatar" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,var(--accent,#00d2ff),#7c3aed); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; color:#fff; flex-shrink:0; letter-spacing:-1px;">?</div>
+      <div style="flex:1; min-width:0;">
+        <div id="acct-name" style="font-size:13px; font-weight:700; color:var(--text,#f1f5f9); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">--</div>
+        <div id="acct-email" style="font-size:11px; color:var(--text-muted,#94a3b8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">--</div>
+      </div>
+      <button onclick="closeAccountDrawer()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer; padding:4px; line-height:1; flex-shrink:0;" title="Fechar">✕</button>
+    </div>
+
+    <!-- Plan Badge -->
+    <div style="padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.07);">
+      <div style="font-size:10px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Plano Atual</div>
+      <div id="acct-plan-badge" style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700;">--</div>
+      <div id="acct-expiry" style="font-size:11px; color:var(--text-muted); margin-top:6px;"></div>
+    </div>
+
+    <!-- Permissions -->
+    <div style="padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.07); flex:1;">
+      <div style="font-size:10px; font-weight:600; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Recursos do Plano</div>
+      <div id="acct-perms" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <!-- Demo CTA -->
+    <div id="acct-upgrade-block" style="display:none; padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.07); background:rgba(37,211,102,0.04);">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5;">🚀 <strong style="color:var(--text);">Quer mais poder?</strong><br>Acesse resultados completos, PDF e CRM ilimitado.</div>
+      <a id="acct-upgrade-link" href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20fazer%20upgrade%20do%20Spray%20Precision%20PRO" target="_blank" style="display:block; text-align:center; padding:10px; background:linear-gradient(135deg,#25D366,#128C7E); color:#fff; border-radius:10px; font-weight:700; font-size:13px; text-decoration:none;">📲 Fazer Upgrade → PRO</a>
+    </div>
+
+    <!-- Footer Actions -->
+    <div style="padding:16px 20px; display:flex; flex-direction:column; gap:10px;">
+      <a href="https://wa.me/5565999106415" target="_blank" style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.2); border-radius:10px; color:#25D366; font-size:12px; font-weight:600; text-decoration:none;">💬 Suporte via WhatsApp</a>
+      <button onclick="closeAccountDrawer(); if(typeof logout==='function') logout();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); border-radius:10px; color:#f87171; font-size:12px; font-weight:600; cursor:pointer; width:100%;">🚪 Sair da Conta</button>
+    </div>
+  </div>
+
+  <script>
+    function openAccountDrawer() {
+      const overlay = document.getElementById('account-drawer-overlay');
+      const drawer  = document.getElementById('account-drawer');
+      if (!overlay || !drawer) return;
+
+      // Populate data
+      const email = (window.currentUserEmail || document.getElementById('logged-user-email')?.textContent || '--').toLowerCase();
+      const perms = window.userPermissions || {};
+      const isTrial = window.isTrialActive || perms.plan_type === 'demo';
+
+      // Avatar initials
+      const initials = email.slice(0,2).toUpperCase();
+      document.getElementById('acct-avatar').textContent = initials;
+      document.getElementById('acct-email').textContent  = email;
+      document.getElementById('acct-name').textContent   = email.split('@')[0];
+
+      // Plan badge
+      const planLabels = {
+        demo:          { text:'🧪 Demo Gratuito',  bg:'#854d0e', color:'#fef08a' },
+        pro_monthly:   { text:'📅 PRO Mensal',     bg:'#1d4ed8', color:'#bfdbfe' },
+        pro_annual:    { text:'🏆 PRO Anual',      bg:'#6d28d9', color:'#ddd6fe' },
+        pro_founder:   { text:'⭐ Fundador',        bg:'#065f46', color:'#a7f3d0' },
+        single_report: { text:'🧾 Laudo Avulso',   bg:'#374151', color:'#d1d5db' },
+        corporate:     { text:'🏢 Corporativo',    bg:'#0e7490', color:'#a5f3fc' }
+      };
+      const planKey  = isTrial ? 'demo' : (perms.plan_type || 'pro_monthly');
+      const planInfo = planLabels[planKey] || { text:'🔑 '+planKey, bg:'#374151', color:'#d1d5db' };
+      const badge    = document.getElementById('acct-plan-badge');
+      badge.textContent   = planInfo.text;
+      badge.style.background = planInfo.bg;
+      badge.style.color      = planInfo.color;
+
+      // Expiry
+      const expiry = localStorage.getItem('spray_subscription_end');
+      const expiryEl = document.getElementById('acct-expiry');
+      if (expiry && !isTrial) {
+        const d = new Date(expiry + 'T12:00:00').toLocaleDateString('pt-BR');
+        expiryEl.textContent = '📆 Ativo até ' + d;
+      } else if (isTrial) {
+        expiryEl.textContent = '♾️ Gratuito permanente com limitações';
+      } else {
+        expiryEl.textContent = '';
+      }
+
+      // Permissions grid
+      const permsEl = document.getElementById('acct-perms');
+      const rows = [
+        { key:'can_generate_pdf',    label:'Laudo técnico em PDF' },
+        { key:'can_export_csv',      label:'Exportar planilha CSV' },
+        { key:'can_use_full_results',label:'Resultados completos (sem blur)' },
+        { key:'can_use_pwm',         label:'Modo PWM' },
+        { key:'can_use_dual_nozzle', label:'Bico Duplo' },
+        { key:'can_use_crm',         label:'CRM Clientes & Máquinas' },
+        { key:'can_sync_cloud',      label:'Sincronização em nuvem' }
+      ];
+      const maxN = perms.max_nozzles_per_report;
+      permsEl.innerHTML = rows.map(r => {
+        const ok = perms[r.key] === true;
+        return `<div style="display:flex; align-items:center; gap:10px; font-size:12px;">
+          <span style="font-size:14px; flex-shrink:0;">${ok ? '✅' : '🔒'}</span>
+          <span style="color:${ok ? 'var(--text)' : 'var(--text-muted)'}; ${ok ? '' : 'text-decoration:line-through; opacity:0.5;'}">${r.label}</span>
+        </div>`;
+      }).join('') +
+      `<div style="display:flex; align-items:center; gap:10px; font-size:12px; margin-top:4px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
+        <span style="font-size:14px;">🔢</span>
+        <span style="color:var(--text);">Bicos por laudo: <b>${maxN && maxN < 999 ? maxN : 'Ilimitado'}</b></span>
+      </div>`;
+
+      // Upgrade CTA
+      document.getElementById('acct-upgrade-block').style.display = isTrial ? 'block' : 'none';
+
+      // Show
+      overlay.style.display = 'block';
+      drawer.style.display  = 'flex';
+      requestAnimationFrame(() => { drawer.style.transform = 'translateX(0)'; });
+    }
+
+    function closeAccountDrawer() {
+      const overlay = document.getElementById('account-drawer-overlay');
+      const drawer  = document.getElementById('account-drawer');
+      if (!drawer) return;
+      drawer.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        drawer.style.display  = 'none';
+      }, 320);
+    }
+  </script>
+
 </body>
 
 </html>

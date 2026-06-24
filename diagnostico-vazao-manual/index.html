@@ -382,9 +382,8 @@
           </div>
         </div>
         <!-- Badge de Perfil do Consultor Logado (Nuvem SaaS) -->
-        <div id="user-profile-badge" style="display: none; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(0, 102, 204, 0.06); border: 1px solid rgba(0, 102, 204, 0.15); border-radius: 20px; font-size: 11px; color: var(--text-muted); font-weight: bold;" title="Consultor Autenticado">
-          👤 <span id="logged-user-email">--</span>
-          <button id="btn-logout" title="Voltar ao Painel (Hub)" style="background: none; border: none; color: var(--accent-error); font-weight: bold; cursor: pointer; padding: 0 2px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">🚪</button>
+        <div id="user-profile-badge" onclick="openAccountDrawer()" style="display: none; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(0, 102, 204, 0.06); border: 1px solid rgba(0, 102, 204, 0.15); border-radius: 20px; font-size: 11px; color: var(--text-muted); font-weight: bold; cursor: pointer; transition: background .2s;" title="Minha Conta" onmouseenter="this.style.background='rgba(0,102,204,0.12)'" onmouseleave="this.style.background='rgba(0,102,204,0.06)'">
+          👤 <span id="logged-user-email">--</span> <span style="opacity:0.5; font-size:9px;">▼</span>
         </div>
         
         <!-- Badge de Modo de Contingência Offline -->
@@ -1726,6 +1725,128 @@
       </a>
     </div>
   </div>
+
+  <!-- ═══ ACCOUNT DRAWER ═══ -->
+  <div id="account-drawer-overlay" onclick="closeAccountDrawer()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9998; backdrop-filter:blur(3px);"></div>
+  <div id="account-drawer" style="display:none; position:fixed; top:0; right:0; width:310px; max-width:95vw; height:100%; background:#ffffff; border-left:1px solid #e2e8f0; z-index:9999; flex-direction:column; box-shadow:-8px 0 40px rgba(0,0,0,0.12); transform:translateX(100%); transition:transform .32s cubic-bezier(.4,0,.2,1); overflow-y:auto;">
+
+    <!-- Header -->
+    <div style="padding:24px 20px 16px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:14px; background:linear-gradient(135deg,#0066cc 0%,#004499 100%);">
+      <div id="acct-avatar" style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; color:#fff; flex-shrink:0;">?</div>
+      <div style="flex:1; min-width:0;">
+        <div id="acct-name" style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">--</div>
+        <div id="acct-email" style="font-size:11px; color:rgba(255,255,255,0.75); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">--</div>
+      </div>
+      <button onclick="closeAccountDrawer()" style="background:rgba(255,255,255,0.15); border:none; color:#fff; font-size:16px; cursor:pointer; padding:6px 8px; border-radius:8px; line-height:1; flex-shrink:0;" title="Fechar">✕</button>
+    </div>
+
+    <!-- Plan Badge -->
+    <div style="padding:16px 20px; border-bottom:1px solid #f1f5f9;">
+      <div style="font-size:10px; font-weight:600; letter-spacing:1px; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">Plano Atual</div>
+      <div id="acct-plan-badge" style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700;">--</div>
+      <div id="acct-expiry" style="font-size:11px; color:#64748b; margin-top:6px;"></div>
+    </div>
+
+    <!-- Permissions -->
+    <div style="padding:16px 20px; border-bottom:1px solid #f1f5f9; flex:1;">
+      <div style="font-size:10px; font-weight:600; letter-spacing:1px; color:#94a3b8; text-transform:uppercase; margin-bottom:12px;">Recursos do Plano</div>
+      <div id="acct-perms" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <!-- Demo CTA -->
+    <div id="acct-upgrade-block" style="display:none; padding:16px 20px; border-bottom:1px solid #f1f5f9; background:#f0fdf4;">
+      <div style="font-size:12px; color:#475569; margin-bottom:10px; line-height:1.5;">🚀 <strong style="color:#0f172a;">Quer acesso completo?</strong><br>Salve laudos, gere PDF e sincronize com a nuvem.</div>
+      <a href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20fazer%20upgrade%20do%20Spray%20Precision%20PRO" target="_blank" style="display:block; text-align:center; padding:10px; background:linear-gradient(135deg,#25D366,#128C7E); color:#fff; border-radius:10px; font-weight:700; font-size:13px; text-decoration:none;">📲 Fazer Upgrade → PRO</a>
+    </div>
+
+    <!-- Footer Actions -->
+    <div style="padding:16px 20px; display:flex; flex-direction:column; gap:10px;">
+      <a href="https://wa.me/5565999106415" target="_blank" style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#f0fdf4; border:1px solid #86efac; border-radius:10px; color:#16a34a; font-size:12px; font-weight:600; text-decoration:none;">💬 Suporte via WhatsApp</a>
+      <button onclick="closeAccountDrawer(); if(typeof forceUserLogout==='function') forceUserLogout(); else window.location.href='../'" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; background:#fef2f2; border:1px solid #fca5a5; border-radius:10px; color:#dc2626; font-size:12px; font-weight:600; cursor:pointer; width:100%;">🚪 Sair da Conta</button>
+    </div>
+  </div>
+
+  <script>
+    function openAccountDrawer() {
+      const overlay = document.getElementById('account-drawer-overlay');
+      const drawer  = document.getElementById('account-drawer');
+      if (!overlay || !drawer) return;
+
+      const email   = (document.getElementById('logged-user-email')?.textContent || window.currentUserEmail || '--').toLowerCase();
+      const perms   = window.userPermissions || {};
+      const isTrial = window.isTrialActive || perms.plan_type === 'demo';
+
+      // Avatar
+      document.getElementById('acct-avatar').textContent = email.slice(0,2).toUpperCase();
+      document.getElementById('acct-email').textContent  = email;
+      document.getElementById('acct-name').textContent   = email.split('@')[0];
+
+      // Plan badge
+      const planLabels = {
+        demo:          { text:'🧪 Demo Gratuito',  bg:'#fef3c7', color:'#92400e' },
+        pro_monthly:   { text:'📅 PRO Mensal',     bg:'#dbeafe', color:'#1e40af' },
+        pro_annual:    { text:'🏆 PRO Anual',      bg:'#ede9fe', color:'#6d28d9' },
+        pro_founder:   { text:'⭐ Fundador',        bg:'#d1fae5', color:'#065f46' },
+        single_report: { text:'🧾 Laudo Avulso',   bg:'#f1f5f9', color:'#334155' },
+        corporate:     { text:'🏢 Corporativo',    bg:'#e0f2fe', color:'#0369a1' }
+      };
+      const planKey  = isTrial ? 'demo' : (perms.plan_type || 'pro_monthly');
+      const planInfo = planLabels[planKey] || { text:'🔑 '+planKey, bg:'#f1f5f9', color:'#334155' };
+      const badge = document.getElementById('acct-plan-badge');
+      badge.textContent = planInfo.text;
+      badge.style.background = planInfo.bg;
+      badge.style.color = planInfo.color;
+
+      // Expiry
+      const expiry = localStorage.getItem('spray_subscription_end');
+      const expiryEl = document.getElementById('acct-expiry');
+      if (expiry && !isTrial) {
+        expiryEl.textContent = '📆 Ativo até ' + new Date(expiry+'T12:00:00').toLocaleDateString('pt-BR');
+      } else if (isTrial) {
+        expiryEl.textContent = '♾️ Gratuito permanente com limitações';
+      } else {
+        expiryEl.textContent = '';
+      }
+
+      // Permissions
+      const rows = [
+        { key:'can_generate_pdf',    label:'Gerar laudo PDF' },
+        { key:'can_export_csv',      label:'Exportar CSV' },
+        { key:'can_use_full_results',label:'Salvar no histórico' },
+        { key:'can_sync_cloud',      label:'Sincronização em nuvem' }
+      ];
+      const maxN = perms.max_nozzles_per_report;
+      document.getElementById('acct-perms').innerHTML =
+        rows.map(r => {
+          const ok = perms[r.key] === true;
+          return `<div style="display:flex; align-items:center; gap:10px; font-size:12px;">
+            <span style="font-size:14px;">${ok ? '✅' : '🔒'}</span>
+            <span style="color:${ok ? '#0f172a' : '#94a3b8'}; ${ok ? '' : 'text-decoration:line-through; opacity:0.5;'}">${r.label}</span>
+          </div>`;
+        }).join('') +
+        `<div style="display:flex; align-items:center; gap:10px; font-size:12px; margin-top:4px; padding-top:8px; border-top:1px solid #f1f5f9;">
+          <span style="font-size:14px;">🔢</span>
+          <span style="color:#0f172a;">Bicos por laudo: <b>${maxN && maxN < 999 ? maxN : 'Ilimitado'}</b></span>
+        </div>`;
+
+      document.getElementById('acct-upgrade-block').style.display = isTrial ? 'block' : 'none';
+
+      overlay.style.display = 'block';
+      drawer.style.display  = 'flex';
+      requestAnimationFrame(() => { drawer.style.transform = 'translateX(0)'; });
+    }
+
+    function closeAccountDrawer() {
+      const overlay = document.getElementById('account-drawer-overlay');
+      const drawer  = document.getElementById('account-drawer');
+      if (!drawer) return;
+      drawer.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (overlay) overlay.style.display = 'none';
+        drawer.style.display = 'none';
+      }, 320);
+    }
+  </script>
 
 </body>
 </html>

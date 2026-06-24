@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Spray Precision PRO - Controlador Dinâmico da SPA
  * Gerencia a navegação, eventos de formulário, cronômetro, gráficos Chart.js,
  * assistente de voz e integração com o dbService.
@@ -218,14 +218,41 @@ function showAppContainer() {
 }
 
 function handleOfflineBypass() {
+  // Restaurar permissões salvas do último login online
+  try {
+    const savedPerms = window.localStorage.getItem('spray_user_permissions');
+    if (savedPerms) {
+      window.userPermissions = JSON.parse(savedPerms);
+      console.log('🔒 Permissões offline restauradas:', window.userPermissions);
+    } else {
+      // Fallback seguro: sem permissões = modo mais restrito
+      window.userPermissions = {
+        plan_type: 'unknown',
+        can_generate_pdf: false, can_export_csv: false, can_export_json: false,
+        can_sync_cloud: false, can_use_pwm: false, can_use_dual_nozzle: false,
+        can_use_crm: false, can_use_full_results: false, max_nozzles_per_report: 12
+      };
+    }
+    window.isTrialActive = window.localStorage.getItem('spray_is_trial') === 'true';
+  } catch(e) { window.userPermissions = {}; }
+
   showAppContainer();
-  
+
   // Alternar visibilidade dos badges no cabeçalho
   const badgeOnline = document.getElementById('user-profile-badge');
   const badgeOffline = document.getElementById('offline-profile-badge');
   if (badgeOnline) badgeOnline.style.display = 'none';
   if (badgeOffline) badgeOffline.style.display = 'flex';
-  
+
+  // Banner offline demo
+  if (window.isTrialActive) {
+    const banner = document.getElementById('trial-banner');
+    if (banner) {
+      banner.innerHTML = `🧪 <strong>Conta Gratuita (Demo) • Offline:</strong> Funcionalidades limitadas ativas. <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20plano%20PRO" target="_blank" style="color:#38ef7d;font-weight:700;text-decoration:none;">Faça upgrade →</a>`;
+      banner.style.display = 'flex';
+    }
+  }
+
   // Carregar histórico local
   renderHistoryList();
 }
@@ -422,31 +449,24 @@ async function verifySessionIntegrity(userId) {
         return;
       }
       window.isTrialActive = (metadata.is_trial === true);
-      if (metadata.subscription_end) {
+      // Contas demo (is_trial) têm acesso permanente — não expiram por data
+      if (metadata.subscription_end && !metadata.is_trial) {
         const end = new Date(metadata.subscription_end);
         const today = new Date();
         today.setHours(0,0,0,0);
         end.setHours(23,59,59,999);
         if (end < today) {
           const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-          const isTrialUser = metadata.is_trial === true;
-          if (isTrialUser) {
-            alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
-            const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
-            window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
-          } else {
-            alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
-          }
+          alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
           await forceUserLogout();
           return;
         }
       }
-      if (window.isTrialActive && metadata.subscription_end) {
+      // Banner demo permanente
+      if (window.isTrialActive) {
         const banner = document.getElementById('trial-banner');
         if (banner) {
-          const end = new Date(metadata.subscription_end + 'T12:00:00');
-          const formattedEnd = end.toLocaleDateString('pt-BR');
-          banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs e exportação de CSV estão desativadas.`;
+          banner.innerHTML = `🧪 <strong>Conta Gratuita (Demo):</strong> Você está no plano gratuito com funcionalidades limitadas. <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20plano%20PRO" target="_blank" style="color:#38ef7d;font-weight:700;text-decoration:none;">Faça upgrade para acesso completo →</a>`;
           banner.style.display = 'flex';
         }
       }
@@ -516,31 +536,24 @@ async function handleUserLoggedIn(user) {
     return;
   }
   window.isTrialActive = (metadata.is_trial === true);
-  if (metadata.subscription_end) {
+  // Contas demo (is_trial) têm acesso permanente — não expiram por data
+  if (metadata.subscription_end && !metadata.is_trial) {
     const end = new Date(metadata.subscription_end);
     const today = new Date();
     today.setHours(0,0,0,0);
     end.setHours(23,59,59,999);
     if (end < today) {
       const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-      const isTrialUser = metadata.is_trial === true;
-      if (isTrialUser) {
-        alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
-        const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
-        window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
-      } else {
-        alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
-      }
+      alert(t("⚠️ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
       await forceUserLogout();
       return;
     }
   }
-  if (window.isTrialActive && metadata.subscription_end) {
+  // Banner demo permanente
+  if (window.isTrialActive) {
     const banner = document.getElementById('trial-banner');
     if (banner) {
-      const end = new Date(metadata.subscription_end + 'T12:00:00');
-      const formattedEnd = end.toLocaleDateString('pt-BR');
-      banner.innerHTML = `🧪 <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs e exportação de CSV estão desativadas.`;
+      banner.innerHTML = `🧪 <strong>Conta Gratuita (Demo):</strong> Você está no plano gratuito com funcionalidades limitadas. <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20plano%20PRO" target="_blank" style="color:#38ef7d;font-weight:700;text-decoration:none;">Faça upgrade para acesso completo →</a>`;
       banner.style.display = 'flex';
     }
   }
@@ -553,7 +566,27 @@ async function handleUserLoggedIn(user) {
 
   // Salvar pré-autorização offline bem sucedida no dispositivo
   setOfflinePreAuthorization(true);
-  
+
+  // ── FASE 3: Salvar permissões em window.userPermissions ──
+  window.userPermissions = {
+    plan_type: metadata.plan_type || (metadata.is_trial ? 'demo' : 'pro_monthly'),
+    can_generate_pdf: metadata.can_generate_pdf !== false && !metadata.is_trial,
+    can_export_csv: metadata.can_export_csv !== false && !metadata.is_trial,
+    can_export_json: metadata.can_export_json !== false && !metadata.is_trial,
+    can_sync_cloud: metadata.can_sync_cloud !== false,
+    can_use_pwm: metadata.can_use_pwm !== false && !metadata.is_trial,
+    can_use_dual_nozzle: metadata.can_use_dual_nozzle !== false && !metadata.is_trial,
+    can_use_crm: metadata.can_use_crm !== false,
+    can_use_full_results: metadata.can_use_full_results !== false && !metadata.is_trial,
+    max_nozzles_per_report: metadata.max_nozzles_per_report || (metadata.is_trial ? 12 : 999)
+  };
+  console.log('🔒 Spray Precision PRO — Permissões carregadas:', window.userPermissions);
+  // Persistir permissões no localStorage para modo offline
+  try {
+    window.localStorage.setItem('spray_user_permissions', JSON.stringify(window.userPermissions));
+    window.localStorage.setItem('spray_is_trial', metadata.is_trial ? 'true' : 'false');
+  } catch(e) { /* Safari private mode */ }
+
   showAppContainer();
   
   // Registrar nova sessão ativa
@@ -758,6 +791,18 @@ function validateTabPulverizador() {
 
   if (isNaN(largura) || isNaN(bicos) || isNaN(espacamento) || isNaN(pressao) || isNaN(velocidade) || isNaN(volume)) {
     alert(t("Por favor, preencha todos os parâmetros numéricos obrigatórios do pulverizador."));
+    return false;
+  }
+
+  // ── FASE 3: Limitar número de bicos pelo plano do usuário ──
+  const perms = window.userPermissions || {};
+  const maxNozzles = perms.max_nozzles_per_report || 999;
+  if (bicos > maxNozzles && window.currentUser) {
+    const planLabel = perms.plan_type === 'demo' ? 'Demo' : 'seu plano';
+    alert(`⚠️ Limite do plano ${planLabel}: máximo de ${maxNozzles} bicos por diagnóstico.
+
+Sua conta está configurada para até ${maxNozzles} bicos. Contate o suporte para ampliar o limite ou faça upgrade para o plano PRO.`);
+    document.getElementById('input-total-bicos').value = maxNozzles;
     return false;
   }
 
@@ -2148,6 +2193,31 @@ window.saveDbConfig = function(event) {
   }
 };
 
+// ── FASE 4: Consumir crédito do Laudo Avulso ─────────────────────────────
+async function consumeReportCreditDiag() {
+  try {
+    const supabase = window.supabaseClient;
+    if (!supabase) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const meta = user.user_metadata || {};
+    const used = (meta.reports_used || 0) + 1;
+    const { error } = await supabase.auth.updateUser({ data: { reports_used: used } });
+    if (!error) {
+      if (window.userPermissions) window.userPermissions.reports_used = used;
+      try {
+        const saved = JSON.parse(localStorage.getItem('spray_user_permissions') || '{}');
+        saved.reports_used = used;
+        localStorage.setItem('spray_user_permissions', JSON.stringify(saved));
+      } catch(e) {}
+      console.log(`📄 Crédito Laudo Avulso consumido: ${used} de ${meta.max_reports || 1}`);
+    }
+  } catch (e) {
+    console.warn('Erro ao consumir crédito laudo avulso:', e);
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────
+
 // ==========================================
 // 12. EVENTOS GERAIS DA INTERFACE
 // ==========================================
@@ -2201,10 +2271,25 @@ function setupEventListeners() {
   // Ações de relatório
   document.getElementById('btn-save-report').addEventListener('click', handleSaveInspectionWorkflow);
   document.getElementById('btn-save-report-bottom').addEventListener('click', handleSaveInspectionWorkflow);
-  document.getElementById('btn-print').addEventListener('click', () => {
+  document.getElementById('btn-print').addEventListener('click', async () => {
+    // ── FASE 3: Bloquear PDF sem permissão ──
+    const perms = window.userPermissions || {};
+    if (window.currentUser && perms.can_generate_pdf === false) {
+      alert('🔒 Geração de laudo PDF é exclusiva para planos PRO, Fundador e Laudo Avulso.\n\nEntre em contato via WhatsApp para fazer o upgrade: wa.me/5565999106415');
+      return;
+    }
     if (window.isTrialActive) {
       showTrialPremiumModal();
       return;
+    }
+    // ── FASE 4: Verificar e consumir crédito do Laudo Avulso ──
+    if (perms.plan_type === 'single_report') {
+      const maxRep = perms.max_reports || 1;
+      const usedRep = perms.reports_used || 0;
+      if (usedRep >= maxRep) {
+        alert(`🔒 Laudo Avulso Esgotado!\n\nVocê já utilizou seu crédito (${usedRep}/${maxRep}).\n\nPara gerar mais laudos, compre um novo Laudo Avulso ou assine o PRO.\nWhatsApp: wa.me/5565999106415`);
+        return;
+      }
     }
     if (typeof logTelemetry === 'function') {
       logTelemetry('print_report', { 
@@ -2213,6 +2298,10 @@ function setupEventListeners() {
       });
     }
     window.print();
+    // Consumir crédito após impressão (Laudo Avulso)
+    if (perms.plan_type === 'single_report') {
+      await consumeReportCreditDiag();
+    }
   });
   document.getElementById('btn-export-csv').addEventListener('click', exportToCSV);
   document.getElementById('btn-export-json').addEventListener('click', exportToJSON);

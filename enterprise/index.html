@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -1803,6 +1803,52 @@
           <div id="topCards" class="recommended-grid">
             <!-- Cards injetados via JS -->
           </div>
+
+          <!-- ── AVISO DEMO: resultados bloqueados ────────────────── -->
+          <div id="demoResultsWarn" style="display:none; flex-direction:column; gap:0; border-radius:12px; overflow:hidden; border:1px solid rgba(0,210,255,.2);">
+            <!-- linhas fantasma com blur -->
+            <div style="position:relative; padding:14px 18px; background:rgba(255,255,255,.03); border-bottom:1px solid rgba(255,255,255,.06);">
+              <div style="filter:blur(5px); pointer-events:none; display:flex; justify-content:space-between; opacity:.5;">
+                <span style="font-size:13px; font-family:Outfit; color:#aaa;">████████ ISO XX     ██████ L/min   ██ km/h — ██ km/h</span>
+                <span style="background:#555; border-radius:4px; padding:2px 10px; font-size:11px; color:transparent;">IDEAL</span>
+              </div>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:11px; font-weight:700; color:rgba(0,210,255,.8); letter-spacing:.5px;">🔒 PRO</span>
+              </div>
+            </div>
+            <div style="position:relative; padding:14px 18px; background:rgba(255,255,255,.02); border-bottom:1px solid rgba(255,255,255,.06);">
+              <div style="filter:blur(5px); pointer-events:none; display:flex; justify-content:space-between; opacity:.4;">
+                <span style="font-size:13px; font-family:Outfit; color:#aaa;">████████ ISO XX     ██████ L/min   ██ km/h — ██ km/h</span>
+                <span style="background:#555; border-radius:4px; padding:2px 10px; font-size:11px; color:transparent;">IDEAL</span>
+              </div>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:11px; font-weight:700; color:rgba(0,210,255,.6); letter-spacing:.5px;">🔒 PRO</span>
+              </div>
+            </div>
+            <div style="position:relative; padding:14px 18px; background:rgba(255,255,255,.01);">
+              <div style="filter:blur(5px); pointer-events:none; display:flex; justify-content:space-between; opacity:.3;">
+                <span style="font-size:13px; font-family:Outfit; color:#aaa;">████████ ISO XX     ██████ L/min   ██ km/h — ██ km/h</span>
+                <span style="background:#555; border-radius:4px; padding:2px 10px; font-size:11px; color:transparent;">IDEAL</span>
+              </div>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:11px; font-weight:700; color:rgba(0,210,255,.4); letter-spacing:.5px;">🔒 PRO</span>
+              </div>
+            </div>
+            <!-- CTA upgrade -->
+            <div style="padding:16px 20px; background:rgba(0,210,255,.05); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
+              <div>
+                <div style="font-size:13px; font-weight:700; color:var(--accent);">🔒 Lista completa disponível no PRO</div>
+                <div id="demoResultsHiddenCount" style="font-size:12px; color:var(--text-muted); margin-top:2px;">Mais resultados ocultos no plano gratuito.</div>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <a href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20o%20Laudo%20Avulso%20R%24%2049%2C90" target="_blank"
+                   style="padding:8px 14px; border-radius:8px; background:rgba(56,239,125,.15); border:1px solid rgba(56,239,125,.3); color:#38ef7d; font-size:12px; font-weight:700; text-decoration:none; white-space:nowrap;">📄 Laudo Avulso R$ 29,90</a>
+                <a href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20assinar%20o%20plano%20PRO" target="_blank"
+                   style="padding:8px 14px; border-radius:8px; background:rgba(0,210,255,.15); border:1px solid rgba(0,210,255,.3); color:#00d2ff; font-size:12px; font-weight:700; text-decoration:none; white-space:nowrap;">⭐ Assinar PRO</a>
+              </div>
+            </div>
+          </div>
+          <!-- ──────────────────────────────────────────────────────── -->
         </div>
 
         <!-- Alertas Técnicos Contextuais -->
@@ -2505,6 +2551,19 @@
 
       function setMode(mode) {
         MACHINE_MODE = mode;
+
+        // ── FASE 3: Feature Guard ──
+        const perms = window.userPermissions || {};
+        const isDemoUser = window.isTrialActive || perms.plan_type === 'demo';
+        if (mode === 'pwm' && !perms.can_use_pwm && window.currentUserEmail) {
+          showUpgradeModal('Modo PWM', 'O Modo PWM (Pulsado) é exclusivo para planos PRO e Fundador.');
+          return;
+        }
+        if (mode === 'dual' && !perms.can_use_dual_nozzle && window.currentUserEmail) {
+          showUpgradeModal('Modo Bico Duplo', 'O Modo Bico Duplo é exclusivo para planos PRO e Fundador.');
+          return;
+        }
+
         if (typeof logTelemetry === 'function') {
           logTelemetry('select_mode', { mode: mode });
         }
@@ -2527,6 +2586,30 @@
         if (dashboardTitle) dashboardTitle.innerText = titles[mode];
 
         update();
+      }
+
+      // ── FASE 3: Upgrade Modal (bloqueia recurso PRO) ──
+      function showUpgradeModal(featureName, description) {
+        let modal = document.getElementById('upgradeModal');
+        if (!modal) {
+          modal = document.createElement('div');
+          modal.id = 'upgradeModal';
+          modal.style.cssText = `position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:20px;`;
+          modal.innerHTML = `
+            <div style="background:#0d1117;border:1px solid rgba(0,210,255,.25);border-radius:20px;padding:36px;max-width:420px;width:100%;text-align:center;">
+              <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+              <h3 style="font-family:'Outfit';color:#00d2ff;margin:0 0 8px;font-size:22px;" id="upgradeModalTitle">Recurso PRO</h3>
+              <p style="color:rgba(255,255,255,.7);font-size:14px;line-height:1.6;" id="upgradeModalDesc"></p>
+              <div style="display:flex;gap:10px;margin-top:24px;justify-content:center;">
+                <button onclick="document.getElementById('upgradeModal').style.display='none'" style="padding:10px 22px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;cursor:pointer;font-size:14px;">Fechar</button>
+                <a href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Quero%20fazer%20upgrade%20para%20o%20plano%20PRO%20do%20Spray%20Precision%20PRO." target="_blank" style="padding:10px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,#00d2ff,#38ef7d);color:#0d1117;font-weight:900;cursor:pointer;font-size:14px;text-decoration:none;">Fazer Upgrade ⭐</a>
+              </div>
+            </div>`;
+          document.body.appendChild(modal);
+        }
+        document.getElementById('upgradeModalTitle').innerText = featureName;
+        document.getElementById('upgradeModalDesc').innerText = description;
+        modal.style.display = 'flex';
       }
 
       const PWM_PRESETS = {
@@ -3041,9 +3124,22 @@
               return a.ok ? (a.deviation - b.deviation) : (a.violation - b.violation);
             });
 
-            renderCards(rows, pMin, pMax, vMin, vMax);
-            updateChart(rows, vMin, vMax);
-            renderTable(rows, vMin, vAvg, vMax);
+            // ── FASE 3: Limitar resultados para usuários demo ──
+            const perms = window.userPermissions || {};
+            const maxResults = (perms.can_use_full_results === false && window.currentUserEmail) ? 12 : rows.length;
+            const displayRows = rows.slice(0, maxResults);
+            // Mostrar aviso de limite se demo
+            const demoWarn = document.getElementById('demoResultsWarn');
+            if (demoWarn) {
+              const hidden = rows.length - displayRows.length;
+              const hiddenEl = document.getElementById('demoResultsHiddenCount');
+              if (hiddenEl) hiddenEl.textContent = `+ ${hidden} bico${hidden !== 1 ? 's' : ''} compatível${hidden !== 1 ? 'is' : ''} oculto${hidden !== 1 ? 's' : ''} — acesse o plano PRO para ver a lista completa.`;
+              demoWarn.style.display = (rows.length > displayRows.length) ? 'flex' : 'none';
+            }
+
+            renderCards(displayRows, pMin, pMax, vMin, vMax);
+            updateChart(displayRows, vMin, vMax);
+            renderTable(displayRows, vMin, vAvg, vMax);
 
           } catch (err) {
             console.error("Erro no cálculo local:", err);
@@ -3940,10 +4036,27 @@
         if (typeof applyTranslations === 'function') applyTranslations();
       }
 
-      function generateReport() {
+      async function generateReport() {
+        // ── FASE 3: Bloquear PDF para usuários sem permissão ──
+        const perms = window.userPermissions || {};
+        if (window.currentUserEmail && perms.can_generate_pdf === false) {
+          showUpgradeModal('Gerar Laudo PDF', 'A geração de laudos PDF profissionais é exclusiva para planos PRO, Fundador e Laudo Avulso.');
+          return;
+        }
         if (window.isTrialActive) {
           showTrialPremiumModal();
           return;
+        }
+        // ── FASE 4: Verificar e consumir crédito do Laudo Avulso ──
+        const isSingleReport = (perms.plan_type === 'single_report');
+        if (isSingleReport) {
+          const maxRep = perms.max_reports || 1;
+          const usedRep = perms.reports_used || 0;
+          if (usedRep >= maxRep) {
+            showUpgradeModal('Laudo Avulso Esgotado',
+              `Você já utilizou seu Laudo Avulso (${usedRep}/${maxRep}).<br>Para gerar mais laudos, compre um novo Laudo Avulso ou assine o PRO.`);
+            return;
+          }
         }
         if (typeof logTelemetry === 'function') {
           const inp = readInputs();
@@ -4441,14 +4554,46 @@
         document.title = fileName;
         if (titleTag) titleTag.textContent = fileName;
 
-        setTimeout(() => {
+        setTimeout(async () => {
           window.print();
+          // ── FASE 4: Consumir crédito do Laudo Avulso após impressão ──
+          const permsNow = window.userPermissions || {};
+          if (permsNow.plan_type === 'single_report') {
+            await consumeReportCredit();
+          }
           setTimeout(() => {
             document.title = oldTitle;
             if (titleTag) titleTag.textContent = oldTitle;
           }, 1000);
         }, 300);
       }
+
+      // ── FASE 4: Consumir crédito do Laudo Avulso no Supabase ───────────────────────────
+      async function consumeReportCredit() {
+        try {
+          if (!clienteSupabase) return;
+          const { data: { user } } = await clienteSupabase.auth.getUser();
+          if (!user) return;
+          const meta = user.user_metadata || {};
+          const used = (meta.reports_used || 0) + 1;
+          const { error } = await clienteSupabase.auth.updateUser({
+            data: { reports_used: used }
+          });
+          if (!error) {
+            // Atualizar local também
+            if (window.userPermissions) window.userPermissions.reports_used = used;
+            try {
+              const saved = JSON.parse(localStorage.getItem('spray_user_permissions') || '{}');
+              saved.reports_used = used;
+              localStorage.setItem('spray_user_permissions', JSON.stringify(saved));
+            } catch(e) {}
+            console.log(`📄 Laudo Avulso consumido: ${used} de ${meta.max_reports || 1}`);
+          }
+        } catch (e) {
+          console.warn('Erro ao consumir crédito do laudo avulso:', e);
+        }
+      }
+      // ─────────────────────────────────────────────────────────────────────
 
       function destroyChart() {
         if (myChart) {
@@ -6012,13 +6157,40 @@
       window.isOfflineBypass = true;
       window.currentUserEmail = 'offline@local';
       migrateCrmStorage('offline@local');
-      
+
+      // Restaurar permissões salvas do último login online
+      try {
+        const savedPerms = localStorage.getItem('spray_user_permissions');
+        if (savedPerms) {
+          window.userPermissions = JSON.parse(savedPerms);
+          console.log('\ud83d\udd12 Permissões offline restauradas:', window.userPermissions);
+        } else {
+          // Fallback seguro: modo mais restrito
+          window.userPermissions = {
+            plan_type: 'unknown',
+            can_generate_pdf: false, can_export_csv: false, can_export_json: false,
+            can_sync_cloud: false, can_use_pwm: false, can_use_dual_nozzle: false,
+            can_use_crm: false, can_use_full_results: false, max_nozzles_per_report: 12
+          };
+        }
+        window.isTrialActive = localStorage.getItem('spray_is_trial') === 'true';
+      } catch(e) { window.userPermissions = {}; }
+
       const loginScreen = document.getElementById('loginScreen');
       if (loginScreen) loginScreen.style.display = 'none';
-      
+
       const mainApp = document.getElementById('mainApp');
       if (mainApp) mainApp.style.display = 'flex';
-      
+
+      // Banner offline demo
+      if (window.isTrialActive) {
+        const banner = document.getElementById('trial-banner');
+        if (banner) {
+          banner.innerHTML = `\ud83e\uddea <strong>Conta Gratuita (Demo) \u2022 Offline:</strong> Funcionalidades limitadas ativas. <a href="https://wa.me/5565999106415?text=Ol\u00e1!%20Quero%20fazer%20upgrade%20para%20o%20plano%20PRO" target="_blank" style="color:#38ef7d;font-weight:700;text-decoration:none;">Fa\u00e7a upgrade \u2192</a>`;
+          banner.style.display = 'flex';
+        }
+      }
+
       if (window._updateApp) {
         window._updateApp();
       }
@@ -6253,7 +6425,8 @@
             window.location.href = '../';
             return;
           }
-          if (metadata.subscription_end) {
+          // Contas demo (is_trial) têm acesso permanente — não expiram por data
+          if (metadata.subscription_end && !metadata.is_trial) {
             const end = new Date(metadata.subscription_end);
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -6324,6 +6497,7 @@
       const badgeOnline = document.getElementById('user-profile-badge');
       const badgeOffline = document.getElementById('offline-profile-badge');
       if (badgeOnline) badgeOnline.style.display = 'none';
+      const badgeOffline = document.getElementById('offline-profile-badge');
       if (badgeOffline) badgeOffline.style.display = 'inline-flex';
 
       if (clienteSupabase) {
@@ -6361,37 +6535,46 @@
             return;
           }
           window.isTrialActive = (metadata.is_trial === true);
-          if (metadata.subscription_end) {
+          // Contas demo (is_trial) têm acesso permanente — não expiram por data
+          if (metadata.subscription_end && !metadata.is_trial) {
             const end = new Date(metadata.subscription_end);
             const today = new Date();
             today.setHours(0,0,0,0);
             end.setHours(23,59,59,999);
             if (end < today) {
               const formattedEnd = new Date(metadata.subscription_end + 'T12:00:00').toLocaleDateString('pt-BR');
-              const isTrialUser = metadata.is_trial === true;
-              if (isTrialUser) {
-                alert(t("Olá! Seu período de testes de 5 dias do Spray Precision PRO terminou.\n\nPara continuar usando as ferramentas e gerando laudos ilimitados, entre em contato para ativar sua licença profissional!"));
-                const waMsg = encodeURIComponent("Olá! Meu período de testes de 5 dias expirou e gostaria de assinar a versão completa do Spray Precision PRO.");
-                window.open(`https://wa.me/5565999106415?text=${waMsg}`, '_blank');
-              } else {
-                alert(t("❌ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
-              }
+              alert(t("❌ Acesso interrompido: Seu período de assinatura expirou em ") + formattedEnd + "!");
               await logout();
               return;
             }
           }
-          if (window.isTrialActive && metadata.subscription_end) {
+          // Banner demo permanente
+          if (window.isTrialActive) {
             const banner = document.getElementById('trial-banner');
             if (banner) {
-              const end = new Date(metadata.subscription_end + 'T12:00:00');
-              const formattedEnd = end.toLocaleDateString('pt-BR');
-              banner.innerHTML = `⚠️ <strong>Modo de Teste (Demo):</strong> Seus 5 dias de acesso terminam em ${formattedEnd}. A geração de PDFs está desativada.`;
+              banner.innerHTML = `🧪 <strong>Conta Gratuita (Demo):</strong> Você está no plano gratuito com funcionalidades limitadas. <a href="https://wa.me/5565999106415?text=Olá!%20Quero%20fazer%20upgrade%20para%20o%20plano%20PRO" target="_blank" style="color:#38ef7d;font-weight:700;text-decoration:none;">Faça upgrade para acesso completo →</a>`;
               banner.style.display = 'flex';
             }
           }
 
+
           window.currentUserEmail = user.email;
           migrateCrmStorage(user.email);
+
+          // ── FASE 3: Salvar permissões em window.userPermissions ──
+          window.userPermissions = {
+            plan_type: metadata.plan_type || (metadata.is_trial ? 'demo' : 'pro_monthly'),
+            can_generate_pdf: metadata.can_generate_pdf !== false && !metadata.is_trial,
+            can_export_csv: metadata.can_export_csv !== false && !metadata.is_trial,
+            can_export_json: metadata.can_export_json !== false && !metadata.is_trial,
+            can_sync_cloud: metadata.can_sync_cloud !== false,
+            can_use_pwm: metadata.can_use_pwm !== false && !metadata.is_trial,
+            can_use_dual_nozzle: metadata.can_use_dual_nozzle !== false && !metadata.is_trial,
+            can_use_crm: metadata.can_use_crm !== false,
+            can_use_full_results: metadata.can_use_full_results !== false && !metadata.is_trial,
+            max_nozzles_per_report: metadata.max_nozzles_per_report || 999
+          };
+          console.log('🔒 Spray Precision PRO — Permissões carregadas:', window.userPermissions);
 
           // Update user badge
           const badgeOnline = document.getElementById('user-profile-badge');

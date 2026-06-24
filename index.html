@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -1610,7 +1610,7 @@
         <div id="loginMessage" class="login-message"></div>
 
         <div class="login-links">
-          <a href="#" onclick="openTrialModal(); return false;" class="login-link">Criar conta de teste (5 dias)</a>
+          <a href="#" onclick="openTrialModal(); return false;" class="login-link">Criar conta gratuita (acesso limitado)</a>
           <a href="https://wa.me/5565999106415?text=Olá!%20Esqueci%20minha%20senha%20de%20acesso%20ao%20Spray%20Precision." target="_blank" class="login-link">Esqueceu a senha?</a>
         </div>
       </div>
@@ -1661,7 +1661,7 @@
       <!-- Trial CTA Section below the cards -->
       <div class="trial-cta-container" style="display: none;">
         <div class="trial-cta-text">
-          <h3>🧪 Teste Gratuito por 5 Dias</h3>
+          <h3>🧪 Plano Gratuito com Limitações</h3>
           <p>Quer experimentar as ferramentas antes de assinar? Crie uma conta teste gratuita e avalie no campo, sem compromisso.</p>
         </div>
         <button onclick="openTrialModal(); return false;" class="trial-cta-btn">Começar Teste Grátis ➔</button>
@@ -1972,6 +1972,160 @@
       }
     }
 
+    // ─── MODAL SIGNUP CONTA OFICIAL ───────────────────────────────────────
+    const SIGNUP_PLANS = {
+      pro_monthly: {
+        icon: '⭐', title: 'Conta PRO Mensal', desc: 'Acesso completo — sem limite de bicos, PDF ilimitado, todos os modos.',
+        badge: '✅ R$ 69,90/mês · Cancele quando quiser · Acesso completo imediato',
+        validity_days: 365 // será gerenciado pelo admin
+      },
+      pro_annual: {
+        icon: '📅', title: 'Conta PRO Anual', desc: 'Melhor custo-benefício — R$ 47,83/mês (R$ 574/ano).',
+        badge: '✅ R$ 574/ano · Economia de 30% · Todos os recursos PRO liberados',
+        validity_days: 365
+      },
+      founder_annual: {
+        icon: '🏅', title: 'Conta Fundador (Pix Anual)', desc: 'Acesso vitalício com preço exclusivo de fundador.',
+        badge: '✅ R$ 430,80/ano via Pix · Preço de Fundador · Acesso permanente garantido',
+        validity_days: 365
+      },
+      single_report: {
+        icon: '📄', title: 'Laudo Avulso', desc: 'Acesso temporário para gerar 1 laudo técnico em PDF.',
+        badge: '✅ R$ 29,90 · Válido por 7 dias · 1 laudo em PDF incluído',
+        validity_days: 7
+      }
+    };
+
+    function openSignupModal(plan) {
+      closePricingModal();
+      const config = SIGNUP_PLANS[plan] || SIGNUP_PLANS.pro_monthly;
+      document.getElementById('signupModalIcon').innerText = config.icon;
+      document.getElementById('signupModalTitle').innerText = config.title;
+      document.getElementById('signupModalDesc').innerText = config.desc;
+      document.getElementById('signupPlanBadge').innerText = config.badge;
+      document.getElementById('signupPlanType').value = plan;
+      const modal = document.getElementById('modal-signup');
+      if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('show'), 10);
+      }
+    }
+
+    function closeSignupModal() {
+      const modal = document.getElementById('modal-signup');
+      if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 400);
+      }
+      const form = document.getElementById('signupForm');
+      if (form) form.reset();
+      const msg = document.getElementById('signupMessage');
+      if (msg) { msg.style.display = 'none'; msg.innerText = ''; }
+      const btn = document.getElementById('signupSubmitBtn');
+      if (btn) { btn.disabled = false; btn.innerText = 'Ativar Minha Conta ➔'; }
+    }
+
+    async function handleSignupRegistration(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('signupSubmitBtn');
+      const msgEl = document.getElementById('signupMessage');
+      const plan = document.getElementById('signupPlanType').value || 'pro_monthly';
+      const config = SIGNUP_PLANS[plan] || SIGNUP_PLANS.pro_monthly;
+
+      const name = document.getElementById('signupName').value.trim();
+      const phone = document.getElementById('signupPhone').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value.trim();
+
+      if (!name || !phone || !email || !password) {
+        msgEl.innerText = 'Por favor, preencha todos os campos.';
+        msgEl.className = 'trial-message error';
+        msgEl.style.display = 'block';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Criando sua conta...';
+      msgEl.style.display = 'none';
+
+      try {
+        const supabase = getSupabaseClient();
+        if (!supabase) throw new Error('Supabase não foi carregado corretamente.');
+
+        const today = new Date();
+        const subStart = today.toISOString().split('T')[0];
+        const end = new Date(today);
+        end.setDate(today.getDate() + config.validity_days);
+        const subEnd = end.toISOString().split('T')[0];
+
+        // Permissões PRO completas (admin deve ajustar conforme necessário)
+        const isSingleReport = plan === 'single_report';
+        const metadata = {
+          nome: name, full_name: name,
+          whatsapp: phone, phone: phone,
+          role: 'consultor',
+          partner_id: 'individual', partner_name: 'Autônomo',
+          partner_color: '#00d2ff', partner_logo: './logo.png',
+          partner_whatsapp: '5565999106415',
+          is_enterprise: false,
+          subscription_start: subStart,
+          subscription_end: subEnd,
+          is_trial: false,
+          plan_type: plan,
+          has_seletor: true,
+          has_diagnostico: true,
+          can_generate_pdf: true,
+          can_export_csv: !isSingleReport,
+          can_export_json: !isSingleReport,
+          can_sync_cloud: !isSingleReport,
+          can_use_pwm: true,
+          can_use_dual_nozzle: true,
+          can_use_crm: !isSingleReport,
+          can_use_full_results: true,
+          max_nozzles_per_report: 999,
+          max_reports: isSingleReport ? 1 : 999,
+          reports_used: 0
+        };
+
+        const { data, error } = await supabase.auth.signUp({
+          email, password,
+          options: { data: metadata }
+        });
+
+        if (error) {
+          if (error.message.toLowerCase().includes('already') || error.message.toLowerCase().includes('registered') || error.message.toLowerCase().includes('exists')) {
+            throw new Error('Este e-mail já possui cadastro. Entre em contato com o suporte para ativar seu plano.');
+          }
+          throw error;
+        }
+        if (data && data.user && data.user.identities && data.user.identities.length === 0) {
+          throw new Error('Este e-mail já possui cadastro. Entre em contato com o suporte para ativar seu plano.');
+        }
+
+        msgEl.className = 'trial-message success';
+        msgEl.style.display = 'block';
+        msgEl.innerHTML = `<strong>✅ Conta criada com sucesso!</strong><br><span style="font-size:13px;opacity:.95;display:block;margin-top:5px;">Redirecionando para a tela de login...</span>`;
+        document.getElementById('signupForm').style.display = 'none';
+        submitBtn.style.display = 'none';
+
+        const loginEmailField = document.getElementById('loginEmail');
+        if (loginEmailField) loginEmailField.value = email;
+
+        setTimeout(() => {
+          closeSignupModal();
+          showLoginView();
+        }, 2500);
+
+      } catch (err) {
+        msgEl.innerText = err.message || 'Erro inesperado ao criar conta.';
+        msgEl.className = 'trial-message error';
+        msgEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Ativar Minha Conta ➔';
+      }
+    }
+    // ──────────────────────────────────────────────────────────────────────
+
     function openTrialModal() {
       closePricingModal();
       const modal = document.getElementById('modal-trial');
@@ -2002,7 +2156,7 @@
       if (submitBtn) {
         submitBtn.style.display = 'block';
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Ativar Meu Teste de 5 Dias ➔';
+        submitBtn.innerText = 'Criar Minha Conta Gratuita ➔';
       }
     }
 
@@ -2025,7 +2179,7 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerText = 'Cadastrando...';
+      submitBtn.innerText = 'Criando conta gratuita...';
       msgEl.style.display = 'none';
 
       try {
@@ -2034,11 +2188,9 @@
           throw new Error('Supabase não foi carregado corretamente.');
         }
 
+        // Contas Demo são permanentes - sem data de expiração
         const today = new Date();
         const subStart = today.toISOString().split('T')[0];
-        const trialEnd = new Date(today);
-        trialEnd.setDate(today.getDate() + 5);
-        const subEnd = trialEnd.toISOString().split('T')[0];
 
         const { data, error } = await supabase.auth.signUp({
           email: email,
@@ -2057,8 +2209,21 @@
               partner_whatsapp: '5565999106415',
               is_enterprise: false,
               subscription_start: subStart,
-              subscription_end: subEnd,
-              is_trial: true
+              // Sem subscription_end: conta gratuita permanente com limitações
+              is_trial: true,
+              plan_type: 'demo',
+              // Permissões do plano Demo
+              has_seletor: true,
+              has_diagnostico: true,
+              can_generate_pdf: false,
+              can_export_csv: false,
+              can_export_json: false,
+              can_sync_cloud: false,
+              can_use_pwm: false,
+              can_use_dual_nozzle: false,
+              can_use_crm: false,
+              can_use_full_results: false,
+              max_nozzles_per_report: 12
             }
           }
         });
@@ -2077,7 +2242,7 @@
         msgEl.className = 'trial-message success';
         msgEl.style.display = 'block';
         msgEl.innerHTML = `
-          <strong>✅ Conta de teste criada com sucesso!</strong><br>
+          <strong>✅ Conta gratuita criada com sucesso!</strong><br>
           <span style="font-size: 13px; opacity: 0.95; display: block; margin-top: 5px;">
             Redirecionando para a tela de login...
           </span>
@@ -2105,7 +2270,7 @@
         msgEl.className = 'trial-message error';
         msgEl.style.display = 'block';
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Ativar Meu Teste de 5 Dias ➔';
+        submitBtn.innerText = 'Criar Minha Conta Gratuita ➔';
       }
     }
 
@@ -2120,12 +2285,15 @@
         return;
       }
 
-      // Check url query params for trial=true
+      // Check url query params for trial=true ou signup=PLAN_TYPE
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('trial') === 'true') {
-        // Clean search params and open trial modal
         window.history.replaceState({}, document.title, window.location.pathname);
         openTrialModal();
+      } else if (urlParams.get('signup')) {
+        const plan = urlParams.get('signup');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        openSignupModal(plan);
       }
 
       try {
@@ -2406,10 +2574,10 @@
             Sem Custo
           </div>
           <div>
-            <h3 class="plan-title">Teste 5 Dias</h3>
+            <h3 class="plan-title">Demo Gratuito</h3>
             <div class="plan-price-box">
               <span class="plan-price-value">Grátis</span>
-              <span class="plan-price-period">/5 dias</span>
+              <span class="plan-price-period">(limitado)</span>
               <p class="plan-price-subtitle">Experimente e comprove a precisão no campo.</p>
             </div>
             <ul class="plan-features-list">
@@ -2486,7 +2654,7 @@
               <li>Treinamento de onboarding e suporte dedicado</li>
             </ul>
           </div>
-          <a href="https://wa.me/5565999106415?text=Olá!%20Gostaria%20de%20solicitar%20un%20plano%20corporativo%20personalizado%20para%20minha%20empresa/equipe." target="_blank" class="plan-btn" style="background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%); border: none; color: #ffffff;">
+          <a href="https://wa.me/5565999106415?text=Ol%C3%A1!%20Gostaria%20de%20solicitar%20um%20plano%20corporativo%20personalizado%20para%20minha%20empresa/equipe." target="_blank" class="plan-btn" style="background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%); border: none; color: #ffffff;">
             Fale conosco &rarr;
           </a>
         </div>
@@ -2494,14 +2662,15 @@
     </div>
   </div>
 
-  <!-- MODAL DE REGISTRO DE TESTE 5 DIAS -->
+  <!-- MODAL DE REGISTRO DE CONTA GRATUITA (Demo) -->
   <div id="modal-trial" class="trial-overlay" onclick="if(event.target === this) closeTrialModal()">
     <div class="trial-content">
       <button class="trial-close" onclick="closeTrialModal()">&times;</button>
       
       <div class="trial-header">
-        <h2>Criar Conta de Teste (5 dias)</h2>
-        <p>Insira seus dados para liberar acesso imediato às ferramentas de teste.</p>
+        <div style="font-size:32px; margin-bottom:8px;">🧪</div>
+        <h2>Criar Conta Gratuita</h2>
+        <p>Acesso gratuito e permanente com funcionalidades limitadas. Sem cobrança.</p>
       </div>
 
       <form id="trialForm" onsubmit="handleTrialRegistration(event)" class="trial-form">
@@ -2530,12 +2699,54 @@
           <span>Eu li e concordo com os <a href="./termos_uso.html" target="_blank" style="color: #eab308; text-decoration: underline;">Termos de Uso</a>.</span>
         </label>
 
-        <button type="submit" id="trialSubmitBtn" class="trial-submit-btn">Ativar Meu Teste de 5 Dias ➔</button>
+        <button type="submit" id="trialSubmitBtn" class="trial-submit-btn">Criar Minha Conta Gratuita ➤</button>
       </form>
 
       <div id="trialMessage" class="trial-message"></div>
     </div>
   </div>
 
+  <!-- MODAL DE CADASTRO CONTA OFICIAL (PRO/ANUAL/FUNDADOR) -->
+  <div id="modal-signup" class="trial-overlay" onclick="if(event.target === this) closeSignupModal()">
+    <div class="trial-content" style="max-width:480px;">
+      <button class="trial-close" onclick="closeSignupModal()">&times;</button>
+
+      <div class="trial-header">
+        <div style="font-size:32px; margin-bottom:8px;" id="signupModalIcon">⭐</div>
+        <h2 id="signupModalTitle">Criar Conta PRO</h2>
+        <p id="signupModalDesc">Preencha seus dados para ativar seu acesso completo.</p>
+      </div>
+
+      <div id="signupPlanBadge" style="background:rgba(0,210,255,.08);border:1px solid rgba(0,210,255,.25);border-radius:10px;padding:10px 16px;margin-bottom:18px;font-size:13px;color:rgba(255,255,255,.85);text-align:center;"></div>
+
+      <form id="signupForm" onsubmit="handleSignupRegistration(event)" class="trial-form">
+        <input type="hidden" id="signupPlanType" value="">
+        <div class="trial-input-group">
+          <label for="signupName">Nome Completo</label>
+          <input type="text" id="signupName" class="trial-input" placeholder="Seu nome completo" required>
+        </div>
+        <div class="trial-input-group">
+          <label for="signupPhone">WhatsApp (apenas números)</label>
+          <input type="tel" id="signupPhone" class="trial-input" placeholder="Ex: 65999106415" required pattern="[0-9]{10,11}">
+        </div>
+        <div class="trial-input-group">
+          <label for="signupEmail">Seu E-mail</label>
+          <input type="email" id="signupEmail" class="trial-input" placeholder="Ex: seuemail@provedor.com" required>
+        </div>
+        <div class="trial-input-group">
+          <label for="signupPassword">Senha (mín. 6 caracteres)</label>
+          <input type="password" id="signupPassword" class="trial-input" placeholder="Crie uma senha de acesso" required minlength="6">
+        </div>
+        <label class="trial-checkbox-label">
+          <input type="checkbox" required>
+          <span>Eu li e concordo com os <a href="./termos_uso.html" target="_blank" style="color:#00d2ff;text-decoration:underline;">Termos de Uso</a>.</span>
+        </label>
+        <button type="submit" id="signupSubmitBtn" class="trial-submit-btn" style="background:linear-gradient(135deg,#00d2ff,#38ef7d);color:#0d1117;">Ativar Minha Conta ➤</button>
+      </form>
+      <div id="signupMessage" class="trial-message"></div>
+    </div>
+  </div>
+
 </body>
 </html>
+

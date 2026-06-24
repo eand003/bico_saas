@@ -1469,7 +1469,7 @@
   </div>
 
   <!-- AUTH SCREEN -->
-  <div id="loginScreen">
+  <div id="loginScreen" style="display:none;">
     <div class="login-box" style="position: relative;">
       <!-- Language Selector Widget (Login Screen) -->
       <div class="lang-selector-container" style="position: absolute; top: 16px; right: 16px;">
@@ -6215,17 +6215,18 @@
           try {
             const { access_token, refresh_token } = JSON.parse(ssoBridge);
             clienteSupabase.auth.setSession({ access_token, refresh_token })
-              .then(({ data: { session }, error }) => {
-                if (session && !error) {
+              .then(({ data: bridgeData, error: bridgeErr }) => {
+                const bridgeSession = bridgeData?.session;
+                if (bridgeSession && !bridgeErr) {
                   showApp();
                 } else {
                   // Fallback: tenta getSession normal
-                  clienteSupabase.auth.getSession().then(({ data: { session: s } }) => {
-                    if (s) showApp(); else showLogin();
-                  }).catch(() => showLogin());
+                  clienteSupabase.auth.getSession().then(({ data: sd }) => {
+                    if (sd?.session) showApp(); else window.location.href = '../';
+                  }).catch(() => window.location.href = '../');
                 }
               })
-              .catch(() => showLogin());
+              .catch(() => window.location.href = '../');
             return; // sai do initAuth normal
           } catch(e) {
             console.warn('SSO bridge parse error:', e);
@@ -6761,20 +6762,8 @@
     }
 
     function showLogin() {
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('mainApp').style.display = 'none';
-
-      const authError = document.getElementById('authError');
-      const authSuccess = document.getElementById('authSuccess');
-      if (authError) authError.style.display = 'none';
-      if (authSuccess) authSuccess.style.display = 'none';
-
-      const btnSubmit = document.getElementById('btnSubmit');
-      if (btnSubmit) {
-        btnSubmit.disabled = false;
-        btnSubmit.innerText = 'Entrar / Cadastrar';
-      }
-      if (typeof applyTranslations === 'function') applyTranslations();
+      // Login centralizado no hub — sub-apps não possuem formulário próprio
+      window.location.href = '../';
     }
 
     if (document.readyState === 'loading') {

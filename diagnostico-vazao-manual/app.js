@@ -210,43 +210,13 @@ async function checkAuthSession() {
 }
 
 function showLoginScreen(options = {}) {
-  document.getElementById('app-login-screen').style.display = 'flex';
-  document.querySelector('.app-container').style.display = 'none';
-  
-  const isPreAuthorized = checkOfflinePreAuthorization();
-  const skipBtn = document.getElementById('btn-login-skip');
-  const blockedMsg = document.getElementById('login-offline-blocked-msg');
-  
-  if (options.noNetwork) {
-    if (isPreAuthorized) {
-      skipBtn.style.display = 'block';
-      blockedMsg.style.display = 'none';
-      document.getElementById('login-email').disabled = false;
-      document.getElementById('login-password').disabled = false;
-      document.getElementById('btn-login-submit').disabled = false;
-      document.getElementById('btn-login-submit').textContent = "🔐 Entrar no Sistema";
-    } else {
-      skipBtn.style.display = 'none';
-      blockedMsg.style.display = 'block';
-      document.getElementById('login-email').disabled = true;
-      document.getElementById('login-password').disabled = true;
-      document.getElementById('btn-login-submit').disabled = true;
-      document.getElementById('btn-login-submit').textContent = "❌ Sem Conexão de Rede";
-    }
+  // Login centralizado no hub — sub-apps não possuem formulário próprio
+  const isPreAuth = checkOfflinePreAuthorization();
+  if (isPreAuth) {
+    handleOfflineBypass();
   } else {
-    document.getElementById('login-email').disabled = false;
-    document.getElementById('login-password').disabled = false;
-    document.getElementById('btn-login-submit').disabled = false;
-    document.getElementById('btn-login-submit').textContent = "🔐 Entrar no Sistema";
-    blockedMsg.style.display = 'none';
-    
-    if (isPreAuthorized) {
-      skipBtn.style.display = 'block';
-    } else {
-      skipBtn.style.display = 'none';
-    }
+    window.location.href = '../';
   }
-  if (typeof window.applyTranslations === 'function') window.applyTranslations();
 }
 
 function showAppContainer() {

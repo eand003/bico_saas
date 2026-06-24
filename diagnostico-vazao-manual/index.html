@@ -1797,15 +1797,25 @@
       badge.style.background = planInfo.bg;
       badge.style.color = planInfo.color;
 
-      // Expiry
-      const expiry = localStorage.getItem('spray_subscription_end');
-      const expiryEl = document.getElementById('acct-expiry');
-      if (expiry && !isTrial) {
-        expiryEl.textContent = '📆 Ativo até ' + new Date(expiry+'T12:00:00').toLocaleDateString('pt-BR');
-      } else if (isTrial) {
-        expiryEl.textContent = '♾️ Gratuito permanente com limitações';
+      // ── Datas de início e fim da assinatura ──
+      const expiryRaw = localStorage.getItem('spray_subscription_end');
+      const startRaw  = localStorage.getItem('spray_subscription_start');
+      const expiryEl  = document.getElementById('acct-expiry');
+      if (isTrial) {
+        expiryEl.innerHTML = '<span style="color:#92400e;">♾️ Gratuito — limitado</span>';
+      } else if (expiryRaw) {
+        const endDate  = new Date(expiryRaw + 'T12:00:00');
+        const today    = new Date(); today.setHours(0,0,0,0);
+        const isActive = endDate >= today;
+        const endStr   = endDate.toLocaleDateString('pt-BR');
+        const startStr = startRaw ? new Date(startRaw + 'T12:00:00').toLocaleDateString('pt-BR') : null;
+        const color    = isActive ? '#16a34a' : '#dc2626';
+        const status   = isActive ? '✅ Ativo' : '⚠️ Expirado';
+        expiryEl.innerHTML =
+          (startStr ? `<div style="color:#64748b; font-size:11px;">📅 Início: <b style="color:#0f172a;">${startStr}</b></div>` : '') +
+          `<div style="color:#64748b; font-size:11px; margin-top:2px;">📅 Vencimento: <b style="color:${color};">${endStr}</b> — <span style="color:${color}; font-weight:700;">${status}</span></div>`;
       } else {
-        expiryEl.textContent = '';
+        expiryEl.innerHTML = '';
       }
 
       // Permissions

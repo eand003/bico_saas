@@ -2827,14 +2827,17 @@
 
     // ── FASE 2: Templates de plano (1 clique preenche tudo) ──
     function applyPlanTemplate(planType) {
-      const today = new Date().toISOString().split('T')[0];
-      const in7Days = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0];
+      const today    = new Date().toISOString().split('T')[0];
+      const in7Days  = new Date(Date.now() +   7*24*60*60*1000).toISOString().split('T')[0];
+      const in30Days = new Date(Date.now() +  30*24*60*60*1000).toISOString().split('T')[0];
+      const in365Days= new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0];
 
       const templates = {
         demo: {
           plan_type: 'demo', is_trial: true,
           has_seletor: true, has_diagnostico: true,
           max_nozzles: 12, max_reports: 0, reports_used: 0,
+          subscription_start: '', subscription_end: '',
           single_report_valid_until: '',
           can_generate_pdf: false, can_export_csv: false, can_export_json: false,
           can_sync_cloud: false, can_use_pwm: false, can_use_dual_nozzle: false,
@@ -2844,6 +2847,7 @@
           plan_type: 'single_report', is_trial: false,
           has_seletor: true, has_diagnostico: true,
           max_nozzles: 999, max_reports: 1, reports_used: 0,
+          subscription_start: today, subscription_end: in7Days,
           single_report_valid_until: in7Days,
           can_generate_pdf: true, can_export_csv: false, can_export_json: false,
           can_sync_cloud: true, can_use_pwm: true, can_use_dual_nozzle: true,
@@ -2853,6 +2857,7 @@
           plan_type: 'pro_monthly', is_trial: false,
           has_seletor: true, has_diagnostico: true,
           max_nozzles: 999, max_reports: 9999, reports_used: 0,
+          subscription_start: today, subscription_end: in30Days,
           single_report_valid_until: '',
           can_generate_pdf: true, can_export_csv: true, can_export_json: true,
           can_sync_cloud: true, can_use_pwm: true, can_use_dual_nozzle: true,
@@ -2862,6 +2867,7 @@
           plan_type: 'pro_annual', is_trial: false,
           has_seletor: true, has_diagnostico: true,
           max_nozzles: 999, max_reports: 9999, reports_used: 0,
+          subscription_start: today, subscription_end: in365Days,
           single_report_valid_until: '',
           can_generate_pdf: true, can_export_csv: true, can_export_json: true,
           can_sync_cloud: true, can_use_pwm: true, can_use_dual_nozzle: true,
@@ -2871,6 +2877,7 @@
           plan_type: 'founder_annual', is_trial: false,
           has_seletor: true, has_diagnostico: true,
           max_nozzles: 999, max_reports: 9999, reports_used: 0,
+          subscription_start: today, subscription_end: in365Days,
           single_report_valid_until: '',
           can_generate_pdf: true, can_export_csv: true, can_export_json: true,
           can_sync_cloud: true, can_use_pwm: true, can_use_dual_nozzle: true,
@@ -2888,6 +2895,8 @@
       document.getElementById('accessMaxNozzles').value = t.max_nozzles;
       document.getElementById('accessMaxReports').value = t.max_reports;
       document.getElementById('accessReportsUsed').value = t.reports_used;
+      document.getElementById('accessSubStart').value = t.subscription_start;
+      document.getElementById('accessSubEnd').value = t.subscription_end;
       document.getElementById('accessSingleReportValidUntil').value = t.single_report_valid_until;
       document.getElementById('accessCanGeneratePdf').checked = t.can_generate_pdf;
       document.getElementById('accessCanExportCsv').checked = t.can_export_csv;

@@ -566,6 +566,11 @@ async function handleUserLoggedIn(user) {
   } else {
     window.localStorage.removeItem('spray_subscription_end');
   }
+  if (metadata.subscription_start) {
+    window.localStorage.setItem('spray_subscription_start', metadata.subscription_start);
+  } else {
+    window.localStorage.removeItem('spray_subscription_start');
+  }
 
   // Salvar pré-autorização offline bem sucedida no dispositivo
   setOfflinePreAuthorization(true);

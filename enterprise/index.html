@@ -6529,6 +6529,11 @@
           } else {
             localStorage.removeItem('spray_subscription_end');
           }
+          if (metadata.subscription_start) {
+            localStorage.setItem('spray_subscription_start', metadata.subscription_start);
+          } else {
+            localStorage.removeItem('spray_subscription_start');
+          }
           // Validação inicial de acesso e bloqueio
           if (metadata.is_blocked === true) {
             alert(t("❌ Acesso interrompido: Esta conta foi bloqueada temporariamente!"));
@@ -7013,19 +7018,28 @@
       badge.style.background = planInfo.bg;
       badge.style.color      = planInfo.color;
 
-      // Expiry
-      const expiry = localStorage.getItem('spray_subscription_end');
-      const expiryEl = document.getElementById('acct-expiry');
-      if (expiry && !isTrial) {
-        const d = new Date(expiry + 'T12:00:00').toLocaleDateString('pt-BR');
-        expiryEl.textContent = '📆 Ativo até ' + d;
-      } else if (isTrial) {
-        expiryEl.textContent = '♾️ Gratuito permanente com limitações';
+      // ── Datas de início e fim da assinatura ──
+      const expiryRaw = localStorage.getItem('spray_subscription_end');
+      const startRaw  = localStorage.getItem('spray_subscription_start');
+      const expiryEl  = document.getElementById('acct-expiry');
+      if (isTrial) {
+        expiryEl.innerHTML = '<span style="color:#a3a3a3;">♾️ Gratuito — limitado</span>';
+      } else if (expiryRaw) {
+        const endDate  = new Date(expiryRaw + 'T12:00:00');
+        const today    = new Date(); today.setHours(0,0,0,0);
+        const isActive = endDate >= today;
+        const endStr   = endDate.toLocaleDateString('pt-BR');
+        const startStr = startRaw ? new Date(startRaw + 'T12:00:00').toLocaleDateString('pt-BR') : null;
+        const color    = isActive ? '#4ade80' : '#f87171';
+        const status   = isActive ? '✅ Ativo' : '⚠️ Expirado';
+        expiryEl.innerHTML =
+          (startStr ? `<div style="color:#94a3b8; font-size:11px;">📅 Início: <b style="color:#e2e8f0;">${startStr}</b></div>` : '') +
+          `<div style="color:#94a3b8; font-size:11px; margin-top:2px;">📅 Vencimento: <b style="color:${color};">${endStr}</b> — <span style="color:${color}; font-weight:700;">${status}</span></div>`;
       } else {
-        expiryEl.textContent = '';
+        expiryEl.innerHTML = '';
       }
 
-      // Permissions grid
+      // Permissions grid — USAR CORES EXPLÍCITAS (var(--text) não funciona no drawer escuro)
       const permsEl = document.getElementById('acct-perms');
       const rows = [
         { key:'can_generate_pdf',    label:'Laudo técnico em PDF' },
@@ -7041,12 +7055,12 @@
         const ok = perms[r.key] === true;
         return `<div style="display:flex; align-items:center; gap:10px; font-size:12px;">
           <span style="font-size:14px; flex-shrink:0;">${ok ? '✅' : '🔒'}</span>
-          <span style="color:${ok ? 'var(--text)' : 'var(--text-muted)'}; ${ok ? '' : 'text-decoration:line-through; opacity:0.5;'}">${r.label}</span>
+          <span style="color:${ok ? '#e2e8f0' : '#64748b'}; ${ok ? '' : 'text-decoration:line-through; opacity:0.6;'}">${r.label}</span>
         </div>`;
       }).join('') +
       `<div style="display:flex; align-items:center; gap:10px; font-size:12px; margin-top:4px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
         <span style="font-size:14px;">🔢</span>
-        <span style="color:var(--text);">Bicos por laudo: <b>${maxN && maxN < 999 ? maxN : 'Ilimitado'}</b></span>
+        <span style="color:#e2e8f0;">Bicos por laudo: <b>${maxN && maxN < 999 ? maxN : 'Ilimitado'}</b></span>
       </div>`;
 
       // Upgrade CTA

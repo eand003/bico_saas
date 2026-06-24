@@ -65,7 +65,19 @@ function initApp() {
   loadSavedCredentials();
   
   // Executar autenticação Supabase online
-  checkAuthSession().catch(err => {
+  // Timeout de segurança: se auth demorar mais de 8s, redireciona ao hub
+  const authTimeout = setTimeout(() => {
+    const loading = document.getElementById('app-auth-loading');
+    const appEl = document.querySelector('.app-container');
+    const appVisible = appEl && appEl.style.display !== 'none';
+    if (!appVisible) {
+      console.warn('Auth timeout — redirecionando ao hub');
+      window.location.href = '../';
+    }
+  }, 8000);
+
+  checkAuthSession().then(() => clearTimeout(authTimeout)).catch(err => {
+    clearTimeout(authTimeout);
     console.error('Erro não capturado em checkAuthSession:', err);
     const isPreAuth = localStorage.getItem('spray_offline_authorized') === 'true';
     if (isPreAuth) { handleOfflineBypass(); } else { window.location.href = '../'; }
@@ -220,6 +232,8 @@ function showLoginScreen(options = {}) {
 }
 
 function showAppContainer() {
+  const loading = document.getElementById('app-auth-loading');
+  if (loading) loading.style.display = 'none';
   document.getElementById('app-login-screen').style.display = 'none';
   document.querySelector('.app-container').style.display = 'flex';
   if (typeof window.applyTranslations === 'function') window.applyTranslations();

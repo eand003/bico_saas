@@ -746,6 +746,14 @@ h1, h2, h3, h4, .font-display {
   animation: pulse 1.5s infinite;
 }
 
+/* Reconectando: cor âmbar + rotação do ícone */
+.voice-indicator.reconnecting {
+  background: #fef9c3;
+  border-color: #fde047;
+  color: #92400e;
+  animation: pulse 0.8s infinite;
+}
+
 @keyframes pulse {
   0% { opacity: 1; }
   50% { opacity: 0.6; }

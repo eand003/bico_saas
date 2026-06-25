@@ -1,145 +1,235 @@
 /**
- * Assistente de Voz Inteligente da Spray Precision
- * Encapsula a Web Speech API para síntese (fala) e reconhecimento (escuta) de voz nativos do navegador.
- * Projetado para operações "Hands-Free" (mãos livres) no campo.
+ * Assistente de Voz Inteligente — Spray Precision PRO
+ * Web Speech API (síntese + reconhecimento) para operação Hands-Free em campo.
+ *
+ * BUGS CORRIGIDOS nesta versão:
+ *  #1 — Chrome continuous timeout: onend auto-reinicia se userWantsListening=true
+ *  #2 — Microfone pausado durante síntese de voz (evita auto-trigger)
+ *  #3 — Flag userWantsListening separa intenção do usuário do estado real da API
+ *  #4 — stopListening usa recognition.abort() (imediato) em vez de stop()
+ *  #5 — processTranscript aceita variações sem acento e palavras sinônimas
  */
 
-// Reconhecimento de Voz (Speech to Text)
-let recognition = null;
-let isListening = false;
+// ── Estado ──────────────────────────────────────────────────────────────────
+let recognition      = null;
+let isListening      = false;   // true = onstart confirmado
+let userWantsListen  = false;   // intenção explícita do usuário
+let restartTimer     = null;    // timeout de auto-restart
+let speakingNow      = false;   // síntese em andamento (evita auto-trigger)
 
-// Síntese de Voz (Text to Speech)
-const synth = typeof window !== 'undefined' ? window.speechSynthesis : null;
+// ── Síntese de Voz ───────────────────────────────────────────────────────────
+const synth = (typeof window !== 'undefined') ? window.speechSynthesis : null;
 
-// Callbacks que serão acionados pelo serviço
-let resultCallback = null; // Quando escuta um valor (ex: "450" ou "bico 5 500")
-let commandCallback = null; // Quando escuta um comando (ex: "próximo", "voltar", "cronômetro")
-let statusCallback = null; // Atualizações de status do microfone
+// ── Callbacks registrados pela interface ─────────────────────────────────────
+let resultCallback  = null; // onResult(volumeMl, nozzleIndex|null)
+let commandCallback = null; // onCommand('next'|'back'|'timer'|'clear'|'clogged'|'leaking'|'pause_timer')
+let statusCallback  = null; // onStatus('escutando'|'inativo'|'reconectando'|'negado'|'indisponivel')
 
-/**
- * Inicializa o assistente de voz e verifica suporte nativo no navegador
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// INICIALIZAÇÃO
+// ─────────────────────────────────────────────────────────────────────────────
 function initVoiceService() {
   if (typeof window === 'undefined') return { supported: false };
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  
   if (!SpeechRecognition) {
-    console.warn("Speech Recognition não é suportado neste navegador. Recomenda-se Chrome, Edge ou Safari.");
+    console.warn('[VoiceService] Speech Recognition não suportado. Use Chrome, Edge ou Safari.');
     return { supported: false };
   }
 
   try {
     recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    const lang = localStorage.getItem('spray_language') || 'pt';
-    recognition.lang = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-419' : 'pt-BR');
+    recognition.continuous      = true;
+    recognition.interimResults  = false;
+    recognition.maxAlternatives = 1;
+    _applyLang();
 
+    // ── onstart: API confirmou início da escuta ──
     recognition.onstart = () => {
       isListening = true;
+      clearTimeout(restartTimer);
+      console.log('[VoiceService] Reconhecimento iniciado.');
       if (statusCallback) statusCallback('escutando');
     };
 
+    // ── onend: API encerrou (por qualquer motivo) ──
+    // FIX #1 — Chrome tem timeout de silêncio que dispara onend sem erro.
+    // Se o usuário QUER ouvir (userWantsListen=true), auto-reinicia.
     recognition.onend = () => {
       isListening = false;
-      if (statusCallback) statusCallback('inativo');
-    };
+      console.log('[VoiceService] onend — userWantsListen:', userWantsListen);
 
-    recognition.onerror = (event) => {
-      console.error("Erro no reconhecimento de voz:", event.error);
-      if (statusCallback) statusCallback('erro', event.error);
-      
-      // Auto-restart em caso de perda de conexão no campo (mas não em caso de aborto explícito)
-      if (isListening && event.error !== 'aborted') {
-        setTimeout(() => {
-          try { recognition.start(); } catch (e) {}
-        }, 1000);
+      if (userWantsListen) {
+        if (statusCallback) statusCallback('reconectando');
+        restartTimer = setTimeout(() => {
+          if (userWantsListen && !isListening) {
+            try {
+              recognition.start();
+            } catch (e) {
+              console.warn('[VoiceService] Falha ao reiniciar:', e);
+              userWantsListen = false;
+              if (statusCallback) statusCallback('inativo');
+            }
+          }
+        }, 400);
+      } else {
+        if (statusCallback) statusCallback('inativo');
       }
     };
 
+    // ── onerror: erros da API ──
+    recognition.onerror = (event) => {
+      console.warn('[VoiceService] Erro:', event.error);
+
+      // FIX #3 — só desabilita definitivamente se permissão negada
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        userWantsListen = false;
+        clearTimeout(restartTimer);
+        isListening = false;
+        if (statusCallback) statusCallback('negado', event.error);
+        return;
+      }
+      // Para 'no-speech', 'network', 'aborted', etc. → onend cuida do restart
+    };
+
+    // ── onresult: transcrição recebida ──
     recognition.onresult = (event) => {
-      const resultIndex = event.resultIndex;
-      const transcript = event.results[resultIndex][0].transcript.trim().toLowerCase();
-      console.log("Fala detectada:", transcript);
-      
-      processTranscript(transcript);
+      // FIX #2 — Ignora resultados capturados enquanto TTS está falando
+      if (speakingNow) {
+        console.log('[VoiceService] Resultado ignorado durante TTS.');
+        return;
+      }
+
+      const idx        = event.resultIndex;
+      const transcript = event.results[idx][0].transcript.trim().toLowerCase();
+      console.log('[VoiceService] Fala detectada:', transcript);
+      _processTranscript(transcript);
     };
 
     return { supported: true };
   } catch (e) {
-    console.error("Erro ao configurar reconhecimento de voz:", e);
+    console.error('[VoiceService] Falha ao configurar:', e);
     return { supported: false };
   }
 }
 
-/**
- * Registra callbacks de escuta para a interface
- */
-function registerVoiceCallbacks({ onResult, onCommand, onStatus }) {
-  if (onResult) resultCallback = onResult;
-  if (onCommand) commandCallback = onCommand;
-  if (onStatus) statusCallback = onStatus;
+function _applyLang() {
+  if (!recognition) return;
+  const lang = (typeof localStorage !== 'undefined') ? (localStorage.getItem('spray_language') || 'pt') : 'pt';
+  recognition.lang = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-419' : 'pt-BR');
 }
 
-/**
- * Ativa o microfone e começa a escutar comandos
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// API PÚBLICA
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Registra callbacks da interface */
+function registerVoiceCallbacks({ onResult, onCommand, onStatus }) {
+  if (onResult)  resultCallback  = onResult;
+  if (onCommand) commandCallback = onCommand;
+  if (onStatus)  statusCallback  = onStatus;
+}
+
+/** Ativa o microfone */
 function startListening() {
   if (!recognition) {
     const check = initVoiceService();
-    if (!check.supported) return false;
+    if (!check.supported) {
+      if (statusCallback) statusCallback('indisponivel');
+      return false;
+    }
   }
-  
+
+  userWantsListen = true;
+  _applyLang();
+
+  if (isListening) return true; // já está ouvindo
+
   try {
     recognition.start();
-    isListening = true;
     return true;
   } catch (e) {
-    console.error("Erro ao iniciar reconhecimento:", e);
+    console.error('[VoiceService] Erro ao iniciar:', e);
+    userWantsListen = false;
     return false;
   }
 }
 
-/**
- * Desliga o microfone
- */
+/** Desliga o microfone permanentemente (intenção do usuário) */
 function stopListening() {
-  if (!recognition) return;
-  try {
-    isListening = false;
-    recognition.stop();
-  } catch (e) {
-    console.error("Erro ao parar reconhecimento:", e);
+  userWantsListen = false;        // impede onend de reiniciar
+  clearTimeout(restartTimer);
+  isListening = false;
+
+  if (recognition) {
+    try { recognition.abort(); } catch (e) {} // FIX #4 — abort é imediato
   }
 }
 
-/**
- * Retorna se o assistente está escutando no momento
- */
+/** Retorna true se o microfone está ativamente escutando */
 function isCurrentlyListening() {
   return isListening;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SÍNTESE DE VOZ
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
- * Executa síntese de fala (fala um texto em português brasileiro)
+ * Fala um texto em português brasileiro.
+ * FIX #2 — Pausa o reconhecimento durante a fala para evitar auto-trigger.
  */
 function speak(text, interrupt = true) {
-  if (!synth) return;
-  
-  if (interrupt) {
-    synth.cancel(); // Cancela falas anteriores em andamento
-  }
-  
+  if (!synth || !text) return;
+
+  // Cancela fala anterior se solicitado
+  if (interrupt) synth.cancel();
+
   const utterance = new SpeechSynthesisUtterance(text);
-  const lang = localStorage.getItem('spray_language') || 'pt';
-  utterance.lang = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-419' : 'pt-BR');
-  utterance.rate = 1.0; // Velocidade natural
+  const lang      = (typeof localStorage !== 'undefined') ? (localStorage.getItem('spray_language') || 'pt') : 'pt';
+  utterance.lang  = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-419' : 'pt-BR');
+  utterance.rate  = 1.05;
   utterance.pitch = 1.0;
-  
+
+  // ── Pausa o microfone enquanto TTS fala ──
+  const wasListening = isListening;
+  if (wasListening && recognition) {
+    speakingNow     = true;
+    userWantsListen = false; // impede restart automático do onend durante TTS
+    try { recognition.abort(); } catch(e) {}
+  }
+
+  utterance.onend = () => {
+    speakingNow = false;
+    // Reinicia microfone se estava ativo antes do TTS
+    if (wasListening) {
+      userWantsListen = true;
+      setTimeout(() => {
+        if (userWantsListen && !isListening) {
+          try { recognition.start(); } catch(e) {}
+        }
+      }, 350);
+    }
+  };
+
+  utterance.onerror = () => {
+    speakingNow = false;
+    if (wasListening) {
+      userWantsListen = true;
+      setTimeout(() => {
+        if (userWantsListen && !isListening) {
+          try { recognition.start(); } catch(e) {}
+        }
+      }, 350);
+    }
+  };
+
   synth.speak(utterance);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// ÁUDIO — BEEPS (Web Audio API)
+// ─────────────────────────────────────────────────────────────────────────────
 /**
  * Emite beeps de áudio customizados usando a Web Audio API
  * Perfis:
@@ -158,14 +248,6 @@ function playBeep(type = 'success') {
 
     const ctx = new AudioCtx();
 
-    /**
-     * Cria um oscilador agendado num contexto já aberto
-     * @param {number} freq     - frequência Hz
-     * @param {number} startAt  - segundos (relativo a ctx.currentTime)
-     * @param {number} duration - duração em segundos
-     * @param {number} volume   - 0 a 1
-     * @param {string} shape    - tipo de onda (sine, square, sawtooth, triangle)
-     */
     function tone(freq, startAt, duration, volume = 0.18, shape = 'sine') {
       const osc  = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -176,10 +258,8 @@ function playBeep(type = 'success') {
       const t0 = ctx.currentTime + startAt;
       osc.frequency.setValueAtTime(freq, t0);
 
-      // Ataque suave (evita clique digital)
       gain.gain.setValueAtTime(0.001, t0);
       gain.gain.linearRampToValueAtTime(volume, t0 + 0.015);
-      // Sustain + decay
       gain.gain.setValueAtTime(volume, t0 + duration * 0.7);
       gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
 
@@ -188,114 +268,135 @@ function playBeep(type = 'success') {
     }
 
     if (type === 'timer_start') {
-      // ── "atenção-VAI!" ── dois bipes ascendentes ──
-      tone(660,  0.00, 0.12, 0.16); // bing  (E5)
-      tone(1047, 0.22, 0.20, 0.22); // BING  (C6) — sinal de largada
-
+      tone(660,  0.00, 0.12, 0.16);
+      tone(1047, 0.22, 0.20, 0.22);
     } else if (type === 'countdown_tick') {
-      // ── Tick dos últimos 3-2-1 segundos ──
-      tone(1200, 0.00, 0.06, 0.14, 'square'); // curto e nítido
-
+      tone(1200, 0.00, 0.06, 0.14, 'square');
     } else if (type === 'timer_end') {
-      // ── "PARE!" ── três bipes descendentes ──
-      tone(880,  0.00, 0.22, 0.22); // beep 1  (A5)
-      tone(880,  0.32, 0.22, 0.22); // beep 2  (A5)
-      tone(523,  0.64, 0.55, 0.28); // beep 3 longo (C5) — sinal de fim
-
+      tone(880,  0.00, 0.22, 0.22);
+      tone(880,  0.32, 0.22, 0.22);
+      tone(523,  0.64, 0.55, 0.28);
     } else if (type === 'success') {
-      // ── Bipe positivo simples ──
       tone(880, 0.00, 0.14, 0.12);
-
     } else if (type === 'error') {
-      // ── Bipe grave de erro ──
       tone(160, 0.00, 0.30, 0.16, 'sawtooth');
     }
-
   } catch (e) {
-    console.warn('Web Audio API não disponível:', e);
+    console.warn('[VoiceService] Web Audio API indisponível:', e);
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PROCESSAMENTO DE TRANSCRIÇÃO
+// FIX #5 — aceita variações sem acento, sinônimos e palavras por extenso PT-BR
+// ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Processa o texto transcrito pelo microfone e interpreta intenções
- */
-function processTranscript(text) {
-  // 1. Verificar comandos de navegação rápidos
-  if (text.includes('próximo') || text.includes('salvar') || text.includes('avançar')) {
+/** Remove acentos para comparação tolerante */
+function _normalize(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function _processTranscript(text) {
+  const n = _normalize(text); // versão sem acentos para matching
+
+  // ── 1. Comandos de navegação ────────────────────────────────────────────
+  if (_matchAny(n, ['proximo', 'salvar', 'avancar', 'confirmar', 'gravar'])) {
     if (commandCallback) commandCallback('next');
     return;
   }
-  if (text.includes('voltar') || text.includes('anterior')) {
+  if (_matchAny(n, ['voltar', 'anterior', 'retornar'])) {
     if (commandCallback) commandCallback('back');
     return;
   }
-  if (text.includes('iniciar') || text.includes('cronômetro') || text.includes('tempo') || text.includes('começar')) {
+
+  // ── 2. Cronômetro ───────────────────────────────────────────────────────
+  if (_matchAny(n, ['iniciar', 'cronometro', 'cronometros', 'comecar', 'comeca', 'medir', 'mede', 'tempo', 'start'])) {
     if (commandCallback) commandCallback('timer');
     return;
   }
-  if (text.includes('repetir') || text.includes('limpar') || text.includes('zerar')) {
+  if (_matchAny(n, ['parar', 'pausar', 'para', 'pausa', 'stop', 'finalizar', 'terminar', 'encerrar'])) {
+    if (commandCallback) commandCallback('pause_timer');
+    return;
+  }
+
+  // ── 3. Limpar ────────────────────────────────────────────────────────────
+  if (_matchAny(n, ['repetir', 'limpar', 'zerar', 'apagar', 'deletar', 'errei'])) {
     if (commandCallback) commandCallback('clear');
     return;
   }
-  if (text.includes('entupido') || text.includes('obstruído')) {
+
+  // ── 4. Status dos bicos ──────────────────────────────────────────────────
+  if (_matchAny(n, ['entupido', 'entupida', 'obstruido', 'obstruida', 'bloqueado', 'nao passa', 'sem fluxo'])) {
     if (commandCallback) commandCallback('clogged');
     return;
   }
-  if (text.includes('vazando') || text.includes('vazamento')) {
+  if (_matchAny(n, ['vazando', 'vazamento', 'gotejando', 'goteja', 'pingando'])) {
     if (commandCallback) commandCallback('leaking');
     return;
   }
 
-  // 2. Extrair números para volumes de coleta (mL)
-  // Expressões regulares para encontrar números (ex: "quatrocentos e cinquenta", "450 ml", "450")
-  const textCleaned = text
-    .replace(/ml/g, '')
-    .replace(/militros/g, '')
-    .replace(/l/g, '')
+  // ── 5. Extração de volume numérico (mL) ──────────────────────────────────
+  const cleaned = n
+    .replace(/mililitros?/g, '')
+    .replace(/\bml\b/g, '')
+    .replace(/litros?/g, '')
     .trim();
-  
-  // Tentar extrair números explícitos digitados
-  const numbersFound = textCleaned.match(/\d+/g);
-  
-  if (numbersFound && numbersFound.length > 0) {
-    const value = parseInt(numbersFound[0]);
-    if (value > 0 && value < 10000) {
-      
-      // Checar se o usuário disse "bico X valor Y"
-      // Ex: "bico cinco quatrocentos e cinquenta"
-      if (text.includes('bico') || text.includes('pontas')) {
-        const bicoWordIndex = text.indexOf('bico');
-        const bicoText = text.substring(bicoWordIndex);
-        const subNumbers = bicoText.match(/\d+/g);
-        
-        if (subNumbers && subNumbers.length >= 2) {
-          const nozzleNum = parseInt(subNumbers[0]);
-          const volMl = parseInt(subNumbers[1]);
-          if (resultCallback) {
-            resultCallback(volMl, nozzleNum);
-            return;
-          }
+
+  // Tentar extrair dígitos diretos: "450", "450 ml", "bico 3 450"
+  const digits = cleaned.match(/\d+/g);
+  if (digits && digits.length > 0) {
+    // Detectar "bico X valor Y"
+    if (n.includes('bico') || n.includes('ponta') || n.includes('bocal')) {
+      const bicoIdx = Math.max(n.indexOf('bico'), n.indexOf('ponta'), n.indexOf('bocal'));
+      const afterBico = n.substring(bicoIdx);
+      const subNums = afterBico.match(/\d+/g);
+      if (subNums && subNums.length >= 2) {
+        const nozzle = parseInt(subNums[0]);
+        const vol    = parseInt(subNums[1]);
+        if (resultCallback && vol > 0 && vol < 10000) {
+          resultCallback(vol, nozzle);
+          return;
         }
       }
-      
-      // Caso contrário, apenas reporta o volume para o bico atual da interface
-      if (resultCallback) {
-        resultCallback(value, null); // null indica "bico atual"
-      }
     }
-  } else {
-    // Tentar converter números por extenso básicos (zero a dez) em pt-BR se a API não traduzir para dígitos
-    const numWords = {
-      'zero': 0, 'um': 1, 'dois': 2, 'três': 3, 'quatro': 4, 'cinco': 5,
-      'seis': 6, 'sete': 7, 'oito': 8, 'nove': 9, 'dez': 10
-    };
-    
-    for (const [word, val] of Object.entries(numWords)) {
-      if (textCleaned === word) {
-        if (resultCallback) resultCallback(val, null);
-        return;
-      }
+
+    const val = parseInt(digits[0]);
+    if (resultCallback && val > 0 && val < 10000) {
+      resultCallback(val, null);
+      return;
     }
   }
+
+  // Converter extenso PT-BR (unidades + centenas comuns no campo)
+  const wordMap = {
+    'zero': 0, 'um': 1, 'dois': 2, 'tres': 3, 'quatro': 4, 'cinco': 5,
+    'seis': 6, 'sete': 7, 'oito': 8, 'nove': 9, 'dez': 10,
+    'onze': 11, 'doze': 12, 'treze': 13, 'quatorze': 14, 'quinze': 15,
+    'dezesseis': 16, 'dezessete': 17, 'dezoito': 18, 'dezenove': 19, 'vinte': 20,
+    'trinta': 30, 'quarenta': 40, 'cinquenta': 50,
+    'sessenta': 60, 'setenta': 70, 'oitenta': 80, 'noventa': 90,
+    'cem': 100, 'cento': 100, 'duzentos': 200, 'trezentos': 300,
+    'quatrocentos': 400, 'quinhentos': 500, 'seiscentos': 600,
+    'setecentos': 700, 'oitocentos': 800, 'novecentos': 900,
+    'mil': 1000
+  };
+
+  // Tentar somar palavras presentes no enunciado
+  let total = 0;
+  let found = false;
+  const words = cleaned.split(/\s+/);
+  for (const w of words) {
+    if (wordMap[w] !== undefined) {
+      total += wordMap[w];
+      found = true;
+    }
+  }
+  if (found && total > 0 && total < 10000) {
+    if (resultCallback) resultCallback(total, null);
+  }
+}
+
+/** Verifica se qualquer palavra da lista aparece no texto normalizado */
+function _matchAny(normalizedText, keywords) {
+  return keywords.some(kw => normalizedText.includes(kw));
 }

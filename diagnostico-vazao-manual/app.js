@@ -2090,7 +2090,8 @@ async function deleteInspectionFromHistory(id) {
 // ==========================================
 function setupVoiceAssistant() {
   const indicator = document.getElementById('voice-indicator');
-  
+  if (!indicator) return;
+
   const check = initVoiceService();
   if (!check.supported) {
     indicator.style.display = 'none';
@@ -2118,6 +2119,9 @@ function setupVoiceAssistant() {
         prevNozzle();
       } else if (cmd === 'timer') {
         startChronometer();
+      } else if (cmd === 'pause_timer') {
+        pauseChronometer();
+        speak(t("Cronômetro pausado."));
       } else if (cmd === 'clear') {
         document.getElementById('input-volume-ml').value = '';
         updateRealtimeNozzleFeedback();
@@ -2131,7 +2135,16 @@ function setupVoiceAssistant() {
     onStatus: (status, err) => {
       if (status === 'escutando') {
         indicator.className = 'voice-indicator active';
-        indicator.textContent = '🎤 ' + t("Assistente de Voz: Ouvindo...");
+        indicator.textContent = '🎤 ' + t("Ouvindo...");
+      } else if (status === 'reconectando') {
+        indicator.className = 'voice-indicator reconnecting';
+        indicator.textContent = '🔄 ' + t("Reconectando...");
+      } else if (status === 'negado') {
+        indicator.className = 'voice-indicator';
+        indicator.textContent = '🚫 ' + t("Microfone bloqueado");
+        indicator.title = t('Permissão de microfone negada. Verifique as configurações do navegador.');
+      } else if (status === 'indisponivel') {
+        indicator.style.display = 'none';
       } else {
         indicator.className = 'voice-indicator';
         indicator.textContent = '🎤 ' + t("Assistente de Voz: Desligado");

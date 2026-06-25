@@ -2,13 +2,13 @@
  * Assistente de Voz Inteligente — Spray Precision PRO
  * Web Speech API (síntese + reconhecimento) para operação Hands-Free em campo.
  *
- * BUGS CORRIGIDOS nesta versão:
- *  #1 — Chrome continuous timeout: onend auto-reinicia se userWantsListening=true
- *  #2 — Microfone pausado durante síntese de voz (evita auto-trigger)
- *  #3 — Flag userWantsListening separa intenção do usuário do estado real da API
- *  #4 — stopListening usa recognition.abort() (imediato) em vez de stop()
- *  #5 — processTranscript aceita variações sem acento e palavras sinônimas
+ * ARQUITETURA ANTI-OFUSCAÇÃO:
+ *  Todas as funções internas podem ser renomeadas pelo obfuscator.
+ *  A API pública é exposta via window.SprayVoiceService (propriedades de string
+ *  não são renomeadas pelo obfuscator) e consumida pelo app.js.
  */
+
+console.log('[Voice] voiceService carregado');
 
 // ── Estado ──────────────────────────────────────────────────────────────────
 let recognition      = null;
@@ -33,7 +33,7 @@ function initVoiceService() {
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    console.warn('[VoiceService] Speech Recognition não suportado. Use Chrome, Edge ou Safari.');
+    console.warn('[Voice] Speech Recognition NÃO suportado neste navegador.');
     return { supported: false };
   }
 
@@ -43,6 +43,7 @@ function initVoiceService() {
     recognition.interimResults  = false;
     recognition.maxAlternatives = 1;
     _applyLang();
+    console.log('[Voice] suporte detectado — lang:', recognition.lang);
 
     // ── onstart: API confirmou início da escuta ──
     recognition.onstart = () => {
@@ -96,13 +97,13 @@ function initVoiceService() {
     recognition.onresult = (event) => {
       // FIX #2 — Ignora resultados capturados enquanto TTS está falando
       if (speakingNow) {
-        console.log('[VoiceService] Resultado ignorado durante TTS.');
+        console.log('[Voice] resultado ignorado durante TTS.');
         return;
       }
 
       const idx        = event.resultIndex;
       const transcript = event.results[idx][0].transcript.trim().toLowerCase();
-      console.log('[VoiceService] Fala detectada:', transcript);
+      console.log('[Voice] fala detectada:', transcript);
       _processTranscript(transcript);
     };
 
@@ -400,3 +401,21 @@ function _processTranscript(text) {
 function _matchAny(normalizedText, keywords) {
   return keywords.some(kw => normalizedText.includes(kw));
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPOSIÇÃO PÚBLICA — Anti-ofuscação
+//
+// O obfuscator renomeia funções internas (initVoiceService → a, etc.).
+// Porém propriedades de window são acessadas via string e NÃO são renomeadas.
+// O app.js deve chamar window.SprayVoiceService.start() etc.
+// ─────────────────────────────────────────────────────────────────────────────
+window.SprayVoiceService = {
+  init:              initVoiceService,
+  registerCallbacks: registerVoiceCallbacks,
+  start:             startListening,
+  stop:              stopListening,
+  isListening:       isCurrentlyListening,
+  speak:             speak,
+  playBeep:          playBeep
+};
+console.log('[Voice] window.SprayVoiceService exposto:', Object.keys(window.SprayVoiceService));

@@ -2086,33 +2086,51 @@ async function deleteInspectionFromHistory(id) {
 }
 
 // ==========================================
+// ==========================================
 // 10. ASSISTENTE DE VOZ (HANDS-FREE)
 // ==========================================
 function setupVoiceAssistant() {
   const indicator = document.getElementById('voice-indicator');
   if (!indicator) return;
 
-  const check = initVoiceService();
-  if (!check.supported) {
-    indicator.style.display = 'none';
+  // ── Verificar se SprayVoiceService foi carregado ──────────────────────────
+  // (voiceService.js deve ser carregado ANTES de app.js no index.html)
+  const VS = window.SprayVoiceService;
+  if (!VS) {
+    console.error('[Voice] window.SprayVoiceService não encontrado! Verifique a ordem dos scripts.');
+    indicator.textContent = '🎤 Assistente de Voz: erro de carregamento';
     return;
   }
 
-  // Conectar callbacks de voz à interface
-  registerVoiceCallbacks({
+  // ── Inicializar e verificar suporte do navegador ──────────────────────────
+  const check = VS.init();
+
+  if (!check.supported) {
+    // TASK #4: mostrar mensagem em vez de esconder
+    indicator.className = 'voice-indicator';
+    indicator.textContent = '🎤 Assistente de Voz: Não suportado neste navegador';
+    indicator.style.cursor = 'default';
+    indicator.title = 'Use Chrome, Edge ou Safari para usar o assistente de voz.';
+    return;
+  }
+
+  // ── Conectar callbacks de voz à interface ─────────────────────────────────
+  VS.registerCallbacks({
     onResult: (volumeMl, explicitNozzle) => {
+      console.log('[Voice] volume reconhecido:', volumeMl, 'mL | bico:', explicitNozzle);
       // Se um bico explícito foi falado (ex: "Bico 5, 450 ml")
       if (explicitNozzle !== null && explicitNozzle >= 1 && explicitNozzle <= totalNozzles) {
         activeNozzleIndex = explicitNozzle - 1;
         updateGuidedNozzleFocus();
       }
-
       document.getElementById('input-volume-ml').value = volumeMl;
       updateRealtimeNozzleFeedback();
-      playBeep('success');
-      speak(`${t("Bico")} ${activeNozzleIndex + 1}: ${volumeMl} mL ${t("anotado.")}`);
+      VS.playBeep('success');
+      VS.speak(`${t("Bico")} ${activeNozzleIndex + 1}: ${volumeMl} mL ${t("anotado.")}`);
     },
+
     onCommand: (cmd) => {
+      console.log('[Voice] comando reconhecido:', cmd);
       if (cmd === 'next') {
         saveAndNextNozzle();
       } else if (cmd === 'back') {
@@ -2121,17 +2139,18 @@ function setupVoiceAssistant() {
         startChronometer();
       } else if (cmd === 'pause_timer') {
         pauseChronometer();
-        speak(t("Cronômetro pausado."));
+        VS.speak(t("Cronômetro pausado."));
       } else if (cmd === 'clear') {
         document.getElementById('input-volume-ml').value = '';
         updateRealtimeNozzleFeedback();
-        speak(`${t("Valores apagados para o bico")} ${activeNozzleIndex + 1}.`);
+        VS.speak(`${t("Valores apagados para o bico")} ${activeNozzleIndex + 1}.`);
       } else if (cmd === 'clogged') {
         markNozzleStatus('critico_abaixo');
       } else if (cmd === 'leaking') {
         markNozzleStatus('critico_acima');
       }
     },
+
     onStatus: (status, err) => {
       if (status === 'escutando') {
         indicator.className = 'voice-indicator active';
@@ -2142,30 +2161,43 @@ function setupVoiceAssistant() {
       } else if (status === 'negado') {
         indicator.className = 'voice-indicator';
         indicator.textContent = '🚫 ' + t("Microfone bloqueado");
-        indicator.title = t('Permissão de microfone negada. Verifique as configurações do navegador.');
+        indicator.title = t('Permissão negada. Vá em Configurações do navegador → Microfone → Permitir.');
       } else if (status === 'indisponivel') {
-        indicator.style.display = 'none';
+        indicator.textContent = '🎤 Assistente de Voz: Não suportado neste navegador';
+        indicator.style.cursor = 'default';
       } else {
+        // inativo
         indicator.className = 'voice-indicator';
         indicator.textContent = '🎤 ' + t("Assistente de Voz: Desligado");
       }
     }
   });
 
-  // Ligar/Desligar no clique do indicador
+  // ── Ligar/Desligar no clique do indicador ─────────────────────────────────
   indicator.addEventListener('click', () => {
-    if (isCurrentlyListening()) {
-      stopListening();
-      speak(t("Assistente de voz inativo."));
+    console.log('[Voice] clique no microfone — ouvindo agora:', VS.isListening());
+    if (VS.isListening()) {
+      VS.stop();
+      // TASK #5: apenas beep ao desligar, sem speak() (evita confusão com mic ainda aberto)
+      VS.playBeep('error');
     } else {
-      startListening();
-      speak(t("Assistente ativado. Diga o volume ou cronômetro."));
-      if (typeof logTelemetry === 'function') {
-        logTelemetry('enable_voice_assistant');
+      const ok = VS.start();
+      if (ok) {
+        // TASK #5: apenas beep e atualiza texto; NÃO faz speak() (evita auto-trigger)
+        VS.playBeep('timer_start');
+        indicator.className = 'voice-indicator active';
+        indicator.textContent = '🎤 ' + t("Ouvindo...");
+        if (typeof logTelemetry === 'function') {
+          logTelemetry('enable_voice_assistant');
+        }
+      } else {
+        indicator.className = 'voice-indicator';
+        indicator.textContent = '🚫 ' + t("Microfone bloqueado");
       }
     }
   });
 }
+
 
 function saveAndNextNozzle() {
   const inputVol = document.getElementById('input-volume-ml');

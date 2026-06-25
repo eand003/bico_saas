@@ -2301,26 +2301,53 @@ function setupEventListeners() {
   document.getElementById('btn-print').addEventListener('click', async () => {
     // ── FASE 3+4: Bloquear PDF para demo / sem permissão ──
     const perms = window.userPermissions || {};
-    if (window.isTrialActive || (window.currentUser && perms.can_generate_pdf === false)) {
+    if (window.isTrialActive || (window.currentUser && perms.can_generate_pdf === false && perms.plan_type !== 'single_report')) {
       showTrialPremiumModal();
       return;
     }
-    // ── FASE 4: Verificar e consumir crédito do Laudo Avulso ──
+
+    // ── FASE 4: Verificar crédito do Laudo Avulso ──
     if (perms.plan_type === 'single_report') {
       const maxRep = perms.max_reports || 1;
       const usedRep = perms.reports_used || 0;
+
       if (usedRep >= maxRep) {
-        alert(`🔒 Laudo Avulso Esgotado!\n\nVocê já utilizou seu crédito (${usedRep}/${maxRep}).\n\nPara gerar mais laudos, compre um novo Laudo Avulso ou assine o PRO.\nWhatsApp: wa.me/5565999106415`);
+        // ── Crédito esgotado → modal com link clicável (não alert) ──
+        const modal = document.getElementById('trial-premium-modal');
+        if (modal) {
+          const titleEl = document.getElementById('trial-modal-title');
+          const textEl  = document.getElementById('trial-modal-text');
+          const waEl    = document.getElementById('trial-modal-whatsapp');
+          if (titleEl) titleEl.textContent = '🔒 Laudo Esgotado';
+          if (textEl)  textEl.textContent  = `Você já utilizou todo o seu crédito de laudo (${usedRep}/${maxRep}).\n\nPara gerar mais laudos, compre um novo Laudo Avulso ou assine o PRO.`;
+          if (waEl) {
+            const waMsg = encodeURIComponent('Olá! Meu crédito de Laudo Avulso esgotou. Quero comprar mais créditos ou assinar o plano PRO do Spray Precision PRO.');
+            waEl.href = `https://wa.me/5565999106415?text=${waMsg}`;
+            waEl.textContent = '💬 Falar sobre mais créditos';
+          }
+          modal.style.display = 'flex';
+        }
         return;
       }
+
+      // ── Confirmação antes de consumir crédito ──
+      const remaining = maxRep - usedRep;
+      const msg = `📄 Confirmar geração do Laudo Avulso?\n\n` +
+                  `Esta ação vai consumir 1 crédito de laudo.\n` +
+                  `Créditos disponíveis agora: ${remaining} de ${maxRep}\n` +
+                  (remaining === 1 ? `⚠️ Este é o seu último crédito!\n` : '') +
+                  `\nApós a impressão restará${remaining - 1 === 0 ? 'ão 0 créditos' : remaining - 1 === 1 ? ' 1 crédito' : ` ${remaining - 1} créditos`}.\n\nDeseja continuar?`;
+      if (!confirm(msg)) return;
     }
+
     if (typeof logTelemetry === 'function') {
-      logTelemetry('print_report', { 
+      logTelemetry('print_report', {
         client: document.getElementById('input-cliente')?.value || 'Anonymous',
         total_nozzles: totalNozzles
       });
     }
     window.print();
+
     // Consumir crédito após impressão (Laudo Avulso)
     if (perms.plan_type === 'single_report') {
       await consumeReportCreditDiag();

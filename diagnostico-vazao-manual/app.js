@@ -61,11 +61,13 @@ function initApp() {
     if (!restored) {
       initMeasurements();
     }
-    setupVoiceAssistant();
     loadSavedCredentials();
   } catch(setupErr) {
     console.error('Erro no setup de UI:', setupErr);
   }
+
+  // setupVoiceAssistant fora do try/catch — garante que sempre executa
+  try { setupVoiceAssistant(); } catch(vErr) { console.error('[Voice] setupVoiceAssistant falhou:', vErr); }
   
   // Registrar data atual na identificação
   const today = new Date().toLocaleDateString('pt-BR');
@@ -2064,111 +2066,238 @@ async function loadInspectionIntoApp(id) {
 
 // ==========================================
 // 10. ASSISTENTE DE VOZ (HANDS-FREE)
+// Auto-contido: cria SpeechRecognition diretamente, sem depender de
+// window.SprayVoiceService (elimina riscos de dependência).
 // ==========================================
 function setupVoiceAssistant() {
   var indicator = document.getElementById('voice-indicator');
-  if (!indicator) return;
-
-  indicator.textContent = '🎤 Assistente de Voz';
-
-  // ── SprayVoiceService deve existir (voiceService.js carrega antes de app.js) ──
-  var VS = window['SprayVoiceService'];
-  if (!VS) {
-    console.error('[Voice] window.SprayVoiceService não encontrado. Verifique a ordem dos scripts.');
-    indicator.textContent = '🎤 Voz: erro de carregamento';
+  if (!indicator) {
+    console.warn('[Voice] #voice-indicator não encontrado no DOM.');
     return;
   }
 
-  // ── Inicializar ───────────────────────────────────────────────────────────
-  var check = VS['init']();
+  console.log('[Voice] setupVoiceAssistant iniciado');
 
-  if (!check.supported) {
-    indicator.className   = 'voice-indicator';
-    indicator.textContent = '🎤 Assistente de Voz: Não suportado neste navegador';
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    indicator.textContent = '🎤 Voz: não suportado neste navegador';
     indicator.style.cursor = 'default';
-    indicator.title = 'Use Chrome (Android/Desktop), Edge ou Safari 14.5+ para usar o assistente de voz.';
+    console.warn('[Voice] SpeechRecognition não disponível');
     return;
   }
 
-  indicator.textContent = '🎤 Assistente de Voz: Desligado';
+  // ── Estado local ──────────────────────────────────────────────────────────
+  var rec         = null;     // instância de SpeechRecognition
+  var listening   = false;    // onstart confirmado
+  var wantListen  = false;    // intenção do usuário
+  var restartTmr  = null;
 
-  // ── Callbacks ─────────────────────────────────────────────────────────────
-  VS['registerCallbacks']({
-    onResult: function(volumeMl, explicitNozzle) {
-      if (explicitNozzle !== null && explicitNozzle >= 1 && explicitNozzle <= totalNozzles) {
-        activeNozzleIndex = explicitNozzle - 1;
-        updateGuidedNozzleFocus();
+  function getLang() {
+    try { return localStorage.getItem('spray_language') || 'pt'; } catch(e) { return 'pt'; }
+  }
+
+  function beep(type) {
+    try {
+      var VS = window['SprayVoiceService'];
+      if (VS && VS['playBeep']) VS['playBeep'](type);
+    } catch(e) {}
+  }
+
+  function setIndicator(cls, text) {
+    indicator.className   = cls;
+    indicator.textContent = text;
+  }
+
+  function scheduleRestart() {
+    clearTimeout(restartTmr);
+    restartTmr = setTimeout(function() {
+      if (wantListen && !listening) {
+        try { rec.start(); } catch(e) {
+          console.warn('[Voice] restart falhou:', e.message || e);
+          if (e.name === 'NotAllowedError') {
+            wantListen = false;
+            setIndicator('voice-indicator', '🚫 Microfone bloqueado');
+          }
+        }
       }
-      document.getElementById('input-volume-ml').value = volumeMl;
-      updateRealtimeNozzleFeedback();
-      VS['playBeep']('success');
-    },
+    }, 600);
+  }
 
-    onCommand: function(cmd) {
-      console.log('[Voice] comando reconhecido:', cmd);
-      if (cmd === 'next') {
-        saveAndNextNozzle();
-      } else if (cmd === 'back') {
-        prevNozzle();
-      } else if (cmd === 'timer') {
-        startChronometer();
-      } else if (cmd === 'pause_timer') {
-        pauseChronometer();
-      } else if (cmd === 'clear') {
-        document.getElementById('input-volume-ml').value = '';
-        updateRealtimeNozzleFeedback();
-      } else if (cmd === 'clogged') {
-        markNozzleStatus('critico_abaixo');
-      } else if (cmd === 'leaking') {
-        markNozzleStatus('critico_acima');
-      }
-    },
+  function buildRecognition() {
+    var r = new SR();
+    r.continuous     = true;
+    r.interimResults = false;
+    try { r.maxAlternatives = 1; } catch(e) {}
 
-    onStatus: function(status, err) {
-      if (status === 'escutando') {
-        indicator.className   = 'voice-indicator active';
-        indicator.textContent = '🎤 Ouvindo...';
-        indicator.title = 'Clique para desligar o assistente de voz';
-      } else if (status === 'reconectando') {
-        indicator.className   = 'voice-indicator reconnecting';
-        indicator.textContent = '🔄 Reconectando...';
-      } else if (status === 'negado') {
-        indicator.className   = 'voice-indicator';
-        indicator.textContent = '🚫 Microfone bloqueado';
-        indicator.title = 'Permissão negada. Vá em Configurações > Privacidade > Microfone > Permitir.';
-      } else if (status === 'indisponivel') {
-        indicator.className   = 'voice-indicator';
-        indicator.textContent = '🎤 Assistente de Voz: Não suportado';
-        indicator.style.cursor = 'default';
+    var langCode = getLang() === 'en' ? 'en-US' : getLang() === 'es' ? 'es-419' : 'pt-BR';
+    try { r.lang = langCode; } catch(e) {}
+
+    r.onstart = function() {
+      listening = true;
+      clearTimeout(restartTmr);
+      console.log('[Voice] onstart — mic ativo');
+      setIndicator('voice-indicator active', '🎤 Ouvindo...');
+    };
+
+    r.onend = function() {
+      listening = false;
+      console.log('[Voice] onend — wantListen:', wantListen);
+      if (wantListen) {
+        setIndicator('voice-indicator reconnecting', '🔄 Reconectando...');
+        scheduleRestart();
       } else {
-        // inativo
-        indicator.className   = 'voice-indicator';
-        indicator.textContent = '🎤 Assistente de Voz: Desligado';
-        indicator.title       = 'Clique para ativar o assistente de voz';
+        setIndicator('voice-indicator', '🎤 Assistente de Voz: Desligado');
       }
-    }
-  });
+    };
 
-  // ── Clique: ativar / desativar ────────────────────────────────────────────
+    r.onerror = function(evt) {
+      console.warn('[Voice] onerror:', evt.error);
+      if (evt.error === 'not-allowed' || evt.error === 'service-not-allowed') {
+        wantListen = false;
+        listening  = false;
+        clearTimeout(restartTmr);
+        setIndicator('voice-indicator', '🚫 Microfone bloqueado — verifique permissões');
+      }
+      // outros erros: onend cuida do restart
+    };
+
+    r.onresult = function(evt) {
+      var idx = evt.resultIndex;
+      var txt = evt.results[idx][0].transcript.trim().toLowerCase();
+      console.log('[Voice] fala:', txt);
+      processVoiceTranscript(txt);
+    };
+
+    return r;
+  }
+
+  // ── Inicializa recognition ────────────────────────────────────────────────
+  try {
+    rec = buildRecognition();
+  } catch(e) {
+    console.error('[Voice] Falha ao criar SpeechRecognition:', e);
+    setIndicator('voice-indicator', '🎤 Voz: erro ao inicializar');
+    indicator.style.cursor = 'default';
+    return;
+  }
+
+  // ── Indicador inicial ─────────────────────────────────────────────────────
+  setIndicator('voice-indicator', '🎤 Assistente de Voz: Desligado');
+  indicator.title = 'Clique para ativar o assistente de voz';
+  console.log('[Voice] pronto — clique no botão para ativar');
+
+  // ── CLIQUE ────────────────────────────────────────────────────────────────
   indicator.addEventListener('click', function() {
-    console.log('[Voice] clique no microfone — ouvindo:', VS['isListening']());
+    console.log('[Voice] CLIQUE — listening:', listening, 'wantListen:', wantListen);
 
-    if (VS['isListening']()) {
-      VS['stop']();
-      VS['playBeep']('error');
+    if (listening || wantListen) {
+      // Desligar
+      wantListen = false;
+      listening  = false;
+      clearTimeout(restartTmr);
+      try { rec.stop(); } catch(e) {}
+      beep('error');
+      setIndicator('voice-indicator', '🎤 Assistente de Voz: Desligado');
     } else {
-      indicator.textContent = '🎤 Aguardando microfone...';
-      var ok = VS['start']();
-      if (ok) {
-        VS['playBeep']('timer_start');
+      // Ligar
+      wantListen = true;
+      setIndicator('voice-indicator active', '🎤 Aguardando microfone...');
+
+      try {
+        rec.start();
+        beep('timer_start');
         if (typeof logTelemetry === 'function') {
           logTelemetry('enable_voice_assistant');
         }
-        // onStatus('escutando') atualiza o indicator quando onstart disparar
+      } catch(e) {
+        console.error('[Voice] Erro ao iniciar:', e.message || e);
+        wantListen = false;
+        if (e.name === 'NotAllowedError') {
+          setIndicator('voice-indicator', '🚫 Microfone bloqueado');
+        } else if (e.name === 'InvalidStateError') {
+          // "already started" — tenta parar e reiniciar
+          try { rec.stop(); } catch(e2) {}
+          scheduleRestart();
+        } else {
+          setIndicator('voice-indicator', '❌ Voz: ' + (e.message || e.name || 'erro'));
+        }
       }
-      // se ok=false, onStatus('negado') já foi chamado
     }
   });
+}
+
+// ── Processamento de voz (chamado por setupVoiceAssistant) ────────────────────
+function processVoiceTranscript(text) {
+  function norm(s) {
+    try { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch(e) { return s; }
+  }
+  function has(n, kws) { for (var i=0; i<kws.length; i++) { if (n.indexOf(kws[i])!==-1) return true; } return false; }
+
+  var n = norm(text);
+
+  // Comandos de navegação
+  if (has(n, ['proximo','salvar','avancar','confirmar','gravar'])) { saveAndNextNozzle(); return; }
+  if (has(n, ['voltar','anterior','retornar']))                    { prevNozzle(); return; }
+
+  // Cronômetro
+  if (has(n, ['iniciar','cronometro','comecar','comeca','medir','start'])) { startChronometer(); return; }
+  if (has(n, ['parar','pausar','para','pausa','stop','finalizar']))         { pauseChronometer(); return; }
+
+  // Limpar
+  if (has(n, ['limpar','zerar','apagar','deletar','errei','repetir'])) {
+    document.getElementById('input-volume-ml').value = '';
+    updateRealtimeNozzleFeedback();
+    return;
+  }
+
+  // Bico
+  if (has(n, ['entupido','entupida','obstruido','bloqueado'])) { markNozzleStatus('critico_abaixo'); return; }
+  if (has(n, ['vazando','vazamento','gotejando','pingando']))   { markNozzleStatus('critico_acima');  return; }
+
+  // Volume numérico
+  var cleaned = n.replace(/mililitros?|\bml\b|litros?/g, '').trim();
+
+  // "bico X, Y mL"
+  var bicoMatch = n.match(/(?:bico|ponta|bocal)\s*(\d+).*?(\d+)/);
+  if (bicoMatch) {
+    var nozzle = parseInt(bicoMatch[1], 10);
+    var vol    = parseInt(bicoMatch[2], 10);
+    if (vol > 0 && vol < 10000) {
+      if (nozzle >= 1 && nozzle <= totalNozzles) {
+        activeNozzleIndex = nozzle - 1;
+        updateGuidedNozzleFocus();
+      }
+      document.getElementById('input-volume-ml').value = vol;
+      updateRealtimeNozzleFeedback();
+      return;
+    }
+  }
+
+  var nums = cleaned.match(/\d+/g);
+  if (nums && nums[0]) {
+    var val = parseInt(nums[0], 10);
+    if (val > 0 && val < 10000) {
+      document.getElementById('input-volume-ml').value = val;
+      updateRealtimeNozzleFeedback();
+      return;
+    }
+  }
+
+  // Por extenso
+  var wmap = { zero:0,um:1,dois:2,tres:3,quatro:4,cinco:5,seis:6,sete:7,oito:8,nove:9,dez:10,
+    onze:11,doze:12,treze:13,quatorze:14,quinze:15,dezesseis:16,dezessete:17,dezoito:18,
+    dezenove:19,vinte:20,trinta:30,quarenta:40,cinquenta:50,sessenta:60,setenta:70,
+    oitenta:80,noventa:90,cem:100,cento:100,duzentos:200,trezentos:300,quatrocentos:400,
+    quinhentos:500,seiscentos:600,setecentos:700,oitocentos:800,novecentos:900,mil:1000 };
+  var words = cleaned.split(/\s+/);
+  var total = 0; var found = false;
+  for (var i = 0; i < words.length; i++) {
+    if (wmap[words[i]] !== undefined) { total += wmap[words[i]]; found = true; }
+  }
+  if (found && total > 0 && total < 10000) {
+    document.getElementById('input-volume-ml').value = total;
+    updateRealtimeNozzleFeedback();
+  }
 }
 
 

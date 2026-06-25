@@ -981,8 +981,17 @@
             </div>
             
             <div style="display: flex; gap: 12px; align-items: center; width: 100%; justify-content: space-between; flex-wrap: wrap; margin-top: 8px;">
-              <input type="text" id="userSearchInput" class="input-field" placeholder="🔍 Buscar por e-mail, empresa ou cargo..." oninput="renderUsersTable()" style="max-width: 380px; width: 100%; padding: 8px 12px; font-size: 13px; margin: 0;">
-              
+              <input type="text" id="userSearchInput" class="input-field" placeholder="🔍 Buscar por e-mail, empresa ou cargo..." oninput="renderUsersTable()" style="max-width: 340px; width: 100%; padding: 8px 12px; font-size: 13px; margin: 0;">
+
+              <select id="segmentFilterSelect" class="input-field" onchange="renderUsersTable()" style="padding: 8px 12px; font-size: 13px; margin: 0; min-width: 190px; cursor: pointer;">
+                <option value="all">🎯 Todos os segmentos</option>
+                <option value="campeao">🌟 Campeão</option>
+                <option value="promissor">📈 Promissor</option>
+                <option value="adormecido">😴 Adormecido</option>
+                <option value="novo">🆕 Novo</option>
+                <option value="fantasma">👻 Fantasma / Inativo</option>
+              </select>
+
               <div style="font-size: 12px; color: var(--text-muted);">
                 💡 Clique nas colunas para ordenar
               </div>
@@ -2299,12 +2308,18 @@
         });
       }
 
+      // ── Filtro por segmento de engajamento ──
+      const segFilter = document.getElementById('segmentFilterSelect')?.value || 'all';
+      if (segFilter !== 'all') {
+        filteredUsers = filteredUsers.filter(u => getEngagementData(u).segment === segFilter);
+      }
+
       document.getElementById('userCount').innerText = filteredUsers.length;
 
       if (filteredUsers.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6">
+            <td colspan="8">
               <div class="empty-state">
                 <p>Nenhum usuário correspondente encontrado.</p>
               </div>

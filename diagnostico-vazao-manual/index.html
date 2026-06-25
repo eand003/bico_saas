@@ -1937,7 +1937,27 @@
         `<div style="display:flex; align-items:center; gap:10px; font-size:12px; margin-top:4px; padding-top:8px; border-top:1px solid #f1f5f9;">
           <span style="font-size:14px;">🔢</span>
           <span style="color:#0f172a;">Bicos por laudo: <b>${maxN && maxN < 999 ? maxN : 'Ilimitado'}</b></span>
-        </div>`;
+        </div>` +
+        (perms.plan_type === 'single_report' ? (() => {
+          const maxR  = perms.max_reports  || 1;
+          const usedR = perms.reports_used || 0;
+          const leftR = Math.max(0, maxR - usedR);
+          const pct   = Math.min(100, Math.round((usedR / maxR) * 100));
+          const esgotado = leftR === 0;
+          const barColor = esgotado ? '#dc2626' : leftR === 1 ? '#f59e0b' : '#16a34a';
+          const waMsg = encodeURIComponent('Olá! Meu crédito de Laudo Avulso esgotou. Quero comprar mais créditos ou assinar o plano PRO do Spray Precision PRO.');
+          return `<div style="margin-top:12px; padding-top:10px; border-top:1px solid #f1f5f9;">
+            <div style="font-size:10px; font-weight:600; letter-spacing:1px; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">Créditos de Laudo</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:12px; color:#0f172a;">🧾 <b>${usedR}</b> de <b>${maxR}</b> usados</span>
+              <span style="font-size:11px; font-weight:700; color:${barColor};">${esgotado ? '🔒 Esgotado' : leftR === 1 ? '⚠️ Último!' : `✅ ${leftR} disponível${leftR > 1 ? 'is' : ''}`}</span>
+            </div>
+            <div style="background:#f1f5f9; border-radius:99px; height:6px; overflow:hidden;">
+              <div style="height:100%; width:${pct}%; background:${barColor}; border-radius:99px; transition:width .4s;"></div>
+            </div>
+            ${esgotado ? `<a href="https://wa.me/5565999106415?text=${waMsg}" target="_blank" style="display:block; text-align:center; padding:8px; margin-top:10px; background:linear-gradient(135deg,#25D366,#128C7E); color:#fff; border-radius:8px; font-weight:700; font-size:11px; text-decoration:none;">📲 Comprar mais créditos</a>` : ''}
+          </div>`;
+        })() : '');
 
       document.getElementById('acct-upgrade-block').style.display = isTrial ? 'block' : 'none';
 

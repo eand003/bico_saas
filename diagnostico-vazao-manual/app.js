@@ -595,7 +595,9 @@ async function handleUserLoggedIn(user) {
     can_use_dual_nozzle: metadata.can_use_dual_nozzle !== false && !metadata.is_trial,
     can_use_crm: metadata.can_use_crm !== false,
     can_use_full_results: metadata.can_use_full_results !== false && !metadata.is_trial,
-    max_nozzles_per_report: metadata.max_nozzles_per_report || (metadata.is_trial ? 12 : 999)
+    max_nozzles_per_report: metadata.max_nozzles_per_report || (metadata.is_trial ? 12 : 999),
+    max_reports: (metadata.max_reports !== undefined && metadata.max_reports !== null) ? metadata.max_reports : 999,
+    reports_used: metadata.reports_used || 0
   };
   console.log('🔒 Spray Precision PRO — Permissões carregadas:', window.userPermissions);
   // Persistir permissões no localStorage para modo offline

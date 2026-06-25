@@ -1064,29 +1064,41 @@ function startChronometer() {
   timerTimeLeft = timerDuration;
   document.getElementById('chronometer-display').textContent = formatTimerTime(timerTimeLeft);
   document.getElementById('btn-timer-start').textContent = '⏸️ Pausar';
-  playBeep('success');
+  playBeep('timer_start'); // bing-BING: sinal de largada
 
   timerInterval = setInterval(() => {
+    const prevTime = timerTimeLeft;
     timerTimeLeft -= 0.1;
+
     if (timerTimeLeft <= 0) {
       timerTimeLeft = 0;
       clearInterval(timerInterval);
       timerInterval = null;
       document.getElementById('btn-timer-start').textContent = '▶️ Iniciar';
-      
+
       // Ações ao concluir o cronômetro
-      playBeep('timer_end');
+      playBeep('timer_end'); // beep-beep-BEEP: sinal de parar coleta
       speak(t("Tempo esgotado para o bico") + " " + (activeNozzleIndex + 1) + ". " + t("Registre o volume."));
-      
+
       // Tentar focar no input de volume automaticamente (desativado em mobile)
       const isMobile = window.matchMedia('(max-width: 768px)').matches || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
       if (!isMobile) {
         document.getElementById('input-volume-ml').focus();
       }
+    } else {
+      // ── Ticks de contagem regressiva nos últimos 3-2-1 segundos ──
+      // Detecta cruzamento de limiar (evita disparo duplo por flutuação de ponto flutuante)
+      [3, 2, 1].forEach(threshold => {
+        if (prevTime > threshold && timerTimeLeft <= threshold) {
+          playBeep('countdown_tick');
+        }
+      });
     }
+
     document.getElementById('chronometer-display').textContent = formatTimerTime(timerTimeLeft);
   }, 100);
 }
+
 
 function pauseChronometer() {
   if (!timerInterval) return;

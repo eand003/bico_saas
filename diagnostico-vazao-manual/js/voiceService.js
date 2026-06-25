@@ -141,48 +141,81 @@ function speak(text, interrupt = true) {
 }
 
 /**
- * Emite um beep de áudio customizado usando a Web Audio API (evita dependências de arquivos de áudio locais)
+ * Emite beeps de áudio customizados usando a Web Audio API
+ * Perfis:
+ *   'timer_start'    → 2 bipes ascendentes (bing-BING) → "atenção, começa!"
+ *   'countdown_tick' → tick curto a cada segundo (3-2-1)
+ *   'timer_end'      → 3 bipes descendentes longos     → "PARE a coleta!"
+ *   'success'        → bipe simples positivo
+ *   'error'          → bipe grave de erro
  */
 function playBeep(type = 'success') {
   if (typeof window === 'undefined') return;
-  
+
   try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    if (type === 'success') {
-      osc.frequency.setValueAtTime(880, ctx.currentTime); // Nota A5 (agudo rápido)
-      gain.gain.setValueAtTime(0.1, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.15);
-    } else if (type === 'timer_end') {
-      // Beep duplo longo (fim de tempo)
-      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // Nota C5
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime + 0.2);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.4);
-    } else if (type === 'error') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, ctx.currentTime); // Grave de erro
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.3);
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+
+    /**
+     * Cria um oscilador agendado num contexto já aberto
+     * @param {number} freq     - frequência Hz
+     * @param {number} startAt  - segundos (relativo a ctx.currentTime)
+     * @param {number} duration - duração em segundos
+     * @param {number} volume   - 0 a 1
+     * @param {string} shape    - tipo de onda (sine, square, sawtooth, triangle)
+     */
+    function tone(freq, startAt, duration, volume = 0.18, shape = 'sine') {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = shape;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      const t0 = ctx.currentTime + startAt;
+      osc.frequency.setValueAtTime(freq, t0);
+
+      // Ataque suave (evita clique digital)
+      gain.gain.setValueAtTime(0.001, t0);
+      gain.gain.linearRampToValueAtTime(volume, t0 + 0.015);
+      // Sustain + decay
+      gain.gain.setValueAtTime(volume, t0 + duration * 0.7);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+
+      osc.start(t0);
+      osc.stop(t0 + duration + 0.02);
     }
+
+    if (type === 'timer_start') {
+      // ── "atenção-VAI!" ── dois bipes ascendentes ──
+      tone(660,  0.00, 0.12, 0.16); // bing  (E5)
+      tone(1047, 0.22, 0.20, 0.22); // BING  (C6) — sinal de largada
+
+    } else if (type === 'countdown_tick') {
+      // ── Tick dos últimos 3-2-1 segundos ──
+      tone(1200, 0.00, 0.06, 0.14, 'square'); // curto e nítido
+
+    } else if (type === 'timer_end') {
+      // ── "PARE!" ── três bipes descendentes ──
+      tone(880,  0.00, 0.22, 0.22); // beep 1  (A5)
+      tone(880,  0.32, 0.22, 0.22); // beep 2  (A5)
+      tone(523,  0.64, 0.55, 0.28); // beep 3 longo (C5) — sinal de fim
+
+    } else if (type === 'success') {
+      // ── Bipe positivo simples ──
+      tone(880, 0.00, 0.14, 0.12);
+
+    } else if (type === 'error') {
+      // ── Bipe grave de erro ──
+      tone(160, 0.00, 0.30, 0.16, 'sawtooth');
+    }
+
   } catch (e) {
-    console.warn("Web Audio API não inicializada:", e);
+    console.warn('Web Audio API não disponível:', e);
   }
 }
+
 
 /**
  * Processa o texto transcrito pelo microfone e interpreta intenções

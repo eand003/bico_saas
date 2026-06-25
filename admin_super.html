@@ -1011,6 +1011,7 @@
                   <th onclick="toggleUserSort('last_access')" style="min-width: 140px; user-select: none;">
                     Atividade <span id="sortIcon-last_access" style="font-size: 10px; margin-left: 4px; display: inline-block;">⇅</span>
                   </th>
+                  <th style="min-width: 170px; user-select: none;">🎯 Engajamento</th>
                   <th style="min-width: 270px; text-align: right; user-select: none;">Ações</th>
                 </tr>
               </thead>
@@ -1545,6 +1546,7 @@
     let cachedMachines = [];
     let cachedEmpresas = [];
     let cachedSessions = [];
+    let cachedUserMetrics = {}; // user_id → { reports, inspections }
     let selectedEnterpriseId = 'all';
     let currentTab = 'users';
     let userSortField = 'created_at';
@@ -2063,6 +2065,21 @@
         const { data: machines } = await supabaseAdmin.from('maquinas').select('id, user_id, client_id, name, nozzle_count, spacing');
         const { data: sessions } = await supabaseAdmin.from('user_sessions').select('user_id, updated_at, accessed_app');
 
+        // ── Métricas de engajamento por usuário ──
+        const { data: telData } = await supabaseAdmin.from('user_telemetry').select('user_id, event_type').eq('event_type', 'print_report');
+        const { data: inspData } = await supabaseAdmin.from('flow_inspections').select('owner_id');
+        cachedUserMetrics = {};
+        (telData || []).forEach(r => {
+          if (!cachedUserMetrics[r.user_id]) cachedUserMetrics[r.user_id] = { reports: 0, inspections: 0 };
+          cachedUserMetrics[r.user_id].reports++;
+        });
+        (inspData || []).forEach(r => {
+          if (r.owner_id) {
+            if (!cachedUserMetrics[r.owner_id]) cachedUserMetrics[r.owner_id] = { reports: 0, inspections: 0 };
+            cachedUserMetrics[r.owner_id].inspections++;
+          }
+        });
+
         cachedClients = clients || [];
         cachedMachines = machines || [];
         cachedSessions = sessions || [];
@@ -2183,6 +2200,75 @@
                 <span style="font-size: 10px; color: var(--text-muted); opacity: 0.85;">🕒 ${text}</span>
                 <span style="font-size: 10px; color: var(--text-muted); opacity: 0.6;">💻 ${appName}</span>
               </div>`;
+    }
+
+    // ══════════════════════════════════════════════
+    // ENGAJAMENTO: segmentação + ação por cliente
+    // ══════════════════════════════════════════════
+    function getEngagementData(user) {
+      const userId = user.id;
+      const metrics = cachedUserMetrics[userId] || { reports: 0, inspections: 0 };
+      const sess = cachedSessions.find(s => s.user_id === userId);
+      const meta = user.user_metadata || {};
+      const fullName = meta.full_name || '';
+      const firstName = fullName ? fullName.split(' ')[0] : user.email.split('@')[0];
+      const phone = (meta.phone || '').replace(/\D/g, '');
+
+      const now = new Date();
+      const createdAt = new Date(user.created_at);
+      const daysSinceCreated = Math.floor((now - createdAt) / 86400000);
+      let daysSinceAccess = Infinity;
+      if (sess) daysSinceAccess = Math.floor((now - new Date(sess.updated_at)) / 86400000);
+
+      const totalActivity = metrics.reports + metrics.inspections;
+
+      // ── Determinar segmento ──
+      let segment, segBadge, segColor, waText;
+      if (!sess && daysSinceCreated > 2) {
+        segment = 'fantasma';
+        segBadge = '👻 Fantasma';
+        segColor = '#6b7280';
+        waText = `Oi ${firstName}! Vi que você se cadastrou no Spray Precision PRO mas ainda não conseguiu usar. Teve alguma dificuldade para entrar? Me chama que a gente resolve rapidinho! 🤝`;
+      } else if (daysSinceCreated <= 7) {
+        segment = 'novo';
+        segBadge = '🆕 Novo';
+        segColor = '#0ea5e9';
+        waText = `Oi ${firstName}! Seja bem-vindo ao Spray Precision PRO! 👋 Como foi sua primeira experiência? Posso te ajudar com alguma dúvida pra você aproveitar melhor o app?`;
+      } else if (daysSinceAccess > 20) {
+        segment = 'adormecido';
+        segBadge = '😴 Adormecido';
+        segColor = '#f59e0b';
+        waText = `Oi ${firstName}! Faz um tempo que não te vejo no Spray Precision PRO. Tudo certo? Teve alguma dificuldade ou ficou alguma dúvida? Estou aqui pra ajudar 😊`;
+      } else if (totalActivity >= 6 || metrics.reports >= 2) {
+        segment = 'campeao';
+        segBadge = '🌟 Campeão';
+        segColor = '#22c55e';
+        waText = `Oi ${firstName}! Vi aqui que você está mandando bem no Spray Precision PRO — já fez ${metrics.inspections} diagnóstico(s) e gerou ${metrics.reports} laudo(s)! 🌟 Você toparia me dar um depoimento rápido sobre sua experiência?`;
+      } else if (totalActivity > 0) {
+        segment = 'promissor';
+        segBadge = '📈 Promissor';
+        segColor = '#8b5cf6';
+        waText = `Oi ${firstName}! Vi que você já está usando o Spray Precision PRO — ótimo! Você sabia que também dá pra ${metrics.reports === 0 ? 'gerar laudos técnicos em PDF' : 'salvar o histórico de todos os diagnósticos na nuvem'}? Me chama e te mostro! 🚀`;
+      } else {
+        segment = 'fantasma';
+        segBadge = '👻 Inativo';
+        segColor = '#6b7280';
+        waText = `Oi ${firstName}! Vi que você tem acesso ao Spray Precision PRO mas ainda não usou. Posso te ajudar a dar o primeiro passo? É bem rápido! 😊`;
+      }
+
+      const waUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(waText)}` : '';
+      const waBtnHtml = waUrl
+        ? `<a href="${waUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:3px;padding:4px 8px;background:#25D366;color:white;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;margin-top:4px;" title="Enviar mensagem no WhatsApp">📲 ${segment === 'campeao' ? 'Depoimento' : segment === 'adormecido' ? 'Reativar' : segment === 'fantasma' || segment === 'inativo' ? 'Ativar' : segment === 'novo' ? 'Onboarding' : 'Upsell'}</a>`
+        : `<span style="font-size:9px;color:var(--text-muted);font-style:italic;">sem telefone</span>`;
+
+      return {
+        segment, segBadge, segColor, metrics, waBtnHtml,
+        html: `<div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
+          <span style="background:${segColor};color:white;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;white-space:nowrap;">${segBadge}</span>
+          <span style="font-size:10px;color:var(--text-muted);">📋 ${metrics.inspections} diag. · 📄 ${metrics.reports} laudo${metrics.reports !== 1 ? 's' : ''}</span>
+          ${waBtnHtml}
+        </div>`
+      };
     }
 
     function selectEnterprise(pId) {
@@ -2323,13 +2409,30 @@
             const renewMsg = encodeURIComponent(`Oi ${firstName}! Seu acesso ao Spray Precision PRO vence em ${formattedEnd}. Para continuar usando o Seletor de Bicos + Diagnóstico de Vazão ilimitado, é só fazer o PIX de R$ 60 e eu renovo por mais 30 dias na hora! 🚀`);
             renewalBtnHtml = `<a href="https://wa.me/${phone.replace(/\D/g,'')}?text=${renewMsg}" target="_blank" class="btn" style="padding: 6px 10px; font-size: 11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center;" title="Enviar mensagem de renovação no WhatsApp">📲 Renovar</a>`;
           }
+        } else if (metadata.plan_type === 'single_report') {
+          // ── Laudo Avulso: mostrar crédito consumido ──
+          const maxR = metadata.max_reports || 1;
+          const usedR = metadata.reports_used || 0;
+          const esgotado = usedR >= maxR;
+          if (esgotado) {
+            accessHtml = `<span style="background:#dc2626; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🔒 Laudo Esgotado (${usedR}/${maxR})</span>`;
+            if (phone || user.email) {
+              const firstName = fullName ? fullName.split(' ')[0] : user.email.split('@')[0];
+              const contact = phone ? phone.replace(/\D/g,'') : '';
+              const upsellMsg = encodeURIComponent(`Oi ${firstName}! Vi aqui que você já utilizou seu Laudo Avulso no Spray Precision PRO. Se precisar de mais laudos ou quiser conhecer o plano PRO com laudos ilimitados, é só me chamar! 🚀`);
+              if (contact) {
+                renewalBtnHtml = `<a href="https://wa.me/${contact}?text=${upsellMsg}" target="_blank" class="btn" style="padding:5px 9px; font-size:11px; background:#25D366; border-color:#25D366; color:white; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Abordar para vender mais laudos">📲 Vender mais</a>`;
+              }
+            }
+          } else {
+            accessHtml = `<span style="background:#2563eb; color:white; font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; white-space:nowrap;">🧾 Laudo Avulso ${usedR}/${maxR} usado</span>`;
+          }
         } else if (metadata.plan_type && metadata.plan_type !== 'demo' && !metadata.is_trial) {
           // Plano ativo sem data de fim (ex: PRO sem validade definida)
           const planLabels = {
             pro_monthly: '📅 PRO Mensal',
             pro_annual:  '🏆 PRO Anual',
             pro_founder: '⭐ Fundador',
-            single_report: '🧾 Laudo Avulso',
             corporate: '🏢 Corporativo'
           };
           const label = planLabels[metadata.plan_type] || ('🔑 ' + metadata.plan_type);
@@ -2370,6 +2473,7 @@
             </div>
           </td>
           <td data-label="Atividade">${badgeHtml}</td>
+          <td data-label="Engajamento">${getEngagementData(user).html}</td>
           <td data-label="Ações" style="text-align: right;">
             <div style="display:flex; justify-content:flex-end; gap:6px; width: 100%; flex-wrap: wrap;">
               <button class="btn" style="padding: 6px 10px; font-size: 11px; background:#1e293b; border-color:rgba(0,210,255,0.4); color:var(--accent);" onclick="openUserCrmTab('${user.email}')" title="Ver CRM deste Consultor">📊 CRM</button>

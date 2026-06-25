@@ -1867,7 +1867,7 @@
   </div>
 
   <script>
-    function openAccountDrawer() {
+    async function openAccountDrawer() {
       const overlay = document.getElementById('account-drawer-overlay');
       const drawer  = document.getElementById('account-drawer');
       if (!overlay || !drawer) return;
@@ -1875,6 +1875,20 @@
       const email   = (document.getElementById('logged-user-email')?.textContent || window.currentUserEmail || '--').toLowerCase();
       const perms   = window.userPermissions || {};
       const isTrial = window.isTrialActive || perms.plan_type === 'demo';
+
+      // \u2500\u2500 Refresh de metadata para plano Laudo Avulso \u2500\u2500
+      // Garante que max_reports/reports_used refletem o valor atual no Supabase,
+      // mesmo que o admin tenha alterado depois da \u00faltima sess\u00e3o do usu\u00e1rio.
+      if (perms.plan_type === 'single_report' && window.supabaseClient) {
+        try {
+          const { data: { user: freshUser } } = await window.supabaseClient.auth.getUser();
+          if (freshUser) {
+            const fm = freshUser.user_metadata || {};
+            if (fm.max_reports  !== undefined && fm.max_reports  !== null) { perms.max_reports  = fm.max_reports;  if (window.userPermissions) window.userPermissions.max_reports  = fm.max_reports; }
+            if (fm.reports_used !== undefined && fm.reports_used !== null) { perms.reports_used = fm.reports_used; if (window.userPermissions) window.userPermissions.reports_used = fm.reports_used; }
+          }
+        } catch(e) { /* offline: usa cache */ }
+      }
 
       // Avatar
       document.getElementById('acct-avatar').textContent = email.slice(0,2).toUpperCase();

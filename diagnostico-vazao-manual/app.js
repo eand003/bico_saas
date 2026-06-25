@@ -2310,8 +2310,28 @@ function setupEventListeners() {
 
     // ── FASE 4: Verificar crédito do Laudo Avulso ──
     if (perms.plan_type === 'single_report') {
-      const maxRep = perms.max_reports || 1;
-      const usedRep = perms.reports_used || 0;
+      // Refresh SEMPRE do Supabase: admin pode ter alterado max_reports/reports_used
+      // depois da última sessão do usuário (valores não são atualizados na JWT ativa)
+      try {
+        const supabaseFresh = window.supabaseClient;
+        if (supabaseFresh) {
+          const { data: { user: freshUser } } = await supabaseFresh.auth.getUser();
+          if (freshUser) {
+            const freshMeta = freshUser.user_metadata || {};
+            if (freshMeta.max_reports !== undefined && freshMeta.max_reports !== null) {
+              perms.max_reports = freshMeta.max_reports;
+              if (window.userPermissions) window.userPermissions.max_reports = freshMeta.max_reports;
+            }
+            if (freshMeta.reports_used !== undefined && freshMeta.reports_used !== null) {
+              perms.reports_used = freshMeta.reports_used;
+              if (window.userPermissions) window.userPermissions.reports_used = freshMeta.reports_used;
+            }
+          }
+        }
+      } catch(e) { /* offline: usa valores em cache */ }
+
+      const maxRep  = (perms.max_reports  !== undefined && perms.max_reports  !== null) ? perms.max_reports  : 1;
+      const usedRep = (perms.reports_used !== undefined && perms.reports_used !== null) ? perms.reports_used : 0;
 
       if (usedRep >= maxRep) {
         // ── Crédito esgotado → modal com link clicável (não alert) ──
